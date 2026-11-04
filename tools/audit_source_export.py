@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,hashlib,json,os,re
 
 PROJECT=Path(__file__).resolve().parents[1]
-SKIP={'.git','.codex','.agents','.aws','.claude','private','inputs','build','backups','outputs','out','node_modules','__pycache__','CMakeFiles'}
+SKIP={'.git','.codex','.agents','.aws','.claude','private','inputs','build','backups','outputs','out','node_modules','__pycache__','CMakeFiles','upscaled','originals','user-data','upscale-runtime','build-work'}
 TEXT={'.py','.cpp','.hpp','.h','.c','.cc','.cmake','.sh','.cmd','.ps1','.md','.json','.toml','.ini','.yml','.yaml','.txt','.map','.ld','.inc'}
 SPECIAL={'Makefile','CMakeLists.txt','LICENSE','COPYING','.gitignore','.gitattributes','.editorconfig'}
 BINARY={'.png','.jpg','.jpeg','.bmp','.dds','.svg','.wav','.xma','.mp3','.wma','.ogg','.flac','.wmv','.mp4','.mkv','.zip','.7z','.tgz','.gz','.xex','.xexp','.xzp','.xur','.xus','.nxui','.nxak','.elf','.exe','.dll','.so','.a','.o','.obj','.bin','.pack','.ttf','.otf','.xtt'}

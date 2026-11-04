@@ -45,3 +45,10 @@ __pycache__/
 *.zip
 *.7z
 .env*
+
+# X17 user originals, derived images and locally built engine.
+**/upscaled/
+**/originals/
+**/user-data/
+**/upscale-runtime/
+**/build-work/

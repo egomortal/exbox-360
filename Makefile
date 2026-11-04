@@ -10,13 +10,11 @@ LIB := $(SDK)/target/user/homebrew/lib
 INC := $(SDK)/target/user/homebrew/include
 HOSTCXX ?= g++
 
-all: build/eboot.elf
-
-build/eboot.elf: $(SRC) $(HDR) avatar_kit.hpp
-	mkdir -p build
-	$(CC) -std=c++17 -O2 -Wall -Wextra -D__PROSPERO__ -I$(INC) -Imodules/host_bridge $(SRC) -o $@ \
-		-L$(LIB) -lSDL2_ttf -lSDL2_image -lSDL2 -lfreetype -lharfbuzz -lpng -ljpeg -lwebpdemux -lwebp -lz -lbz2 -lsamplerate -liconv \
-		-lSceSystemService -lSceUserService -lScePad -lSceAudioOut -lSceVideoOut -lSceKeyboard -lSceImeDialog -lkernel_sys
+.DEFAULT_GOAL := host
+.PHONY: native
+native:
+	@echo "Native build unavailable: see README-NATIVE.md for missing pinned dependencies."
+	@exit 2
 
 # Unit tests for the Xbox mapping and the dashboard model. No SDL or SDK needed.
 test: build/test_dash build/test_library build/test-xui build/test-ad-profiles

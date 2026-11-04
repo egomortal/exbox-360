@@ -23,6 +23,10 @@
 #include "xui_renderer.hpp"
 #include "custom_scene_playback.hpp"
 #include <fstream>
+#ifdef EXBOX_NATIVE_TITLE
+#include "native_audio_endpoint.hpp"
+extern "C" void exbox_native_note(const char*,...);
+#endif
 #include "ps5_library.hpp"
 #include "system_data.hpp"
 #include "modules/editor_dashboard/bridge.hpp"

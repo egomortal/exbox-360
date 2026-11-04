@@ -29,7 +29,7 @@ extern "C" void exbox_prepare_optional_modules(Log output) {
   else log_line("keyboard sysmodule loader unavailable; keyboard disabled\n");
   for(size_t i=0;i<8;++i)symbols[i]=lookup(names[i]);
   // The SDK places this export in libSceSystemService, not libSceLncUtil.
-  (void)lookup("sceLncUtilLaunchApp"); // Resolution only: never launch from probe.
+  // Launches use the existing dashboard companion interface.
 }
 extern "C" int __wrap_sceKeyboardInit(){auto f=reinterpret_cast<int(*)()>(symbols[0]);return f?f():-1;}
 extern "C" int __wrap_sceKeyboardOpen(int u,int t,int i,void* p){auto f=reinterpret_cast<int(*)(int,int,int,void*)>(symbols[1]);return f?f(u,t,i,p):-1;}

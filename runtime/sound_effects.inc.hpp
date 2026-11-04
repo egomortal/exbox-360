@@ -8,21 +8,30 @@ size_t next_blade_switch=0;
 int loaded_build=-1;
 Clip toast_clip, done_clip, boot_clip;
 Voice voices[4];
+// One SDL sfx device serializes mix; close joins callbacks before reopen.
+int mix_scratch[8192]{}; // Persistent32KiB, not an audio-thread stack allocation.
 SDL_AudioDeviceID device=0;
+#ifdef EXBOX_NATIVE_TITLE
+void endpoint_note(const char* message){exbox_native_note("%s\n",message);}
+exbox::audio::Endpoint endpoint(exbox::audio::sdl_calls(),endpoint_note);
+#endif
 // mix() runs on SDL's audio thread with the device locked; play() takes the
 // same lock (SDL_LockAudioDevice) to start a voice.
 void mix(void *, Uint8 *stream, int len) {
+    if(len<=0)return;
+    std::memset(stream,0,size_t(len));
+    if(len%4 || len>16384)return; // At most4096 complete stereo S16 frames.
     auto *out=reinterpret_cast<Sint16 *>(stream);
     const int n=len/2;
-    std::vector<int> acc(size_t(n),0);
+    int* acc=mix_scratch;std::fill_n(acc,size_t(n),0);
     for (auto &v:voices) {
         if (!v.clip) continue;
         for (int i=0;i<n && v.at<v.clip->pcm.size();i++) acc[size_t(i)]+=v.clip->pcm[v.at++]*7/10;
         if (v.at>=v.clip->pcm.size()) v.clip=nullptr;
     }
-    music_player.mix(acc.data(),size_t(n/2)); // stereo frames
+    music_player.mix(acc,size_t(n/2)); // stereo frames
 #ifdef NXE_DIRECT_VIDEO
-    direct_video.mix(acc.data(),size_t(n/2));
+    direct_video.mix(acc,size_t(n/2));
 #endif
     for (int i=0;i<n;i++) out[i]=Sint16(std::clamp(acc[size_t(i)],-32768,32767));
 }
@@ -109,13 +118,21 @@ void open() {
     if (device) return; // opened even without the 360's sounds: music plays through it
     SDL_AudioSpec want{}, have{};
     want.freq=48000; want.format=AUDIO_S16SYS; want.channels=2; want.samples=1024; want.callback=mix;
+#ifdef EXBOX_NATIVE_TITLE
+    (void)have;device=endpoint.open(want);
+#else
     device=SDL_OpenAudioDevice(nullptr,0,&want,&have,0);
     if (device) SDL_PauseAudioDevice(device,0);
     else log("sounds: no audio device");
+#endif
 }
 void close() {
     if (!device) return;
+#ifdef EXBOX_NATIVE_TITLE
+    endpoint.close();
+#else
     SDL_CloseAudioDevice(device);
+#endif
     device=0;
     for (auto &v:voices) v.clip=nullptr;
 }
