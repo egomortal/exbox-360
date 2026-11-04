@@ -1,0 +1,6 @@
+"""Separate local trailer drop-folder importer. See docs/TRAILERS.md."""
+from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent/'tools'))
+from trailer_import import main
+if __name__=='__main__':raise SystemExit(main())

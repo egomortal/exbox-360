@@ -1,0 +1,1223 @@
+{
+  "schema": 1,
+  "source": "docs/astra/EDITOR-LAYER-SPEC.md",
+  "bindings": [
+    {
+      "kind": "import",
+      "symbol": "__imp__XamAvatarSetManifest",
+      "name": "__imp__XamAvatarSetManifest",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamFormatMessage",
+      "name": "__imp__XamFormatMessage",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamGetDashContext",
+      "name": "__imp__XamGetDashContext",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamGetLiveHiveValueA",
+      "name": "__imp__XamGetLiveHiveValueA",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamGetLiveHiveValueW",
+      "name": "__imp__XamGetLiveHiveValueW",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamIsNuiAutomationEnabled",
+      "name": "__imp__XamIsNuiAutomationEnabled",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamNuiIsDeviceReady",
+      "name": "__imp__XamNuiIsDeviceReady",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamParseGamerTileKey",
+      "name": "__imp__XamParseGamerTileKey",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamPngDecode",
+      "name": "__imp__XamPngDecode",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamPngEncodeEx",
+      "name": "__imp__XamPngEncodeEx",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamReadTile",
+      "name": "__imp__XamReadTile",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamReadTileEx",
+      "name": "__imp__XamReadTileEx",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamReadTileToTexture",
+      "name": "__imp__XamReadTileToTexture",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamSessionCreateHandle",
+      "name": "__imp__XamSessionCreateHandle",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamSessionRefObjByHandle",
+      "name": "__imp__XamSessionRefObjByHandle",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamShowMarketplaceUI",
+      "name": "__imp__XamShowMarketplaceUI",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamShowNuiMarketplaceUI",
+      "name": "__imp__XamShowNuiMarketplaceUI",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamShowSigninUI",
+      "name": "__imp__XamShowSigninUI",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserAddRecentPlayer",
+      "name": "__imp__XamUserAddRecentPlayer",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserAllowedToPostToSocialNetwork",
+      "name": "__imp__XamUserAllowedToPostToSocialNetwork",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserAreUsersFriends",
+      "name": "__imp__XamUserAreUsersFriends",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserCheckPrivilege",
+      "name": "__imp__XamUserCheckPrivilege",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserContentRestrictionCheckAccess",
+      "name": "__imp__XamUserContentRestrictionCheckAccess",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserContentRestrictionGetFlags",
+      "name": "__imp__XamUserContentRestrictionGetFlags",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserContentRestrictionGetRating",
+      "name": "__imp__XamUserContentRestrictionGetRating",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserCreateAchievementEnumerator",
+      "name": "__imp__XamUserCreateAchievementEnumerator",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserCreateAvatarAssetEnumerator",
+      "name": "__imp__XamUserCreateAvatarAssetEnumerator",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserCreatePlayerEnumerator",
+      "name": "__imp__XamUserCreatePlayerEnumerator",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserCreateStatsEnumerator",
+      "name": "__imp__XamUserCreateStatsEnumerator",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserCreateTitlesPlayedEnumerator",
+      "name": "__imp__XamUserCreateTitlesPlayedEnumerator",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserFlushLogonQueue",
+      "name": "__imp__XamUserFlushLogonQueue",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetAge",
+      "name": "__imp__XamUserGetAge",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetAgeGroup",
+      "name": "__imp__XamUserGetAgeGroup",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetCachedUserFlags",
+      "name": "__imp__XamUserGetCachedUserFlags",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetDeviceId",
+      "name": "__imp__XamUserGetDeviceId",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetGamerTag",
+      "name": "__imp__XamUserGetGamerTag",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetIndexFromXUID",
+      "name": "__imp__XamUserGetIndexFromXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetMembershipTier",
+      "name": "__imp__XamUserGetMembershipTier",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetMembershipTierFromXUID",
+      "name": "__imp__XamUserGetMembershipTierFromXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetName",
+      "name": "__imp__XamUserGetName",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetOnlineCountryFromXUID",
+      "name": "__imp__XamUserGetOnlineCountryFromXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetOnlineLanguageFromXUID",
+      "name": "__imp__XamUserGetOnlineLanguageFromXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetOnlineXUIDFromOfflineXUID",
+      "name": "__imp__XamUserGetOnlineXUIDFromOfflineXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetReportingInfo",
+      "name": "__imp__XamUserGetReportingInfo",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetRequestedUserIndexMask",
+      "name": "__imp__XamUserGetRequestedUserIndexMask",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetSigninInfo",
+      "name": "__imp__XamUserGetSigninInfo",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetSigninState",
+      "name": "__imp__XamUserGetSigninState",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetSubscriptionType",
+      "name": "__imp__XamUserGetSubscriptionType",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetUserFlags",
+      "name": "__imp__XamUserGetUserFlags",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetUserFlagsFromXUID",
+      "name": "__imp__XamUserGetUserFlagsFromXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetUserIndexMask",
+      "name": "__imp__XamUserGetUserIndexMask",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetUserTenure",
+      "name": "__imp__XamUserGetUserTenure",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetUsersMissingAvatars",
+      "name": "__imp__XamUserGetUsersMissingAvatars",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetXUID",
+      "name": "__imp__XamUserGetXUID",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserGetXUIDForTFA",
+      "name": "__imp__XamUserGetXUIDForTFA",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserInvalidateProfileSetting",
+      "name": "__imp__XamUserInvalidateProfileSetting",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsGuest",
+      "name": "__imp__XamUserIsGuest",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsLogonPreviewModeEnabled",
+      "name": "__imp__XamUserIsLogonPreviewModeEnabled",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsOnlineEnabled",
+      "name": "__imp__XamUserIsOnlineEnabled",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsParentalControlled",
+      "name": "__imp__XamUserIsParentalControlled",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsPartial",
+      "name": "__imp__XamUserIsPartial",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsPartialProfile",
+      "name": "__imp__XamUserIsPartialProfile",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserIsUnsafeProgrammingAllowed",
+      "name": "__imp__XamUserIsUnsafeProgrammingAllowed",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserLockLogonPreviewMode",
+      "name": "__imp__XamUserLockLogonPreviewMode",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserLogon",
+      "name": "__imp__XamUserLogon",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserLogonEx",
+      "name": "__imp__XamUserLogonEx",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserLookupDevice",
+      "name": "__imp__XamUserLookupDevice",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiBind",
+      "name": "__imp__XamUserNuiBind",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiEnableBiometric",
+      "name": "__imp__XamUserNuiEnableBiometric",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiGetEnrollmentIndex",
+      "name": "__imp__XamUserNuiGetEnrollmentIndex",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiGetUserIndex",
+      "name": "__imp__XamUserNuiGetUserIndex",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiGetUserIndexForBind",
+      "name": "__imp__XamUserNuiGetUserIndexForBind",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiGetUserIndexForSignin",
+      "name": "__imp__XamUserNuiGetUserIndexForSignin",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiIsBiometricEnabled",
+      "name": "__imp__XamUserNuiIsBiometricEnabled",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserNuiUnbind",
+      "name": "__imp__XamUserNuiUnbind",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserOverrideBindingCallbacks",
+      "name": "__imp__XamUserOverrideBindingCallbacks",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserOverrideDeviceBindings",
+      "name": "__imp__XamUserOverrideDeviceBindings",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserOverrideGlobalState",
+      "name": "__imp__XamUserOverrideGlobalState",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserOverrideUserInfo",
+      "name": "__imp__XamUserOverrideUserInfo",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserPrefetchProfileSettings",
+      "name": "__imp__XamUserPrefetchProfileSettings",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserProfileSync",
+      "name": "__imp__XamUserProfileSync",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserReadProfileSettings",
+      "name": "__imp__XamUserReadProfileSettings",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserReadProfileSettingsEx",
+      "name": "__imp__XamUserReadProfileSettingsEx",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserReadUserPreference",
+      "name": "__imp__XamUserReadUserPreference",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserResetSubscriptionType",
+      "name": "__imp__XamUserResetSubscriptionType",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserUnlockLogonPreviewMode",
+      "name": "__imp__XamUserUnlockLogonPreviewMode",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserUpdateRecentPlayer",
+      "name": "__imp__XamUserUpdateRecentPlayer",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserValidateAvatarManifest",
+      "name": "__imp__XamUserValidateAvatarManifest",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserWriteProfileSettings",
+      "name": "__imp__XamUserWriteProfileSettings",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamUserWriteUserPreference",
+      "name": "__imp__XamUserWriteUserPreference",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamVerifyPasscode",
+      "name": "__imp__XamVerifyPasscode",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationCreateReport",
+      "name": "__imp__XamWebInstrumentationCreateReport",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationCreateSampledReport",
+      "name": "__imp__XamWebInstrumentationCreateSampledReport",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationDestroyReport",
+      "name": "__imp__XamWebInstrumentationDestroyReport",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationGetURL",
+      "name": "__imp__XamWebInstrumentationGetURL",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationGetURLEx",
+      "name": "__imp__XamWebInstrumentationGetURLEx",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationSendReport",
+      "name": "__imp__XamWebInstrumentationSendReport",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationSetUserVar",
+      "name": "__imp__XamWebInstrumentationSetUserVar",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWebInstrumentationSetUserVarNoEscape",
+      "name": "__imp__XamWebInstrumentationSetUserVarNoEscape",
+      "return": "-",
+      "arguments": "-",
+      "policy": "stub"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWriteGamerTile",
+      "name": "__imp__XamWriteGamerTile",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWriteGamerTileEx",
+      "name": "__imp__XamWriteGamerTileEx",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "import",
+      "symbol": "__imp__XamWriteTile",
+      "name": "__imp__XamWriteTile",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z17AE_MktParserEventRN3rex3ppc8RegisterE",
+      "name": "AE_MktParserEvent",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z18AE_MktSlotValidateRN3rex3ppc8RegisterE",
+      "name": "AE_MktSlotValidate",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z21AE_MktChannelValidateRN3rex3ppc8RegisterE",
+      "name": "AE_MktChannelValidate",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z13AE_MktNetPollRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktNetPoll",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z16AE_MktNetHeadersRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktNetHeaders",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z17AE_MktNetTeardownRN3rex3ppc8RegisterE",
+      "name": "AE_MktNetTeardown",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z14AE_MktNetCloseRN3rex3ppc8RegisterE",
+      "name": "AE_MktNetClose",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z17AE_MktSceneLookupRN3rex3ppc8RegisterES2_S2_",
+      "name": "AE_MktSceneLookup",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4, PPCRegister& r5",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z17AE_MktPreviewLoadRN3rex3ppc8RegisterE",
+      "name": "AE_MktPreviewLoad",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z15AE_MktItemFetchRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktItemFetch",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "marketplace_remember_fetcher"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z15AE_MktPageErrorRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktPageError",
+      "return": "void",
+      "arguments": "PPCRegister& r11, PPCRegister& r30",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z14AE_MktCatFetchRN3rex3ppc8RegisterES2_S2_S2_",
+      "name": "AE_MktCatFetch",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4, PPCRegister& r5, PPCRegister& r6",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z16AE_MktQueryIssueRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktQueryIssue",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z18AE_MktRatingArgFixRN3rex3ppc8RegisterE",
+      "name": "AE_MktRatingArgFix",
+      "return": "void",
+      "arguments": "PPCRegister& r1",
+      "policy": "marketplace_rating_argument"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z18AE_MktDispatchKindRN3rex3ppc8RegisterE",
+      "name": "AE_MktDispatchKind",
+      "return": "void",
+      "arguments": "PPCRegister& r4",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z16AE_MktTitleQueryRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktTitleQuery",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z13AE_MktMarshalRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktMarshal",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r5",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z15AE_MktWearStartRN3rex3ppc8RegisterE",
+      "name": "AE_MktWearStart",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z14AE_MktWearStepRN3rex3ppc8RegisterE",
+      "name": "AE_MktWearStep",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z15AE_MktOwnStatusRN3rex3ppc8RegisterE",
+      "name": "AE_MktOwnStatus",
+      "return": "bool",
+      "arguments": "PPCRegister& r3",
+      "policy": "marketplace_ownership_status"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z17AE_MktOwnContainsRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktOwnContains",
+      "return": "bool",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "marketplace_ownership_contains"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z14AE_MktPurchaseRN3rex3ppc8RegisterE",
+      "name": "AE_MktPurchase",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "marketplace_offline_purchase"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z16AE_MktHoverTryOnRN3rex3ppc8RegisterE",
+      "name": "AE_MktHoverTryOn",
+      "return": "void",
+      "arguments": "PPCRegister& r3",
+      "policy": "marketplace_hover_generation"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z20AE_MktNoParentalGateRN3rex3ppc8RegisterE",
+      "name": "AE_MktNoParentalGate",
+      "return": "bool",
+      "arguments": "PPCRegister& r3",
+      "policy": "marketplace_local_access"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z18AE_MktPreviewApplyRN3rex3ppc8RegisterES2_",
+      "name": "AE_MktPreviewApply",
+      "return": "void",
+      "arguments": "PPCRegister& r3, PPCRegister& r4",
+      "policy": "trace"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z16MktResetFetchersPKc",
+      "name": "MktResetFetchers",
+      "return": "void",
+      "arguments": "const char* prefix",
+      "policy": "marketplace_reset_fetchers"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z19AE_GuardNullOpStateRN3rex3ppc8RegisterE",
+      "name": "AE_GuardNullOpState",
+      "return": "bool",
+      "arguments": "PPCRegister& value",
+      "policy": "patch_null_operation"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z20AE_GuardNullOpActiveRN3rex3ppc8RegisterE",
+      "name": "AE_GuardNullOpActive",
+      "return": "bool",
+      "arguments": "PPCRegister& value",
+      "policy": "patch_null_operation"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z15AE_TileSizeHintRN3rex3ppc8RegisterE",
+      "name": "AE_TileSizeHint",
+      "return": "void",
+      "arguments": "PPCRegister& value",
+      "policy": "patch_tile_hint"
+    },
+    {
+      "kind": "title",
+      "symbol": "_Z17AE_TileBufferSizeRN3rex3ppc8RegisterE",
+      "name": "AE_TileBufferSize",
+      "return": "void",
+      "arguments": "PPCRegister& value",
+      "policy": "patch_tile_buffer"
+    },
+    {
+      "kind": "service",
+      "symbol": "_ZN3rex6kernel3xam15SetTileSizeHintEj",
+      "name": "SetTileSizeHint",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "service",
+      "symbol": "stbi_load_from_memory",
+      "name": "stbi_load_from_memory",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    },
+    {
+      "kind": "service",
+      "symbol": "stbi_image_free",
+      "name": "stbi_image_free",
+      "return": "-",
+      "arguments": "-",
+      "policy": "existing"
+    }
+  ],
+  "linker_flags": [
+    "-Wl,--wrap=__imp__XamAvatarSetManifest",
+    "-Wl,--wrap=__imp__XamFormatMessage",
+    "-Wl,--wrap=__imp__XamGetDashContext",
+    "-Wl,--wrap=__imp__XamGetLiveHiveValueA",
+    "-Wl,--wrap=__imp__XamGetLiveHiveValueW",
+    "-Wl,--wrap=__imp__XamIsNuiAutomationEnabled",
+    "-Wl,--wrap=__imp__XamNuiIsDeviceReady",
+    "-Wl,--wrap=__imp__XamParseGamerTileKey",
+    "-Wl,--wrap=__imp__XamPngDecode",
+    "-Wl,--wrap=__imp__XamPngEncodeEx",
+    "-Wl,--wrap=__imp__XamReadTile",
+    "-Wl,--wrap=__imp__XamReadTileEx",
+    "-Wl,--wrap=__imp__XamReadTileToTexture",
+    "-Wl,--wrap=__imp__XamSessionCreateHandle",
+    "-Wl,--wrap=__imp__XamSessionRefObjByHandle",
+    "-Wl,--wrap=__imp__XamShowMarketplaceUI",
+    "-Wl,--wrap=__imp__XamShowNuiMarketplaceUI",
+    "-Wl,--wrap=__imp__XamShowSigninUI",
+    "-Wl,--wrap=__imp__XamUserAddRecentPlayer",
+    "-Wl,--wrap=__imp__XamUserAllowedToPostToSocialNetwork",
+    "-Wl,--wrap=__imp__XamUserAreUsersFriends",
+    "-Wl,--wrap=__imp__XamUserCheckPrivilege",
+    "-Wl,--wrap=__imp__XamUserContentRestrictionCheckAccess",
+    "-Wl,--wrap=__imp__XamUserContentRestrictionGetFlags",
+    "-Wl,--wrap=__imp__XamUserContentRestrictionGetRating",
+    "-Wl,--wrap=__imp__XamUserCreateAchievementEnumerator",
+    "-Wl,--wrap=__imp__XamUserCreateAvatarAssetEnumerator",
+    "-Wl,--wrap=__imp__XamUserCreatePlayerEnumerator",
+    "-Wl,--wrap=__imp__XamUserCreateStatsEnumerator",
+    "-Wl,--wrap=__imp__XamUserCreateTitlesPlayedEnumerator",
+    "-Wl,--wrap=__imp__XamUserFlushLogonQueue",
+    "-Wl,--wrap=__imp__XamUserGetAge",
+    "-Wl,--wrap=__imp__XamUserGetAgeGroup",
+    "-Wl,--wrap=__imp__XamUserGetCachedUserFlags",
+    "-Wl,--wrap=__imp__XamUserGetDeviceId",
+    "-Wl,--wrap=__imp__XamUserGetGamerTag",
+    "-Wl,--wrap=__imp__XamUserGetIndexFromXUID",
+    "-Wl,--wrap=__imp__XamUserGetMembershipTier",
+    "-Wl,--wrap=__imp__XamUserGetMembershipTierFromXUID",
+    "-Wl,--wrap=__imp__XamUserGetName",
+    "-Wl,--wrap=__imp__XamUserGetOnlineCountryFromXUID",
+    "-Wl,--wrap=__imp__XamUserGetOnlineLanguageFromXUID",
+    "-Wl,--wrap=__imp__XamUserGetOnlineXUIDFromOfflineXUID",
+    "-Wl,--wrap=__imp__XamUserGetReportingInfo",
+    "-Wl,--wrap=__imp__XamUserGetRequestedUserIndexMask",
+    "-Wl,--wrap=__imp__XamUserGetSigninInfo",
+    "-Wl,--wrap=__imp__XamUserGetSigninState",
+    "-Wl,--wrap=__imp__XamUserGetSubscriptionType",
+    "-Wl,--wrap=__imp__XamUserGetUserFlags",
+    "-Wl,--wrap=__imp__XamUserGetUserFlagsFromXUID",
+    "-Wl,--wrap=__imp__XamUserGetUserIndexMask",
+    "-Wl,--wrap=__imp__XamUserGetUserTenure",
+    "-Wl,--wrap=__imp__XamUserGetUsersMissingAvatars",
+    "-Wl,--wrap=__imp__XamUserGetXUID",
+    "-Wl,--wrap=__imp__XamUserGetXUIDForTFA",
+    "-Wl,--wrap=__imp__XamUserInvalidateProfileSetting",
+    "-Wl,--wrap=__imp__XamUserIsGuest",
+    "-Wl,--wrap=__imp__XamUserIsLogonPreviewModeEnabled",
+    "-Wl,--wrap=__imp__XamUserIsOnlineEnabled",
+    "-Wl,--wrap=__imp__XamUserIsParentalControlled",
+    "-Wl,--wrap=__imp__XamUserIsPartial",
+    "-Wl,--wrap=__imp__XamUserIsPartialProfile",
+    "-Wl,--wrap=__imp__XamUserIsUnsafeProgrammingAllowed",
+    "-Wl,--wrap=__imp__XamUserLockLogonPreviewMode",
+    "-Wl,--wrap=__imp__XamUserLogon",
+    "-Wl,--wrap=__imp__XamUserLogonEx",
+    "-Wl,--wrap=__imp__XamUserLookupDevice",
+    "-Wl,--wrap=__imp__XamUserNuiBind",
+    "-Wl,--wrap=__imp__XamUserNuiEnableBiometric",
+    "-Wl,--wrap=__imp__XamUserNuiGetEnrollmentIndex",
+    "-Wl,--wrap=__imp__XamUserNuiGetUserIndex",
+    "-Wl,--wrap=__imp__XamUserNuiGetUserIndexForBind",
+    "-Wl,--wrap=__imp__XamUserNuiGetUserIndexForSignin",
+    "-Wl,--wrap=__imp__XamUserNuiIsBiometricEnabled",
+    "-Wl,--wrap=__imp__XamUserNuiUnbind",
+    "-Wl,--wrap=__imp__XamUserOverrideBindingCallbacks",
+    "-Wl,--wrap=__imp__XamUserOverrideDeviceBindings",
+    "-Wl,--wrap=__imp__XamUserOverrideGlobalState",
+    "-Wl,--wrap=__imp__XamUserOverrideUserInfo",
+    "-Wl,--wrap=__imp__XamUserPrefetchProfileSettings",
+    "-Wl,--wrap=__imp__XamUserProfileSync",
+    "-Wl,--wrap=__imp__XamUserReadProfileSettings",
+    "-Wl,--wrap=__imp__XamUserReadProfileSettingsEx",
+    "-Wl,--wrap=__imp__XamUserReadUserPreference",
+    "-Wl,--wrap=__imp__XamUserResetSubscriptionType",
+    "-Wl,--wrap=__imp__XamUserUnlockLogonPreviewMode",
+    "-Wl,--wrap=__imp__XamUserUpdateRecentPlayer",
+    "-Wl,--wrap=__imp__XamUserValidateAvatarManifest",
+    "-Wl,--wrap=__imp__XamUserWriteProfileSettings",
+    "-Wl,--wrap=__imp__XamUserWriteUserPreference",
+    "-Wl,--wrap=__imp__XamVerifyPasscode",
+    "-Wl,--wrap=__imp__XamWebInstrumentationCreateReport",
+    "-Wl,--wrap=__imp__XamWebInstrumentationCreateSampledReport",
+    "-Wl,--wrap=__imp__XamWebInstrumentationDestroyReport",
+    "-Wl,--wrap=__imp__XamWebInstrumentationGetURL",
+    "-Wl,--wrap=__imp__XamWebInstrumentationGetURLEx",
+    "-Wl,--wrap=__imp__XamWebInstrumentationSendReport",
+    "-Wl,--wrap=__imp__XamWebInstrumentationSetUserVar",
+    "-Wl,--wrap=__imp__XamWebInstrumentationSetUserVarNoEscape",
+    "-Wl,--wrap=__imp__XamWriteGamerTile",
+    "-Wl,--wrap=__imp__XamWriteGamerTileEx",
+    "-Wl,--wrap=__imp__XamWriteTile",
+    "-Wl,--wrap=_Z17AE_MktParserEventRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z18AE_MktSlotValidateRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z21AE_MktChannelValidateRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z13AE_MktNetPollRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z16AE_MktNetHeadersRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z17AE_MktNetTeardownRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z14AE_MktNetCloseRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z17AE_MktSceneLookupRN3rex3ppc8RegisterES2_S2_",
+    "-Wl,--wrap=_Z17AE_MktPreviewLoadRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z15AE_MktItemFetchRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z15AE_MktPageErrorRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z14AE_MktCatFetchRN3rex3ppc8RegisterES2_S2_S2_",
+    "-Wl,--wrap=_Z16AE_MktQueryIssueRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z18AE_MktRatingArgFixRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z18AE_MktDispatchKindRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z16AE_MktTitleQueryRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z13AE_MktMarshalRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z15AE_MktWearStartRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z14AE_MktWearStepRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z15AE_MktOwnStatusRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z17AE_MktOwnContainsRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z14AE_MktPurchaseRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z16AE_MktHoverTryOnRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z20AE_MktNoParentalGateRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z18AE_MktPreviewApplyRN3rex3ppc8RegisterES2_",
+    "-Wl,--wrap=_Z16MktResetFetchersPKc",
+    "-Wl,--wrap=_Z19AE_GuardNullOpStateRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z20AE_GuardNullOpActiveRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z15AE_TileSizeHintRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_Z17AE_TileBufferSizeRN3rex3ppc8RegisterE",
+    "-Wl,--wrap=_ZN3rex6kernel3xam15SetTileSizeHintEj",
+    "-Wl,--wrap=stbi_load_from_memory",
+    "-Wl,--wrap=stbi_image_free"
+  ]
+}
