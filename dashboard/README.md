@@ -14,6 +14,7 @@ kept exactly as the build expects, so run every command from inside this folder.
 | `tools/` | Build helpers and audit scripts used while reconstructing the look |
 | `Makefile`, `build-wsl.sh` | Build the title in WSL with the PS5 payload SDK |
 | `ExBox Setup.cmd`, `setup.py`, `launch_setup.py` | The Windows setup app (installer) |
+| `tools/branding.py`, `installer-icons/` | Installer step: app names (Ex-Box 360 / Ex-Box Avatars) and home-screen icons |
 | `deploy.py`, `deploy_update.py`, `activate.py` | Copy a build to your console over FTP |
 | `run_*_audit.py`, `audit_*.py`, `verify_*.py` | Visual and media checks against your own original files |
 

@@ -10,6 +10,8 @@ on the PC test harness but has not been accepted on the TV yet.
 - New home-screen icons, chosen in the installer under **Icons**: "Xbox style (from my files)", made on your
   PC from your own loading art and avatar, or "Ex-Box default", our own artwork in `dashboard/installer-icons/`.
   The generator is `dashboard/tools/make_app_icons.py`.
+- The installer applies both with `dashboard/tools/branding.py`. It also fixes the name on a console that
+  registered an older name, backs up everything it replaces, and asks for a restart.
 
 ### Added to this repository
 - **`avatar-editor/local-builder/`**: a source-only builder for the native Avatar Editor.

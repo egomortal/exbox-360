@@ -25,7 +25,7 @@ for original,target in [(base/'title-smoke/out/PPSA99733/sce_module/libc.prx',ap
     shutil.copy2(original,target);assert hashlib.sha256(original.read_bytes()).digest()==hashlib.sha256(target.read_bytes()).digest()
 meta=json.loads((base/'title-smoke/out/PPSA99733/sce_sys/param.json').read_text())
 meta['titleId']='PPSA99735';meta['contentId']='UP9000-PPSA99735_00-EXBOXNATIVEPROBE1'
-meta['localizedParameters']['en-US']['titleName']='Ex-Box 360 (Native Probe)'
+meta['localizedParameters']['en-US']['titleName']='Ex-Box 360'
 meta['kernel']['flexibleMemorySize']=1073741824
 (app/'sce_sys/param.json').write_text(json.dumps(meta,indent=2)+'\n')
 with (state/'self-inspect.txt').open('w') as log:
