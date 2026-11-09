@@ -6,10 +6,10 @@ on the PC test harness but has not been accepted on the TV yet.
 ## 2026-11-09: editor builder, Games integration, docs
 
 ### Added to this repository
-- **`modules/avatar_editor/local-builder/`**: a source-only builder for the native Avatar Editor.
+- **`avatar-editor/local-builder/`**: a source-only builder for the native Avatar Editor.
   It builds from your own original files on your own PC (Windows + WSL). It ships no editor binary,
   no fonts, no artwork and no SDK. See its `README.md`.
-- **`modules/games/`**: the Games blade library model, tiles, filters, artwork contract, and the
+- **`games/`**: the Games blade library model, tiles, filters, artwork contract, and the
   launch/return design for Xbox 360 games through PS5X360.
 
 ### Avatar Editor (installed on the console, Nov 5–6)

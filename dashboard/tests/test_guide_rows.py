@@ -17,7 +17,7 @@ from guide_curves import convert_guide
 from guide_pack import colour_factor
 
 SOURCE = Path(os.environ.get('T19_GUIDE_ROOT',
-    'C:/Users/USER/Downloads/Xbox 360 Guide Recovery/guide-unpacked'))
+    'private/guide-unpacked'))
 BUILDS = ((9199, 'nxe'), (13604, 'kinect'), (15574, 'metro1'), (17559, 'metro'))
 
 

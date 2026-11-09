@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import subprocess
 
-ROOT=Path('/mnt/c/Users/USER/Downloads/playstation personal app/nxe-ps5/bigapp')
+ROOT=Path(__file__).resolve().parent
 OUT=Path(__file__).resolve().parent/'build/audit-20261025/video-sources.json'
 def probe(entry):
     path=ROOT/'private/trailers/originals'/entry['file']

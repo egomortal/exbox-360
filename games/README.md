@@ -1,4 +1,21 @@
-# Games integration content handoff
+# Games blade
+
+The Games blade puts your Xbox 360 games (played through PS5X360) and your PS5 games in one list, with an
+All / Xbox 360 / PS5 filter. This folder holds the library model, the tile and controller logic, and the
+design notes:
+
+| File | What it is |
+|---|---|
+| `games_library.hpp` | Builds the game list from folder names and the dashboard's installed-titles list |
+| `games_blade.hpp` | Filter row, tile grid and controller navigation |
+| `games_art.hpp` | Optional cover art from your own PNG files |
+| `LAUNCH-RETURN-SPEC.md` | How a game is started from the dashboard and how you come back |
+| `ARTWORK-CONTRACT.md` | Where artwork comes from (your files only; never official art) |
+| `COMPATIBILITY-DESIGN.md` | How compatibility status is shown |
+| `RENDERER-HANDOFF.md` | Notes for wiring the blade into the dashboard renderer |
+| `*_test.cpp` | Host tests (build each one on its own with clang++ -std=c++17) |
+
+## Design details
 
 Continuation completed and PAUSED at the owner's request. See LAUNCH-RETURN-SPEC.md, ARTWORK-CONTRACT.md, COMPATIBILITY-DESIGN.md, RENDERER-HANDOFF.md and NEEDS-FOR-MORNING.md. The added CPU artwork module requires libpng; the original library/blade modules remain dependency-free. PNG is the supported runtime artwork format. Official art is never included.
 

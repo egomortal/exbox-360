@@ -13,7 +13,7 @@ HOSTCXX ?= g++
 .DEFAULT_GOAL := host
 .PHONY: native
 native:
-	@echo "Native build unavailable: see README-NATIVE.md for missing pinned dependencies."
+	@echo "Native build unavailable: see ../docs/BUILDING.md for missing pinned dependencies."
 	@exit 2
 
 # Unit tests for the Xbox mapping and the dashboard model. No SDL or SDK needed.

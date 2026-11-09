@@ -20,4 +20,4 @@ Local setup window: run `py -3 launch_setup.py` (Windows) or `ExBox Setup.cmd`.
 Drop files/folders, inspect the feature checklist, then Prepare or Build locally.
 The window delegates to setup.py; it never moves originals. Windows builds use
 WSL Ubuntu-24.04. This review inventory still needs dependency/provenance closure
-before it is a portable distributable; see modules/avatar_editor/UPSTREAM.md.
+before it is a portable distributable; see ../dashboard/modules/avatar_editor/UPSTREAM.md.

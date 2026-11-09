@@ -3,9 +3,8 @@
 # Run inside WSL Ubuntu-24.04 (build-exbox-xboxmap.cmd does this). No console actions.
 # Log: outputs/exbox-xboxmap-build.log   Status: outputs/exbox-xboxmap-build-status.txt
 set -euo pipefail
-WIN='/mnt/c/Users/USER/Downloads/playstation personal app'
-cd "$WIN/nxe-ps5/bigapp"
-OUT="$WIN/outputs"; STATUS="$OUT/exbox-xboxmap-build-status.txt"
+cd "$(dirname "$0")"
+OUT="${OUT:-$PWD/build/logs}"; mkdir -p "$OUT"; STATUS="$OUT/exbox-xboxmap-build-status.txt"
 exec > >(tee "$OUT/exbox-xboxmap-build.log") 2>&1
 echo "RUNNING $(date -Is)" > "$STATUS"
 trap 'echo "FAIL $(date -Is)" > "$STATUS"' ERR

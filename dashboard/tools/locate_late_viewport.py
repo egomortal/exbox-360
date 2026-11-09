@@ -1,7 +1,8 @@
+import os
 from pathlib import Path
 import struct,json
 from audit_original_runtime import Image
-root=Path('C:/Users/USER/Downloads/jailbreak stuff/asset/exbox360/runtime-verification-20261025');im=Image(root,'dash6717');text=next(s for s in im.pe.sections if s.Name.rstrip(b'\0')==b'.text');report={}
+root=Path(os.environ.get('EXBOX_ASSET_DIR','private/asset/exbox360'))/'runtime-verification-20261025';im=Image(root,'dash6717');text=next(s for s in im.pe.sections if s.Name.rstrip(b'\0')==b'.text');report={}
 for value in [8/7,12/11,-64,96,1000/60]:
  needle=struct.pack('>f',value);offsets=[];pos=0
  while True:
