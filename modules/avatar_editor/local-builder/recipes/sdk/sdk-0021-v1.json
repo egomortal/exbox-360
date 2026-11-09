@@ -1,0 +1,461 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "src/core/dynlib_posix.cpp",
+      "sha256": "549fe51916851e13e7adccd96b1d2094941a6b3ac47b526c4dc774ca635fac12"
+    }
+  },
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 33
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 63,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 95,
+      "length": 17
+    },
+    {
+      "authored_utf8": "PS5"
+    },
+    {
+      "copy": "upstream",
+      "offset": 115,
+      "length": 29
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 148,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "#include <cstdio>\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 170,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 199,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 236,
+      "length": 10
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 90
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 345,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 378,
+      "length": 76
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 456,
+      "length": 23
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 481,
+      "length": 12
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 495,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 525,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 555,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 560,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 582,
+      "length": 85
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 236,
+      "length": 10
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "#if REX_PLATFORM_PS5\n"
+    },
+    {
+      "authored_utf8": "  (void)mode;\n"
+    },
+    {
+      "authored_utf8": "  std::fprintf(stderr, \"AV2: desktop dynamic library unavailable on native title: %s\\n\", path.c_str());\n"
+    },
+    {
+      "authored_utf8": "  return false;\n"
+    },
+    {
+      "authored_utf8": "#else\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 681,
+      "length": 76
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 759,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 801,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "#endif\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 836,
+      "length": 30
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 868,
+      "length": 16
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 886,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 909,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 555,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 943,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1005,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1022,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1043,
+      "length": 30
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1080,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/av2/sdk-ps5-core-source/src/core/dynlib_posix.cpp",
+  "output_sha256": "c992d6bdc61940845125e0c654194b0036674f79bf0d94e63a513f5f65660d64"
+}

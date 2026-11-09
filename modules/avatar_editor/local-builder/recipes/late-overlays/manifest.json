@@ -1,0 +1,302 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "app",
+      "path": "authored/project/private/q7j-random-device-20261103/random.cpp",
+      "input_sha256": [
+        "653560796e75ad7c3a23d879736c8b374039c0feeb8d3b2926d4c03bada375ba"
+      ],
+      "output": "source/project/private/q7j-random-device-20261103/random.cpp",
+      "output_sha256": "653560796e75ad7c3a23d879736c8b374039c0feeb8d3b2926d4c03bada375ba"
+    }
+  ],
+  "transforms": [
+    {
+      "label": "src/core/fiber_posix.cpp -> source/project/private/p2-release-diagnostics-20261103/src/fiber_posix.cpp",
+      "variants": [
+        {
+          "path": "896e075f6d5099b84c07-v0.json",
+          "sha256": "35f6059dd252de732be0f88130c23072bfb0240f29653f04481353e462b4b359"
+        },
+        {
+          "path": "896e075f6d5099b84c07-v1.json",
+          "sha256": "30bf3a327cffe3ecfb1bbbf08b64659092618b0cd415c2a7ac1d5db2bdb42a7b"
+        }
+      ]
+    },
+    {
+      "label": "src/core/threading_posix.cpp -> source/project/private/a1-dashboard-followup-20261104/exit-v2/src/threading_posix.cpp",
+      "variants": [
+        {
+          "path": "44d8a3ad50cbe49690fa-v0.json",
+          "sha256": "72fd9784940984e5d92b7c2ac3f5bf7488abf742383f26c9a51d734d9d4b0d8f"
+        },
+        {
+          "path": "44d8a3ad50cbe49690fa-v1.json",
+          "sha256": "28c5d2f6db2f656444c030f6688ca32451e61fe63e78a6d8895a6fd6458e8521"
+        }
+      ]
+    },
+    {
+      "label": "src/filesystem/virtual_file_system.cpp -> source/project/private/q7r-index-vfs-20261103/src/virtual_file_system.cpp",
+      "variants": [
+        {
+          "path": "d4f782859d7baadfc7d0-v0.json",
+          "sha256": "b901253eb439528700997a749810a024fb31d88e0398df060447f85424bb0fb2"
+        },
+        {
+          "path": "d4f782859d7baadfc7d0-v1.json",
+          "sha256": "fd68b7ca1eb9e2ed9fc84720480a550cb5ac2ccb8f7ece1eed60bddb4670a973"
+        }
+      ]
+    },
+    {
+      "label": "src/filesystem/devices/host_path_device.cpp -> source/project/private/q7r-index-vfs-20261103/src/host_path_device.cpp",
+      "variants": [
+        {
+          "path": "97da100393567b867b18-v0.json",
+          "sha256": "e3c604311fc330f692b30fbb88867e7984b4c34d9ba76aaf8050dd1b6c8bb349"
+        },
+        {
+          "path": "97da100393567b867b18-v1.json",
+          "sha256": "c0eb59a582a3ce81cb3a51af36ece523f96f6427c8415da5aed466b0df1b8d4a"
+        }
+      ]
+    },
+    {
+      "label": "src/filesystem/devices/host_path_entry.cpp -> source/project/private/q7r-index-vfs-20261103/src/host_path_entry.cpp",
+      "variants": [
+        {
+          "path": "dbe1d883abb82d13e656-v0.json",
+          "sha256": "b584040922f73cf911872c4519403200a66f9bc5d87bc65399ff42afd4ac6771"
+        },
+        {
+          "path": "dbe1d883abb82d13e656-v1.json",
+          "sha256": "dae21037b84035705c6cf1caf9e38fa9afd44b2592ffe7e91b9aa89103273adc"
+        }
+      ]
+    },
+    {
+      "label": "src/system/kernel_state.cpp -> source/project/private/a1-dashboard-followup-20261104/exit-v2/src/kernel_state.cpp",
+      "variants": [
+        {
+          "path": "cd3ed2ca9e45fa583efa-v0.json",
+          "sha256": "e1c936ce1d09b0dd890814026af2cb9de64899e7217d7d0a6a1d6e24b1aeeec2"
+        },
+        {
+          "path": "cd3ed2ca9e45fa583efa-v1.json",
+          "sha256": "40820f55baaf0e3cc4ed18054479f40a302ce46827216b421604bc64c0df01ac"
+        }
+      ]
+    },
+    {
+      "label": "src/system/xthread.cpp -> source/project/private/a1-dashboard-followup-20261104/exit-v2/src/xthread.cpp",
+      "variants": [
+        {
+          "path": "faff649ce6d85d9aac88-v0.json",
+          "sha256": "74490d91bef9a2e395aeaaf21f16c84da3f5e55e4a0ef9c902ca3e404dc7fcc3"
+        },
+        {
+          "path": "faff649ce6d85d9aac88-v1.json",
+          "sha256": "9694496f8577eeebf345294b7b5556db4bfe5a6607877157900a286573613bea"
+        }
+      ]
+    },
+    {
+      "label": "src/system/function_dispatcher.cpp -> source/project/private/q7p-hang-diagnostics-20261103/function_dispatcher.cpp",
+      "variants": [
+        {
+          "path": "4be18a25ea65f70eeb72-v0.json",
+          "sha256": "3b48176647b5c73da1a1cec57cacbfb1a81cccabece05f7dfb58d64564f2bfa3"
+        },
+        {
+          "path": "4be18a25ea65f70eeb72-v1.json",
+          "sha256": "6acae695cfe23ec1794cf865dd60fa72fbaf39c5b1ce0b580baeaf5a2782600b"
+        }
+      ]
+    },
+    {
+      "label": "src/kernel/xam/xam_info.cpp -> source/project/private/a1-dashboard-followup-20261104/exit-v2/src/xam_info.cpp",
+      "variants": [
+        {
+          "path": "854f9d1c39d423b734b6-v0.json",
+          "sha256": "484a83082f9d0d1e668991457c09d35584a303c78331a71e32d6cf03398eab50"
+        },
+        {
+          "path": "854f9d1c39d423b734b6-v1.json",
+          "sha256": "3742b1a0a63be206875107d5ac8e02957db078efcbcc1a4eedc5b66620f3dc52"
+        }
+      ]
+    },
+    {
+      "label": "src/kernel/xboxkrnl/xboxkrnl_threading.cpp -> source/project/private/p13-native-hitch-20261104/src/xboxkrnl_threading.cpp",
+      "variants": [
+        {
+          "path": "45d1601ba56faee04e22-v0.json",
+          "sha256": "f5a3268a7f05ece2401795f8e4c191e142db15f88b30685b1aae656b266ca62b"
+        },
+        {
+          "path": "45d1601ba56faee04e22-v1.json",
+          "sha256": "7ae45332814cb396ae4a5c244e37b45390108f4aef93c4835ce99cc04c401547"
+        }
+      ]
+    },
+    {
+      "label": "src/audio/xma_context.cpp -> source/project/private/q8a-xma-guard-20261103/native-src/xma_context.cpp",
+      "variants": [
+        {
+          "path": "6137ab0d3fa9d1dbd0a3-v0.json",
+          "sha256": "a987fd208fe3eba9ddc276ad3c75867500b80eebaea23ab59a20fcde3c319e8d"
+        },
+        {
+          "path": "6137ab0d3fa9d1dbd0a3-v1.json",
+          "sha256": "f1ca7e5eddfd8e33ebcdf97fe4053c4c2af4e71cb57d122565f6a55c9a038266"
+        }
+      ]
+    },
+    {
+      "label": "src/input/sdl/sdl_input_driver.cpp -> source/project/private/av2/q7-input-source/pad_keys.cpp",
+      "variants": [
+        {
+          "path": "1b89cc1ab66570d22862-v0.json",
+          "sha256": "afdc1cdfed8d3d45fa7d2bebd8b3101ffe513cd82a115427de40783f843f6b78"
+        },
+        {
+          "path": "1b89cc1ab66570d22862-v1.json",
+          "sha256": "1b5a85a0b5ed9733bf26e49fb283c4cbb69dd92dc0d3c53300bda7a324371986"
+        }
+      ]
+    },
+    {
+      "label": "src/vulkan/wsi/wsi_common_videoout.c -> source/project/private/p3-native-pulse-20261103/pulse-integration/wsi_common_videoout.c",
+      "variants": [
+        {
+          "path": "faee08f2a4386516876c-v0.json",
+          "sha256": "2024cf9f73078e7bb681cf5af6d1c2715500c10e4ac0f513b4be1292de3dc54b"
+        },
+        {
+          "path": "faee08f2a4386516876c-v1.json",
+          "sha256": "f22bd3d3698eead7b59ea3dc2ae2cf3cefac9e0d3a594cbf7f92cec64c730080"
+        }
+      ]
+    },
+    {
+      "label": "platform/src/heap_wrap.c -> source/project/private/p2-release-diagnostics-20261103/src/heap_wrap.c",
+      "variants": [
+        {
+          "path": "e1c2c0326d10c0b66840-v0.json",
+          "sha256": "a6981f74c37a4492a5e9140f1577e546148292bec9a673641e33e321bfad5684"
+        },
+        {
+          "path": "e1c2c0326d10c0b66840-v1.json",
+          "sha256": "a682fd0f19375b8dca9ef53ac49ccac3a944cc498f7dccae1e472285d529b1ec"
+        }
+      ]
+    },
+    {
+      "label": "platform/src/dlmalloc/mspace.c -> source/project/private/p2-release-diagnostics-20261103/src/mspace.c",
+      "variants": [
+        {
+          "path": "d64e7fbf076f92cf0174-v0.json",
+          "sha256": "6805a1b28daf1dc21ee14d18e204f25b318918de9f085cb56ab4ea14a7f2d7a5"
+        },
+        {
+          "path": "d64e7fbf076f92cf0174-v1.json",
+          "sha256": "6457c43a77f38903ad3914c521b9daec457b9a51f25c1889f5703896c045a32c"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/thread/fiber.h -> source/project/private/q7y-fiber-context-20261103/native-overlay/include/rex/thread/fiber.h",
+      "variants": [
+        {
+          "path": "0d6a69a5a6f56b636748-v0.json",
+          "sha256": "5db693708abf454db5afb82ceac53deea73a294e314a826d8a77d7fa399a6a88"
+        },
+        {
+          "path": "0d6a69a5a6f56b636748-v1.json",
+          "sha256": "14b4d3813c92500caffaafe1f9d536aed4c638211f9fbc5565ba48e199e162b9"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/ppc/function.h -> source/project/private/q7q-host-skew-20261103/inverse-includes/rex/ppc/function.h",
+      "variants": [
+        {
+          "path": "b4a60286b04959b60795-v0.json",
+          "sha256": "3ce21fa20e8c3d7934bc1cf0497ba0175b5738bf13c538ccbef2193b9748e424"
+        },
+        {
+          "path": "b4a60286b04959b60795-v1.json",
+          "sha256": "ce11da4d8bb738141b603a94e9225097d0225667d6620ee7abb4ca1702582dba"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/system/xmemory.h -> source/project/private/q7q-host-skew-20261103/inverse-includes/rex/system/xmemory.h",
+      "variants": [
+        {
+          "path": "7ab7b5e5f860688882c5-v0.json",
+          "sha256": "926a08b630cf7a366ee35a3916fbccacd221c6f2d625a871e82dbcad015ea631"
+        },
+        {
+          "path": "7ab7b5e5f860688882c5-v1.json",
+          "sha256": "182e8cbc10313c815e3d1391b6a8ad8c3d921a9108081193e0c1addc643ab3d5"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/ppc/stack.h -> source/project/private/q7q-host-skew-20261103/additional-includes/rex/ppc/stack.h",
+      "variants": [
+        {
+          "path": "782a919ed51545b9956b-v0.json",
+          "sha256": "83d470a5c726cdb3ccf69c2df140495291bf7912b8982f466c845d5276d4aafc"
+        },
+        {
+          "path": "782a919ed51545b9956b-v1.json",
+          "sha256": "07b250c364b0e0b5486c747712d8c8a31e4f588e55c34783dff1fc31745f77f3"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/system/xmemory.h -> source/project/private/q7q-host-skew-20261103/include/rex/system/xmemory.h",
+      "variants": [
+        {
+          "path": "b3aa7bcbc65d707cb53e-v0.json",
+          "sha256": "1151f93bb1c742b4d2404b5e87643393956f51dcada8d9bc8c83415a6e5a22cb"
+        },
+        {
+          "path": "b3aa7bcbc65d707cb53e-v1.json",
+          "sha256": "1e152a091fd3f6e85af68437c979f386ee60aa661bbaf25cbd9f7a19301081a8"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/system/xfile.h -> source/project/private/q7q-host-skew-20261103/additional-includes/rex/system/xfile.h",
+      "variants": [
+        {
+          "path": "b81fc7ab13942533272a-v0.json",
+          "sha256": "005eb25846a2afc86ff6c73247d857b6b1c996bd7b62dbe38c28ef5e3dd017d7"
+        },
+        {
+          "path": "b81fc7ab13942533272a-v1.json",
+          "sha256": "529c172523787ff5bb67ccf9a6e6794189de8728a17a20a363c373f34bdfd8fa"
+        }
+      ]
+    },
+    {
+      "label": "include/rex/input/sdl/sdl_input_driver.h -> source/project/private/av2/q7-input-source/pad_keys.h",
+      "variants": [
+        {
+          "path": "37a9eacb8a2852cd12e5-v0.json",
+          "sha256": "ae31ad800546d810e6dee9747370d194b8e2b566495bbab6e0af1cd75399b259"
+        },
+        {
+          "path": "37a9eacb8a2852cd12e5-v1.json",
+          "sha256": "69f4733338fe5a9efd26694e7d966f68310d9f1144980c165d8161c0876def41"
+        }
+      ]
+    }
+  ]
+}

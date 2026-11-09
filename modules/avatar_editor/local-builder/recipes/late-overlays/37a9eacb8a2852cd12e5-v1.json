@@ -1,0 +1,288 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "include/rex/input/sdl/sdl_input_driver.h",
+      "sha256": "e6a2d2ae251b11289388acd55d73965c06b5b10a6a807178fc3eec7c482d9f4f"
+    }
+  },
+  "output": "source/project/private/av2/q7-input-source/pad_keys.h",
+  "output_sha256": "b19b1e9092c88b8432017818354f2398d3bfb971f3ab53801e1bd822ee022bd3",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 86,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 329,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 495,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 557,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 564,
+      "length": 12
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 659,
+      "length": 25
+    },
+    {
+      "authored_utf8": ".h>\n"
+    },
+    {
+      "authored_utf8": "#include <rex/system/xtypes.h>\n"
+    },
+    {
+      "authored_utf8": "#include <cstdint>\n"
+    },
+    {
+      "authored_utf8": "namespace av2::native {\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1700,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1728,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1790,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1852,
+      "length": 47
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1901,
+      "length": 4
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  struct PadRepeat {\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1934,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1957,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1988,
+      "length": 47
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2037,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2067,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2149,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1901,
+      "length": 4
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "rex::X_RESULT next_pad_key(const rex::input::"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3107,
+      "length": 16
+    },
+    {
+      "authored_utf8": ", PadRepeat&, uint32_t, bool, rex::input::"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1581,
+      "length": 18
+    },
+    {
+      "authored_utf8": ");\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1903,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    }
+  ]
+}

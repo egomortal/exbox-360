@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/gpu_memory.h",
+      "sha256": "59b9e2fdcd515dfa05efb1605a1bb31f6457579846976e6d7c726384584c0a7c"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gpu/gpu_memory.h",
+  "output_sha256": "59b9e2fdcd515dfa05efb1605a1bb31f6457579846976e6d7c726384584c0a7c",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1693
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/texture.h",
+      "sha256": "fdca95493414bbe5796377caa70d753f5ce093dfe2491bb94b5a2ec765e3265f"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/texture.h",
+  "output_sha256": "fdca95493414bbe5796377caa70d753f5ce093dfe2491bb94b5a2ec765e3265f",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1450
+    }
+  ]
+}

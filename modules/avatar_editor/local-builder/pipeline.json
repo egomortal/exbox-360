@@ -1,0 +1,194 @@
+{
+  "schema": 1,
+  "release_ready": true,
+  "target": "PPSA99734",
+  "tryon_delay_ms": 125,
+  "optimization": "O2",
+  "load_limits_MiB": [
+    71,
+    26,
+    2,
+    25,
+    3
+  ],
+  "required_inputs": [
+    {
+      "root": "inputs",
+      "path": "avatareditor.xex",
+      "label": "Avatar Editor XEX",
+      "sha256": "5593985c1e9b980ea3587a838583571d3acc2d7cd1f808ec22c856f9760337cb"
+    },
+    {
+      "root": "inputs",
+      "path": "xenonclatin.xtt",
+      "label": "Original XTT font",
+      "sha256": "977bbe13d5545d300e57dacf9dff492476452f50880ef3868d3aa308d041187d"
+    },
+    {
+      "root": "inputs",
+      "path": "splash_360.png",
+      "label": "Original Xbox 360 splash logo",
+      "sha256": "2881b4e94e386d6e15b03dc4e229ac006e3897e36d38b21c14a151198c0081fb"
+    }
+  ],
+  "stages": [
+    {
+      "kind": "prepare",
+      "argv": [
+        "${python}",
+        "${app}/input_layout.py",
+        "--originals",
+        "${inputs}",
+        "--dependencies",
+        "${dependencies}",
+        "--output",
+        "${run}/inputs.json"
+      ],
+      "label": "Check supplied folders"
+    },
+    {
+      "kind": "prepare",
+      "argv": [
+        "${python}",
+        "${app}/workflow.py",
+        "prepare",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "prepare source and resources"
+    },
+    {
+      "kind": "generate",
+      "argv": [
+        "${python}",
+        "${app}/workflow.py",
+        "generate",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "generate source and resources"
+    },
+    {
+      "kind": "verify",
+      "argv": [
+        "${python}",
+        "${app}/focused_behavior.py",
+        "--project",
+        "${run}/native-work/source/project",
+        "--source",
+        "${run}/native-work/source/tryon/rev2",
+        "--compiler",
+        "${dependencies}/llvm21/bin/clang++",
+        "--sdk",
+        "${dependencies}/sources/rexglue_sdk",
+        "--output",
+        "${run}/native-work/behavior"
+      ],
+      "label": "Test 125 ms try-on behavior"
+    },
+    {
+      "kind": "verify",
+      "label": "Test Sort & Filter and original Y legend",
+      "argv": [
+        "${python}",
+        "${app}/filter_behavior.py",
+        "--run",
+        "${run}/native-work",
+        "--compiler",
+        "${dependencies}/llvm21/bin/clang++"
+      ]
+    },
+    {
+      "kind": "compile",
+      "argv": [
+        "${python}",
+        "${app}/workflow.py",
+        "compile",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "Compile editor and dependencies"
+    },
+    {
+      "kind": "link",
+      "argv": [
+        "${python}",
+        "${app}/finalize_build.py",
+        "--action",
+        "link",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "link editor"
+    },
+    {
+      "kind": "verify",
+      "argv": [
+        "${python}",
+        "${app}/finalize_build.py",
+        "--action",
+        "verify",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "verify editor"
+    },
+    {
+      "kind": "generate",
+      "argv": [
+        "${python}",
+        "${app}/finalize_build.py",
+        "--action",
+        "companions",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "companions editor"
+    },
+    {
+      "kind": "verify",
+      "label": "Verify startup splash fallback and actual images",
+      "argv": [
+        "${python}",
+        "${app}/splash_behavior.py",
+        "--run",
+        "${run}/native-work",
+        "--compiler",
+        "${dependencies}/llvm21/bin/clang++"
+      ]
+    },
+    {
+      "kind": "package",
+      "argv": [
+        "${python}",
+        "${app}/finalize_build.py",
+        "--action",
+        "package",
+        "--inputs",
+        "${run}/inputs.json",
+        "--run",
+        "${run}/native-work"
+      ],
+      "label": "package editor"
+    }
+  ],
+  "package": "native-work/package/Editor-125ms-Sort-Filter-Splash.zip",
+  "features": [
+    "125ms try-on delay",
+    "Sort & Filter on Y/Triangle",
+    "Original Marketplace button artwork",
+    "Xbox 360 splash generated from your own original logo"
+  ]
+}

@@ -1,0 +1,1256 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/gpu/gpu_edge.cpp",
+      "input_sha256": [
+        "cf6f92d2a918bae44ff307db6914c85ef003be2570c752438c0e75daa17ee420"
+      ],
+      "output": "source/project/modules/avatar_editor/gpu/gpu_edge.cpp",
+      "output_sha256": "cf6f92d2a918bae44ff307db6914c85ef003be2570c752438c0e75daa17ee420"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/headless/title_environment.cpp",
+      "input_sha256": [
+        "f51e2021ce264cdb0f90df6953703e391854436ef943138f543ba6f13cb707d9"
+      ],
+      "output": "source/project/modules/avatar_editor/headless/title_environment.cpp",
+      "output_sha256": "f51e2021ce264cdb0f90df6953703e391854436ef943138f543ba6f13cb707d9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/gpu/gpu_edge_runtime.cpp",
+      "input_sha256": [
+        "1ce9dbd6310be59538deec8367b10fc7ba7ad45749ddcde7e6751e1ec1ba70f9"
+      ],
+      "output": "source/project/modules/avatar_editor/gpu/gpu_edge_runtime.cpp",
+      "output_sha256": "1ce9dbd6310be59538deec8367b10fc7ba7ad45749ddcde7e6751e1ec1ba70f9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/marketplace/offline_marketplace.cpp",
+      "input_sha256": [
+        "06a1ada067270055a5c3de853bdcca0515b1e1e5bdd886c4c448082282fa7211"
+      ],
+      "output": "source/project/modules/avatar_editor/marketplace/offline_marketplace.cpp",
+      "output_sha256": "06a1ada067270055a5c3de853bdcca0515b1e1e5bdd886c4c448082282fa7211"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/marketplace/catalog_probe.cpp",
+      "input_sha256": [
+        "78eda135a592b03a1dfeb19a810ddab1e588af9018487d1e7327e3f39ba14238"
+      ],
+      "output": "source/project/modules/avatar_editor/marketplace/catalog_probe.cpp",
+      "output_sha256": "78eda135a592b03a1dfeb19a810ddab1e588af9018487d1e7327e3f39ba14238"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p5-audio-output-20261103/p5_audio.cpp",
+      "input_sha256": [
+        "e48048bc55580b74cc4d8fb552e22bdf1c626de3babac13ce2a4dd40f9c382a2"
+      ],
+      "output": "source/project/private/p5-audio-output-20261103/p5_audio.cpp",
+      "output_sha256": "e48048bc55580b74cc4d8fb552e22bdf1c626de3babac13ce2a4dd40f9c382a2"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p6-input-latency-20261103/native_pad.cpp",
+      "input_sha256": [
+        "fde6619b14395a05a3e2be01a343a5cc108e35ffeb4e619a9d27ffb4b8626ad5"
+      ],
+      "output": "source/project/private/p6-input-latency-20261103/native_pad.cpp",
+      "output_sha256": "fde6619b14395a05a3e2be01a343a5cc108e35ffeb4e619a9d27ffb4b8626ad5"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/src/guest_drain.cpp",
+      "input_sha256": [
+        "69bfdf1f31b32ee7c2151c19e61c884c220fb68f30ee1864383b70edf6b8098d"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/guest_drain.cpp",
+      "output_sha256": "69bfdf1f31b32ee7c2151c19e61c884c220fb68f30ee1864383b70edf6b8098d"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/avatar_save_store.cpp",
+      "input_sha256": [
+        "f5401949de94cdcff825d8e772f6f5dbbfcb0343d628a48013ab4f4b1d4c5259"
+      ],
+      "output": "source/project/modules/avatar_editor/native/avatar_save_store.cpp",
+      "output_sha256": "f5401949de94cdcff825d8e772f6f5dbbfcb0343d628a48013ab4f4b1d4c5259"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p10-dashboard-return-20261103/src/dashboard_return.cpp",
+      "input_sha256": [
+        "8e1419785a5aa35b9cab4bc9dcdd4917a41375713b399d3df19270b1327f38cc"
+      ],
+      "output": "source/project/private/p10-dashboard-return-20261103/src/dashboard_return.cpp",
+      "output_sha256": "8e1419785a5aa35b9cab4bc9dcdd4917a41375713b399d3df19270b1327f38cc"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/return_ticket.cpp",
+      "input_sha256": [
+        "472ca8badb2ebd7c461a08145e4974504b25f9891b349d37a2c779a86409b1ad"
+      ],
+      "output": "source/project/modules/avatar_editor/native/return_ticket.cpp",
+      "output_sha256": "472ca8badb2ebd7c461a08145e4974504b25f9891b349d37a2c779a86409b1ad"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/ticket_file.cpp",
+      "input_sha256": [
+        "f46e9a413e027653feff540c993f266a94c3905e6d2a6b7d0f18d667ac86d327"
+      ],
+      "output": "source/project/modules/avatar_editor/native/ticket_file.cpp",
+      "output_sha256": "f46e9a413e027653feff540c993f266a94c3905e6d2a6b7d0f18d667ac86d327"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/paced_frames.cpp",
+      "input_sha256": [
+        "f7f900980a6f77c82b4f0ba2f00ea9b17f8516a94ae303fa20b3d24f1f803784"
+      ],
+      "output": "source/project/modules/avatar_editor/native/paced_frames.cpp",
+      "output_sha256": "f7f900980a6f77c82b4f0ba2f00ea9b17f8516a94ae303fa20b3d24f1f803784"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/locale_accessor.cpp",
+      "input_sha256": [
+        "4ac56055051a95256e1303c34b6cb514630a793557a1ce9049d9f9ddbeac53b6"
+      ],
+      "output": "source/project/modules/avatar_editor/native/locale_accessor.cpp",
+      "output_sha256": "4ac56055051a95256e1303c34b6cb514630a793557a1ce9049d9f9ddbeac53b6"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/tempfile_compat.cpp",
+      "input_sha256": [
+        "d7fe2b0d5b779b42cb13c587be0f746e2ce760220a7f073649c86136b00cc937"
+      ],
+      "output": "source/project/modules/avatar_editor/native/tempfile_compat.cpp",
+      "output_sha256": "d7fe2b0d5b779b42cb13c587be0f746e2ce760220a7f073649c86136b00cc937"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/rex_bindings.cpp",
+      "input_sha256": [
+        "e649bd1e20bc1e775ec1d9780fd2d90ba1bb32b15adff94d72d4ab15acaf2fb0"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/rex_bindings.cpp",
+      "output_sha256": "e649bd1e20bc1e775ec1d9780fd2d90ba1bb32b15adff94d72d4ab15acaf2fb0"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/rex_clock_checks.cpp",
+      "input_sha256": [
+        "2550745f4f7368a59536d45b0aaecd3f633e8767887d126463c39c0bf8760d13"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/rex_clock_checks.cpp",
+      "output_sha256": "2550745f4f7368a59536d45b0aaecd3f633e8767887d126463c39c0bf8760d13"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/ps5_platform.cpp",
+      "input_sha256": [
+        "3e2c4d2e386ec0b67a26f59c705ef22180bcb8398e55c16b89b5355d302acb29"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/ps5_platform.cpp",
+      "output_sha256": "3e2c4d2e386ec0b67a26f59c705ef22180bcb8398e55c16b89b5355d302acb29"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/guest_memory.cpp",
+      "input_sha256": [
+        "e948d3632d73e9615a7bd4e2d2a4c2245c83cb0dd21b9f81deb16c75af7b1e88"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/guest_memory.cpp",
+      "output_sha256": "e948d3632d73e9615a7bd4e2d2a4c2245c83cb0dd21b9f81deb16c75af7b1e88"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/paged_vfs.cpp",
+      "input_sha256": [
+        "6318f75986834f180c7bd2a2cb1d4921a3e48d99da3dbfd363738351e47da241"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/paged_vfs.cpp",
+      "output_sha256": "6318f75986834f180c7bd2a2cb1d4921a3e48d99da3dbfd363738351e47da241"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/scheduler.cpp",
+      "input_sha256": [
+        "ad9b6c69a8fa18f0a231deb68626a20402b2fbe7d60e98e531e8f3558f2edd26"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/scheduler.cpp",
+      "output_sha256": "ad9b6c69a8fa18f0a231deb68626a20402b2fbe7d60e98e531e8f3558f2edd26"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7p-hang-diagnostics-20261103/hang_monitor.cpp",
+      "input_sha256": [
+        "4fc421bc8b4a8bc930fd8c315273ac79f8a52159283261073d507040d50798fd"
+      ],
+      "output": "source/project/private/q7p-hang-diagnostics-20261103/hang_monitor.cpp",
+      "output_sha256": "4fc421bc8b4a8bc930fd8c315273ac79f8a52159283261073d507040d50798fd"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7p-hang-diagnostics-20261103/gpu_diagnostics.cpp",
+      "input_sha256": [
+        "e6f87f408bdc6f63eef42f36f24f41c3deaa5571e6b7b6a81188a8f1a40fab89"
+      ],
+      "output": "source/project/private/q7p-hang-diagnostics-20261103/gpu_diagnostics.cpp",
+      "output_sha256": "e6f87f408bdc6f63eef42f36f24f41c3deaa5571e6b7b6a81188a8f1a40fab89"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p2-release-diagnostics-20261103/src/guest_diagnostics.cpp",
+      "input_sha256": [
+        "9e3cf4ea07de14b119ec5cf6ec929fcaa8045459b40c98c66b86c3e32666ea86"
+      ],
+      "output": "source/project/private/p2-release-diagnostics-20261103/src/guest_diagnostics.cpp",
+      "output_sha256": "9e3cf4ea07de14b119ec5cf6ec929fcaa8045459b40c98c66b86c3e32666ea86"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/import_observers.cpp",
+      "input_sha256": [
+        "82778dc03fc36a7bcb66181e8a0399cdb31200ad65fdf00067fed7c90010b9f1"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/import_observers.cpp",
+      "output_sha256": "82778dc03fc36a7bcb66181e8a0399cdb31200ad65fdf00067fed7c90010b9f1"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7q-host-skew-20261103/cs_selftest.cpp",
+      "input_sha256": [
+        "e9320eebe0e8c7d1f3f05d3f5820771e0f043555f9e258f2184bc041387544f5"
+      ],
+      "output": "source/project/private/q7q-host-skew-20261103/cs_selftest.cpp",
+      "output_sha256": "e9320eebe0e8c7d1f3f05d3f5820771e0f043555f9e258f2184bc041387544f5"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7q-host-skew-20261103/blocked_exit.cpp",
+      "input_sha256": [
+        "189b37b5624d2a90770386a19f917d9d5122ba7679fba728c42542c4c0e032d3"
+      ],
+      "output": "source/project/private/q7q-host-skew-20261103/blocked_exit.cpp",
+      "output_sha256": "189b37b5624d2a90770386a19f917d9d5122ba7679fba728c42542c4c0e032d3"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/main.cpp",
+      "input_sha256": [
+        "4b76157a9ecf8ab6be7b649ff0f823fae8e13b4e1f61addccfec27385677ba67"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/main.cpp",
+      "output_sha256": "4b76157a9ecf8ab6be7b649ff0f823fae8e13b4e1f61addccfec27385677ba67"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/frame_tags.cpp",
+      "input_sha256": [
+        "9db0863aea571f8243c725f1e59f0e24769cc47d4ae4b4479d56b6fd33739fa9"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/frame_tags.cpp",
+      "output_sha256": "9db0863aea571f8243c725f1e59f0e24769cc47d4ae4b4479d56b6fd33739fa9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/legend_capture.cpp",
+      "input_sha256": [
+        "62821bd2259042cc7c987b5ee3d37054d473eb3e2dc38f5bbe747379cb0eb369"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/legend_capture.cpp",
+      "output_sha256": "62821bd2259042cc7c987b5ee3d37054d473eb3e2dc38f5bbe747379cb0eb369"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/src/normal_exit.cpp",
+      "input_sha256": [
+        "8cf37bc0dc6ccd2ea4e1587610f82c9011b9c9efb1c798e18fb14f0de9e801bb"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/normal_exit.cpp",
+      "output_sha256": "8cf37bc0dc6ccd2ea4e1587610f82c9011b9c9efb1c798e18fb14f0de9e801bb"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/hitch_profile.cpp",
+      "input_sha256": [
+        "5c3279538e6f8d2d268848efea8b577e7a60fe38208f917f5599d933bcd9dca5"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/hitch_profile.cpp",
+      "output_sha256": "5c3279538e6f8d2d268848efea8b577e7a60fe38208f917f5599d933bcd9dca5"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/render_phases.cpp",
+      "input_sha256": [
+        "801427a8bdfc3f19cf6c4765ab0f4d5590ca145d625691d741993537422508d5"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/render_phases.cpp",
+      "output_sha256": "801427a8bdfc3f19cf6c4765ab0f4d5590ca145d625691d741993537422508d5"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/signal_profile.cpp",
+      "input_sha256": [
+        "cae84b9fee6c978649590a0a6f4c93863ecc404ecfddf4175329f0a8bce7948d"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/signal_profile.cpp",
+      "output_sha256": "cae84b9fee6c978649590a0a6f4c93863ecc404ecfddf4175329f0a8bce7948d"
+    },
+    {
+      "root": "builder_source",
+      "path": "authored/splash/runtime_loading.cpp",
+      "input_sha256": [
+        "dbd51b1b2ac36302db5dd6d824255dbcfd1f17dde7a467a3bbe593ed85b9c900"
+      ],
+      "output": "source/project/private/l3-runtime-loading-20261103/runtime_loading.cpp",
+      "output_sha256": "dbd51b1b2ac36302db5dd6d824255dbcfd1f17dde7a467a3bbe593ed85b9c900"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/src/prompt_bridge.cpp",
+      "input_sha256": [
+        "f294de61be57da0d6fff20be2925129d8485ee0f98593b112b0fc3903b23e9d3"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/prompt_bridge.cpp",
+      "output_sha256": "f294de61be57da0d6fff20be2925129d8485ee0f98593b112b0fc3903b23e9d3"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/pulse-integration/native_pulse.cpp",
+      "input_sha256": [
+        "36be16745ae767f8558bed745c3de90de70f51c2096b9b6d50a934c7eacf0ef8"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/pulse-integration/native_pulse.cpp",
+      "output_sha256": "36be16745ae767f8558bed745c3de90de70f51c2096b9b6d50a934c7eacf0ef8"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/vblank_source.cpp",
+      "input_sha256": [
+        "3f89a71d6d439a0f97aca451f9aff6f6451820d006a36076ca1eadc13750aac2"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/vblank_source.cpp",
+      "output_sha256": "3f89a71d6d439a0f97aca451f9aff6f6451820d006a36076ca1eadc13750aac2"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/launch_profile.cpp",
+      "input_sha256": [
+        "737948c686bd8a6aa98375214ac64653a25b08a8a38857976d85b1a0b8b3ef12"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/launch_profile.cpp",
+      "output_sha256": "737948c686bd8a6aa98375214ac64653a25b08a8a38857976d85b1a0b8b3ef12"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/wait_profile.cpp",
+      "input_sha256": [
+        "1e06c307ec9001fae7988c1a8113717813934df8bd9b2caffad00d09936b12ee"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/wait_profile.cpp",
+      "output_sha256": "1e06c307ec9001fae7988c1a8113717813934df8bd9b2caffad00d09936b12ee"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/boot_log.cpp",
+      "input_sha256": [
+        "8da3e4a504fb7347d4b5a7dcd1666bae38c0418782cd831d9ccff375ee82fc6d"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/boot_log.cpp",
+      "output_sha256": "8da3e4a504fb7347d4b5a7dcd1666bae38c0418782cd831d9ccff375ee82fc6d"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/crash-record-20261103/crash_record.cpp",
+      "input_sha256": [
+        "dbe4cf75acbecb96ed4e68a85bad6428ffcfef401bbe9b9e87983c95e3985fab"
+      ],
+      "output": "source/project/private/crash-record-20261103/crash_record.cpp",
+      "output_sha256": "dbe4cf75acbecb96ed4e68a85bad6428ffcfef401bbe9b9e87983c95e3985fab"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7t-backtrace-20261103/fatal_diagnostics.cpp",
+      "input_sha256": [
+        "ae150b583ebede3b73d7c694a3a935a65f59bf65317ebf16eb6ed1aed5ba1f2a"
+      ],
+      "output": "source/project/private/q7t-backtrace-20261103/fatal_diagnostics.cpp",
+      "output_sha256": "ae150b583ebede3b73d7c694a3a935a65f59bf65317ebf16eb6ed1aed5ba1f2a"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p2-release-diagnostics-20261103/src/raw_capture.cpp",
+      "input_sha256": [
+        "bac2dfc160e1a37d6bea62698315e88e2f8ca5e27ec75a62b85367c5ac86d43f"
+      ],
+      "output": "source/project/private/p2-release-diagnostics-20261103/src/raw_capture.cpp",
+      "output_sha256": "bac2dfc160e1a37d6bea62698315e88e2f8ca5e27ec75a62b85367c5ac86d43f"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7o-guest-skew-20261103/guest_memory_bridge.cpp",
+      "input_sha256": [
+        "da91ee6ebafe78d5c5a75708f02be4a57426964868e61199936d1f3b8024fa6c"
+      ],
+      "output": "source/project/private/q7o-guest-skew-20261103/guest_memory_bridge.cpp",
+      "output_sha256": "da91ee6ebafe78d5c5a75708f02be4a57426964868e61199936d1f3b8024fa6c"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/thread_observer.cpp",
+      "input_sha256": [
+        "d7229867cb0d2627c944aea5d1e0a760243ba44c31490224bc4e1600a171328c"
+      ],
+      "output": "source/project/modules/avatar_editor/native/thread_observer.cpp",
+      "output_sha256": "d7229867cb0d2627c944aea5d1e0a760243ba44c31490224bc4e1600a171328c"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/j41-xma-ffmpeg-20261103/clock-coverage/import_check.cpp",
+      "input_sha256": [
+        "c943045e771d748d6a7d9046414cd6eb0cca614d35ab402d37061d58e37df41c"
+      ],
+      "output": "source/project/private/j41-xma-ffmpeg-20261103/clock-coverage/import_check.cpp",
+      "output_sha256": "c943045e771d748d6a7d9046414cd6eb0cca614d35ab402d37061d58e37df41c"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/terminal_compat.cpp",
+      "input_sha256": [
+        "b7b3f62bd0b0ed65ed6d3c0a1bb581d210186e17850fb9707cbdaa3f58ff99c0"
+      ],
+      "output": "source/project/modules/avatar_editor/native/terminal_compat.cpp",
+      "output_sha256": "b7b3f62bd0b0ed65ed6d3c0a1bb581d210186e17850fb9707cbdaa3f58ff99c0"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/unavailable_posix.cpp",
+      "input_sha256": [
+        "a7ba3a79d720d01fd479e9c6ea490c5481f70da684a0d2e4a3bd0c32de3ad5e9"
+      ],
+      "output": "source/project/modules/avatar_editor/native/unavailable_posix.cpp",
+      "output_sha256": "a7ba3a79d720d01fd479e9c6ea490c5481f70da684a0d2e4a3bd0c32de3ad5e9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/native_dashboard/optional_modules.cpp",
+      "input_sha256": [
+        "aa5957b443b4f0ea8f71f7dde9c019cecc8340746f38f9dc47baeeddc1d58a34"
+      ],
+      "output": "source/project/modules/native_dashboard/optional_modules.cpp",
+      "output_sha256": "aa5957b443b4f0ea8f71f7dde9c019cecc8340746f38f9dc47baeeddc1d58a34"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7z-physical-alias-20261103/platform/guest_memory.cpp",
+      "input_sha256": [
+        "d1845eeb7224a9b6f6796fa29d9a2a165f4ed4c5649a10483f94131b0907adf9"
+      ],
+      "output": "source/project/private/q7z-physical-alias-20261103/platform/guest_memory.cpp",
+      "output_sha256": "d1845eeb7224a9b6f6796fa29d9a2a165f4ed4c5649a10483f94131b0907adf9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/av2_compat.h",
+      "input_sha256": [
+        "7ffd4d650dceedcc6ba742c53b10d73e29f1bd66a858d3b583e7ef4ff7d39336"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/av2_compat.h",
+      "output_sha256": "7ffd4d650dceedcc6ba742c53b10d73e29f1bd66a858d3b583e7ef4ff7d39336"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/gpu/gpu_edge_runtime.h",
+      "input_sha256": [
+        "6d142fb28029b381d22115edbd054034548a3d9264c27082ba642207131a5e35"
+      ],
+      "output": "source/project/modules/avatar_editor/gpu/gpu_edge_runtime.h",
+      "output_sha256": "6d142fb28029b381d22115edbd054034548a3d9264c27082ba642207131a5e35"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/gpu/gpu_edge.h",
+      "input_sha256": [
+        "e64da66c667d3bb2f835815f0a70c431be46a2be14d1f10e7e35ca2cd1958218"
+      ],
+      "output": "source/project/modules/avatar_editor/gpu/gpu_edge.h",
+      "output_sha256": "e64da66c667d3bb2f835815f0a70c431be46a2be14d1f10e7e35ca2cd1958218"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/marketplace/offline_title_hooks.inc.hpp",
+      "input_sha256": [
+        "af06983498b03af218584afa62bbea04e3a26f62a06dd7e72f706a3a7d0c46af"
+      ],
+      "output": "source/project/modules/avatar_editor/marketplace/offline_title_hooks.inc.hpp",
+      "output_sha256": "af06983498b03af218584afa62bbea04e3a26f62a06dd7e72f706a3a7d0c46af"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/pulse-integration/native_pulse.h",
+      "input_sha256": [
+        "033bbcc35992b05dd70786a8a4fbd7f29c7f93be62eb5a6a8103a86b592c3a82"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/pulse-integration/native_pulse.h",
+      "output_sha256": "033bbcc35992b05dd70786a8a4fbd7f29c7f93be62eb5a6a8103a86b592c3a82"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/avatar_save_store.h",
+      "input_sha256": [
+        "78c416663ca499d8a7b1a7a65aae09a5f8e788ec3909230ccd96a8a310be09d4"
+      ],
+      "output": "source/project/modules/avatar_editor/native/avatar_save_store.h",
+      "output_sha256": "78c416663ca499d8a7b1a7a65aae09a5f8e788ec3909230ccd96a8a310be09d4"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/paged_vfs.h",
+      "input_sha256": [
+        "9c5acedff94b5e122388365d886110ab8c7bc909e9c57d624d84ce0890b4fffe"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/paged_vfs.h",
+      "output_sha256": "9c5acedff94b5e122388365d886110ab8c7bc909e9c57d624d84ce0890b4fffe"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/boot_log.h",
+      "input_sha256": [
+        "8c14397f5744739a5a7f71e3c3d77289159553408c118cd03edfb986c56e703f"
+      ],
+      "output": "source/project/modules/avatar_editor/native/boot_log.h",
+      "output_sha256": "8c14397f5744739a5a7f71e3c3d77289159553408c118cd03edfb986c56e703f"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/src/normal_exit_api.h",
+      "input_sha256": [
+        "3489f07201cea1eb2c4e3c63a469edce44d10457765b505f94af974db304b497"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/normal_exit_api.h",
+      "output_sha256": "3489f07201cea1eb2c4e3c63a469edce44d10457765b505f94af974db304b497"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/marketplace/offline_marketplace.h",
+      "input_sha256": [
+        "5ee083b0e16476ffff8213c29886838c627ec62950d3944dc91ec98b24d7fbc4"
+      ],
+      "output": "source/project/modules/avatar_editor/marketplace/offline_marketplace.h",
+      "output_sha256": "5ee083b0e16476ffff8213c29886838c627ec62950d3944dc91ec98b24d7fbc4"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/frame_tags.h",
+      "input_sha256": [
+        "36551c08c150dee7588cc2dbe8126431fe48815d1f700502da49f19d4b7e2a28"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/frame_tags.h",
+      "output_sha256": "36551c08c150dee7588cc2dbe8126431fe48815d1f700502da49f19d4b7e2a28"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/headless/title_environment.h",
+      "input_sha256": [
+        "7035be238e6ec4923e0f697464aba61dc318a739c90525b7f2b326331bae09ee"
+      ],
+      "output": "source/project/modules/avatar_editor/headless/title_environment.h",
+      "output_sha256": "7035be238e6ec4923e0f697464aba61dc318a739c90525b7f2b326331bae09ee"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/launch_profile.h",
+      "input_sha256": [
+        "69b2bc728b217a0a0602002e3f886b05492e6e37cadd5d37a1d8a70e279b44e9"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/launch_profile.h",
+      "output_sha256": "69b2bc728b217a0a0602002e3f886b05492e6e37cadd5d37a1d8a70e279b44e9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/hitch_profile.h",
+      "input_sha256": [
+        "5f269f93d9157788d71795dd8f68024234c70ca7eb0c1aeecd7b0ac76518aa84"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/hitch_profile.h",
+      "output_sha256": "5f269f93d9157788d71795dd8f68024234c70ca7eb0c1aeecd7b0ac76518aa84"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/wait_metadata.h",
+      "input_sha256": [
+        "f2ed4e62c77a6d81b6df060f01807b8ff092cb7fe5f10de7a942ca641a91e154"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/wait_metadata.h",
+      "output_sha256": "f2ed4e62c77a6d81b6df060f01807b8ff092cb7fe5f10de7a942ca641a91e154"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7p-hang-diagnostics-20261103/guest_diagnostics.h",
+      "input_sha256": [
+        "10261986b1153de3b1aea560204339351ae50b60b1602fed1a4a046844673ce9"
+      ],
+      "output": "source/project/private/q7p-hang-diagnostics-20261103/guest_diagnostics.h",
+      "output_sha256": "10261986b1153de3b1aea560204339351ae50b60b1602fed1a4a046844673ce9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/guest_creation.h",
+      "input_sha256": [
+        "96bbf44de58c4cc370a6e0420fce96c5428732f42d8ff7f56464db1fa3c64983"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/guest_creation.h",
+      "output_sha256": "96bbf44de58c4cc370a6e0420fce96c5428732f42d8ff7f56464db1fa3c64983"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/normal_exit_api.h",
+      "input_sha256": [
+        "3489f07201cea1eb2c4e3c63a469edce44d10457765b505f94af974db304b497"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/normal_exit_api.h",
+      "output_sha256": "3489f07201cea1eb2c4e3c63a469edce44d10457765b505f94af974db304b497"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l3-p6-instant-splash-20261104/src/loading_presenter.h",
+      "input_sha256": [
+        "6b3e82b73ddab2b53fdffb48b7441f847a442ed8dfc0bd4f588be2ae81ffe8fe"
+      ],
+      "output": "source/project/private/l3-p6-instant-splash-20261104/src/loading_presenter.h",
+      "output_sha256": "6b3e82b73ddab2b53fdffb48b7441f847a442ed8dfc0bd4f588be2ae81ffe8fe"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p8-clean-exit-20261103/src/clean_exit.h",
+      "input_sha256": [
+        "dd00f1234f0b8368853d3fcd07887d96af784109390bcc5ef155d91d9723bbb9"
+      ],
+      "output": "source/project/private/p8-clean-exit-20261103/src/clean_exit.h",
+      "output_sha256": "dd00f1234f0b8368853d3fcd07887d96af784109390bcc5ef155d91d9723bbb9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7q-host-skew-20261103/blocked_exit.h",
+      "input_sha256": [
+        "bfff03b0cdfe02036e2634880cb7cd85ac5b6089fc4dcf03117ee6e2b4b17244"
+      ],
+      "output": "source/project/private/q7q-host-skew-20261103/blocked_exit.h",
+      "output_sha256": "bfff03b0cdfe02036e2634880cb7cd85ac5b6089fc4dcf03117ee6e2b4b17244"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7q-host-skew-20261103/hang_monitor.h",
+      "input_sha256": [
+        "0ac8e2f55f499aee8c26a627ebf6e5a6b27b03794ae9f2209535432a423255e9"
+      ],
+      "output": "source/project/private/q7q-host-skew-20261103/hang_monitor.h",
+      "output_sha256": "0ac8e2f55f499aee8c26a627ebf6e5a6b27b03794ae9f2209535432a423255e9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7q-host-skew-20261103/gpu_diagnostics.h",
+      "input_sha256": [
+        "605220932533b971eaefd43e373cdaff1b055a1db5679b4d2bd99bb7b7ff34ea"
+      ],
+      "output": "source/project/private/q7q-host-skew-20261103/gpu_diagnostics.h",
+      "output_sha256": "605220932533b971eaefd43e373cdaff1b055a1db5679b4d2bd99bb7b7ff34ea"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7q-host-skew-20261103/guest_diagnostics.h",
+      "input_sha256": [
+        "10261986b1153de3b1aea560204339351ae50b60b1602fed1a4a046844673ce9"
+      ],
+      "output": "source/project/private/q7q-host-skew-20261103/guest_diagnostics.h",
+      "output_sha256": "10261986b1153de3b1aea560204339351ae50b60b1602fed1a4a046844673ce9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/native_pad.h",
+      "input_sha256": [
+        "0947cb3cff0bad456b524f02d85587f4a53ea0e45ad2a2d467cfb4c014332439"
+      ],
+      "output": "source/project/modules/avatar_editor/native/native_pad.h",
+      "output_sha256": "0947cb3cff0bad456b524f02d85587f4a53ea0e45ad2a2d467cfb4c014332439"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/silent_audio.h",
+      "input_sha256": [
+        "4061f612a4412699cbb838e5a3e0c8aa4031c2d9ced9426c6fc5d096790ba7f3"
+      ],
+      "output": "source/project/modules/avatar_editor/native/silent_audio.h",
+      "output_sha256": "4061f612a4412699cbb838e5a3e0c8aa4031c2d9ced9426c6fc5d096790ba7f3"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/guest_drain.h",
+      "input_sha256": [
+        "20c5c5a29db69d1001fc6b793829f7c1e3fc8ae0f0cfdf22c4a7d129a0ef88c8"
+      ],
+      "output": "source/project/modules/avatar_editor/native/guest_drain.h",
+      "output_sha256": "20c5c5a29db69d1001fc6b793829f7c1e3fc8ae0f0cfdf22c4a7d129a0ef88c8"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/dashboard_return.h",
+      "input_sha256": [
+        "7c01820a3448cd16217483b508763df4bb7d6d99af2726ab96abeae268a551d6"
+      ],
+      "output": "source/project/modules/avatar_editor/native/dashboard_return.h",
+      "output_sha256": "7c01820a3448cd16217483b508763df4bb7d6d99af2726ab96abeae268a551d6"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/return_ticket.h",
+      "input_sha256": [
+        "6b6fff88ea50d6c241f41f97404ca45e371af03b83548d164508edf446d297e7"
+      ],
+      "output": "source/project/modules/avatar_editor/native/return_ticket.h",
+      "output_sha256": "6b6fff88ea50d6c241f41f97404ca45e371af03b83548d164508edf446d297e7"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-editor-back-20261103/owned-prompt/prompt_api.h",
+      "input_sha256": [
+        "9fe4a87f6b4f431eed212c0d5bc628ad38de9990af54a06887ddfb0f3ca9f827"
+      ],
+      "output": "source/project/private/a1-editor-back-20261103/owned-prompt/prompt_api.h",
+      "output_sha256": "9fe4a87f6b4f431eed212c0d5bc628ad38de9990af54a06887ddfb0f3ca9f827"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-editor-back-20261103/owned-prompt/prompt_state.hpp",
+      "input_sha256": [
+        "070f61e62f5410fae24268bffc8b2aa8e19373de8b1972f44e5339f5d6015a70"
+      ],
+      "output": "source/project/private/a1-editor-back-20261103/owned-prompt/prompt_state.hpp",
+      "output_sha256": "070f61e62f5410fae24268bffc8b2aa8e19373de8b1972f44e5339f5d6015a70"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/signal_profile.h",
+      "input_sha256": [
+        "b8d826e9fc305ae6b4ccded360a1faa4a0a24c7b9264962fd085c5b0a3d8155a"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/signal_profile.h",
+      "output_sha256": "b8d826e9fc305ae6b4ccded360a1faa4a0a24c7b9264962fd085c5b0a3d8155a"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p6-input-latency-20261103/p6_input_latency.h",
+      "input_sha256": [
+        "84ae05619ad7242e52f202586a74b1d8a798f480b69d1b974ad382a599af41e3"
+      ],
+      "output": "source/project/private/p6-input-latency-20261103/p6_input_latency.h",
+      "output_sha256": "84ae05619ad7242e52f202586a74b1d8a798f480b69d1b974ad382a599af41e3"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7t-raw-abort-20261103/raw_capture.h",
+      "input_sha256": [
+        "305cd83a4ae1f956b1b02826e882ad44b91b22c33b8ac26d52256237591cdb9d"
+      ],
+      "output": "source/project/private/q7t-raw-abort-20261103/raw_capture.h",
+      "output_sha256": "305cd83a4ae1f956b1b02826e882ad44b91b22c33b8ac26d52256237591cdb9d"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7t-raw-abort-20261103/guest_diagnostics.h",
+      "input_sha256": [
+        "3b8ed52ee329d8255667d95a6252822c3f8051cdf9db032c322b6b7989079c3b"
+      ],
+      "output": "source/project/private/q7t-raw-abort-20261103/guest_diagnostics.h",
+      "output_sha256": "3b8ed52ee329d8255667d95a6252822c3f8051cdf9db032c322b6b7989079c3b"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/crash-record-20261103/crash_record.h",
+      "input_sha256": [
+        "2f7088ce42c84e522535d360f5cf6e0d89a2260b93b8eaf167f3e4c944859dd4"
+      ],
+      "output": "source/project/private/crash-record-20261103/crash_record.h",
+      "output_sha256": "2f7088ce42c84e522535d360f5cf6e0d89a2260b93b8eaf167f3e4c944859dd4"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/crash-record-20261103/editor-integration/hang_monitor.h",
+      "input_sha256": [
+        "0ac8e2f55f499aee8c26a627ebf6e5a6b27b03794ae9f2209535432a423255e9"
+      ],
+      "output": "source/project/private/crash-record-20261103/editor-integration/hang_monitor.h",
+      "output_sha256": "0ac8e2f55f499aee8c26a627ebf6e5a6b27b03794ae9f2209535432a423255e9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/render_phases.h",
+      "input_sha256": [
+        "f14f317612d950ffa795cbbb2dff6d034941400e63adfeeb79ce507c63f07740"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/render_phases.h",
+      "output_sha256": "f14f317612d950ffa795cbbb2dff6d034941400e63adfeeb79ce507c63f07740"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/asset.h",
+      "input_sha256": [
+        "fa0e02cf79e92fdd544d9714adae88e00efd8991e69d1790890c717ada525dd8"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/asset.h",
+      "output_sha256": "fa0e02cf79e92fdd544d9714adae88e00efd8991e69d1790890c717ada525dd8"
+    },
+    {
+      "root": "builder_source",
+      "path": "authored/splash/runtime_loading.h",
+      "input_sha256": [
+        "adf612783acd731f257c2efc4442aac1722e2138feccb89e7f046e4f92722007"
+      ],
+      "output": "source/project/private/l3-runtime-loading-20261103/runtime_loading.h",
+      "output_sha256": "adf612783acd731f257c2efc4442aac1722e2138feccb89e7f046e4f92722007"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l3-runtime-loading-20261103/integration/prompt_pixels.h",
+      "input_sha256": [
+        "2f58f9af27f9a124d4d4393baa2936b6837ca7f4bb1720e8d6e5a19f796d23c9"
+      ],
+      "output": "source/project/private/l3-runtime-loading-20261103/integration/prompt_pixels.h",
+      "output_sha256": "2f58f9af27f9a124d4d4393baa2936b6837ca7f4bb1720e8d6e5a19f796d23c9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l3-runtime-loading-20261103/integration/loading_pixels.h",
+      "input_sha256": [
+        "7ecb4bb52e571ef08696bb8b393e3db36bc0be7cf14e5ef1db7903cb061ac346"
+      ],
+      "output": "source/project/private/l3-runtime-loading-20261103/integration/loading_pixels.h",
+      "output_sha256": "7ecb4bb52e571ef08696bb8b393e3db36bc0be7cf14e5ef1db7903cb061ac346"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l3-runtime-loading-20261103/integration/loading_art.hpp",
+      "input_sha256": [
+        "3e1e1e50bbfb2f788bd61d8d9bc423b4682351cd84d98d4461c6bd2a77e956f9"
+      ],
+      "output": "source/project/private/l3-runtime-loading-20261103/integration/loading_art.hpp",
+      "output_sha256": "3e1e1e50bbfb2f788bd61d8d9bc423b4682351cd84d98d4461c6bd2a77e956f9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/hitch_collector.h",
+      "input_sha256": [
+        "7cead0ea039e72de532773781600e8bd1c0a0748db77a37f7c5a58cc43dd1f75"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/hitch_collector.h",
+      "output_sha256": "7cead0ea039e72de532773781600e8bd1c0a0748db77a37f7c5a58cc43dd1f75"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/src/guest_creation.h",
+      "input_sha256": [
+        "96bbf44de58c4cc370a6e0420fce96c5428732f42d8ff7f56464db1fa3c64983"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/guest_creation.h",
+      "output_sha256": "96bbf44de58c4cc370a6e0420fce96c5428732f42d8ff7f56464db1fa3c64983"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/src/handoff.hpp",
+      "input_sha256": [
+        "9a91776261c9326c7516a4d6aefbce8a3e82471e95671e2f39ad3100259b7b94"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/handoff.hpp",
+      "output_sha256": "9a91776261c9326c7516a4d6aefbce8a3e82471e95671e2f39ad3100259b7b94"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l3-p6-instant-splash-20261104/src/loading_pixels.h",
+      "input_sha256": [
+        "7ecb4bb52e571ef08696bb8b393e3db36bc0be7cf14e5ef1db7903cb061ac346"
+      ],
+      "output": "source/project/private/l3-p6-instant-splash-20261104/src/loading_pixels.h",
+      "output_sha256": "7ecb4bb52e571ef08696bb8b393e3db36bc0be7cf14e5ef1db7903cb061ac346"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l3-p6-instant-splash-20261104/src/loading_art.hpp",
+      "input_sha256": [
+        "3e1e1e50bbfb2f788bd61d8d9bc423b4682351cd84d98d4461c6bd2a77e956f9"
+      ],
+      "output": "source/project/private/l3-p6-instant-splash-20261104/src/loading_art.hpp",
+      "output_sha256": "3e1e1e50bbfb2f788bd61d8d9bc423b4682351cd84d98d4461c6bd2a77e956f9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l1-p6-launch-profile-20261104/launch_profile.h",
+      "input_sha256": [
+        "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+      ],
+      "output": "source/project/private/l1-p6-launch-profile-20261104/launch_profile.h",
+      "output_sha256": "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7p-hang-diagnostics-20261103/gpu_diagnostics.h",
+      "input_sha256": [
+        "605220932533b971eaefd43e373cdaff1b055a1db5679b4d2bd99bb7b7ff34ea"
+      ],
+      "output": "source/project/private/q7p-hang-diagnostics-20261103/gpu_diagnostics.h",
+      "output_sha256": "605220932533b971eaefd43e373cdaff1b055a1db5679b4d2bd99bb7b7ff34ea"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/q7p-hang-diagnostics-20261103/hang_monitor.h",
+      "input_sha256": [
+        "0ac8e2f55f499aee8c26a627ebf6e5a6b27b03794ae9f2209535432a423255e9"
+      ],
+      "output": "source/project/private/q7p-hang-diagnostics-20261103/hang_monitor.h",
+      "output_sha256": "0ac8e2f55f499aee8c26a627ebf6e5a6b27b03794ae9f2209535432a423255e9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l2-p6-shader-cache-20261104/p4_pipeline_cache.h",
+      "input_sha256": [
+        "e6d94d011d0addc370a304ff6f5661022f5e3d48dd9d8dec0a1226bfae9942bd"
+      ],
+      "output": "source/project/private/l2-p6-shader-cache-20261104/p4_pipeline_cache.h",
+      "output_sha256": "e6d94d011d0addc370a304ff6f5661022f5e3d48dd9d8dec0a1226bfae9942bd"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l2-p6-shader-cache-20261104/l2_mesa_cache.h",
+      "input_sha256": [
+        "d388fe1775190e959dba6d692203f1a5268ddeac5c516d447e148493c429a5c3"
+      ],
+      "output": "source/project/private/l2-p6-shader-cache-20261104/l2_mesa_cache.h",
+      "output_sha256": "d388fe1775190e959dba6d692203f1a5268ddeac5c516d447e148493c429a5c3"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/ps5_platform.h",
+      "input_sha256": [
+        "bb283bec54e2c9d4dbf0436208ca4358f955b0830258a6b628b6d6222dcb9c9c"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/ps5_platform.h",
+      "output_sha256": "bb283bec54e2c9d4dbf0436208ca4358f955b0830258a6b628b6d6222dcb9c9c"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/guest_memory.h",
+      "input_sha256": [
+        "644c04acfb6e610addc5b6f341944862d8f569a3512a7e2edf0e90a568a689ea"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/guest_memory.h",
+      "output_sha256": "644c04acfb6e610addc5b6f341944862d8f569a3512a7e2edf0e90a568a689ea"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/scheduler.h",
+      "input_sha256": [
+        "954c28b7f3c53c2910a49bd3f9ffec0c687e0c2b8b2092492dd0dfb63045aec1"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/scheduler.h",
+      "output_sha256": "954c28b7f3c53c2910a49bd3f9ffec0c687e0c2b8b2092492dd0dfb63045aec1"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/ps5_fault_context.h",
+      "input_sha256": [
+        "5006d822cc7cec2a4589333709f0eae1e4b0b117bd624ddf62691a6849ac620e"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/ps5_fault_context.h",
+      "output_sha256": "5006d822cc7cec2a4589333709f0eae1e4b0b117bd624ddf62691a6849ac620e"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/paced_frames.h",
+      "input_sha256": [
+        "55a066310ad53043a119efb051767e7b97cd8769e7e7f3b1acc7c654586a459c"
+      ],
+      "output": "source/project/modules/avatar_editor/native/paced_frames.h",
+      "output_sha256": "55a066310ad53043a119efb051767e7b97cd8769e7e7f3b1acc7c654586a459c"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/ticket_file.h",
+      "input_sha256": [
+        "430882ef27d3f07aed5a61f6d448be5493709b32f6f30046f01827a73aa42967"
+      ],
+      "output": "source/project/modules/avatar_editor/native/ticket_file.h",
+      "output_sha256": "430882ef27d3f07aed5a61f6d448be5493709b32f6f30046f01827a73aa42967"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/display_surface.h",
+      "input_sha256": [
+        "00d7013b7714f1b15ab622622d2e31023a9aeaa84704f9a3fda45a2d48595c1a"
+      ],
+      "output": "source/project/modules/avatar_editor/native/display_surface.h",
+      "output_sha256": "00d7013b7714f1b15ab622622d2e31023a9aeaa84704f9a3fda45a2d48595c1a"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/guest_memory_bridge.h",
+      "input_sha256": [
+        "24428c28368247d6d79d078d7c25dd69faddf32f9743490539b43bbcf14c1cc0"
+      ],
+      "output": "source/project/modules/avatar_editor/native/guest_memory_bridge.h",
+      "output_sha256": "24428c28368247d6d79d078d7c25dd69faddf32f9743490539b43bbcf14c1cc0"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/fat_time_compat.h",
+      "input_sha256": [
+        "686432e4e94a030a788d68f664901adf0882a7613657abe152265fe3c2bcf6f1"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/fat_time_compat.h",
+      "output_sha256": "686432e4e94a030a788d68f664901adf0882a7613657abe152265fe3c2bcf6f1"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/rex_directory_cursor.inc.hpp",
+      "input_sha256": [
+        "8754e241fdad9b04d0931182ed3d2976988b38a855f0999fce0b63c5340ed217"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/rex_directory_cursor.inc.hpp",
+      "output_sha256": "8754e241fdad9b04d0931182ed3d2976988b38a855f0999fce0b63c5340ed217"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/platform/rex_resolve_path.inc.hpp",
+      "input_sha256": [
+        "df0ec5537f6245933c3df2ab539f55e4e4b825010a20e1d8b6598327cad453e7"
+      ],
+      "output": "source/project/modules/avatar_editor/platform/rex_resolve_path.inc.hpp",
+      "output_sha256": "df0ec5537f6245933c3df2ab539f55e4e4b825010a20e1d8b6598327cad453e7"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/launch_profile.h",
+      "input_sha256": [
+        "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/launch_profile.h",
+      "output_sha256": "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/wait_profile.h",
+      "input_sha256": [
+        "f02984feecb6ae5be1d887c326690490b1232ec4a12227dc89ce41b08991c921"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/wait_profile.h",
+      "output_sha256": "f02984feecb6ae5be1d887c326690490b1232ec4a12227dc89ce41b08991c921"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-frame-pacing-20261103/vblank_source.hpp",
+      "input_sha256": [
+        "fe93cb7cae01f3983e314fda97367e1b93b74e2b79c3b244bb1254780e86fff9"
+      ],
+      "output": "source/project/private/p3-frame-pacing-20261103/vblank_source.hpp",
+      "output_sha256": "fe93cb7cae01f3983e314fda97367e1b93b74e2b79c3b244bb1254780e86fff9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-frame-pacing-20261103/vblank_state.hpp",
+      "input_sha256": [
+        "66e158e4304fac4315a114877d98400b3e82c5602739f5320865b30dd7ba4e20"
+      ],
+      "output": "source/project/private/p3-frame-pacing-20261103/vblank_state.hpp",
+      "output_sha256": "66e158e4304fac4315a114877d98400b3e82c5602739f5320865b30dd7ba4e20"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p5-audio-output-20261103/p5_pcm_queue.h",
+      "input_sha256": [
+        "648c62f9d060784b7d7b024bd83993224a4a796521a4ccc29a816661d1fdb592"
+      ],
+      "output": "source/project/private/p5-audio-output-20261103/p5_pcm_queue.h",
+      "output_sha256": "648c62f9d060784b7d7b024bd83993224a4a796521a4ccc29a816661d1fdb592"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/marketplace/offline_footer.inc.hpp",
+      "input_sha256": [
+        "bd5db8042c74f5ecf96ae5315aa17c3bd1825a5ae6e637979bd3385e99d049af"
+      ],
+      "output": "source/project/modules/avatar_editor/marketplace/offline_footer.inc.hpp",
+      "output_sha256": "bd5db8042c74f5ecf96ae5315aa17c3bd1825a5ae6e637979bd3385e99d049af"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/l1-launch-profile-20261104/launch_profile.h",
+      "input_sha256": [
+        "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+      ],
+      "output": "source/project/private/l1-launch-profile-20261104/launch_profile.h",
+      "output_sha256": "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p13-native-hitch-20261104/src/wait_callsites.h",
+      "input_sha256": [
+        "8619f01744b55f6988efff913d6b4a21c55706293a92f3177deeddbab0b30111"
+      ],
+      "output": "source/project/private/p13-native-hitch-20261104/src/wait_callsites.h",
+      "output_sha256": "8619f01744b55f6988efff913d6b4a21c55706293a92f3177deeddbab0b30111"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/launch_profile.h",
+      "input_sha256": [
+        "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/launch_profile.h",
+      "output_sha256": "54bd6ef548f3d09f5f4985cd67cb5f033b3e59d3a1cebcf274810c337e86b99b"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/native_pulse.h",
+      "input_sha256": [
+        "033bbcc35992b05dd70786a8a4fbd7f29c7f93be62eb5a6a8103a86b592c3a82"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/native_pulse.h",
+      "output_sha256": "033bbcc35992b05dd70786a8a4fbd7f29c7f93be62eb5a6a8103a86b592c3a82"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/signal_callsites.h",
+      "input_sha256": [
+        "d77f3e893634f0cd4e8a9dc3a5317cf9be6fbab0cd207f738b50ec68d850c36c"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/signal_callsites.h",
+      "output_sha256": "d77f3e893634f0cd4e8a9dc3a5317cf9be6fbab0cd207f738b50ec68d850c36c"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/vblank_source.hpp",
+      "input_sha256": [
+        "fe93cb7cae01f3983e314fda97367e1b93b74e2b79c3b244bb1254780e86fff9"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/vblank_source.hpp",
+      "output_sha256": "fe93cb7cae01f3983e314fda97367e1b93b74e2b79c3b244bb1254780e86fff9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/vblank_state.hpp",
+      "input_sha256": [
+        "66e158e4304fac4315a114877d98400b3e82c5602739f5320865b30dd7ba4e20"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/vblank_state.hpp",
+      "output_sha256": "66e158e4304fac4315a114877d98400b3e82c5602739f5320865b30dd7ba4e20"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-signal-attribution-20261103/wait_profile.h",
+      "input_sha256": [
+        "f02984feecb6ae5be1d887c326690490b1232ec4a12227dc89ce41b08991c921"
+      ],
+      "output": "source/project/private/p3-signal-attribution-20261103/wait_profile.h",
+      "output_sha256": "f02984feecb6ae5be1d887c326690490b1232ec4a12227dc89ce41b08991c921"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-editor-back-20261103/overlay/prompt_pixels.h",
+      "input_sha256": [
+        "2f58f9af27f9a124d4d4393baa2936b6837ca7f4bb1720e8d6e5a19f796d23c9"
+      ],
+      "output": "source/project/private/a1-editor-back-20261103/overlay/prompt_pixels.h",
+      "output_sha256": "2f58f9af27f9a124d4d4393baa2936b6837ca7f4bb1720e8d6e5a19f796d23c9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p2-release-diagnostics-20261103/src/guest_diagnostics.h",
+      "input_sha256": [
+        "3b8ed52ee329d8255667d95a6252822c3f8051cdf9db032c322b6b7989079c3b"
+      ],
+      "output": "source/project/private/p2-release-diagnostics-20261103/src/guest_diagnostics.h",
+      "output_sha256": "3b8ed52ee329d8255667d95a6252822c3f8051cdf9db032c322b6b7989079c3b"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p2-release-diagnostics-20261103/src/raw_capture.h",
+      "input_sha256": [
+        "305cd83a4ae1f956b1b02826e882ad44b91b22c33b8ac26d52256237591cdb9d"
+      ],
+      "output": "source/project/private/p2-release-diagnostics-20261103/src/raw_capture.h",
+      "output_sha256": "305cd83a4ae1f956b1b02826e882ad44b91b22c33b8ac26d52256237591cdb9d"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/crash-record-20261103/editor-integration/guest_diagnostics.h",
+      "input_sha256": [
+        "10261986b1153de3b1aea560204339351ae50b60b1602fed1a4a046844673ce9"
+      ],
+      "output": "source/project/private/crash-record-20261103/editor-integration/guest_diagnostics.h",
+      "output_sha256": "10261986b1153de3b1aea560204339351ae50b60b1602fed1a4a046844673ce9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/pulse-integration/pulse_feed.h",
+      "input_sha256": [
+        "ce448f4f1abdb41fd9680a7f4de37726b3388417d5c672d5ea6f9f6006947cf2"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/pulse-integration/pulse_feed.h",
+      "output_sha256": "ce448f4f1abdb41fd9680a7f4de37726b3388417d5c672d5ea6f9f6006947cf2"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/pulse-integration/vblank_source.hpp",
+      "input_sha256": [
+        "fe93cb7cae01f3983e314fda97367e1b93b74e2b79c3b244bb1254780e86fff9"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/pulse-integration/vblank_source.hpp",
+      "output_sha256": "fe93cb7cae01f3983e314fda97367e1b93b74e2b79c3b244bb1254780e86fff9"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/p3-native-pulse-20261103/pulse-integration/vblank_state.hpp",
+      "input_sha256": [
+        "66e158e4304fac4315a114877d98400b3e82c5602739f5320865b30dd7ba4e20"
+      ],
+      "output": "source/project/private/p3-native-pulse-20261103/pulse-integration/vblank_state.hpp",
+      "output_sha256": "66e158e4304fac4315a114877d98400b3e82c5602739f5320865b30dd7ba4e20"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/handoff.hpp",
+      "input_sha256": [
+        "9a91776261c9326c7516a4d6aefbce8a3e82471e95671e2f39ad3100259b7b94"
+      ],
+      "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/handoff.hpp",
+      "output_sha256": "9a91776261c9326c7516a4d6aefbce8a3e82471e95671e2f39ad3100259b7b94"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/av2/q7-plume-source/av2_boot_log.h",
+      "input_sha256": [
+        "42e4b18d998001700e1b15b6da0392ac9811ea5b9c667611c60ee9307bb87cb4"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/av2_boot_log.h",
+      "output_sha256": "42e4b18d998001700e1b15b6da0392ac9811ea5b9c667611c60ee9307bb87cb4"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/private/av2/q7-plume-source/av2_display_surface.h",
+      "input_sha256": [
+        "930e7036bffd668b51716cdedc106d6b24d5c940fe2183c8337669b40c1c5a9c"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/av2_display_surface.h",
+      "output_sha256": "930e7036bffd668b51716cdedc106d6b24d5c940fe2183c8337669b40c1c5a9c"
+    }
+  ]
+}

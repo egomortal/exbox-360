@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gamma_ramp.h",
+      "sha256": "a371d0dc16326cd605d97062720e7d7988893655589ccc6078fcfa7ebc7fcf9e"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gamma_ramp.h",
+  "output_sha256": "a371d0dc16326cd605d97062720e7d7988893655589ccc6078fcfa7ebc7fcf9e",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 362
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/search_state.h",
+      "sha256": "f0e112f92a538e530355ce845a32f7a848669508656bd18662bc2c157238f9c0"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/search_state.h",
+  "output_sha256": "3ed2b6eb56693b08444c5b8a7d96484286da546b37086d5a9d0b5334fb5660de",
+  "operations": [
+    {
+      "authored_utf8": "// search_state.h: Ctrl+F box state shared between the controller and the XUI hooks.\n#pragma once\n\nnamespace ae_search {\n\n// Replace the box state; lines are the result rows, the first one is the match count.\nvoid SetSearchOverlay(bool open, const char* query, const char* const* lines, int line_count);\nvoid SetFilterMenuOverlay(bool open, const char* focus_row, const char* query,\n                          const char* selected_choice);\n\n// Heading text for the possessed XUI label, returns the byte length written (0 when closed).\nint GetSearchStatusLine(char* utf8, int cap);\n\n// Filter armed after Enter, so the heading reads \"Filter: q\" until cleared.\nvoid SetSearchApplied(bool applied);\n\n// Controller -> frame tick bridge for the guest's catalog rebuild.\nvoid RequestCatalogRebuild();\nbool ConsumeCatalogRebuildRequest();\n\n// The in-game heading label currently carries the status line.\nvoid SetSearchLabelPossessed(bool possessed);\n\n}  // namespace ae_search\n"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "profile": "125 ms delay, Sort/Filter and owner-generated Xbox splash",
+  "eboot_sha256": "ef199349102fb2f37f694441d8819d1e2b95a66407530063323f7ef5553ffde0",
+  "native_elf_sha256": "0491757e9db063e0b0853ab5a9192675ddf190c95da5af8b54d78081bbb8b890",
+  "native_units": 1219,
+  "archives": 23,
+  "source_files": 8413,
+  "imports": 441,
+  "load_limits_MiB": [
+    71,
+    26,
+    2,
+    25,
+    3
+  ],
+  "optimization": "editor/runtime O2; inherited dependency settings unchanged",
+  "builder_tests": 54,
+  "graph_receipt_sha256": "e83871bb4307055e4c87845249641b5ea679367e87f5c2d7046678d74755d05d",
+  "native_verification_sha256": "fe857e10391d9f4e2e519ffd6330feadde127a6f94b391a61bdde4ce87144096",
+  "tryon_behavior_sha256": "f350e8f29f4331e3c95fcb65cc5dcdf6008bc1d9da037e1bc843fef2104eaf34",
+  "filter_behavior_sha256": "8ad633ff9944ca9143ffe5f5ba7ad16d7f5243ef1b4be5a1d69dbebdd40f4bc5",
+  "companions": {
+    "assets/ui/sort-filter-legend.rle": "553bc771e1371fc0cd8b5bb3635eb8d9b0b0fd8e2eaf7fedf37d78fbc8647bdd",
+    "assets/ui/back-prompt.rle": "f3644bbca0523843edb1fd9662e45dad567f254ff6d2359d3e46c2ad1b771f10",
+    "assets/ui/dashboard-legend.rle": "7ac94d37375ae9c059ae77ce0695c565e28d641ea76499d8c45719f5c19851ac",
+    "sce_sys/icon0.png": "a16d6dfbfac885c42a0f9bb2d16b89cdc3d7fa1cdbf1c787b383e2744ffd352e",
+    "sce_sys/param.json": "7768afbddaeb2762a345df5b6fe1ccf44bc65cc5b98ed03cfb960d52c41aa07d",
+    "sce_module/libc.prx": "e6ff45d16adf687855cc3b33b0c8a4132b6504360b221e0a34c7e99fb3ba0036",
+    "assets/ui/loading-1080p.png": "78766e28aeada1d891b063a37ed624401d7b3707d1e1a95dc308d50968f43f79",
+    "assets/ui/loading-2160p.png": "4ba13b919b018a380ae0821885c4d69e50b25a091e5dd4d66ddbce05f6dc256c"
+  },
+  "baseline_five_companions_unchanged": true,
+  "original_y_png_sha256": "a1403c004bd70a517c7df65715e9bdbfe15069d1664fbaaf562301f160ede21e",
+  "legend_placement": {
+    "x": 519,
+    "y": 630,
+    "reference_width": 1280,
+    "reference_height": 720,
+    "exact_retail_position_claim": false
+  },
+  "fresh_full_application_execution": false,
+  "previous_full_application_receipt_sha256": "a82e0cea874c6bbef3042061ae4787c8c8f8fea6e2f3183c801637d83f2fabc9",
+  "native_execution": false,
+  "console_contact": false,
+  "private_artwork_in_source_download": false,
+  "validation_method": "two splash units rebuilt; 1217 unchanged source/object hashes verified and reused; fresh host delay/filter/splash gates, native link/import/layout/SELF, companions and package",
+  "splash_behavior_sha256": "c81ecdcc6b695c1f658babcb610fe892eb61c2639f4fb41bf93d1387efda09a6",
+  "original_splash_sha256": "2881b4e94e386d6e15b03dc4e229ac006e3897e36d38b21c14a151198c0081fb",
+  "previous_six_companions_unchanged": true
+}

@@ -1,0 +1,721 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/dxc_compiler.cpp",
+      "sha256": "db68a7399780e36b48530fabefe4f516356cff40beca07cad0a83bc2c49c66f4"
+    }
+  },
+  "output": "source/project/private/av2/q7-pack-source/XenosRecomp/dxc_compiler.cpp",
+  "output_sha256": "20cfc6efc99eb7ab70628622d817c671c192a1320ac297036b44ca824d52e02e",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 29,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 57,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "    // Offline pack executor: no DXC library is loaded.\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 172,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 177,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 57,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "    // No compiler object exists in the offline executor.\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 172,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 280,
+      "length": 115
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 397,
+      "length": 34
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 57,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 436,
+      "length": 37
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 477,
+      "length": 43
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 522,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 550,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 557,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 586,
+      "length": 9
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 597,
+      "length": 34
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 633,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 670,
+      "length": 9
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 681,
+      "length": 12
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 586,
+      "length": 9
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 706,
+      "length": 70
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 670,
+      "length": 9
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 674,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 798,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 827,
+      "length": 32
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 861,
+      "length": 44
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 907,
+      "length": 109
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1018,
+      "length": 100
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1120,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1144,
+      "length": 32
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1180,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 550,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1210,
+      "length": 34
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1246,
+      "length": 46
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1296,
+      "length": 115
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1413,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1495,
+      "length": 61
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1558,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 674,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 685,
+      "length": 8
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 550,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1629,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1682,
+      "length": 43
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 674,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1736,
+      "length": 37
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1777,
+      "length": 116
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1895,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1917,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1958,
+      "length": 31
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1991,
+      "length": 42
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2035,
+      "length": 6
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2045,
+      "length": 16
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 172,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2068,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 57,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "    // Pack producer identity, not a claim of a target compiler.\n"
+    },
+    {
+      "authored_utf8": "    return \"1.8+4662.416fab6b\";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 172,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3024,
+      "length": 128
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 397,
+      "length": 34
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 57,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    },
+    {
+      "authored_utf8": "    (void)shaderSource; (void)"
+    },
+    {
+      "copy": "upstream",
+      "offset": 336,
+      "length": 18
+    },
+    {
+      "authored_utf8": "; (void)compileLibrary;\n"
+    },
+    {
+      "authored_utf8": "    (void)compileSpirv; (void)targetOverride;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3850,
+      "length": 17
+    },
+    {
+      "authored_utf8": "Native offline pack: shader missing; compile it with the verified host tool\";\n"
+    },
+    {
+      "authored_utf8": "    return nullptr;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 172,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 26,
+      "length": 1
+    }
+  ]
+}

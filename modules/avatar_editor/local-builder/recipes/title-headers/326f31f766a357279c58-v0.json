@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/skeleton_scaling.h",
+      "sha256": "adbed690b1bd00caf40717432881e1b409af0dd1de3e90d08ae86b4e4d3d31b7"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/skeleton_scaling.h",
+  "output_sha256": "adbed690b1bd00caf40717432881e1b409af0dd1de3e90d08ae86b4e4d3d31b7",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1213
+    }
+  ]
+}

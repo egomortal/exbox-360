@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/blend_shape.h",
+      "sha256": "83397acc1e1b0d4f9ca29e1f962cc45b2086beb705701442e61a807442abf513"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/blend_shape.h",
+  "output_sha256": "83397acc1e1b0d4f9ca29e1f962cc45b2086beb705701442e61a807442abf513",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2999
+    }
+  ]
+}

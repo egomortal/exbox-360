@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/skeleton_data.h",
+      "sha256": "377342431f6a758e4c523fd31b1b05695b5ae2da424bfbdec81803ddf771730c"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/skeleton_data.h",
+  "output_sha256": "377342431f6a758e4c523fd31b1b05695b5ae2da424bfbdec81803ddf771730c",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 909
+    }
+  ]
+}

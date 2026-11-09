@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/gpu_tracker.h",
+      "sha256": "2c0e4bdd26994d875cd460222df785271c4e359fd7c0e2f7f37322bd7e47d4a2"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gpu/gpu_tracker.h",
+  "output_sha256": "2c0e4bdd26994d875cd460222df785271c4e359fd7c0e2f7f37322bd7e47d4a2",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2067
+    }
+  ]
+}

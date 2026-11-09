@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "copies": [],
+  "transforms": [
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/thirdparty/crypto/sha256.cpp",
+      "variants": [
+        {
+          "path": "sha256-v0.json",
+          "sha256": "7efaa2c1aa9f93f462595531a81a77330ce91212f709057417c9b619e26d61ee"
+        },
+        {
+          "path": "sha256-v1.json",
+          "sha256": "9ba27315bd4e30cecbc7b18efe8fcb62832d18891a814c10bdbdacd5009d7662"
+        }
+      ]
+    }
+  ]
+}

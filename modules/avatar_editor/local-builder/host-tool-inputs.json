@@ -1,0 +1,23 @@
+{
+  "tools": [
+    {
+      "name": "mesa_clc",
+      "destination": "host-tools/mesa_clc",
+      "sha256": "838e377eecd54ef9b6c948aaec120caa13b98eb264d564e2ba59b4fdc22a9db7",
+      "policy": "Compatible user-supplied host tool; no private executable redistribution"
+    },
+    {
+      "name": "vtn_bindgen2",
+      "destination": "host-tools/vtn_bindgen2",
+      "sha256": "c52dd4a420a521b8422d31196458f1d8c803fb644188b4fe8659606d772a3d9d",
+      "policy": "Compatible user-supplied host tool; no private executable redistribution"
+    },
+    {
+      "name": "glslangValidator",
+      "destination": "host-tools/glslangValidator",
+      "sha256": "1d12ae5b41ead4f6e83c511fda249d0db401c70f062448acddd1f8d65daa566a",
+      "policy": "Compatible user-supplied host tool; no private executable redistribution"
+    }
+  ],
+  "version_claim": "Exact file hashes only; no version strings guessed"
+}

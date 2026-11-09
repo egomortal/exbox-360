@@ -1,0 +1,555 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "include/rex/filesystem/devices/host_path_device.h",
+      "sha256": "e9810c396badb8a3bb780a5b584ab499f51e5f17cb95dbdd98e74dae0a747141"
+    }
+  },
+  "output": "source/project/private/av2/sdk-host-source/include/rex/filesystem/devices/host_path_device.h",
+  "output_sha256": "d3499f8043edaa485acb1bde15edd3531124e8741c347e6172b450a1b66aca06",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 83
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 84,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 244,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 324,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 487,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 548,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 553,
+      "length": 12
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 567,
+      "length": 17
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "authored_utf8": "#include <atomic>\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 586,
+      "length": 34
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 622,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 651,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 673,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 712,
+      "length": 8
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 721,
+      "length": 91
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 813,
+      "length": 66
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 880,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 911,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  // Bounded live metadata, including per-handle enumeration results. Existing\n"
+    },
+    {
+      "authored_utf8": "  // Entry pointers stay stable; no unsafe cache eviction while files are open.\n"
+    },
+    {
+      "authored_utf8": "  bool TryRetainEntry() {\n"
+    },
+    {
+      "authored_utf8": "    size_t count=retained_entries_.load();\n"
+    },
+    {
+      "authored_utf8": "    while (count<65536) if (retained_entries_.compare_exchange_weak(count,count+1)) return true;\n"
+    },
+    {
+      "authored_utf8": "    return false;\n"
+    },
+    {
+      "authored_utf8": "  }\n"
+    },
+    {
+      "authored_utf8": "  void ReleaseEntry() { retained_entries_.fetch_sub(1); }\n"
+    },
+    {
+      "authored_utf8": "  size_t retained_entry_count"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1456,
+      "length": 18
+    },
+    {
+      "authored_utf8": "retained_entries_.load(); }\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 941,
+      "length": 58
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1000,
+      "length": 59
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1061,
+      "length": 59
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1121,
+      "length": 89
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1211,
+      "length": 68
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1280,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1360,
+      "length": 70
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1431,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1497,
+      "length": 71
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1570,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1631,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1684,
+      "length": 69
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1755,
+      "length": 73
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1829,
+      "length": 77
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1907,
+      "length": 69
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1977,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2041,
+      "length": 9
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2051,
+      "length": 50
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2103,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2124,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  std::atomic<size_t> retained_entries_{0};\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2160,
+      "length": 37
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2198,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2217,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2245,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2249,
+      "length": 31
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    }
+  ]
+}

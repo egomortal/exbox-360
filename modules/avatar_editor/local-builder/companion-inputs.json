@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "input_roles": {
+    "ui_pngs": {
+      "files": {
+        "dialog_bg.png": "39019f76a8316e7f027ca444d9015f10b9c8b231fc6f74689cbaf5dd60c0558f",
+        "option_dialog_yes_selected.png": "a5614eee303a15e427d4d480fcbe69db33e232c736fc819ab32b1851246bb2a3",
+        "option_dialog_yes_unselected.png": "0613094ff9bd2cd9249938255ad828a8776d16ae4790f81ce2d3222b65814ef9",
+        "option_dialog_no_selected.png": "de5e521486daf5e8bce9738afcc059e5a579fbe4a6aa6019b09c7b80f568aca7",
+        "option_dialog_no_unselected.png": "2871018fb3e6f8bdf2e410e39f76e5de27f2a47e313c6bfe5069c76590d6a36f",
+        "ico_64x_Back.png": "6c0971c87f7345b133f6e6516d33b1aa4efb3aa7da633564f3acb7cc362f082c",
+        "Legend_A.png": "964ff07a55a24feb774519d31442784c2ec997a25703133ee2c3e8915f40ea66",
+        "Legend_B.png": "efeaf06e71acc54276684b2740e42843c233017f40ac6723f6197a88ce98ea46",
+        "Legend_Y.png": "a1403c004bd70a517c7df65715e9bdbfe15069d1664fbaaf562301f160ede21e"
+      }
+    },
+    "font": {
+      "filename": "xenonclatin.xtt",
+      "sha256": "977bbe13d5545d300e57dacf9dff492476452f50880ef3868d3aa308d041187d",
+      "produced_ttf_sha256": "9aa8631de0e0ccaaacf72dcf3a32f2e4f85d106bd1ec042dfe0279442918b0a8"
+    },
+    "vulkan_source": {
+      "files": {
+        "tooling/native/libc_builder.cpp": "fb9e4eb66ef6c1d9e9bcfd059a3a3aaf86156fe065838303a0c3fbd789786a1a",
+        "tooling/native/runtime/api-surface.txt": "d9a81aec01f077817c35f3225f8325126bd63fd077a57734454a1868f6b25052",
+        "tooling/native/runtime/imports.txt": "ef8f04e17c355495ee8120ef28b1648f7d4380eb5b9baeb7ab50034ffacfe8ea"
+      }
+    },
+    "host_compiler": "user-supplied C++20 compiler",
+    "self_tool": "locally built PS5_Vulkan ps5-native-tool"
+  },
+  "outputs": {
+    "assets/ui/back-prompt.rle": "f3644bbca0523843edb1fd9662e45dad567f254ff6d2359d3e46c2ad1b771f10",
+    "assets/ui/dashboard-legend.rle": "7ac94d37375ae9c059ae77ce0695c565e28d641ea76499d8c45719f5c19851ac",
+    "sce_sys/icon0.png": "a16d6dfbfac885c42a0f9bb2d16b89cdc3d7fa1cdbf1c787b383e2744ffd352e",
+    "sce_sys/param.json": "7768afbddaeb2762a345df5b6fe1ccf44bc65cc5b98ed03cfb960d52c41aa07d",
+    "sce_module/libc.prx": "e6ff45d16adf687855cc3b33b0c8a4132b6504360b221e0a34c7e99fb3ba0036",
+    "assets/ui/sort-filter-legend.rle": "553bc771e1371fc0cd8b5bb3635eb8d9b0b0fd8e2eaf7fedf37d78fbc8647bdd"
+  },
+  "libc_raw_sha256": "8ee6e124993e1af26420cb455890fd002f5d6c7e78883c860ce45734e7d002bb",
+  "verified_render_dependencies": {
+    "Pillow": "10.2.0",
+    "FreeType": "2.13.2",
+    "raqm": "0.10.1",
+    "zlib": "1.3"
+  },
+  "network_required": false,
+  "assets_bundled": false
+}

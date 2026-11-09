@@ -1,0 +1,12 @@
+{
+  "scopes": [
+    "private/av2/sdk-host-source/thirdparty",
+    "private/av2/sdk-ps5-core-source/thirdparty"
+  ],
+  "historic_headers": 3620,
+  "already_covered": 1947,
+  "new_header_copies": 1673,
+  "included_source_copies": 7,
+  "included_source_overlays_provider": "recipes/sdk-thirdparty-overlays/manifest.json",
+  "policy": "Only pinned user-supplied source paths and hashes are exported; every output preserves retained bytes."
+}

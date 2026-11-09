@@ -1,0 +1,740 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "include/rex/platform/dynlib.h",
+      "sha256": "0d42aadc2130c3b2dba5eb24582c1051b569d8b7e21c16598863edfdcfc6aa63"
+    }
+  },
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 37
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 38,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 96,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 100,
+      "length": 12
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 114,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 133,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 156,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 183,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 210,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 240,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 320,
+      "length": 13
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 334,
+      "length": 8
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 343,
+      "length": 74
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 418,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 484,
+      "length": 13
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 498,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 502,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 525,
+      "length": 8
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 534,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 564,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 586,
+      "length": 49
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 636,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 697,
+      "length": 50
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 748,
+      "length": 61
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 811,
+      "length": 96
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 908,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 924,
+      "length": 63
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 989,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1036,
+      "length": 23
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1060,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1100,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1152,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1157,
+      "length": 9
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1167,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 498,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1198,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1221,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1245,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1306,
+      "length": 58
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1365,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1446,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1474,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1535,
+      "length": 73
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1609,
+      "length": 81
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1692,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1718,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1781,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1609,
+      "length": 81
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1925,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1949,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2015,
+      "length": 63
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2079,
+      "length": 84
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1446,
+      "length": 19
+    },
+    {
+      "authored_utf8": "PS5\n"
+    },
+    {
+      "authored_utf8": "// Identifiers, not filesystem paths."
+    },
+    {
+      "copy": "upstream",
+      "offset": 507,
+      "length": 16
+    },
+    {
+      "authored_utf8": "rejects loading on this\n"
+    },
+    {
+      "authored_utf8": "// target; the native title uses its directly linked RADV/plume entry points.\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1245,
+      "length": 46
+    },
+    {
+      "authored_utf8": "av2:static-vulkan\";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1306,
+      "length": 43
+    },
+    {
+      "authored_utf8": "av2:unsupported-renderdoc\";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1365,
+      "length": 51
+    },
+    {
+      "authored_utf8": "av2:offline-spirv-tools\";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2165,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2171,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2229,
+      "length": 6
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2237,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2264,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 3,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/av2/sdk-ps5-core-source/include/rex/platform/dynlib.h",
+  "output_sha256": "ad35237698d79491b8bcd567633d1099dd98c1326633a709aaa701241d36e6a8"
+}

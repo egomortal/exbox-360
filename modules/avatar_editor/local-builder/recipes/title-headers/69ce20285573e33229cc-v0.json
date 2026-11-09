@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/gpu_shader_pack.h",
+      "sha256": "ad5328960c7385f1c70cc53946389e163577755066e12a9ea4075f4f6a6c85c4"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/gpu/gpu_shader_pack.h",
+  "output_sha256": "ad5328960c7385f1c70cc53946389e163577755066e12a9ea4075f4f6a6c85c4",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 3259
+    }
+  ]
+}

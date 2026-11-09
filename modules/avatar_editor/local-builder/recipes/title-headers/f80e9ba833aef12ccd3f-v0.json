@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/gpu_resolve_cache.h",
+      "sha256": "b282b5265a5c5ad3c85f6091f256a5d4e094561a92570bf618cb81a680670281"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/gpu/gpu_resolve_cache.h",
+  "output_sha256": "b282b5265a5c5ad3c85f6091f256a5d4e094561a92570bf618cb81a680670281",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2482
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/stb_image.h",
+      "sha256": "2d264ec3e6ce404fc2d0cfff4476c982eb3edf5a61122b03884fdef7bacd9deb"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/kernel/xam/stb_image.h",
+  "output_sha256": "2d264ec3e6ce404fc2d0cfff4476c982eb3edf5a61122b03884fdef7bacd9deb",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 292720
+    }
+  ]
+}

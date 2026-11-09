@@ -1,0 +1,1023 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "src/filesystem/devices/host_path_device.cpp",
+      "sha256": "355f2938652202150bf9f406cf4bce492814fb2432145f8c5506f962dd3a235d"
+    }
+  },
+  "output": "source/project/private/q7r-index-vfs-20261103/src/host_path_device.cpp",
+  "output_sha256": "f89cda0d5b7273d18660480308eed014506be035dae56e7b6edbb8c6cc266adc",
+  "operations": [
+    {
+      "authored_utf8": "#include \"boot_log.h\"\n"
+    },
+    {
+      "authored_utf8": "#include <cerrno>\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 86,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 248,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 329,
+      "length": 79
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 495,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 557,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 564,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "#include \"paged_vfs.h\"\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 643,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 672,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 726,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 752,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 775,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 807,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 838,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 905,
+      "length": 86
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 993,
+      "length": 55
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1050,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1077,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1099,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1129,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1159,
+      "length": 48
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1211,
+      "length": 44
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1259,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1296,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1343,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1367,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1394,
+      "length": 54
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1450,
+      "length": 12
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1464,
+      "length": 46
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1512,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1450,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1452,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1547,
+      "length": 69
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1618,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1672,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  // AV2: entries are resolved lazily; directory handles own streaming cursors.\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1757,
+      "length": 14
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1206,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1778,
+      "length": 64
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1844,
+      "length": 55
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1901,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1206,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1946,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  auto lock="
+    },
+    {
+      "copy": "upstream",
+      "offset": 1865,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "authored_utf8": "  if(av2_boot_vfs_trace())av2_boot_log(\"vfs-resolve\",\"device=%s root=%s relative=%.*s\",mount_path().c_str(),host_path_.c_str(),int(path.size()),path.data());\n"
+    },
+    {
+      "authored_utf8": "  if (path.size()>4096)"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3151,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "authored_utf8": "  auto* current="
+    },
+    {
+      "copy": "upstream",
+      "offset": 2416,
+      "length": 47
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2465,
+      "length": 63
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2530,
+      "length": 22
+    },
+    {
+      "authored_utf8": "continue;\n"
+    },
+    {
+      "authored_utf8": "    if (part==\".\" || part==\"..\" || part.find(':')!="
+    },
+    {
+      "copy": "upstream",
+      "offset": 875,
+      "length": 16
+    },
+    {
+      "authored_utf8": "::npos)"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3151,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "authored_utf8": "    if (auto* cached=current"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2612,
+      "length": 16
+    },
+    {
+      "authored_utf8": ") { current="
+    },
+    {
+      "copy": "upstream",
+      "offset": 4064,
+      "length": 29
+    },
+    {
+      "authored_utf8": "ached); continue; }\n"
+    },
+    {
+      "authored_utf8": "    std::string matched;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2829,
+      "length": 20
+    },
+    {
+      "authored_utf8": "=current->host_path()/"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2886,
+      "length": 19
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "authored_utf8": "    std::uint64_t indexed_bytes=0;std::uint8_t indexed_type=0;\n"
+    },
+    {
+      "authored_utf8": "    const int indexed=av2::platform::indexed_asset_info(exact.string(),indexed_bytes,indexed_type);\n"
+    },
+    {
+      "authored_utf8": "    if(!indexed)matched=std::string(part);\n"
+    },
+    {
+      "authored_utf8": "    else if(indexed==ENOTSUP) {\n"
+    },
+    {
+      "authored_utf8": "      std::error_code direct_error;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2827,
+      "length": 23
+    },
+    {
+      "authored_utf8": "status="
+    },
+    {
+      "copy": "upstream",
+      "offset": 942,
+      "length": 17
+    },
+    {
+      "authored_utf8": "status(exact,direct_error);\n"
+    },
+    {
+      "authored_utf8": "      if(!direct_error &&"
+    },
+    {
+      "copy": "upstream",
+      "offset": 941,
+      "length": 18
+    },
+    {
+      "authored_utf8": "exists(exact_status))matched=std::string(part);\n"
+    },
+    {
+      "authored_utf8": "      else av2_boot_log(\"vfs-error\",\"function=stat path=%s errno=%d\",exact.c_str(),direct_error.value());\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1450,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "    if(matched.empty()) {\n"
+    },
+    {
+      "authored_utf8": "    av2::platform::DirectoryPage page;\n"
+    },
+    {
+      "authored_utf8": "    if (const int e=page.open(current->host_path().c_str(),\"\")) { av2_boot_log(\"vfs-error\",\"directory=%s errno=%d\",current->host_path().c_str(),e);return nullptr; }\n"
+    },
+    {
+      "authored_utf8": "    std::array<av2::platform::DirectoryPage::Entry,32> batch{};\n"
+    },
+    {
+      "authored_utf8": "    for (;;) {\n"
+    },
+    {
+      "authored_utf8": "      size_t count=0;\n"
+    },
+    {
+      "authored_utf8": "      if (const int e=page.next(batch,count)) {av2_boot_log(\"vfs-error\",\"readdir=%s errno=%d\",current->host_path().c_str(),e);return nullptr;}\n"
+    },
+    {
+      "authored_utf8": "      if (!count) break;\n"
+    },
+    {
+      "authored_utf8": "      for (size_t i=0;i<count;++i) {\n"
+    },
+    {
+      "authored_utf8": "        if (!"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3553,
+      "length": 29
+    },
+    {
+      "authored_utf8": "batch[i].name,part)) continue;\n"
+    },
+    {
+      "authored_utf8": "        if (!matched.empty())"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3151,
+      "length": 16
+    },
+    {
+      "authored_utf8": " // reject ambiguous case folds\n"
+    },
+    {
+      "authored_utf8": "        matched=batch[i].name;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3171,
+      "length": 7
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1450,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1450,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "authored_utf8": "    if (matched.empty()) {av2_boot_log(\"vfs-error\",\"no match root=%s name=%.*s\",current->host_path().c_str(),int(part.size()),part.data());return nullptr;}\n"
+    },
+    {
+      "authored_utf8": "    auto full=current->host_path()/rex::to_path(matched);\n"
+    },
+    {
+      "authored_utf8": "    std::error_code error;\n"
+    },
+    {
+      "authored_utf8": "    auto status="
+    },
+    {
+      "copy": "upstream",
+      "offset": 942,
+      "length": 17
+    },
+    {
+      "authored_utf8": "status(full,error);\n"
+    },
+    {
+      "authored_utf8": "    if (error ||"
+    },
+    {
+      "copy": "upstream",
+      "offset": 941,
+      "length": 18
+    },
+    {
+      "authored_utf8": "is_symlink(status)) {av2_boot_log(\"vfs-error\",\"function=stat host=%s errno=%d unsupported_type=%d\",full.c_str(),error.value(),int("
+    },
+    {
+      "copy": "upstream",
+      "offset": 942,
+      "length": 17
+    },
+    {
+      "authored_utf8": "is_symlink(status)));return nullptr;}\n"
+    },
+    {
+      "authored_utf8": "    FileInfo info;\n"
+    },
+    {
+      "authored_utf8": "    if (!GetInfo(full,&info)) {av2_boot_log(\"vfs-error\",\"function=stat host=%s errno=%d\",full.c_str(),errno);return nullptr;}\n"
+    },
+    {
+      "authored_utf8": "    if(av2_boot_vfs_trace())av2_boot_log(\"vfs-host\",\"resolved=%s size=%llu\",full.c_str(),static_cast<unsigned long long>(info.total_size));\n"
+    },
+    {
+      "authored_utf8": "    auto* child="
+    },
+    {
+      "copy": "upstream",
+      "offset": 3044,
+      "length": 27
+    },
+    {
+      "authored_utf8": "current,full,info);\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2631,
+      "length": 16
+    },
+    {
+      "authored_utf8": "return nullptr;\n"
+    },
+    {
+      "authored_utf8": "    current"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4498,
+      "length": 53
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "authored_utf8": "    current=child;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1452,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4108,
+      "length": 16
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1206,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4138,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4205,
+      "length": 75
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4282,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4324,
+      "length": 58
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4384,
+      "length": 96
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4482,
+      "length": 69
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4555,
+      "length": 73
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4630,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1450,
+      "length": 5
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1452,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1206,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4676,
+      "length": 31
+    },
+    {
+      "copy": "upstream",
+      "offset": 4,
+      "length": 1
+    }
+  ]
+}

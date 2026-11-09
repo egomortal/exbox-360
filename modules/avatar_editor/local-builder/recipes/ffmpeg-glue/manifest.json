@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "transforms": [],
+  "copies": [
+    {
+      "output": "source/project/private/j41-xma-ffmpeg-20261103/ps5/ffmpeg-overlay/libavcodec/codec_list.c",
+      "path": "authored/ffmpeg/codec_list.c",
+      "input_sha256": [
+        "39e40c6245e9451dd129d8c7a278ed984e822548e780defbee2fdee1f3ada583"
+      ],
+      "output_sha256": "39e40c6245e9451dd129d8c7a278ed984e822548e780defbee2fdee1f3ada583",
+      "root": "app"
+    },
+    {
+      "output": "source/project/private/j41-xma-ffmpeg-20261103/ps5/ffmpeg-overlay/libavcodec/bsf_list.c",
+      "path": "authored/ffmpeg/bsf_list.c",
+      "input_sha256": [
+        "b80789c4ea547e3d10312127571e2fd19b0a0a992c76ab6d114253b60385073e"
+      ],
+      "output_sha256": "b80789c4ea547e3d10312127571e2fd19b0a0a992c76ab6d114253b60385073e",
+      "root": "app"
+    },
+    {
+      "output": "source/project/private/j41-xma-ffmpeg-20261103/ps5/ffmpeg-overlay/libavcodec/parser_list.c",
+      "path": "authored/ffmpeg/parser_list.c",
+      "input_sha256": [
+        "7d6bfcedfd21e786e7c07087073874d75df111d173a7e50feb65661d6badacab"
+      ],
+      "output_sha256": "7d6bfcedfd21e786e7c07087073874d75df111d173a7e50feb65661d6badacab",
+      "root": "app"
+    },
+    {
+      "output": "source/project/private/j41-xma-ffmpeg-20261103/config/config.h",
+      "path": "authored/ffmpeg/config.h",
+      "input_sha256": [
+        "cd045bf2418a1fc8602a62113b1be3f73c4762e7d0523b0edd813135ddb71c60"
+      ],
+      "output_sha256": "cd045bf2418a1fc8602a62113b1be3f73c4762e7d0523b0edd813135ddb71c60",
+      "root": "app"
+    }
+  ]
+}

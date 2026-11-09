@@ -1,0 +1,392 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "src/core/atomic_posix.cpp",
+      "sha256": "10b0f6610a524cfce0e4ad0caa0a077b4532c02e407d12adb0c61aeb9d666a95"
+    }
+  },
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 56
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 58,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 90,
+      "length": 17
+    },
+    {
+      "authored_utf8": "PS5"
+    },
+    {
+      "copy": "upstream",
+      "offset": 110,
+      "length": 30
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 141,
+      "length": 23
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 166,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 212,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 255,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 301,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 345,
+      "length": 69
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 415,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 483,
+      "length": 69
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 415,
+      "length": 65
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 622,
+      "length": 70
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 693,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 741,
+      "length": 70
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 693,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 861,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 942,
+      "length": 92
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1035,
+      "length": 49
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1087,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1168,
+      "length": 92
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1035,
+      "length": 49
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1314,
+      "length": 71
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1386,
+      "length": 55
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 253,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1445,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 25,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/av2/sdk-ps5-core-source/src/core/atomic_posix.cpp",
+  "output_sha256": "ba031c7d0c21e18ef1cebfc8e5e6b1e7cf124ffaf2a98b2c73c952e8c50c866e"
+}

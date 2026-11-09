@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/marketplace_key.h",
+      "sha256": "597714315d001010d32a3f44f773c7f5d23bac44d71c8f0a983a128202530587"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/marketplace_key.h",
+  "output_sha256": "de2f2394cf5891535b98732bc1f2bbca5f82c32133b0feb711ecec21c7dbf1f7",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 42
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 44,
+      "length": 12
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 58,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 77,
+      "length": 27
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 106,
+      "length": 28
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 135,
+      "length": 25
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 162,
+      "length": 31
+    },
+    {
+      "authored_utf8": "\r\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/ae_app.h",
+      "sha256": "ff4a662ce1d39e5c242b57b95b142487ede24d0b2c9cd99ba683437784f13d16"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/ae_app.h",
+  "output_sha256": "ff4a662ce1d39e5c242b57b95b142487ede24d0b2c9cd99ba683437784f13d16",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 12645
+    }
+  ]
+}

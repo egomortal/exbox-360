@@ -1,0 +1,447 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "src/core/math_gcc.cpp",
+      "sha256": "a5d945c362b683cec3a7a6b8a648b12158ffddea9198231738eb902cbf339a74"
+    }
+  },
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 52,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 129,
+      "length": 6
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 139,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 158,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 186,
+      "length": 66
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 257,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 286,
+      "length": 67
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 358,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 387,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 454,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 483,
+      "length": 64
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 554,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 582,
+      "length": 61
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 648,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 677,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 744,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 773,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 840,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 869,
+      "length": 64
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 940,
+      "length": 66
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1149,
+      "length": 23
+    },
+    {
+      "authored_utf8": "(v);\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1027,
+      "length": 31
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1060,
+      "length": 16
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1081,
+      "length": 66
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1149,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1027,
+      "length": 31
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1060,
+      "length": 16
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 254,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1236,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 22,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/av2/sdk-ps5-core-source/src/core/math_gcc.cpp",
+  "output_sha256": "62674341d75df869508651918b94ddb1479876291ee74107e229366497cb0081"
+}

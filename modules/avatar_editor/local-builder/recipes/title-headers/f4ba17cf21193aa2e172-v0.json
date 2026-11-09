@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/rex/kernel/xam/apps/xlivebase_app.h",
+      "sha256": "2cbcb68427a3b1be659aaa4ad2d0c86d3c84c93d8b4e9da081cefdbd876045f1"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/rex/kernel/xam/apps/xlivebase_app.h",
+  "output_sha256": "2cbcb68427a3b1be659aaa4ad2d0c86d3c84c93d8b4e9da081cefdbd876045f1",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2713
+    }
+  ]
+}

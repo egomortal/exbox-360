@@ -1,0 +1,486 @@
+{
+  "schema": 1,
+  "scope": "Unchanged user SDK host headers already pinned in the reviewed SDK source manifest; no source bodies",
+  "files": {
+    "include/rex/ppc.h": [
+      "150d14119cc373096588ea71f7d4b63403e9dc9298fc59ef096d6d18baba837d",
+      "51abbd8a5a3889d7b4d06193ab5b2599e7a33bb498dddfac888885f071023c9a"
+    ],
+    "include/rex/hook.h": [
+      "c59cfc587abd493df0e5c9d841c98ca4be54616d78fb51e6da6c5a8d2c93cd89",
+      "536167e0619cac00dc5a48d56d4f99e8e1f04c3bb582dba76246fdba996a74d4"
+    ],
+    "include/rex/logging.h": [
+      "95317484f12664bfa43a970215925b3049b2b1971e5df07421d7a840667b742f",
+      "6d96fc2a4b1e9d2b15fef1d3d7b5c9df55ca4ae84b6d908d0c5f8bb8b7caf036"
+    ],
+    "include/rex/logging/types.h": [
+      "b177eb54d26df180b6b7bdf35f377ac1e40f45bc6d57e626c26d6976059fa12c",
+      "5e7aa940c2eff793bd4ced638e7798da15e3f9a7f611237622ebe93edf0e5266"
+    ],
+    "include/rex/logging/api.h": [
+      "afb0f62d193785a618e399e16600947ca409ccf2f6a00b3187e10d5be31fed73",
+      "5c6fcff6b3cce7407a79ba1e6e8bdfcea96cdb52f4f38bfd9c05c399e45a4f83"
+    ],
+    "include/rex/cvar.h": [
+      "2fde6bab7a2b1ce038e11cbf8855aefa07c1cc657c0862114a1522c4f41c4de1",
+      "759be3d33431f0b5ed661d56956617bb70a984286dbf299f2deac8657f81026a"
+    ],
+    "include/rex/assert.h": [
+      "ad25d6dc69545e6ae2c7c3ee749261fe428be74c4f52d382ebad647ceec2d1ce",
+      "1ca1b9b4a9e84a591840a384e2a82aeda7708e8235c16fbee3b50ca338961a94"
+    ],
+    "include/rex/string/utf8.h": [
+      "50be844769d2055ab3dc1d88b9333792da1e17f47543fd93e5ceebf8451900af",
+      "66c1bc652064ac3e7661061b9ec1514cb7df5bd2f404d65b5bfb42efbefdf7c4"
+    ],
+    "include/rex/vec128.h": [
+      "afb7cca94ba534eedf60a03139a061463ff6cae88211c91cf453147b6eb0c409",
+      "c0389f35bc70af479b626470fba39d325000bf8aa977e94f13238c703dd0dbb4"
+    ],
+    "include/rex/math.h": [
+      "1ed06133477ba37e623701b7961df0eb82bc95ef15897d9f53ff4f313f31d91f",
+      "ebfc1bc27feb5bdb9b1261cf52136aa80074da939f7f8de92681c0b4e52935bd"
+    ],
+    "include/rex/logging/macros.h": [
+      "105de1ea00abfaa70d5c4bdd4e47d376aed2127aa112945caa65b83a832ab97c",
+      "5da1053f40627361722a30951e742d662c4654ed0ac3009a0413ef631770621d"
+    ],
+    "include/rex/logging/assert.h": [
+      "4858b2b472bef229a57b24ac3261bab8f3c6076bde411bb18ebd5046d9cb91dd",
+      "5a1151f12f7f7ffc146bf1b09e1cc3b0d96707f8e629104cd1b2b733827fff17"
+    ],
+    "include/rex/logging/format.h": [
+      "1a94c7fa4c2fd5f5726a487f896f80b4b1519253a5258b96904d1bcb08d2d6c5",
+      "480d78f97eef7d617d7fa1d42a15e6ea99c5a942e3cad84a25e0968941b57f47"
+    ],
+    "include/rex/ppc/context.h": [
+      "5f84d78c38cf626cf4c8107293cd9824f6e8cf81225f201b608505698273dc36",
+      "0e4a20f7f80fa467fd0a0446b08e594cbe661d9b26aecc4e672894996ec9ced0"
+    ],
+    "include/rex/platform/fpscr.h": [
+      "e1f98e71630e8dc9efaae4db831679c64273419d612256d76193fb5bd8930adb",
+      "44f73be598e18871bcb25227143793af18e9053dfd7fb14c4187a00d21bfcfba"
+    ],
+    "include/rex/types.h": [
+      "37e3f7ba20a4e7668d2253232f6e6cc7edd5f48846c7d5c80f498152c5bb7af2",
+      "a68fcf7e5ada68487de5ce95b676b081b0e6ac01a9eed9d487a902ffbb98e925"
+    ],
+    "include/rex/ppc/func.h": [
+      "1e3af378fafaff29996b9dc2e5184e0549da2ad81b3a7396c91340787167a912",
+      "d469f3d423a47d6db34ea17375c4a4df6be2f8f3686c226d31093ce8be919b33"
+    ],
+    "include/rex/ppc/function.h": [
+      "a132711cddf466c1945916260bcf41c3e5afb4fbca74a81b70bb01fb4cb274b6",
+      "f615af82dc6bc9e81ca3fbb17c0549e099fae0989d4a33fd9201b0c2b23ba9aa"
+    ],
+    "include/rex/system/kernel_state.h": [
+      "9e45cc465fd5a010a8dc59621e8d7788b1bb21ee36f5b4301175a84b1de7e000",
+      "c1e816790760d7d317a4f4c501924d16eda09ce3a175b11ea7ae4bdc85a95ae0"
+    ],
+    "include/rex/filesystem/vfs.h": [
+      "1eafb5d97b4a032e1a16e65ff853d23ef7fa33096c1a948b6ff9f08a49989315",
+      "d8f8b0c1e0451eba93025e3beb12b8a8f066ff8225b8bb6eb72d5087f3b0d59b"
+    ],
+    "include/rex/filesystem/device.h": [
+      "687087021591cfd8a1bb30c21a9772cb9d3418e442f739b1addeaa5276c35875",
+      "e67e999b69d94b3ebbeef6661c830d78fabb57ec741562247a85916b61eaeeeb"
+    ],
+    "include/rex/filesystem.h": [
+      "eb40cb47010047eef12ad2d7a9ff86aed32e92d79d4232480f9aec825d926b34",
+      "2b506c9ace45fb37975113c44226768dbb580e82678411121fb2bcef36578497"
+    ],
+    "include/rex/string.h": [
+      "fd598fe74edfb7881454af7eddb5efc817590b65fbd7c453fd1402ab6c277464",
+      "a1d55c80f0c98f3bad79f0833434cc2318f0cdf6104b4a0077c1e3a0818deff3"
+    ],
+    "include/rex/memory.h": [
+      "0088ad866ca91d21e1876d8608f1508d7122ee2ac0ce9fe9b7dbc443ae9ead15",
+      "d47be515f1bde7333c929e040a7010f1cdc249d18c4318917b6d8b65a6aa7ec6"
+    ],
+    "include/rex/memory/utils.h": [
+      "df4e2331fd7631d6fc6fbec68f7444b9f7b9c298c0b79671015f805adf1359a5",
+      "ade7adc1d5bb8f7e0286b5fd47c596a24a1e0a40cf2de4516174d1091e4e3e6f"
+    ],
+    "include/rex/memory/arena.h": [
+      "b7541b5f4f15d9c856665a3fa18c2f1d1c214183e2e40768808cb39264468c6c",
+      "8c162deaddf39e8431944836a35f7b315c62f18f297f10fd580401cf701610b0"
+    ],
+    "include/rex/literals.h": [
+      "c89b6c9368e17664150c31dc6509f4a89a737e373b97b6f47ef45512175a5610",
+      "b3bb6d4d68ab2951dc4be328725104491ce81503b115d89c619dd4bdf115274c"
+    ],
+    "include/rex/memory/mapped_memory.h": [
+      "d3034de4d3e38ef7fec913d36464754ba4330af167bceba63cfd6bbe65718ce5",
+      "727852b34a61b8d97228f9380f76142533b71c62dd2f8f0ae04aa1d824509573"
+    ],
+    "include/rex/memory/ring_buffer.h": [
+      "6f5bccfe4843b2321559413e98e746ac6912511857e0dee6dd8aa9270e6cb46b",
+      "f21d4b686fa5eac21409a38a810a317cda3a825cd93db9f9a99f10cabab66b37"
+    ],
+    "include/rex/system/xmemory.h": [
+      "21d05c176449d6dd12cfb4134bcad615565f4255458fde5e0a70915f1e05062b",
+      "75678ad15ca98a08184c32fe0c7adb8c02b5dac55932b85997e96e96b2883af4"
+    ],
+    "include/rex/system/mmio_handler.h": [
+      "c7a7f3c55c61571c480a4bd9763ba6002137e159d796c6fc0b5ca615940d824d",
+      "478d668d66f074a15a458690faa9132ac080fa549067d75ef02a9d0da29ebd91"
+    ],
+    "include/rex/thread/mutex.h": [
+      "c30a48097e9216ea54b93ce599fc122646e54bbdeae36335f71ef8bc907a79d4",
+      "f8d9de8da94eabb530e9817b4d2fd6332266ac554aae3cc4ae6cc93260fc34e8"
+    ],
+    "include/rex/filesystem/wildcard.h": [
+      "4c806d62c3780c37587798a55724dea773a0a2593df3ca226b87cb24cd18c5e5",
+      "7d1cf9c2164554722a14ce58cc8eb0d2712f8ddfb6fe8772d379cc16e68bc45e"
+    ],
+    "include/rex/string/buffer.h": [
+      "f925c44760f3ffab20bdabf02b9691b3c373f47430da98f71be957547d373f8b",
+      "20307a7a8d27069ee553166960fbec13e0d02db9f7c9819baa524f0534b4a681"
+    ],
+    "include/rex/system/xtypes.h": [
+      "f8bbb8b0a8a4f283e8791e3588298da1df31c0a5c0dc9d8d9ef9568169212384",
+      "0d319d2f5e3912ab92a9470349b3004212e7fed96bae78e0a0d7271efc0c1597"
+    ],
+    "include/rex/filesystem/file.h": [
+      "da3b1d7ce104c1f7766d979d49a15cdedbeb6d3a354f0fc0fa6d0fe966479ca0",
+      "3cecee60301f37b7f3baf65c3b8055e9917a8d0cae779468b58a3b24c20b395e"
+    ],
+    "include/rex/system/achievement_manager.h": [
+      "8eae10c42ffadef423422b49ef91d7a0a2465f3f1b2d9a7ffe129b6e4632f03e",
+      "90cde3b52a78f1cc1687435dac60c0471cf61156355174906cb72b8720cd8e4f"
+    ],
+    "include/rex/system/achievement_store.h": [
+      "178e37a68dc8db29ea244f27adfb0cf61877c3a7790ed6e5ce35ca5ba0d855f2",
+      "9d313dbf8575143fad0c45037a8b5f26db88824a995691ce37cde12d3c40dfdb"
+    ],
+    "include/rex/system/thread_state.h": [
+      "34f78435f1318b435f703fee701aa066a959edea0564bcc5fef718c45d4b0055",
+      "383f32288bec450071472c6e7576a53a489a6635cf1239f355facbc6c94d15bd"
+    ],
+    "include/rex/system/util/native_list.h": [
+      "22bff1372133fbdd2861de3af2ea992090ee139705d84957a413cd3b9e4f9e9f",
+      "83fcc3ad20366602751d32be8de64e2ff496a8775eb7acdb5f1b437e6b24ee0e"
+    ],
+    "include/rex/system/util/object_table.h": [
+      "3cd8296dbfe94c4676d182baf82fab9125acd1f36e9469ba31e5ace66edf09cc",
+      "b8f7e3ff2102350143d073b3c29ec7e08075474c8785597f68f1c69acceee558"
+    ],
+    "include/rex/string/key.h": [
+      "dc23dee3a83041ed853b43ee57b932cba43d86bf2bdaca0b14dd844d096ccf3f",
+      "a65d324caff90c951b40bc4257199d0e445478410519d1572baf358e14a90641"
+    ],
+    "include/rex/system/xobject.h": [
+      "a6bb24d43aea373e0ced84fd3b4edeb4ad2ee57c092308604b5d32796f1f0f6e",
+      "d57f45b6e770f7521503424b6e7965c5388519e03daa28a74c6a5022444ca537"
+    ],
+    "include/rex/thread.h": [
+      "3014415dc94ea4dd73025de846e99d8d08bb48f54f02722497ba8d1e2c0d4ccb",
+      "09972d968a29216eb5f9d6408af15e8abfba0029e39f057e2d860f79071a4359"
+    ],
+    "include/rex/chrono/clock.h": [
+      "e8e8eb600b555568e106efab59432dc19bde522a091595f8bbfed28a918cd749",
+      "c43cce9ab7f9a491c0f34c99d94006a50a514ed24f93e6522dad288cea0f0e49"
+    ],
+    "include/rex/thread/timer_queue.h": [
+      "30db6edcf561969a6adf5f43f2222d65e38416f2ef4719a943ef806dac614724",
+      "276de5b503ffc7423b9866356b50911851943516ff8ab1b758dde9fb82e4dc52"
+    ],
+    "include/rex/system/util/xdbf_utils.h": [
+      "92a02e96674d48746547ce80446202e5812a4c1fe0de3b9494bc62c88d6a4ab5",
+      "68b55aff6b033a6bd835bfbfbb14b1a2a7a92f5c25cfe603f4b4940eb10c87c2"
+    ],
+    "include/rex/system/xcontent.h": [
+      "801ad0a95defce1ae5bd2acc6164c0942fe3c4bba3be52fc7609f3c9d9eef802",
+      "d4dd85af6fe5b332d4a80c3b6cda31bcbc2cfde33e794782b3f5c01edd8779d4"
+    ],
+    "include/rex/system/xam/app_manager.h": [
+      "b21cbaab39de95b8287382effb3ea581d02ed35ace0e868f7f26a1d90f8b815f",
+      "4b8e6e073a1d9eb4ee007436f097a1be399dec17df24b8b1aa9c0f849b25b758"
+    ],
+    "include/rex/system/xam/content_manager.h": [
+      "6990884dead59294d9fd5761205782885e01efbc036038c4b29dab667d6b01c4",
+      "aeebc1cb5438e151ee3e554daa76812667d76c32f2be8424b6918b5013c8c8aa"
+    ],
+    "include/rex/system/xam/user_profile.h": [
+      "1ed6d5426f560f362835b89cd5c10b72988a0ba620afe395fa8ff22b08a31dbb",
+      "1c38a83d789d8d11a3127719d235dfa70c0b6fdbef48c3531a5b40978ad28523"
+    ],
+    "include/rex/stream.h": [
+      "8a561054a5fd6a9d153b20148b5d62de0216f7a7ed5b43efe9ad732a3eed30a1",
+      "60fa487def3115ab069dc0f8171fcb0be9197866f4eec556e867e9ed65472f2b"
+    ],
+    "include/rex/system/function_dispatcher.h": [
+      "875d661f855c2164f3d8a4d6bb3906c054b58fdb63f2a564160d95a44e487ad9",
+      "f0a0d107dd0d7bc78cef0294b8d61fe52406f0dfa6caf4ea8050b4c2c38eb781"
+    ],
+    "include/rex/system/export_resolver.h": [
+      "79cc92b7b9ec57b5eead04b26e28e5b3d481e7ac91d91a3bb3d44a9b327dfc58",
+      "622820d7e780294043687f781c9267a42377c5c13f391c76ad634433e4d24c23"
+    ],
+    "include/rex/ppc/intrinsics.h": [
+      "121c2ddd86917308c7f248ee0950baf04ce5c63c71658141165e93c5cf782451",
+      "ff80f0776af29d8557bbb5c186099857bcfd3ab3da12c1fee80245321e932d8e"
+    ],
+    "include/rex/ppc/stack.h": [
+      "6bf457fe2ec1a63393960c4357989910abb4fc1b586788b3ab21926adfe2ca50",
+      "92e4a8901c96364bfa6e2da91c898df4174f5769fc72467d1b94cdcf7df2f030"
+    ],
+    "include/rex/image_info.h": [
+      "7db89020783373bc3768b75947ad6c96313549685ae5e95098a46c4701a04f9a",
+      "941b6afccce3a847360e28ceffa054382ed874b790a354786deba93b0775fcb1"
+    ],
+    "include/rex/perf/counter.h": [
+      "ef361db73f4a5a047e8509077151883073ecc9bec09de754740eb903ddcd8a91",
+      "c76e7c524de76ebb18ee6071ecf9331d813dde53faacf063b39009e8261ec6bd"
+    ],
+    "include/rex/ui/window.h": [
+      "a0a13b7d07e030f2ec446eabe4abada5b788bd79e01af63f228ba2c3d0667999",
+      "fa39a3b0573810d60250a567444f2644c10796065e01d95404acd2ebdea76eed"
+    ],
+    "include/rex/ui/menu_item.h": [
+      "a80eb756a80fef9266f397157e0e2898eaf54eb535e86fffda4d78c197ff8054",
+      "69e5a3bc1679ffa8ffd59e76ad52276396dffb44a2a79eea56896d1110a8abf6"
+    ],
+    "include/rex/ui/ui_event.h": [
+      "5bc80cd9a3f82660387f25397b9bb4043263e94a63cdb3a60f09654fa100cc4a",
+      "82a301503c62ed5a19fbb4f888d3ef7ae84da144412675718618c655bfaeba46"
+    ],
+    "include/rex/ui/virtual_key.h": [
+      "bd634e956163ae054528cf5801137f8007a9316b08a7a21f3f9b5a5c6aaa3b63",
+      "ada8ee55d3c4478e29aa5477a3f5e14529394d392d2aa50904d8994a1c9bcb87"
+    ],
+    "include/rex/ui/presenter.h": [
+      "7f053b9eed03291ced11be4296c6f91b68e84bc097b73e78e61aaa6090d70f20",
+      "ff93bc25b76046cbf8c05520e14cfa87be94e18a846b29dfa8c1dd62f6e85c96"
+    ],
+    "include/rex/ui/flags.h": [
+      "a017796f801eac2ed7e5d6e304364c829b6e6795efff29f3ab38b96f7503ee8c",
+      "838076c4b6fdeb1b9ccc2d8522da52e370d21ce8a4ad406c47553852859789f3"
+    ],
+    "include/rex/ui/surface.h": [
+      "7ab91b78edc036fffac5d123168eb62ee6b88bc218cc884aa054bb18ce850730",
+      "267bb244e4cb9db1b284c73041525535f0951469ff90523cbd40529ef4c1fa80"
+    ],
+    "include/rex/ui/ui_drawer.h": [
+      "39ae3d4acce7594bec9aaa3ea548529844a567176642a4e06b3ef758b8eff1b1",
+      "3360dcddb63f78d54a4ce255ec828ef3d34e7b97eb3fdc43017c96d43e8e09f9"
+    ],
+    "include/rex/ui/window_listener.h": [
+      "5e0a1123c86ba4628b96d21bf111486990f7afd7a1bea49b49318245e441f844",
+      "cae2e82a81e647bd79a95195892fd32349778c8597d80ca8102c16abf6d762ff"
+    ],
+    "include/rex/ui/windowed_app_context.h": [
+      "191793f542abd19c822a9037988fafc56dc3b1edcaedf67eeb21445ef844faf9",
+      "aad6bfa56bfdfb9200056a346250b6fb6686618d1a07cdfe446c4c144afc3924"
+    ],
+    "include/rex/runtime.h": [
+      "8fcd287e79a6211d1052b12a6007bdd6be3fec200f968b3da190517aebf773b6",
+      "82d5df3f4a9e02197b7c65fdfcc8ca1a3e05841aacb346d0de36c9bc001bc81f"
+    ],
+    "include/rex/embedded_metadata.h": [
+      "9903ce736c79ad3428deb9d5bb9ec51752ae4947542e4bb75a063e69b16c3c72",
+      "8da8cc34e2f326530acf5eda0ced8d218c45238d002fe8c9b49b677c68280103"
+    ],
+    "include/rex/system/interfaces/audio.h": [
+      "4e564aa5ac989fc2e54e9926c9ebd3a82c819d40ed067438afafdf85237efea8",
+      "d9a351fc581b070d542f64f10053cf3b4d3e7fd9c36ec37a8f9dbac30a817816"
+    ],
+    "include/rex/system/interfaces/graphics.h": [
+      "648be06bf6cf7cef92de566165d1a97288482ab814b83a2d0a74d257c2768564",
+      "d5b0146d8ae93d075c2157e2d38766731268cfbb56f55a01bbb1b41e4b46081e"
+    ],
+    "include/rex/system/interfaces/input.h": [
+      "8c4b7ead4a95c2771c43b11561bde9b81da1b67e7114592ba95f89f45a5d1a03",
+      "100f7510bb79014d255edb5d6821c79963a28b1487a48e35917b69fad3d3dfe6"
+    ],
+    "include/rex/ui/keybinds.h": [
+      "b774eeed20edd323796d2d12854239b8594a47ee73bf1c154e4800d4fcf4d6cc",
+      "525fef033756c6a8896944c2759407cc00391ed80e184c6a6c2da90d0ceff16f"
+    ],
+    "include/rex/system/xmutant.h": [
+      "64fd25e7b0e6298e07180b6a6322dde6029b71f3da24df73dd9bc37cc5c44609",
+      "53c0e0884232fab9ccf9b318e514b84e769c7bd2effa77e1b444c53fca6b936b"
+    ],
+    "include/rex/system/xsemaphore.h": [
+      "994d5faf4ac4bc2100a49545feb910bf2dac528b5a26f990b21e695567153196",
+      "54c6d102b6bd28bfec57b72cbb2fc1bef6c32c7c65728ee95e3c194716b1caa4"
+    ],
+    "include/rex/system/xtimer.h": [
+      "9a42d744c641f0dbce954acc8cd6c949f1da5f4c1e35f48175c48604dfe21470",
+      "8d29b49312c6bb877b2f5ecd7b6cbe693d87c6b1ce5e43bfbe93c10e7a6aed9b"
+    ],
+    "include/rex/graphics/registers.h": [
+      "2ccf7732db706133acfec34f7d70659e3d12b0533bc51e8b95ca8137cc4d1c40",
+      "8c32f2a3b6ad2c1792bdd8c600ce9e74ccf7853e29f555ad9a9ad976fb75cc15"
+    ],
+    "include/rex/graphics/xenos.h": [
+      "f7dcbf856feaeb0350c9c9aaf5c16a768b4147fc487819cd513e0cc68fc16fd5",
+      "9410d446105084c35f7663814665c8370636bee23a50aab71d736dfce97f32dd"
+    ],
+    "include/rex/graphics/register_table.inc": [
+      "c9dfdbfe72763051736230850ee92eaf73b7e2e9be328ac8b83df7d3b5aa9e53",
+      "e9cec950b9fb00e1f53b8006280c762cf118df2f8ddd8d3388282c5784afdb38"
+    ],
+    "include/rex/kernel/xam/private.h": [
+      "fe0ae1b86863c5c030d051363633433820495aa505eb2a4073c0f3f11360eea2",
+      "ec54482b7c63709902fc10fde48128e6dd74de1747b657e5c0a5c1555ab2bc72"
+    ],
+    "include/rex/kernel/xam/module_export_groups.inc": [
+      "42bf122f940920f810049b577cfc5ea85bbf6c6dfa8ce4db7a7f4927e7a64ee5",
+      "e86da618a62e49919486a76c2cb51166cf96c326f76648a2e1152e82465ab25e"
+    ],
+    "include/rex/system.h": [
+      "4c57d3940c78a134308aacb55c49f4eb9e5fa70a546bbcdb37cf92673b7764ee",
+      "55371fa2fb2bc8013dfc099649e95e17e17bf5d7f0a931714fd518ca1b3b403f"
+    ],
+    "include/rex/system/flags.h": [
+      "060bc84369d12ee6413735941ba9682125f0bcc6607e6edc24b2776e16bd7eab",
+      "080a980337154af1748ffad03732436e32ef83a9cac009d9165a6029b52aff51"
+    ],
+    "include/rex/system/xenumerator.h": [
+      "519fd39e54ba343b0f7180b78ebe28c916b4d0de419b23778d6a7c5f3d434455",
+      "e49eec408f787d052039379afb6aebb8fb211297a6fe76e5dfbb356dcb0c9bf1"
+    ],
+    "include/rex/system/xio.h": [
+      "f743e1c96e86bc471661bbef67fd19ac5af1220083a503f4bfe0964cbd8b4431",
+      "fdf9e0956fc6119564770688bdf8a8397bfcd17b7f16a43ee260e12695e029d1"
+    ],
+    "include/rex/kernel/xam/apps/app.h": [
+      "2f8dcef37fff36b8551c3df025d4f7406ee7263b6e7a1ab17d53bd3350a9f0a3",
+      "381ff485ca4080b2af6ad1669237a401463bca7a27064ff53b0a6e198dbd4e82"
+    ],
+    "include/rex/kernel/xam/apps/xgi_app.h": [
+      "44b1cb51f959b8b50339e28278a9f2512b69126b7223c4296004ea7369eb36b2",
+      "d143bc71f2e90153d1961e171b67d8b6fc2dd081924a125724c6ca94ffa703e7"
+    ],
+    "include/rex/kernel/xam/apps/xmp_app.h": [
+      "5e5ec87572d7a1757b4991fe3ec46fcb85a9b21a10518b2e9705518ee7a0a06b",
+      "011468d044a5bc77cccf0614c9e12b50b77dcd2695e508f65377b870b600a342"
+    ],
+    "include/rex/kernel/xam/module.h": [
+      "05c2361ed54ab805ed42df6f0a83bdf4d7e4922cac880fcdd874579c82caec63",
+      "28debf7ece4f829b55f896d7356aaf58a22a69eb28f52f2e015b0eb0465648c8"
+    ],
+    "include/rex/system/kernel_module.h": [
+      "9c08e56f335b78fbdb4a0d7360d4ea0cc5b64c2aad9c1af571747c896382c25a",
+      "1c1103e1a3ea594443e8182eb65a212ca6bb4416e938de0a052af72601cd6965"
+    ],
+    "include/rex/system/xmodule.h": [
+      "67ea80dc7eac97d971888f215c7a7591ee4e5a8f9517bf7cc2bbd75e3b997c33",
+      "c07bc088589e4135e76df1a4d050d81ed1a727c70230a09bd4e96c0644d678b7"
+    ],
+    "include/rex/system/module.h": [
+      "5b9867905bf7d5432ad2360f6461ae44d76410ad2301996502d9bd8136d01eb5",
+      "cd6102b2fd3384c134c8d486ae4f17f1dd6abc9f67387256d0868929447bac80"
+    ],
+    "include/rex/system/binary_types.h": [
+      "d4dc144f0e905bda384bef7b00aa1c832ba618a68fee64143b25669f6b2856d8",
+      "9659595de8df6a5468170e330323845f05af1430b73d65b11248adedf2a0629f"
+    ],
+    "include/rex/kernel/xbdm/module.h": [
+      "4aee6a00abfeaca0dec6e74b62adeeca34aef2af71daae6214b6cf4e0907338e",
+      "aa18ee1d0c40605ae2d9473c829aecbd9a271e1aeb36f2564bb397f1b413a2ee"
+    ],
+    "include/rex/kernel/xboxkrnl/module.h": [
+      "cef284ddac314fca6944f766df22262471faee1f28c5ef040f76980671c4845a",
+      "755fe97c3aa91a7da33db22802254b164b0acb33e04017950f604be52498c53d"
+    ],
+    "include/rex/kernel/xboxkrnl/rtl.h": [
+      "cd82d81ca9de665e7f2ee333b192f0b5eb4e51c4b4da2bbfef96ae899079ac63",
+      "72961b56a2ec5745788b29671edb72cd896048fe4d7e2b34bf66f301dcf8502d"
+    ],
+    "include/rex/hash.h": [
+      "10dd0a05673729cf304cc2979ae8047e22634ba5b1e7964a19b3b3ccb5fef427",
+      "ff2e0a2b363729024ebae4c9a9f12341a14dd7608acea6abe25679bbb150d5e6"
+    ],
+    "include/rex/graphics/format/ucode.h": [
+      "e820997c448f0fe4734738cac1526b841dde947e2dac568f56c022d1a55a59fb",
+      "e40a54376e415e5844149431c81025e83fbf206f0d958e94d0669bda9ed20f1d"
+    ],
+    "include/rex/graphics/pipeline/texture/info.h": [
+      "50e33125a0bb74237df00f9ab60a8f8108ac42546cdcbdeffea0fc3d3e6cfd1d",
+      "e12215db89fd8d104870a581fb5cbe53414e135cd44cc2175abe4999d905549e"
+    ],
+    "include/rex/graphics/pipeline/texture/util.h": [
+      "d370dded22778c3154eebe06ae2f4fcb7175e8a8e777012744c16391928db81b",
+      "e75fa8c3eea52c5af8cd90d27f44722d9bfaaed76ad58bb102d53a58d66815f7"
+    ],
+    "include/rex/audio/xma/context.h": [
+      "490aeff888c62666f0cab127fa728c18373f7432aba00b6fcac67b7921caec56",
+      "8c0b55da142472f224692003bc3942e994cdc1ba8bc8d7afb1ce957ca077ef93"
+    ],
+    "include/rex/kernel.h": [
+      "164cb1a9fe2ce3d9c0fafa1b7927b6ccff23803072147398fbb493b4acb94019",
+      "116699d524cd7cc1694365b1a9fe56c16be4dc321cf772c10db1b88ac4525d04"
+    ],
+    "include/rex/system/xevent.h": [
+      "4cae57e08e859dcafbce253e2619d772db8df6e7247e70251a96bf53a2f28f4d",
+      "29b403bf9558ced04216fcde48d424c2405c62333d8c5668c6ffa60257604f5d"
+    ],
+    "include/rex/system/xiocompletion.h": [
+      "6d4151eb878f1055baa1fc4870f3888acd28c90716eb4c6e880523e10e0d8777",
+      "a0489e9a0698c06641262abcaaff2275dc407c1f61b678708e16b83e56d2782c"
+    ],
+    "include/rex/audio/xma/decoder.h": [
+      "0f77e87e3a81a14ed50231587009006e915871205328b32f598a673ec62f98f8",
+      "efe8fce851916507564a4868260967b6c6b4f44afd00e8f6878d2e8257fcb47a"
+    ],
+    "include/rex/audio/xma/register_file.h": [
+      "45aebf8621b9e598edfa2b13356d46bec6a0e4af7547f8b9e5750d398c79b19f",
+      "0c0d2c7a8ccaa837c96c78069e87ad59df557afcfc895e84c4fbeb3477cfefd6"
+    ],
+    "include/rex/audio/xma/register_table.inc": [
+      "f036b553b353a90b18dd7642a233ec0abcb98d372c644259263f55459acbaa7f",
+      "4d9f03d05e284572dbbbfcd361c0d6f9b7d954d9d1c58706d699d8969b219902"
+    ],
+    "include/rex/bit.h": [
+      "1ccc20c614989c3f1ea410928a42ecf6d1ec811bb20883b20e37d3227276e47d",
+      "8d8a5089241948b5479bd168e2e6157daa82eedec0a0068b65919bccaed38648"
+    ],
+    "include/rex/audio/xma/helpers.h": [
+      "4e0e6301bae9af312f4257981c5e19939549741c9eaa079cce7f8da4c84cd821",
+      "b22d070897b060a743324dcb19639cb78a8e197d61a634cd2596db59a04c2c70"
+    ],
+    "include/rex/dbg.h": [
+      "c0e04dc7d83d61b97aec89610cae059bfc016b0381f1bedc865b43a883b3f0aa",
+      "834182a4317a586348acc6703e55408d0da576b716115916aad316a46d3a83d9"
+    ],
+    "include/rex/exception_handler.h": [
+      "c4aa6352ef088fe31bebd4faa68a717c07871120e4256d37c74ca9438c20b17d",
+      "d303f397257057c02405d0c7354a1214816916d7550d4189e301c646285bf128"
+    ],
+    "include/rex/audio/audio_system.h": [
+      "8f8a2e71a05258b07dd0a2562f668d97c0fe2327100464a1758d0841fd0823c9",
+      "668355c5a87a7e403a4cdba75921ce5712329441a8e0523faad98806ea76e990"
+    ],
+    "include/rex/audio/audio_driver.h": [
+      "99175ee003e21365d4f4597230da00ece7e4ae80bd4a8574c919c306d62ec777",
+      "4debcf594de490a0cc6b2559d8f787401fc6c30e377e081645f9c4e5081f107a"
+    ],
+    "include/rex/input/input.h": [
+      "290393ae03f0d81fa3619db4497e685ac43bbb6d5c58442da569f2a93530101d",
+      "99927b1e28c9fa7a658c27dcd026d5759f20c1c4d4691ae568981da11895cfab"
+    ],
+    "include/rex/input/input_driver.h": [
+      "8ba62757ca6b82f6bfd2eea70040f1111493494bac04a7923164aa94092478eb",
+      "7deee9e70addaaa59b149226d30b58ac8534597fb2c782cb187d46ece473d3e0"
+    ],
+    "include/rex/input/device.h": [
+      "27c9d4d1d33389f5af95998f19f261245891802f2ce041d6b6b85f4a4fb4e110",
+      "123736b03962b5a784beec30760a534b51171e37d89deb976e0de66cb01a4be4"
+    ],
+    "include/rex/input/input_system.h": [
+      "696037c34e8b9138d84beaf4a515a83da2bee9db50e889940781ec1992098b53",
+      "3993f38c2225ffbf9f542a3b222837e4d72de3acd90e4348b5560afeaf7bab96"
+    ],
+    "include/rex/input/device_assignment.h": [
+      "7569b79c27f444f66be07bc25b0ac62eb69073f30ec3469cd39c0568181116b4",
+      "eb8212c496d594d7c1b58aae9fd4bb02e03192ff50713436a7c48dbcc28e0573"
+    ],
+    "include/rex/input/state_merge.h": [
+      "895cbc03a6e138ebde630c722a747b178ae8387256a2566be2c2d238a4499b18",
+      "95d9361e39751665fea15581114ddd5f1f69ace5a2cff3628c142f27d8c1a3f9"
+    ]
+  }
+}

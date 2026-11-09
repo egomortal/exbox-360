@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/fault_diag.h",
+      "sha256": "07bcbd16633a5b0d4ecf1bfc87c3bb86757b67f24dded2ec32ed4e390feec032"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/fault_diag.h",
+  "output_sha256": "5680e0901d4cc079b288a3099c3f71da6bd9116a69e1164f724be08793689b4b",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 101
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 102,
+      "length": 12
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 116,
+      "length": 20
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 138,
+      "length": 90
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 229,
+      "length": 28
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 259,
+      "length": 24
+    },
+    {
+      "authored_utf8": "\r\n"
+    }
+  ]
+}

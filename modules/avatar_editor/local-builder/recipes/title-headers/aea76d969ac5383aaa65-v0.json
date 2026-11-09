@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/marketplace_key.h",
+      "sha256": "de2f2394cf5891535b98732bc1f2bbca5f82c32133b0feb711ecec21c7dbf1f7"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/kernel/xam/marketplace_key.h",
+  "output_sha256": "de2f2394cf5891535b98732bc1f2bbca5f82c32133b0feb711ecec21c7dbf1f7",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 206
+    }
+  ]
+}

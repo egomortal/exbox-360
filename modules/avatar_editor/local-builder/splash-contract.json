@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "sources": {
+    "source/project/private/l3-runtime-loading-20261103/runtime_loading.h": "adf612783acd731f257c2efc4442aac1722e2138feccb89e7f046e4f92722007",
+    "source/project/private/l3-runtime-loading-20261103/runtime_loading.cpp": "dbd51b1b2ac36302db5dd6d824255dbcfd1f17dde7a467a3bbe593ed85b9c900",
+    "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/gpu_renderer.cpp": "ed3040b1e681751cba0a5f81443fde29df9fca5467b3e3c959dab6ddec22f7a9",
+    "source/project/private/av2/title-native-source/kernel/xam/stb_image.h": "2d264ec3e6ce404fc2d0cfff4476c982eb3edf5a61122b03884fdef7bacd9deb"
+  },
+  "tests": {
+    "tests/startup_loading_test.cpp": "b8ecd9ad5e0472b1e542ea267d84cb8ba8ffb4f2ebc8ac30e33975799cd00b25",
+    "tests/splash_decoder.cpp": "6768dfabc51745c53b1805470719e67606a048fb7db280f3af06fbd6dad9639e",
+    "splash_fixtures.py": "d9e3f0ed751cf0a09def2c2a1ac67650d5525a74ea3bd35a85bda7c1d45f8429"
+  },
+  "loader": "source/project/private/l3-runtime-loading-20261103/runtime_loading.cpp",
+  "decoder_include": "source/project/private/av2/title-native-source/kernel/xam",
+  "payloads": [
+    "companions/assets/ui/loading-1080p.png",
+    "companions/assets/ui/loading-2160p.png"
+  ]
+}

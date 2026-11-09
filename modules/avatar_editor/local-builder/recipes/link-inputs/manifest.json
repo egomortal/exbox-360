@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "app",
+      "path": "authored/link/ps5-large-pie.ld",
+      "input_sha256": [
+        "9e67261afa3400172a0aebbc57bbb2c84a5e0bf3e092dbcabffbf826228ce01e"
+      ],
+      "output": "source/project/tools/native_editor/layout/ps5-large-pie.ld",
+      "output_sha256": "9e67261afa3400172a0aebbc57bbb2c84a5e0bf3e092dbcabffbf826228ce01e"
+    },
+    {
+      "root": "app",
+      "path": "authored/link/app-symbols.map",
+      "input_sha256": [
+        "03ba0dd61b8ac8f7492eb37f8a805b43eaac06bc8296f32a86f0b3fb9aa07e04"
+      ],
+      "output": "source/project/tools/native_editor/layout/app-symbols.map",
+      "output_sha256": "03ba0dd61b8ac8f7492eb37f8a805b43eaac06bc8296f32a86f0b3fb9aa07e04"
+    },
+    {
+      "root": "app",
+      "path": "authored/link/weaken-symbols.txt",
+      "input_sha256": [
+        "6ce2a0a32f185119ff9fd0cfbecae148cfe7a58cb7518dbaa7990b7eb7f4d040"
+      ],
+      "output": "source/project/private/av2/q7-static-hooks/weaken-symbols.txt",
+      "output_sha256": "6ce2a0a32f185119ff9fd0cfbecae148cfe7a58cb7518dbaa7990b7eb7f4d040"
+    },
+    {
+      "root": "vulkan-port-source",
+      "path": "vendor/ps5/sdk/stubs/agc_canary_link_stub.c",
+      "input_sha256": [
+        "16dea5eb87d3defce222150706cccc63767b6a9f30f1afea0d259333de19683c",
+        "c01388bcf00659a3c56d6afac705efb359b1b89c01f998fc5a72a7d5748dda75"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Vulkan/vendor/ps5/sdk/stubs/agc_canary_link_stub.c",
+      "output_sha256": "c01388bcf00659a3c56d6afac705efb359b1b89c01f998fc5a72a7d5748dda75"
+    },
+    {
+      "root": "vulkan-port-source",
+      "path": "vendor/ps5/sdk/stubs/agc_driver_canary_link_stub.c",
+      "input_sha256": [
+        "601e1c7ef28bbba8a860d7bb65188690b5df9ca48da94ebcd79ddaf2bbbf103b",
+        "80366a60f169371262cda69158f9a76336f68b624cef67ab7f176dacb19e7dd8"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Vulkan/vendor/ps5/sdk/stubs/agc_driver_canary_link_stub.c",
+      "output_sha256": "601e1c7ef28bbba8a860d7bb65188690b5df9ca48da94ebcd79ddaf2bbbf103b"
+    }
+  ],
+  "transforms": []
+}

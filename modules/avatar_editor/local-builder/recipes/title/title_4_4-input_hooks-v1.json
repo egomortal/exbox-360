@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/input_hooks.cpp",
+      "sha256": "b0f4269086ea5df219acd2e3c1bc301d22f14069a545ecb65fc59b91ccbb17dc"
+    }
+  },
+  "operations": [
+    {
+      "authored_utf8": "// input_hooks.cpp: keyboard keystroke synthesis for XUI navigation.\n//\n// The runtime's mouse/keyboard driver maps keybinds to gamepad state but\n// never feeds the keystroke queue, and the editor navigates through\n// XamInputGetKeystrokeEx. Capture the window's key events, map them through\n// the same keybind cvars the driver uses, and serve VK_PAD keystrokes with\n// key repeat whenever the runtime has none of its own. Real controllers keep\n// their native keystroke path through the delegated call.\n\n#include <atomic>\n#include <chrono>\n#include <cstdint>\n#include <deque>\n#include <mutex>\n#include <string>\n#include <string_view>\n#include <vector>\n\n#include <cstring>\n\n#include <rex/cvar.h>\n#include <rex/hook.h>\n#include <rex/logging.h>\n#include <rex/ppc/context.h>\n#include <rex/system/kernel_state.h>\n#include <rex/ui/keybinds.h>\n#include <rex/ui/virtual_key.h>\n\n#include \"input_hooks.h\"\n#include \"catalog_search.h\"\n\n"
+    },
+    {
+      "authored_utf8": "extern \"C\" REX_FUNC(av2_original"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6686,
+      "length": 24
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 68,
+      "length": 1
+    },
+    {
+      "authored_utf8": "namespace {\n\nusing Clock = std::chrono::steady_clock;\nusing rex::ui::VirtualKey;\n\nconstexpr uint16_t kKeystrokeKeyDown = 0x0001;\nconstexpr uint16_t kKeystrokeKeyUp = 0x0002;\nconstexpr uint16_t kKeystrokeRepeat = 0x0004;\n\nstruct PadBind {\n  uint16_t pad_vk;         // kXInputPad* value served to the guest\n  const char* cvar_name;   // keybind cvar holding the bind spec\n};\n\nconst PadBind kPadBinds[] = {\n    {uint16_t(VirtualKey::kXInputPadA), \"keybind_a\"},\n    {uint16_t(VirtualKey::kXInputPadB), \"keybind_b\"},\n    {uint16_t(VirtualKey::kXInputPadX), \"keybind_x\"},\n    {uint16_t(VirtualKey::kXInputPadY), \"keybind_y\"},\n    {uint16_t(VirtualKey::kXInputPadDpadUp), \"keybind_dpad_up\"},\n    {uint16_t(VirtualKey::kXInputPadDpadDown), \"keybind_dpad_down\"},\n    {uint16_t(VirtualKey::kXInputPadDpadLeft), \"keybind_dpad_left\"},\n    {uint16_t(VirtualKey::kXInputPadDpadRight), \"keybind_dpad_right\"},\n    {uint16_t(VirtualKey::kXInputPadStart), \"keybind_start\"},\n    {uint16_t(VirtualKey::kXInputPadBack), \"keybind_back\"},\n    {uint16_t(VirtualKey::kXInputPadLShoulder), \"keybind_left_shoulder\"},\n    {uint16_t(VirtualKey::kXInputPadRShoulder), \"keybind_right_shoulder\"},\n    {uint16_t(VirtualKey::kXInputPadLThumbUp), \"keybind_lstick_up\"},\n    {uint16_t(VirtualKey::kXInputPadLThumbDown), \"keybind_lstick_down\"},\n    {uint16_t(VirtualKey::kXInputPadLThumbLeft), \"keybind_lstick_left\"},\n    {uint16_t(VirtualKey::kXInputPadLThumbRight), \"keybind_lstick_right\"},\n};\n\nstruct QueuedStroke {\n  uint16_t pad_vk;\n  uint16_t flags;\n};\n\nstruct HeldPad {\n  uint16_t pad_vk;\n  VirtualKey source_key;\n  Clock::time_point down_time;\n  Clock::time_point last_repeat;\n};\n\nstd::mutex g_mutex;\nstd::deque<QueuedStroke> g_queue;\nstd::vector<HeldPad> g_held;\n\nstd::string_view TrimSpaces(std::string_view s) {\n  while (!s.empty() && s.front() == ' ') s.remove_prefix(1);\n  while (!s.empty() && s.back() == ' ') s.remove_suffix(1);\n  return s;\n}\n\nbool EqualsNoCase(std::string_view a, std::string_view b) {\n  if (a.size() != b.size()) return false;\n  for (size_t i = 0; i < a.size(); ++i) {\n    if (::tolower(uint8_t(a[i])) != ::tolower(uint8_t(b[i]))) return false;\n  }\n  return true;\n}\n\n// One bind token: [Shift+|Ctrl+|Alt+]* KeyName. A token with modifiers\n// requires them held; a bare token requires none, so a Shift chord does not\n// also fire the unmodified bind.\nbool TokenMatches(std::string_view token, VirtualKey key, bool shift, bool ctrl, bool alt) {\n  bool want_shift = false, want_ctrl = false, want_alt = false;\n  for (;;) {\n    size_t plus = token.find('+');\n    if (plus == std::string_view::npos) break;\n    std::string_view mod = TrimSpaces(token.substr(0, plus));\n    if (EqualsNoCase(mod, \"Shift\")) want_shift = true;\n    else if (EqualsNoCase(mod, \"Ctrl\")) want_ctrl = true;\n    else if (EqualsNoCase(mod, \"Alt\")) want_alt = true;\n    else return false;\n    token.remove_prefix(plus + 1);\n  }\n  token = TrimSpaces(token);\n  if (token.empty()) return false;\n  if (rex::ui::ParseVirtualKey(token) != key) return false;\n  return shift == want_shift && ctrl == want_ctrl && alt == want_alt;\n}\n\nbool BindMatches(const std::string& spec, VirtualKey key, bool shift, bool ctrl, bool alt) {\n  std::string_view rest(spec);\n  while (!rest.empty()) {\n    size_t comma = rest.find(',');\n    std::string_view token = rest.substr(0, comma);\n    rest = (comma == std::string_view::npos) ? std::string_view()\n                                             : rest.substr(comma + 1);\n    if (TokenMatches(TrimSpaces(token), key, shift, ctrl, alt)) return true;\n  }\n  return false;\n}\n\nstd::string QueryBind(const char* name) {\n  if (!rex::cvar::GetFlagInfo(name)) return {};\n  return rex::cvar::Query<std::string>(name);\n}\n\n}  // namespace\n\nnamespace ae_input {\n\nvoid OnHostKey(VirtualKey key, bool down, bool shift, bool ctrl, bool alt) {\n  std::lock_guard<std::mutex> lock(g_mutex);\n  if (down) {\n    for (const PadBind& bind : kPadBinds) {\n      if (!BindMatches(QueryBind(bind.cvar_name), key, shift, ctrl, alt)) continue;\n      bool already = false;\n      for (const HeldPad& h : g_held) {\n        if (h.pad_vk == bind.pad_vk) { already = true; break; }\n      }\n      if (already) continue;\n      const auto now = Clock::now();\n      g_held.push_back({bind.pad_vk, key, now, now});\n      g_queue.push_back({bind.pad_vk, kKeystrokeKeyDown});\n    }\n  } else {\n    for (size_t i = 0; i < g_held.size();) {\n      if (g_held[i].source_key == key) {\n        g_queue.push_back({g_held[i].pad_vk, kKeystrokeKeyUp});\n        g_held.erase(g_held.begin() + i);\n      } else {\n        ++i;\n      }\n    }\n  }\n}\n\n}  // namespace ae_input\n\nnamespace {\n\n// Drain one synthesized keystroke, generating repeats for held keys.\nbool NextStroke(QueuedStroke* out) {\n  std::lock_guard<std::mutex> lock(g_mutex);\n  if (!g_queue.empty()) {\n    *out = g_queue.front();\n    g_queue.pop_front();\n    return true;\n  }\n  const auto now = Clock::now();\n  for (HeldPad& h : g_held) {\n    using std::chrono::milliseconds;\n    if (now - h.down_time < milliseconds(400)) continue;\n    if (now - h.last_repeat < milliseconds(100)) continue;\n    h.last_repeat = now;\n    *out = {h.pad_vk, uint16_t(kKeystrokeKeyDown | kKeystrokeRepeat)};\n    return true;\n  }\n  return false;\n}\n\n// The runtime's own export, reachable by name through the DLL's export table\n// even though this exe defines the same symbol for generated code.\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6271,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 68,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  static auto* original=&av2_original"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6593,
+      "length": 23
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6628,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 68,
+      "length": 1
+    },
+    {
+      "authored_utf8": "}\n\n}  // namespace\n\nREX_HOOK_RAW(__imp__XamInputGetKeystrokeEx) {\n  const uint32_t user_index_ptr = ctx.r3.u32;\n  const uint32_t flags = ctx.r4.u32;\n  const uint32_t keystroke_ptr = ctx.r5.u32;\n\n  // Real devices first: controllers deliver their own keystrokes.\n  if (PPCFunc* original = OriginalGetKeystrokeEx()) {\n    original(ctx, base);\n    if (ctx.r3.u32 == 0) {\n      if (!keystroke_ptr) return;\n      auto* memory = rex::system::kernel_state()->memory();\n      uint8_t* ks = memory->TranslateVirtual<uint8_t*>(keystroke_ptr);\n      if (!ks) return;\n      const uint16_t key = uint16_t((uint16_t(ks[0]) << 8) | ks[1]);\n      const uint16_t stroke_flags = uint16_t((uint16_t(ks[4]) << 8) | ks[5]);\n      if (!ae_search::HandleFilterPad(key, stroke_flags)) return;\n      ctx.r3.u64 = 0x800710D2u;  // X_ERROR_EMPTY: consumed by Filter/Sort.\n      return;\n    }\n  }\n\n  if (!keystroke_ptr) return;\n  if ((flags & 0xFF) && (flags & 0x01) == 0) return;  // gamepad queries only\n\n  QueuedStroke stroke;\n  if (!NextStroke(&stroke)) return;\n\n  if (ae_search::HandleFilterPad(stroke.pad_vk, stroke.flags)) {\n    ctx.r3.u64 = 0x800710D2u;  // X_ERROR_EMPTY: consumed by Filter/Sort.\n    return;\n  }\n\n  auto* memory = rex::system::kernel_state()->memory();\n  uint8_t* ks = memory->TranslateVirtual<uint8_t*>(keystroke_ptr);\n  if (!ks) return;\n  ks[0] = uint8_t(stroke.pad_vk >> 8);\n  ks[1] = uint8_t(stroke.pad_vk);\n  ks[2] = 0;  // unicode\n  ks[3] = 0;\n  ks[4] = uint8_t(stroke.flags >> 8);\n  ks[5] = uint8_t(stroke.flags);\n  ks[6] = 0;  // user index\n  ks[7] = 0;  // hid code\n  if (user_index_ptr) {\n    if (uint8_t* user = memory->TranslateVirtual<uint8_t*>(user_index_ptr)) {\n      user[0] = user[1] = user[2] = user[3] = 0;\n    }\n  }\n  ctx.r3.u64 = 0;  // X_ERROR_SUCCESS\n}\n"
+    }
+  ],
+  "output": "source/project/private/av2/title-native-source/input_hooks.cpp",
+  "output_sha256": "3cea2f1b3096704a26c9adb328cd0f0dff477bdcdbe8407fd75c4c4cacd3daad"
+}

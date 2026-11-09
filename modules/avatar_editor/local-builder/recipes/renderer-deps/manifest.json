@@ -1,0 +1,476 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_recompiler.cpp",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/shader_recompiler.cpp",
+      "output_sha256": "4d88c3e05712296fa1106fab8c989a8beb22ca388fd0ecb38d84e567536e33cf",
+      "input_sha256": [
+        "ea9d1bfe089db70b655bad55ea7d2084acde4323a2566b606c27d18a9bd06a48",
+        "4d88c3e05712296fa1106fab8c989a8beb22ca388fd0ecb38d84e567536e33cf"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/ucode_fingerprint.cpp",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/ucode_fingerprint.cpp",
+      "output_sha256": "c9b5a2fe7e80687e474090b67785e77d2a302f375fbbb3a18bd71342801ed18d",
+      "input_sha256": [
+        "9dbc5b313239ce3a3bf3e8cf454a60b41f65ac242bec26ebdaedc35ab0199a82",
+        "c9b5a2fe7e80687e474090b67785e77d2a302f375fbbb3a18bd71342801ed18d"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/xenosrecomp_core.cpp",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/xenosrecomp_core.cpp",
+      "output_sha256": "a4849fe814466e3db0f7ed6da491202347c9283b11ea04ae84b09fc0df304ac9",
+      "input_sha256": [
+        "a4849fe814466e3db0f7ed6da491202347c9283b11ea04ae84b09fc0df304ac9",
+        "23fd71d0395d60b748d898034d0930ccd41bcc0ea64c113e98cdaf95c8008f50"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/thirdparty/smol-v/source/smolv.cpp",
+      "output": "source/project/private/av2/q7-pack-source/thirdparty/smol-v/source/smolv.cpp",
+      "output_sha256": "cfd8be75874d7e7301752293105791b9c379449826123cd4435ca018ab8a6c18",
+      "input_sha256": [
+        "cfd8be75874d7e7301752293105791b9c379449826123cd4435ca018ab8a6c18",
+        "c3fc96b455ee173250f3302c187f1dea4dbc8ab45bf2ab370e63aa271ad0b790"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/plume_render_interface.h",
+      "output": "source/project/private/av2/q7-plume-source/plume_render_interface.h",
+      "output_sha256": "ecc8cc10f6c9d3edd7decab203c3f3829011c70747e86fb3024a94b7d9100b5d",
+      "input_sha256": [
+        "ecc8cc10f6c9d3edd7decab203c3f3829011c70747e86fb3024a94b7d9100b5d",
+        "ac8f076be32da4d63fb1ff45677f87701868ad8cad824762b195313516153830"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/plume_render_interface_builders.h",
+      "output": "source/project/private/av2/q7-plume-source/plume_render_interface_builders.h",
+      "output_sha256": "4de19415ff6c81364e6f546bb499b9b7d61a793491b98dbd4bcafaee0293f2bf",
+      "input_sha256": [
+        "4de19415ff6c81364e6f546bb499b9b7d61a793491b98dbd4bcafaee0293f2bf",
+        "4a665b0d11a821643f8d53022ebf2736aff162a9be66558402409b865bfacee9"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/plume_vulkan.h",
+      "output": "source/project/private/av2/q7-plume-source/plume_vulkan.h",
+      "output_sha256": "458d3f6c50b58b077a1a2e35facad4f8812642841faf2e0abf2b07be9b5aaa67",
+      "input_sha256": [
+        "458d3f6c50b58b077a1a2e35facad4f8812642841faf2e0abf2b07be9b5aaa67",
+        "e03790d80a81822568a25876cec935b0240884ed0883654aaff1801e89dd9a22"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/volk/volk.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/volk/volk.h",
+      "output_sha256": "cd43a33d960e3c6692e80225f94d924e5b3a1ed8c276106eb87bc65c73fdbe1f",
+      "input_sha256": [
+        "cd43a33d960e3c6692e80225f94d924e5b3a1ed8c276106eb87bc65c73fdbe1f",
+        "07b57de92678dfc6fade1a9ad8e52bcf1a7974964064abee86e35d4187532a0b"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vk_platform.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vk_platform.h",
+      "output_sha256": "7083b2b14ce2858b14474bcfe0ef31354d0e78f68bbe360f54b9361db259726d",
+      "input_sha256": [
+        "7083b2b14ce2858b14474bcfe0ef31354d0e78f68bbe360f54b9361db259726d",
+        "2fa47dd60cd94eb6fd8d7615953878f5664eb57fdff3b1b9b856c1d8f1496737"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_core.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_core.h",
+      "output_sha256": "8edef42197a067fbaa097ad8cdea0bb697a8050f26ab6e9e412ba00658f8f9b4",
+      "input_sha256": [
+        "8edef42197a067fbaa097ad8cdea0bb697a8050f26ab6e9e412ba00658f8f9b4",
+        "b8944f451db2231a07acbce90d1d6de2993fc6d656ab120cd833447ec9120710"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h264std.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h264std.h",
+      "output_sha256": "964818c2c2f98fa842b74de3c1ad72e959973fa087fd4facea73205f78e5e8d5",
+      "input_sha256": [
+        "964818c2c2f98fa842b74de3c1ad72e959973fa087fd4facea73205f78e5e8d5",
+        "0b715c26af3eecc950ebedcf6831fd8b8a7d6c662780fd8b8a37d9082ac07fae"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codecs_common.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codecs_common.h",
+      "output_sha256": "8aea50ea0ba86bd8a4dce0d4fc38a95ec40af79e43685e8aafadec20b686b1a2",
+      "input_sha256": [
+        "8aea50ea0ba86bd8a4dce0d4fc38a95ec40af79e43685e8aafadec20b686b1a2",
+        "7afc98e84d3bea72e40a65161463abbd4be2ff1e1853eca3f8c331afb7329a8b"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h264std_encode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h264std_encode.h",
+      "output_sha256": "b857cd260fe34db9a948b5a6f8f8887b4a181b6ec941a22cff91254ed7e7e8c6",
+      "input_sha256": [
+        "b857cd260fe34db9a948b5a6f8f8887b4a181b6ec941a22cff91254ed7e7e8c6",
+        "c68a1fa4ebadd1b50992a61fb93310a6686d5ea932b91b850d3ad9bc8dec488e"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h265std.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h265std.h",
+      "output_sha256": "93a2908bc41aafa679a95ce8a7d39903bb916b4509a12a047f66e9d076b2e2b0",
+      "input_sha256": [
+        "93a2908bc41aafa679a95ce8a7d39903bb916b4509a12a047f66e9d076b2e2b0",
+        "42a2daf1b396f1071f1855262bcadedd544b90da67e2c90d24885720177adf83"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h265std_encode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h265std_encode.h",
+      "output_sha256": "43903b73c96944fe6313a84a1798202f46dc7f80069d17a0b2823722bbe9629b",
+      "input_sha256": [
+        "43903b73c96944fe6313a84a1798202f46dc7f80069d17a0b2823722bbe9629b",
+        "aa8c75beac0962abf752a5ec741a42b1a108ee28fb6b3abcdc995e57e20c6c14"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h264std_decode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h264std_decode.h",
+      "output_sha256": "85064bd1d7e1fcd8cbd41714d8308889e36506f77fe65dd70f0ff553d08d0059",
+      "input_sha256": [
+        "85064bd1d7e1fcd8cbd41714d8308889e36506f77fe65dd70f0ff553d08d0059",
+        "9667ecc76eaba22e311e5d2d48b38af47ca307865ae35477897790343ba3ad14"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h265std_decode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_h265std_decode.h",
+      "output_sha256": "c028ab5ab2844944c750830cf12adf23d8f85aeeee62e70a10e0caa3f1544259",
+      "input_sha256": [
+        "c028ab5ab2844944c750830cf12adf23d8f85aeeee62e70a10e0caa3f1544259",
+        "38a7c0d6688280795efe00f9ce8506795afbbe558300c9f7eacd764daa42f7e2"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_av1std.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_av1std.h",
+      "output_sha256": "04c824e339c5af840cd00c62541e40e85b02490b6e230d68855ddf482e616c90",
+      "input_sha256": [
+        "04c824e339c5af840cd00c62541e40e85b02490b6e230d68855ddf482e616c90",
+        "3443226503a8bcd6b828dabacb8ebe40ece32d6d37274ffd2d855a504629c968"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_av1std_decode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_av1std_decode.h",
+      "output_sha256": "c0cb3e6715074ef8eb237e8da46eaf4d68eb1241867277156622466c6604c6e6",
+      "input_sha256": [
+        "c0cb3e6715074ef8eb237e8da46eaf4d68eb1241867277156622466c6604c6e6",
+        "2b912389d39d6627ee8af01e052e9557d213b27c0b79a0e25f5366cfe1942f1a"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_av1std_encode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_av1std_encode.h",
+      "output_sha256": "b27d64639ac67feced8513d4ce41028b250373cd4310c7c49dbf9e8af8d261da",
+      "input_sha256": [
+        "b27d64639ac67feced8513d4ce41028b250373cd4310c7c49dbf9e8af8d261da",
+        "93ad363de123988cd7b27acc7930f7f93497bc2e5d74f8420ee8ba18e8746e0a"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_vp9std.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_vp9std.h",
+      "output_sha256": "9a598e38e209b84ecf879611668f76d819573c003585b36a08b9180f4fd9f9b6",
+      "input_sha256": [
+        "9a598e38e209b84ecf879611668f76d819573c003585b36a08b9180f4fd9f9b6",
+        "80df697fad03a9acddadb8ae4944bb25b5df4b1a427157ad7fbdeb77112a3c89"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_vp9std_decode.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vk_video/vulkan_video_codec_vp9std_decode.h",
+      "output_sha256": "a69a09c5cbcd0461d8f8907633a8ca1d1e2a852373cc777e416aa4360ca71a02",
+      "input_sha256": [
+        "a69a09c5cbcd0461d8f8907633a8ca1d1e2a852373cc777e416aa4360ca71a02",
+        "318a21532405f31a7b977c340effbf5bff30790734153c29ed6ad9a8230efbaf"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_beta.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_beta.h",
+      "output_sha256": "f08f42e9c4835b41a157fe8c76fd1d64cc154b57d0bae40cd71a663c57e22e76",
+      "input_sha256": [
+        "f08f42e9c4835b41a157fe8c76fd1d64cc154b57d0bae40cd71a663c57e22e76",
+        "13e578c8829257c37f8b40625d7e5db8a732eef742d2c9e90d3891464173542c"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/volk/volk.c",
+      "output": "source/project/private/av2/q7-plume-source/contrib/volk/volk.c",
+      "output_sha256": "949b845d10fbbc2d8ec0872bb13acbdd42a867db7724d174cab6d9f097b5aedb",
+      "input_sha256": [
+        "949b845d10fbbc2d8ec0872bb13acbdd42a867db7724d174cab6d9f097b5aedb",
+        "a730ad456f44e2cf73a911f21eac88477d14c751cafc4c986536af494cdd8737"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/VulkanMemoryAllocator/include/vk_mem_alloc.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/VulkanMemoryAllocator/include/vk_mem_alloc.h",
+      "output_sha256": "66cf1a86c1dcfcd9aad0311bb2a652410955ff21eb848c1c20bf8d1e62793a0b",
+      "input_sha256": [
+        "66cf1a86c1dcfcd9aad0311bb2a652410955ff21eb848c1c20bf8d1e62793a0b",
+        "1869d860b9713dda74f9d226d85b3a16c1c360b5430e56b5a54131c4d9fdf168"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan.h",
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan.h",
+      "output_sha256": "007bc01393374df45208b4049c92ce4893c1f1d532ba382ad727b09bac401c0b",
+      "input_sha256": [
+        "007bc01393374df45208b4049c92ce4893c1f1d532ba382ad727b09bac401c0b",
+        "20c7e1ac42fe62b3ed526612c52ddfc21e2265f5c69ca9a5e9dd182cc4c8625b"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/pch.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/pch.h",
+      "output_sha256": "e2528c642514d4bfcbd74d1d3f5a66c32246124327a264c2fbec423a7127af60",
+      "input_sha256": [
+        "e2528c642514d4bfcbd74d1d3f5a66c32246124327a264c2fbec423a7127af60",
+        "db1ce1fcab2f4dd0323ea5a4d767556a874b3ce98e7a48e7479c119f0bd3b5b3"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/thirdparty/smol-v/source/smolv.h",
+      "output": "source/project/private/av2/q7-pack-source/thirdparty/smol-v/source/smolv.h",
+      "output_sha256": "2030c450cc18649747999362aec474b2e239d974ddc3285e0cf81ba8e956b1c0",
+      "input_sha256": [
+        "2030c450cc18649747999362aec474b2e239d974ddc3285e0cf81ba8e956b1c0",
+        "a4ef18392b5fed85844dec70c8fffe23b69ade92c8bea13e2986c97ad8872ca1"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/dxc_compiler.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/dxc_compiler.h",
+      "output_sha256": "df9faee84b0f00c06dd807a3ba89e52bb64cd49c6008bdf217ac8d59a45edef9",
+      "input_sha256": [
+        "5a3aa3091991cdd933b06b83555067feb8ab6ae12b1ce48983541e29da95487c",
+        "df9faee84b0f00c06dd807a3ba89e52bb64cd49c6008bdf217ac8d59a45edef9"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/ucode_fingerprint.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/ucode_fingerprint.h",
+      "output_sha256": "6c49d3de191bdf05aa7b01554b08127887da4e0dedf37483f74d74697f5c6568",
+      "input_sha256": [
+        "158b2670cf688b7c2b9328dc863046c7758593ea1b6a7c59a09f03efc4c9ddb6",
+        "6c49d3de191bdf05aa7b01554b08127887da4e0dedf37483f74d74697f5c6568"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_code.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/shader_code.h",
+      "output_sha256": "65d5f9b84460830ebc69e1d4091da835a469106597294173b49b2625f97087e4",
+      "input_sha256": [
+        "65d5f9b84460830ebc69e1d4091da835a469106597294173b49b2625f97087e4",
+        "f7e748314222a92f7ffb60263a19f797184ce0e02fcbecd32bb121e9295d8b58"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/xenosrecomp.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/xenosrecomp.h",
+      "output_sha256": "325d4bba81e5c9d135c7eede560f58ef3d04e3d04d54c40b1a1ac7c42c26bbc2",
+      "input_sha256": [
+        "325d4bba81e5c9d135c7eede560f58ef3d04e3d04d54c40b1a1ac7c42c26bbc2",
+        "bace2d27ee10671d28d79ac82e859c60783504d42602b6323c5020403e4feef6"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/shader.h",
+      "output_sha256": "6de8b70354c432fd6c146a12a23eda1ca8c1018e04b64ed48453db69454715b1",
+      "input_sha256": [
+        "6de8b70354c432fd6c146a12a23eda1ca8c1018e04b64ed48453db69454715b1",
+        "4e2807363c5e4439d8dd278ee4c865324f80739a03bdccabc5f17c039f426a28"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/constant_table.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/constant_table.h",
+      "output_sha256": "c5cf53032cb36ab839b91171012ba5da555ef34ccb1a859b2279df7ab0d345fd",
+      "input_sha256": [
+        "c5cf53032cb36ab839b91171012ba5da555ef34ccb1a859b2279df7ab0d345fd",
+        "675397e4faaec7deb68001e934decca9a1bc08f30ecf58c38bfab8c4688ffbb3"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_recompiler.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/shader_recompiler.h",
+      "output_sha256": "5a4f44a319a59924afa66746860bab4f149ee39494880e9aaf61ccf9f11c92c7",
+      "input_sha256": [
+        "5a4f44a319a59924afa66746860bab4f149ee39494880e9aaf61ccf9f11c92c7",
+        "8af74e70b84fdd4518149402d6ae4aaa545c119ac9629de2b377875a1e6d5e1b"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_common.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/shader_common.h",
+      "output_sha256": "3e5f28f175c381cfd4325dcc2825a5b990b152137815de1010c4a5d7b9277d6d",
+      "input_sha256": [
+        "3e5f28f175c381cfd4325dcc2825a5b990b152137815de1010c4a5d7b9277d6d",
+        "9ac5df82a24003b63508b502c1c46b97d35dbc1c8f10a0adc26713d1395e1b66"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/plume_apple.h",
+      "output": "source/project/private/av2/q7-plume-source/plume_apple.h",
+      "output_sha256": "393de5883d9d97dbf4b1350220c9781b94902e9401f1e4797d10d9fd50ab0e55",
+      "input_sha256": [
+        "393de5883d9d97dbf4b1350220c9781b94902e9401f1e4797d10d9fd50ab0e55",
+        "1838f2f07d352e15fae813abfdc0d541e122d8d0ccaa0d28692bc5a288244775"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/plume_d3d12.h",
+      "output": "source/project/private/av2/q7-plume-source/plume_d3d12.h",
+      "output_sha256": "71b75d681078dcd24164b9494a32c757ee6c99ec14884a1da4fce9cee096f7aa",
+      "input_sha256": [
+        "71b75d681078dcd24164b9494a32c757ee6c99ec14884a1da4fce9cee096f7aa",
+        "f662924183d07d03b0755265d0e95585f3dd2036a8180552200ddbf992b6f1f7"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/plume_metal.h",
+      "output": "source/project/private/av2/q7-plume-source/plume_metal.h",
+      "output_sha256": "4eebf754e782ff78a6313df3e6f53cf588a1ec9599d20b869d4d9b6ff35d8568",
+      "input_sha256": [
+        "4eebf754e782ff78a6313df3e6f53cf588a1ec9599d20b869d4d9b6ff35d8568",
+        "d677ea181e1e734d52b440872ed4dba23f64fa94ddd7469dd4a1e468dc1b2a9d"
+      ]
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/rexglue_shader_common.h",
+      "output": "source/project/private/av2/q7-pack-source/XenosRecomp/rexglue_shader_common.h",
+      "output_sha256": "4d41b051a948be6db35220eecf50aecd05f02f62e7b0ac4648da2813ee77aa55",
+      "input_sha256": [
+        "a1fa040e392b27335f12768670df95b4af552056736be9cccd44df2b0254f8fc",
+        "4d41b051a948be6db35220eecf50aecd05f02f62e7b0ac4648da2813ee77aa55"
+      ]
+    }
+  ],
+  "transforms": [
+    {
+      "label": "tools/XenosRecomp/XenosRecomp/dxc_compiler.cpp",
+      "variants": [
+        {
+          "path": "xenosrecomp-native-overlay-XenosRecomp_dxc_compiler_cpp-v0.json",
+          "sha256": "436e1ba0da169bb2d60a7331f87295183a6be0b60312457ac68ed7051274d1fe"
+        },
+        {
+          "path": "xenosrecomp-native-overlay-XenosRecomp_dxc_compiler_cpp-v1.json",
+          "sha256": "74ab2e5d7e908ca2691cbe5ea622f94b8886ad91375d66ac0842e8bfda99b519"
+        }
+      ]
+    },
+    {
+      "label": "thirdparty/plume/plume_vulkan.cpp",
+      "variants": [
+        {
+          "path": "project-overlay-or-generated-review-private_l3-p6-instant-splash-20261104_src_plume_vulkan_cpp-v0.json",
+          "sha256": "3c90f641eaaab0bbc460223723577c51fc1d6899a5590dc92065828973b046ad"
+        },
+        {
+          "path": "project-overlay-or-generated-review-private_l3-p6-instant-splash-20261104_src_plume_vulkan_cpp-v1.json",
+          "sha256": "06ca99c90bc2cd54e5d9c653777528926527bdb2bd460102683cc439020004b4"
+        }
+      ]
+    },
+    {
+      "label": "thirdparty/plume/plume_render_interface_types.h",
+      "variants": [
+        {
+          "path": "plume-native-overlay-plume_render_interface_types_h-v0.json",
+          "sha256": "fa1d4796049602941ed078b3468b1febad97e87d49aa1d1a19feb7ef6c84ecda"
+        },
+        {
+          "path": "plume-native-overlay-plume_render_interface_types_h-v1.json",
+          "sha256": "9d43e99c9531729ea48be40d77b1b6b2cb421308e7ce945c4afbd1257da5774c"
+        }
+      ]
+    },
+    {
+      "label": "thirdparty/plume/plume_vulkan.cpp",
+      "variants": [
+        {
+          "path": "plume-native-overlay-plume_vulkan_cpp-v0.json",
+          "sha256": "fc955f860d138914ef7e0e4e2e0305f0a71e4500f76bbfa18f56335b9dd06ac4"
+        },
+        {
+          "path": "plume-native-overlay-plume_vulkan_cpp-v1.json",
+          "sha256": "6f96f93e99bb2ad3ed97d29dabf47e7b2607c3a41807ed837c6192de8431b3e1"
+        }
+      ]
+    }
+  ],
+  "deferred_outputs": [
+    {
+      "output": "source/project/private/av2/q7-plume-source/av2_boot_log.h",
+      "sha256": "42e4b18d998001700e1b15b6da0392ac9811ea5b9c667611c60ee9307bb87cb4",
+      "producer": "authored project glue"
+    },
+    {
+      "output": "source/project/private/av2/q7-plume-source/av2_display_surface.h",
+      "sha256": "930e7036bffd668b51716cdedc106d6b24d5c940fe2183c8337669b40c1c5a9c",
+      "producer": "authored project glue"
+    },
+    {
+      "output": "source/project/private/av2/q7-pack-source/generated/xenosrecomp_abi_gen.h",
+      "sha256": "cb4cac8e18fbfaa06258255cb5e2a7aeb4c455ad16fac48aa7369553ab01a7ca",
+      "producer": "generate_config_headers.py"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/input_hooks.h",
+      "sha256": "8e5945f121f65e74940fadc43f13c30ccf223865eeb0f4bface73291d3626857"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/input_hooks.h",
+  "output_sha256": "f4be0968276c251b96eadeb44643279840d5a87102bdde1a749eb561d7766b32",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 77,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 155,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 191,
+      "length": 12
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 205,
+      "length": 31
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 238,
+      "length": 20
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 259,
+      "length": 84
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 344,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    }
+  ]
+}

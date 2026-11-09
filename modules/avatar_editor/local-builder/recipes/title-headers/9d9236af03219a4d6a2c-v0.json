@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/closet.h",
+      "sha256": "05abc2fdc2e5703556396edebf2d1ba1604c7261ff54df1994abd2f97d21bb07"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/closet.h",
+  "output_sha256": "05abc2fdc2e5703556396edebf2d1ba1604c7261ff54df1994abd2f97d21bb07",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 6612
+    }
+  ]
+}

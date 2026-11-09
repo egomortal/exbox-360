@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/memory_block.h",
+      "sha256": "a768aa7619023bc9ca916ebf6a909f611e3d814fa06ea45e210491594e035c5e"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/memory_block.h",
+  "output_sha256": "a768aa7619023bc9ca916ebf6a909f611e3d814fa06ea45e210491594e035c5e",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2229
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/rex/kernel/title_id_utils.h",
+      "sha256": "c637b6126386eb1765c8a8b936ca7abec2e914f46d77a372ac8129417b7caa48"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/rex/kernel/title_id_utils.h",
+  "output_sha256": "c637b6126386eb1765c8a8b936ca7abec2e914f46d77a372ac8129417b7caa48",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 4151
+    }
+  ]
+}

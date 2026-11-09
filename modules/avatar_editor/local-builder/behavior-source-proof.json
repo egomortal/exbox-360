@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "validation_kind": "previously run and reused source validation",
+  "fresh_full_application_execution": false,
+  "previous_full_application_receipt_sha256": "a82e0cea874c6bbef3042061ae4787c8c8f8fea6e2f3183c801637d83f2fabc9",
+  "previous_receipt_status": "PASS",
+  "previous_scope": "Essential Save/Discard/Cancel-Save lifecycle plus exact immutable seed/cancel/preview replay; O2; no performance or native-execution claim",
+  "semantic_cases": 3,
+  "replay_flows": 3,
+  "exact_replay_frames": 1096,
+  "source_sha256": {
+    "adapter.cpp": "3282dbf38ce77640b98f8099eaea52394e691ea24c89ac3bac9284d4ec1d0a9a",
+    "policy.h": "d64e40daf8d33737361d11985416c71c236b5c495439f645f3b377bf58c169e7",
+    "wearable.h": "52eecdec5c94920936342863f0b762b2b0efc3248be1b215325743c91dff7358"
+  },
+  "focused_harness_sha256": "9b13a58df481f01833b973c49b0a6c49129cab7e22b8423e9fc99de5d5568121",
+  "focused_scope": "Actual PPCContext with mocked original delegates; public entry suppression, deadline, cancellation and context restoration; not full application execution",
+  "limits": "This metadata records prior source validation; it is not a fresh PASS receipt for a newly compiled editor. Require the local focused gate, exact source guards and native verification before packaging."
+}

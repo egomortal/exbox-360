@@ -1,0 +1,698 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/notify_hooks.cpp",
+      "sha256": "129cad1aacba4cef96daeed6b3edf18a029badeafe523a94a42bd84fc674025e"
+    }
+  },
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 61,
+      "length": 75
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 138,
+      "length": 72
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 212,
+      "length": 76
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 290,
+      "length": 72
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 364,
+      "length": 75
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 441,
+      "length": 74
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 517,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 546,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "authored_utf8": "#include <cstring>\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 592,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 615,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 641,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 671,
+      "length": 36
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "authored_utf8": "extern \"C\" REX_FUNC(av2_original"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1865,
+      "length": 25
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "authored_utf8": "extern \"C\" REX_FUNC(av2_original"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2236,
+      "length": 33
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 56,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 711,
+      "length": 11
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 726,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 785,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 847,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 901,
+      "length": 46
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 951,
+      "length": 43
+    },
+    {
+      "copy": "upstream",
+      "offset": 56,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  if (std::strcmp(name,"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1975,
+      "length": 33
+    },
+    {
+      "authored_utf8": " == 0) return &av2_original"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1865,
+      "length": 24
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "authored_utf8": "if (std::strcmp(name,"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2361,
+      "length": 41
+    },
+    {
+      "authored_utf8": " == 0) return &av2_original"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2236,
+      "length": 32
+    },
+    {
+      "authored_utf8": ";\n"
+    },
+    {
+      "authored_utf8": " "
+    },
+    {
+      "copy": "upstream",
+      "offset": 1135,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1222,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1227,
+      "length": 58
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1287,
+      "length": 37
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1326,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1390,
+      "length": 11
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1403,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1408,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1461,
+      "length": 63
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1526,
+      "length": 67
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1595,
+      "length": 70
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1667,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1731,
+      "length": 89
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1222,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1827,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1846,
+      "length": 46
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1894,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1931,
+      "length": 78
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2011,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2031,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1390,
+      "length": 11
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1403,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2070,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2094,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1222,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2141,
+      "length": 74
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2217,
+      "length": 54
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1894,
+      "length": 35
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1931,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2340,
+      "length": 63
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2011,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2031,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1390,
+      "length": 11
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1403,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2070,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 2094,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    },
+    {
+      "copy": "upstream",
+      "offset": 1222,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 55,
+      "length": 2
+    }
+  ],
+  "output": "source/project/private/av2/title-native-source/notify_hooks.cpp",
+  "output_sha256": "ac51dd084c2f6d79da01c87081ec977f5ce6cc652eb04a8da0050ebaa5a242a1"
+}

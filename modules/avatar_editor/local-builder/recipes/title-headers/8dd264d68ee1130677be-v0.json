@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/precise_sleep.h",
+      "sha256": "d93f0a7d5a36509c9e2eeb6648d26dd4aa7a75708c558794f5aafc9254f5e31b"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gpu/precise_sleep.h",
+  "output_sha256": "d93f0a7d5a36509c9e2eeb6648d26dd4aa7a75708c558794f5aafc9254f5e31b",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2209
+    }
+  ]
+}

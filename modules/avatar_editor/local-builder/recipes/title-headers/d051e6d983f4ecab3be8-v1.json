@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gamma_ramp.h",
+      "sha256": "e9e8654d528c317d88adb78a98d77845f31e111ad99b9f7d0f9951badbf1e3fe"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/gamma_ramp.h",
+  "output_sha256": "a371d0dc16326cd605d97062720e7d7988893655589ccc6078fcfa7ebc7fcf9e",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 103
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 104,
+      "length": 12
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 118,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 135,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 153,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 173,
+      "length": 53
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 227,
+      "length": 69
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 297,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/guest/d3d_device.h",
+      "sha256": "12c95dffba0846bddb334fe249c266e044a2e5529947a2d5f1c24f2258e51b19"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gpu/guest/d3d_device.h",
+  "output_sha256": "12c95dffba0846bddb334fe249c266e044a2e5529947a2d5f1c24f2258e51b19",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 48674
+    }
+  ]
+}

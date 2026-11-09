@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/gpu_burst_timing.h",
+      "sha256": "5e54097e50234ee3fcc20d93ef7fff309ed9da5267a98185560b07e26de486a8"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gpu/gpu_burst_timing.h",
+  "output_sha256": "5e54097e50234ee3fcc20d93ef7fff309ed9da5267a98185560b07e26de486a8",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 684
+    }
+  ]
+}

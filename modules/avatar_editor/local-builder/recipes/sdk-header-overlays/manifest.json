@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "app",
+      "path": "authored/project/modules/avatar_editor/native/guest_memory_bridge.h",
+      "input_sha256": [
+        "24428c28368247d6d79d078d7c25dd69faddf32f9743490539b43bbcf14c1cc0"
+      ],
+      "output": "source/project/private/av2/sdk-ps5-core-source/include/rex/av2_native_memory.h",
+      "output_sha256": "24428c28368247d6d79d078d7c25dd69faddf32f9743490539b43bbcf14c1cc0"
+    }
+  ],
+  "transforms": [
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/filesystem/devices/host_path_device.h",
+      "variants": [
+        {
+          "path": "header-00-v0.json",
+          "sha256": "7d4396487cffeaabb2eabc9762f8c592b5e50eed20fc805138f474f5fd9377cc"
+        },
+        {
+          "path": "header-00-v1.json",
+          "sha256": "21b7cc5bccbb3fecc4926ed728325e7afb4a30eb95ee8682fd525769f121b718"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/filesystem/devices/host_path_entry.h",
+      "variants": [
+        {
+          "path": "header-01-v0.json",
+          "sha256": "85d01b0d6eaed94a995a3310ad51d1bfb0d4ce776177961ef9a1b323e79765cf"
+        },
+        {
+          "path": "header-01-v1.json",
+          "sha256": "000eb418a274d30c25dd7646e827420c5d18ad7a8ada2c82e8c1bd547b39c2a2"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/filesystem/entry.h",
+      "variants": [
+        {
+          "path": "header-02-v0.json",
+          "sha256": "43d4fbd4c79037aa2de4d55bd51bb71363c063e6fe86f2fa2af7d47017b8ee41"
+        },
+        {
+          "path": "header-02-v1.json",
+          "sha256": "365aae7e841852b4fd9a954297f9047e40240088cd3f13b18762e2825b27da38"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/system/xfile.h",
+      "variants": [
+        {
+          "path": "header-03-v0.json",
+          "sha256": "28ac34a674b6e10ab2869c22734eb539e9da133c1b532c412ed9c8720cc9f90c"
+        },
+        {
+          "path": "header-03-v1.json",
+          "sha256": "f61f82eb66235bbd70890b2a56239e88f65bc28f0f5f75e42678654213d72517"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/thread/fiber.h",
+      "variants": [
+        {
+          "path": "header-04-v0.json",
+          "sha256": "ee2565dfa2977e46bc8e880cbdf1e509ce807e806cc0e8637bc8cbca2bb6ce23"
+        },
+        {
+          "path": "header-04-v1.json",
+          "sha256": "7f9e7d177206e78baca18a360949df0de4aab5d009f528e7da463a5f501313bc"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/ui/renderdoc_api.h",
+      "variants": [
+        {
+          "path": "header-05-v0.json",
+          "sha256": "e632c7113e165166f2edb947701034f456cf4cb20aae55008a3074c9aba4998e"
+        },
+        {
+          "path": "header-05-v1.json",
+          "sha256": "b063075dd24cd7fd309d6a577fde0d8b3cb0c96c3397c12c3cbc06eee1e5edbf"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-host-source/include/rex/ui/vulkan/api.h",
+      "variants": [
+        {
+          "path": "header-06-v0.json",
+          "sha256": "cab0ec6792c5139384acfdf0ab30b820e1111fb885d94f5ff83d64f0a7bbce61"
+        },
+        {
+          "path": "header-06-v1.json",
+          "sha256": "e34dda0d6026f56cc6e49203d8e0382029983c3fcc28d8d1787c06b400245a58"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/include/rex/chrono/chrono_steady_cast.h",
+      "variants": [
+        {
+          "path": "header-08-v0.json",
+          "sha256": "289571b2d9caf534a6a8fa374912bb6b309878c9458667ba152bd63a64edf7ed"
+        },
+        {
+          "path": "header-08-v1.json",
+          "sha256": "b90f4dca3f32590eb520efd1bd8e278040627d9d4e295ee5193962ebca52990a"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/include/rex/filesystem/devices/host_path_device.h",
+      "variants": [
+        {
+          "path": "header-09-v0.json",
+          "sha256": "b2f633e0926af42683ec15311b210c7bdd94e489a7a1fd9164211fdb9126f37f"
+        },
+        {
+          "path": "header-09-v1.json",
+          "sha256": "5027e98226128545f804fb534f39cac22af547b6a61287ec438b64c3369326fd"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/include/rex/filesystem/devices/host_path_entry.h",
+      "variants": [
+        {
+          "path": "header-10-v0.json",
+          "sha256": "26fcd05dc682b499f482013c9ec4680a94122d5e090a1e09b23948dce866bf7e"
+        },
+        {
+          "path": "header-10-v1.json",
+          "sha256": "7e7b4af550bbc544d6760e15fdf7566fa86e2825795d49edb77f660ce2b2e7c6"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/include/rex/filesystem/devices/stfs_xbox.h",
+      "variants": [
+        {
+          "path": "header-11-v0.json",
+          "sha256": "bb08b39e27aa780f00b3ebfeeee0fb08fccfc60e5066905d08e67fcf59e0f9ee"
+        },
+        {
+          "path": "header-11-v1.json",
+          "sha256": "504cb00072f8dc87221a23fb8fc4aea50dc94c23f92b72f69c5816d00ccdd3f3"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/include/rex/ui/renderdoc_api.h",
+      "variants": [
+        {
+          "path": "header-12-v0.json",
+          "sha256": "4e0052bfbd14ccc86c507394553c7b4f9043b021afb39b74d16bf62ab011e05f"
+        },
+        {
+          "path": "header-12-v1.json",
+          "sha256": "402a2b8fd431bec6c0854df38f8bd6779efda7fe86d06fbea0dc024619b337f3"
+        }
+      ]
+    },
+    {
+      "label": "source/project/private/av2/sdk-ps5-core-source/include/rex/ui/vulkan/api.h",
+      "variants": [
+        {
+          "path": "header-13-v0.json",
+          "sha256": "6a43251a811c84f4f0c783c5c203733d5e5dc7399a5a230acd2a6acc66eb130a"
+        },
+        {
+          "path": "header-13-v1.json",
+          "sha256": "561681cc87b20d49ae7c9beb0133891734ad2052c6e1eae43a256408eee295b7"
+        }
+      ]
+    }
+  ]
+}

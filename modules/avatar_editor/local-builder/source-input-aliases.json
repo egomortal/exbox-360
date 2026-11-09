@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "reason": "Read the canonical same-SDK source behind supplied header aliases; all byte pins and output paths unchanged; strict symlink safeguards retained",
+  "files": [
+    {
+      "root": "native-sdk",
+      "alias": "target/include/stdint.h",
+      "canonical": "target/include/sys/stdint.h",
+      "sha256": "7959fedbccd25ff491378e21adde00ff30a4f114abfd6919b1f280503eb59174",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/stdint.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/errno.h",
+      "canonical": "target/include/sys/errno.h",
+      "sha256": "1fefa8eba3a0eaec642e0fca02f9a7e0535cc44b0b389fb90fd84e6e41ac3bb1",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/errno.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/stdarg.h",
+      "canonical": "target/include/machine/stdarg.h",
+      "sha256": "3647906a70897141edc23de99498b002ce767a054e7061f94c1cf2d435d1d440",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/stdarg.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/float.h",
+      "canonical": "target/include/machine/float.h",
+      "sha256": "04d020e33bc494240bb503671f4ae351dd1d2e32a479156d28038187926c06a6",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/float.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/sched.h",
+      "canonical": "target/include/sys/sched.h",
+      "sha256": "84d333b2a249a3bb6ecf132024c014e9f83ac91c65ad2ce032106064c6484b21",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/sched.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/fcntl.h",
+      "canonical": "target/include/sys/fcntl.h",
+      "sha256": "d41a582c3b731d1a4faffe12325f552df9be867b6bfbd6817e32d51eafd9927f",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/fcntl.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include_common/iconv.h",
+      "canonical": "target/user/homebrew/include/iconv.h",
+      "sha256": "e91292216b94f7c6f249414260e827f11c051ed148a57ee3d6dac77bc5116c18",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include_common/iconv.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/stdatomic.h",
+      "canonical": "target/include/sys/stdatomic.h",
+      "sha256": "c932fa28fef5faa0decc0b88b5b4481fa057316887352116ab090d7cdaccd79c",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/stdatomic.h"
+    },
+    {
+      "root": "native-sdk",
+      "alias": "target/include/syslog.h",
+      "canonical": "target/include/sys/syslog.h",
+      "sha256": "f5a0928f412338aa64e0cbc160598eed0a341cb1ecfed63c1883554b37cbe761",
+      "output": "source/project/private/av2/toolchain/native-sdk/target/include/syslog.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/aio.h",
+      "canonical": "include/freebsd/sys/aio.h",
+      "sha256": "89ed9ec9b7d7571e863387f41abe333cd5318009ee10bf96a31a22583f3bcdfc",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/aio.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/errno.h",
+      "canonical": "include/freebsd/sys/errno.h",
+      "sha256": "1fefa8eba3a0eaec642e0fca02f9a7e0535cc44b0b389fb90fd84e6e41ac3bb1",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/errno.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/fcntl.h",
+      "canonical": "include/freebsd/sys/fcntl.h",
+      "sha256": "d41a582c3b731d1a4faffe12325f552df9be867b6bfbd6817e32d51eafd9927f",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/fcntl.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/float.h",
+      "canonical": "include/freebsd/machine/float.h",
+      "sha256": "04d020e33bc494240bb503671f4ae351dd1d2e32a479156d28038187926c06a6",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/float.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/floatingpoint.h",
+      "canonical": "include/freebsd/machine/floatingpoint.h",
+      "sha256": "8d69a0b262363341e0e9008535e0bb27e1e41d2192790e5e05c4a118fb3c5eb6",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/floatingpoint.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/linker_set.h",
+      "canonical": "include/freebsd/sys/linker_set.h",
+      "sha256": "439d7ea3b254f9c8ceb0d980fec91e142a7a433384a5f5e5e6d82aff8ab1cd48",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/linker_set.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/ncurses.h",
+      "canonical": "include/freebsd/curses.h",
+      "sha256": "e947a131174993d9fedd612beebec9bab15a254116208713edab387f913c896d",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/ncurses.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/poll.h",
+      "canonical": "include/freebsd/sys/poll.h",
+      "sha256": "a095e29e211e4b2445655bafbaf247bd8be1755a3e947e7c9d1b22fd08a3b4da",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/poll.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/sched.h",
+      "canonical": "include/freebsd/sys/sched.h",
+      "sha256": "84d333b2a249a3bb6ecf132024c014e9f83ac91c65ad2ce032106064c6484b21",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sched.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/stdarg.h",
+      "canonical": "include/freebsd/machine/stdarg.h",
+      "sha256": "3647906a70897141edc23de99498b002ce767a054e7061f94c1cf2d435d1d440",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/stdarg.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/stdatomic.h",
+      "canonical": "include/freebsd/sys/stdatomic.h",
+      "sha256": "c932fa28fef5faa0decc0b88b5b4481fa057316887352116ab090d7cdaccd79c",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/stdatomic.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/stdint.h",
+      "canonical": "include/freebsd/sys/stdint.h",
+      "sha256": "7959fedbccd25ff491378e21adde00ff30a4f114abfd6919b1f280503eb59174",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/stdint.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/syslog.h",
+      "canonical": "include/freebsd/sys/syslog.h",
+      "sha256": "f5a0928f412338aa64e0cbc160598eed0a341cb1ecfed63c1883554b37cbe761",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/syslog.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/ucontext.h",
+      "canonical": "include/freebsd/sys/ucontext.h",
+      "sha256": "82ad2f49b7a5249d3346abdd2758e37cbb2d22f4e6ffc60fbe6220ea26d847a9",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/ucontext.h"
+    },
+    {
+      "root": "payload-sdk-source",
+      "alias": "include/freebsd/_semaphore.h",
+      "canonical": "include/freebsd/sys/_semaphore.h",
+      "sha256": "f9dfe1e965d5f027be4d8a26c518be66b6a8a09ae9c64c0ffa4a14249c4585ba",
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/_semaphore.h"
+    }
+  ]
+}

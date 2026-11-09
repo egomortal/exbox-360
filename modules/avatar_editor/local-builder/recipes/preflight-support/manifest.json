@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/xenosrecomp.h",
+      "input_sha256": [
+        "325d4bba81e5c9d135c7eede560f58ef3d04e3d04d54c40b1a1ac7c42c26bbc2",
+        "bace2d27ee10671d28d79ac82e859c60783504d42602b6323c5020403e4feef6"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/xenosrecomp.h",
+      "output_sha256": "325d4bba81e5c9d135c7eede560f58ef3d04e3d04d54c40b1a1ac7c42c26bbc2"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/constant_table.h",
+      "input_sha256": [
+        "c5cf53032cb36ab839b91171012ba5da555ef34ccb1a859b2279df7ab0d345fd",
+        "675397e4faaec7deb68001e934decca9a1bc08f30ecf58c38bfab8c4688ffbb3"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/constant_table.h",
+      "output_sha256": "c5cf53032cb36ab839b91171012ba5da555ef34ccb1a859b2279df7ab0d345fd"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/dxc_compiler.h",
+      "input_sha256": [
+        "5a3aa3091991cdd933b06b83555067feb8ab6ae12b1ce48983541e29da95487c",
+        "df9faee84b0f00c06dd807a3ba89e52bb64cd49c6008bdf217ac8d59a45edef9"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/dxc_compiler.h",
+      "output_sha256": "5a3aa3091991cdd933b06b83555067feb8ab6ae12b1ce48983541e29da95487c"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/pch.h",
+      "input_sha256": [
+        "e2528c642514d4bfcbd74d1d3f5a66c32246124327a264c2fbec423a7127af60",
+        "db1ce1fcab2f4dd0323ea5a4d767556a874b3ce98e7a48e7479c119f0bd3b5b3"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/pch.h",
+      "output_sha256": "e2528c642514d4bfcbd74d1d3f5a66c32246124327a264c2fbec423a7127af60"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/rexglue_shader_common.h",
+      "input_sha256": [
+        "a1fa040e392b27335f12768670df95b4af552056736be9cccd44df2b0254f8fc",
+        "4d41b051a948be6db35220eecf50aecd05f02f62e7b0ac4648da2813ee77aa55"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/rexglue_shader_common.h",
+      "output_sha256": "a1fa040e392b27335f12768670df95b4af552056736be9cccd44df2b0254f8fc"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader.h",
+      "input_sha256": [
+        "6de8b70354c432fd6c146a12a23eda1ca8c1018e04b64ed48453db69454715b1",
+        "4e2807363c5e4439d8dd278ee4c865324f80739a03bdccabc5f17c039f426a28"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/shader.h",
+      "output_sha256": "6de8b70354c432fd6c146a12a23eda1ca8c1018e04b64ed48453db69454715b1"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_code.h",
+      "input_sha256": [
+        "65d5f9b84460830ebc69e1d4091da835a469106597294173b49b2625f97087e4",
+        "f7e748314222a92f7ffb60263a19f797184ce0e02fcbecd32bb121e9295d8b58"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/shader_code.h",
+      "output_sha256": "65d5f9b84460830ebc69e1d4091da835a469106597294173b49b2625f97087e4"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_common.h",
+      "input_sha256": [
+        "3e5f28f175c381cfd4325dcc2825a5b990b152137815de1010c4a5d7b9277d6d",
+        "9ac5df82a24003b63508b502c1c46b97d35dbc1c8f10a0adc26713d1395e1b66"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/shader_common.h",
+      "output_sha256": "3e5f28f175c381cfd4325dcc2825a5b990b152137815de1010c4a5d7b9277d6d"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_recompiler.h",
+      "input_sha256": [
+        "5a4f44a319a59924afa66746860bab4f149ee39494880e9aaf61ccf9f11c92c7",
+        "8af74e70b84fdd4518149402d6ae4aaa545c119ac9629de2b377875a1e6d5e1b"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/shader_recompiler.h",
+      "output_sha256": "5a4f44a319a59924afa66746860bab4f149ee39494880e9aaf61ccf9f11c92c7"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/ucode_fingerprint.h",
+      "input_sha256": [
+        "158b2670cf688b7c2b9328dc863046c7758593ea1b6a7c59a09f03efc4c9ddb6",
+        "6c49d3de191bdf05aa7b01554b08127887da4e0dedf37483f74d74697f5c6568"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/ucode_fingerprint.h",
+      "output_sha256": "158b2670cf688b7c2b9328dc863046c7758593ea1b6a7c59a09f03efc4c9ddb6"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/dxc_compiler.cpp",
+      "input_sha256": [
+        "db68a7399780e36b48530fabefe4f516356cff40beca07cad0a83bc2c49c66f4",
+        "484c708dd4095baba662c9398e72f50ebf7436aedc38da11951f503373bfe594"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/dxc_compiler.cpp",
+      "output_sha256": "db68a7399780e36b48530fabefe4f516356cff40beca07cad0a83bc2c49c66f4"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/shader_recompiler.cpp",
+      "input_sha256": [
+        "ea9d1bfe089db70b655bad55ea7d2084acde4323a2566b606c27d18a9bd06a48",
+        "4d88c3e05712296fa1106fab8c989a8beb22ca388fd0ecb38d84e567536e33cf"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/shader_recompiler.cpp",
+      "output_sha256": "ea9d1bfe089db70b655bad55ea7d2084acde4323a2566b606c27d18a9bd06a48"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/ucode_fingerprint.cpp",
+      "input_sha256": [
+        "9dbc5b313239ce3a3bf3e8cf454a60b41f65ac242bec26ebdaedc35ab0199a82",
+        "c9b5a2fe7e80687e474090b67785e77d2a302f375fbbb3a18bd71342801ed18d"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/ucode_fingerprint.cpp",
+      "output_sha256": "9dbc5b313239ce3a3bf3e8cf454a60b41f65ac242bec26ebdaedc35ab0199a82"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/XenosRecomp/xenosrecomp_core.cpp",
+      "input_sha256": [
+        "a4849fe814466e3db0f7ed6da491202347c9283b11ea04ae84b09fc0df304ac9",
+        "23fd71d0395d60b748d898034d0930ccd41bcc0ea64c113e98cdaf95c8008f50"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/XenosRecomp/xenosrecomp_core.cpp",
+      "output_sha256": "a4849fe814466e3db0f7ed6da491202347c9283b11ea04ae84b09fc0df304ac9"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "tools/XenosRecomp/BASE",
+      "input_sha256": [
+        "e868f4a6b2a5e782e3c8f610c5308334c38dd6f42b5abdda2a90257fa0c0d8ff",
+        "19551075c6d8380fdc8737e364e435321028686287fb1708972e9111785089dd"
+      ],
+      "output": "source/project/private/av2/q6b-inputs/tools/XenosRecomp/BASE",
+      "output_sha256": "e868f4a6b2a5e782e3c8f610c5308334c38dd6f42b5abdda2a90257fa0c0d8ff"
+    },
+    {
+      "root": "app",
+      "path": "tryon/adapter.cpp",
+      "input_sha256": [
+        "3282dbf38ce77640b98f8099eaea52394e691ea24c89ac3bac9284d4ec1d0a9a"
+      ],
+      "output": "source/tryon/rev2/adapter.cpp",
+      "output_sha256": "3282dbf38ce77640b98f8099eaea52394e691ea24c89ac3bac9284d4ec1d0a9a"
+    },
+    {
+      "root": "app",
+      "path": "tryon/policy.h",
+      "input_sha256": [
+        "d64e40daf8d33737361d11985416c71c236b5c495439f645f3b377bf58c169e7"
+      ],
+      "output": "source/tryon/rev2/policy.h",
+      "output_sha256": "d64e40daf8d33737361d11985416c71c236b5c495439f645f3b377bf58c169e7"
+    },
+    {
+      "root": "app",
+      "path": "tryon/wearable.h",
+      "input_sha256": [
+        "52eecdec5c94920936342863f0b762b2b0efc3248be1b215325743c91dff7358"
+      ],
+      "output": "source/tryon/rev2/wearable.h",
+      "output_sha256": "52eecdec5c94920936342863f0b762b2b0efc3248be1b215325743c91dff7358"
+    }
+  ]
+}

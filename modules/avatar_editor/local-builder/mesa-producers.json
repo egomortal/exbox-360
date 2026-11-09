@@ -1,0 +1,3201 @@
+{
+  "schema": 1,
+  "description": "Fresh Mesa generated files from user source and supplied host tools",
+  "nodes": [
+    {
+      "id": "generated/private/av2/toolchain/build-radv/36",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/util/driconf_static.py",
+        "../../upstream/PS5_Mesa/src/util/00-mesa-defaults.conf",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/00-radv-defaults.conf",
+        "src/util/driconf_static.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/util/driconf_static.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/util/driconf_static.py",
+        "../../upstream/PS5_Mesa/src/util/00-mesa-defaults.conf",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/00-radv-defaults.conf",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/util/driconf_static.h": "1698643564b2c89e5dc224bc161e19ab6bae64dbc62d156409f913fedbd48455"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/37",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/util/format_srgb.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/util/format_srgb.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/util/format_srgb.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/util/format_srgb.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/util/format_srgb.c": "7655886fb99a1d91cc58e069ea2da424d5f928d2cb4c4f5a1311f1c648e48374"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/38",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/util/process_shader_stats.py",
+        "../../upstream/PS5_Mesa/src/util/shader_stats.rnc",
+        "../../upstream/PS5_Mesa/src/util/shader_stats.xml"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/util/shader_stats.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/util/shader_stats.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/util/process_shader_stats.py",
+        "../../upstream/PS5_Mesa/src/util/shader_stats.rnc",
+        "../../upstream/PS5_Mesa/src/util/shader_stats.xml",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/util/shader_stats.h": "b3fad3c6e3fe4850415be4231cc4c3a3fe48e35dc55ca354556e092e6fe0862b"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/39",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml",
+        "--enums"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_gen.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_gen.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/util/format/u_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_pack.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_parse.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_gen.h": "e281cf421ae9d55cb9c67800620a700434f4ddb7e734785b041f48dd9184b1a2"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/40",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml",
+        "--header"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_pack.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_pack.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/util/format/u_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_pack.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_parse.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_pack.h": "ef31a9bb8c2876e482a1cdc356a8c15ea03eb2d68e59a13c93a81d6b25d65f39"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/41",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_table.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_table.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/util/format/u_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_pack.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format_parse.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/util/format/u_format_table.c": "64dc83032f6ee10e0df356eb23258b4e0acebaa32cc3c0baba374567ccf472ae"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/139",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/bin/git_sha1_gen.py",
+        "--output",
+        "src/git_sha1.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/git_sha1.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/bin/git_sha1_gen.py",
+        "/usr/bin/python3.12",
+        "PHONY"
+      ],
+      "requires_shell": false,
+      "env": {
+        "MESA_GIT_SHA1_OVERRIDE": "1ba9874f478657ccf6da72ce55f0260164cc0bd0"
+      },
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/git_sha1.h": "81babf247c70283c469d729893bf9a5e42fd260854ca47363af5cbb9786d5757"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/141",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/builtin_types_c.py",
+        "src/compiler/builtin_types.c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/builtin_types.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/builtin_types_c.py",
+        "../../upstream/PS5_Mesa/src/compiler/builtin_types.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/builtin_types.c": "689eed3087ed277bd5bfb379067941727e88a12dea395327e3d03210a098234d"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/142",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/glsl/ir_expression_operation.py",
+        "enum"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/ir_expression_operation.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/compiler/ir_expression_operation.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/glsl/ir_expression_operation.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/ir_expression_operation.h": "0467a7fb7ae73a30cfff3a4e6615a732031146f5d780c2ef2e6aeb5df4c0ddac"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/147",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_builder_opcodes_h.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_builder_opcodes.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_builder_opcodes.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_builder_opcodes_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_builder_opcodes.h": "d42b2e7a701391b67f8538e6c6eb420cc57e68cb0752ef87a2f9ff388192cdb4"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/148",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_constant_expressions.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_constant_expressions.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_constant_expressions.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_constant_expressions.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_constant_expressions.c": "37aeba920bb4b8ba31a3637300dd65a328d6303b090d9de239654429a8f3a16d"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/149",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes_h.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opcodes.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opcodes.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opcodes.h": "c0614e3a5d421c17720e449d82f24087c9c855a9b3c0a7eec3a72dd193063922"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/150",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes_c.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opcodes.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opcodes.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes_c.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opcodes.c": "abb7a1fcdc21b0572eb95dbc0af65032cf24333d13a6e6b13391171fdf564a3c"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/151",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opt_algebraic.py",
+        "--out",
+        "src/compiler/nir/nir_opt_algebraic.c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opt_algebraic.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opt_algebraic.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_algebraic.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_opt_algebraic.c": "82cebbef1d6650b946ba90f286b54735e01717acdab4685b6e1a40d4c2bb60a4"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/152",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics_h.py",
+        "--out",
+        "src/compiler/nir/nir_intrinsics.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_intrinsics.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_intrinsics.h": "2fdd45b4b4b78f2a9fc0db1590ac698445c877f6d938616bbd92e297dcdebc51"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/153",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics_indices_h.py",
+        "--out",
+        "src/compiler/nir/nir_intrinsics_indices.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_intrinsics_indices.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics_indices_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_intrinsics_indices.h": "65c989ac728f24eaaea97e1bb3f7135fc2645f52b6db56191308cf2638d69edd"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/154",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics_c.py",
+        "--out",
+        "src/compiler/nir/nir_intrinsics.c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_intrinsics.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics_c.py",
+        "../../upstream/PS5_Mesa/src/compiler/nir/nir_intrinsics.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/nir/nir_intrinsics.c": "bc66e3ab846d8d767acbe416c23c79bef24fc2e8ff1b648dd13df36a879ce30a"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/391",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/vtn_gather_types_c.py",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spirv.core.grammar.json",
+        "src/compiler/spirv/vtn_gather_types.c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/vtn_gather_types.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/spirv/vtn_gather_types_c.py",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spirv.core.grammar.json",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/vtn_gather_types.c": "1b1780378eb6f59b7a143f9aba949a759984fa3b001ce5f6f524b87ee700e4e5"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/392",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spirv_info_gen.py",
+        "--json",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spirv.core.grammar.json",
+        "--out-h",
+        "src/compiler/spirv/spirv_info.h",
+        "--out-c",
+        "src/compiler/spirv/spirv_info.c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/spirv_info.h",
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/spirv_info.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spirv_info_gen.py",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spirv.core.grammar.json",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/spirv_info.h": "88d630bb423d518dd346655ecfe39e469330a74af2dc0505cbc1472596d5a93d",
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/spirv_info.c": "a3edbaf0cd7dc8e813ac3669f5ce4ff0d1282fd190acaf6a820eb1c9b58e5717"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/393",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/vtn_generator_ids_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spir-v.xml",
+        "src/compiler/spirv/vtn_generator_ids.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/vtn_generator_ids.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/spirv/vtn_generator_ids_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/spirv/spir-v.xml",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/spirv/vtn_generator_ids.h": "31c795e840edae2429b3f944ddd8e04d87757483562324fffcc0d6f493504599"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/413",
+      "argv": [
+        "${dependencies}/host-tools/mesa_clc",
+        "-o",
+        "src/poly/cl/libpoly.spv",
+        "--depfile",
+        "src/poly/cl/libpoly_shaders.h.d",
+        "../../upstream/PS5_Mesa/src/poly/cl/geometry.cl",
+        "../../upstream/PS5_Mesa/src/poly/cl/tessellation.cl",
+        "--",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/include",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/libcl",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/poly/cl/.",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/poly/cl/../../",
+        "-fmacro-prefix-map=../../upstream/PS5_Mesa/=",
+        "-fmacro-prefix-map=${run}/source/project/private/av2/upstream/PS5_Mesa/=",
+        "-fmacro-prefix-map=${run}/source/project/private/av2/toolchain/build-radv/=",
+        "-cl-std=cl2.0",
+        "-D__OPENCL_VERSION__=200",
+        "-DHAVE___BUILTIN_FFS",
+        "-DHAVE___BUILTIN_CLZ"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/poly/cl/libpoly.spv"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/poly/cl/geometry.cl",
+        "../../upstream/PS5_Mesa/src/poly/cl/tessellation.cl",
+        "../../upstream/PS5_Mesa/src/poly/cl/geometry.cl",
+        "../../upstream/PS5_Mesa/src/poly/cl/tessellation.cl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/mesa_clc"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/poly/cl/libpoly.spv": "894188841eb28023b7ec18fefe54a740c458cbdd6a10046a30ca675c0db1bc82"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/423",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_dispatch_table_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/util/vk_dispatch_table.c",
+        "--out-h",
+        "src/vulkan/util/vk_dispatch_table.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_dispatch_table.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_dispatch_table.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_dispatch_table_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_dispatch_table.c": "f0bbce9693755a711de057cbeacb556ace6c129100fe41238f8afdea81a5e3bd",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_dispatch_table.h": "227347ec03b7bdd8693f900c76bc2eacbda63a076ef7fc31073c5f166e11d239"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/424",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/gen_enum_to_str.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/util/vk_enum_to_str.c",
+        "--out-h",
+        "src/vulkan/util/vk_enum_to_str.h",
+        "--out-d",
+        "src/vulkan/util/vk_enum_defines.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_enum_to_str.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_enum_to_str.h",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_enum_defines.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/gen_enum_to_str.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_enum_to_str.c": "8754b959bd9c066a0b2d033e89e01ba655e2de5cec6f38440b7a4742a2913d9b",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_enum_to_str.h": "81a7ee7e5574ad4e85d4afc9837c5b29fa892aead8ab89deef6c9855cb867e8e",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_enum_defines.h": "c883c531b59ff4f351bac999e3e48ae47b958ab6f5ada626fc027d6c75bdf53d"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/425",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_struct_type_cast_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out",
+        "src/vulkan/util/vk_struct_type_cast.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_struct_type_cast.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_struct_type_cast_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_struct_type_cast.h": "024f44ada68a5fa14bc80e97b16d8b13f0d94e09cf798caa16e1dd62db7e18d4"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/426",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/util/vk_extensions.c",
+        "--out-h",
+        "src/vulkan/util/vk_extensions.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_extensions.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_extensions.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_extensions.c": "2c39a5c95dcd593cdbf69a1cf90e28509769eaa3148aa796eea805ee4c13310d",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/util/vk_extensions.h": "030750891ff721d2763bdd66320ea3c61d0fa7e9f6b5fed905cc08a02f6a6903"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/434",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--proto",
+        "--weak",
+        "--out-h",
+        "src/vulkan/runtime/vk_common_entrypoints.h",
+        "--out-c",
+        "src/vulkan/runtime/vk_common_entrypoints.c",
+        "--prefix",
+        "vk_common",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_common_entrypoints.h",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_common_entrypoints.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_common_entrypoints.h": "11d4ec92b5fa57f448fef2ab2bebbe8a0cb0eae55710275ddddca60cf9235cf8",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_common_entrypoints.c": "98de733be7c46d16a5ba3b4bb13d0f5febbab83fb35b52facedd309fe026f31f"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/435",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_cmd_queue_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_cmd_queue.c",
+        "--out-h",
+        "src/vulkan/runtime/vk_cmd_queue.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_queue.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_queue.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_cmd_queue_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_queue.c": "f64a6557a1c5424661e36ba21043c8750619422ab7380097c2799ad3645aeb10",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_queue.h": "68e5347a6faaca5646404157507a7fecd7968728246a747446fde57a1c06bd41"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/436",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--proto",
+        "--weak",
+        "--out-h",
+        "src/vulkan/runtime/vk_cmd_enqueue_entrypoints.h",
+        "--out-c",
+        "src/vulkan/runtime/vk_cmd_enqueue_entrypoints.c",
+        "--prefix",
+        "vk_cmd_enqueue",
+        "--prefix",
+        "vk_cmd_enqueue_unless_primary",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_enqueue_entrypoints.h",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_enqueue_entrypoints.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_enqueue_entrypoints.h": "8f70bfafc057aba59e635cdb2fc7cb5813275695f5b2079ae4642f622a84bcd0",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_cmd_enqueue_entrypoints.c": "45d66f5fc0e2d6571061b10d92b878b1d773c3263d4c8a45507c9f67013c1834"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/437",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_dispatch_trampolines_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_dispatch_trampolines.c",
+        "--out-h",
+        "src/vulkan/runtime/vk_dispatch_trampolines.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_dispatch_trampolines.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_dispatch_trampolines.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_dispatch_trampolines_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_dispatch_trampolines.c": "6db09aff55daac4605021b7a2de96929697a9136c4177a62228b3803db88b087",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_dispatch_trampolines.h": "d550437c955f34c65e2be4031920c0cda1840d79593aa3eed69e7e7ac99555ae"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/438",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_features_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_physical_device_features.c",
+        "--out-h",
+        "src/vulkan/runtime/vk_physical_device_features.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_features.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_features.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_features_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_features.c": "bdd3387aa08016ed55ceffb3867d6c87d909044b7fb89175e5017149d7c1e51b",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_features.h": "5a3151c8818baa52510238158a4413d5d49f628d4766c3bc737171efe95a9c59"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/439",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_properties_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_physical_device_properties.c",
+        "--out-h",
+        "src/vulkan/runtime/vk_physical_device_properties.h",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_properties.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_properties.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_properties_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_properties.c": "dd8d111b50ce57d3b0be30e17742c2444f4a5cf1df1c6552cf4e70aabb7f93a2",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_properties.h": "23248634a54523b10a412b1dee300dd2c402077a04478b82cc7d7cee5bc45075"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/440",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_spirv_caps_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_physical_device_spirv_caps.c",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_spirv_caps.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_spirv_caps_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_physical_device_features_gen.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_physical_device_spirv_caps.c": "07556110979258211bd4d4a102cb0026332476c88154c7b046546f928f45a91e"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/441",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_synchronization_helpers_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_synchronization_helpers.c",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_synchronization_helpers.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_synchronization_helpers_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_synchronization_helpers.c": "e6768516d8414bd3d052d62720d0db2262fef56a47dfa2a4dee791eec677adac"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/442",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/vk_format_info_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/vulkan/runtime/vk_format_info.c",
+        "--out-h",
+        "src/vulkan/runtime/vk_format_info.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_format_info.c",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_format_info.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/vk_format_info_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_format_info.c": "268d92c188d1cc1a34a713ef5dcee86c84065ac202d0d4279bd2eab398c638e7",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/vk_format_info.h": "63d062dd5cbfe5d2db0f5c68c721cba3615878fdcad0762695e10ed16b0eac03"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/495",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_init.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/init.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_init.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/init.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_init.spv.h": "5ff7cf523bcd9616413e3e72f852ca9122db6785b5a34df8460d9a9bb1edf15c"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/496",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_init.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/init.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_init.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/init.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_init.spv.h": "3194b8fcc6e711098c559db2cb686d3e328f442309be759ccc5c54af19c69cd1"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/497",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/fill.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/fill.comp",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/fill.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/fill.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/fill.spv.h": "321ed718379cf779f564c13d1b8f0a23a2a75d749e9f2b4d034cdfd038892363"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/498",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_histogram.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/histogram.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_histogram.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/histogram.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_histogram.spv.h": "cae5d4223f2a064d4a0558ca908e38adeeb378b2a34433ffc00f10830441a494"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/499",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_histogram.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/histogram.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_histogram.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/histogram.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_histogram.spv.h": "4415267bee845d2ab89c1a70d27726e3fad88b3ae3ad8d5156154a9eb8a4073d"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/500",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_prefix.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_prefix.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_prefix.spv.h": "c4077c23168251b0e52cf2c78104521ea121e72cb4359a995ac239f170233c57"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/501",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_prefix.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_prefix.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_prefix.spv.h": "52c3daed8dc0ec1d64f2126a9a810a4e0903d7150d3a2f76831df9d7f74a0887"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/502",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_scatter_0_even.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_even.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_0_even.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_even.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_0_even.spv.h": "f5e653056282d1397893398e1ed950973b3412df561b5cc28dac6a2f462cc751"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/503",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_scatter_0_even.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_even.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_0_even.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_even.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_0_even.spv.h": "3475ab7040ef3fa152fae55aa0c258e4c7b37c1d832f6899a0afce1d39e65ade"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/504",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_scatter_0_odd.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_odd.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_0_odd.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_odd.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_0_odd.spv.h": "be02959776fe1f90277db7099632aa7821e187cb3ba8e9c464bb4844da48daa8"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/505",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_scatter_0_odd.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_odd.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_0_odd.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_0_odd.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_0_odd.spv.h": "efda6bd19e80bd3ef9450bc62f9392613d1745bbe4a5323450f6e812a24d20e0"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/506",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_scatter_1_even.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_even.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_1_even.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_even.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_1_even.spv.h": "f47270788f1b1fea1293ee65eadec46cbb913ece6b27b1cd48d86205dc186f61"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/507",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_scatter_1_even.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_even.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_1_even.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_even.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_1_even.spv.h": "980cbde5fc8be9e6bd6c7647fcfe437a329b887740a8abfe48ff5772cf62bf89"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/508",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u64_scatter_1_odd.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_odd.comp",
+        "-DRS_KEYVAL_DWORDS=2",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_1_odd.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_odd.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u64_scatter_1_odd.spv.h": "c8e10cf6578ae4a88e285276f974499660f0953104970e890b9f99af18bd9ebc"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/509",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_scatter_1_odd.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_odd.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_1_odd.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_1_odd.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_1_odd.spv.h": "671116f54ae81759551bb9aac65346e23ee8684c7aa9bbfd4a1f9bcc2e3ebfcc"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/510",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_scatter_2_even.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_2_even.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_2_even.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_2_even.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_2_even.spv.h": "7fab03cc14202ecf428590681d7fea6c4050fa28bd7d31e7bb57a6bb98072312"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/511",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/radix_sort/shaders/u96_scatter_2_odd.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_2_odd.comp",
+        "-DRS_KEYVAL_DWORDS=3",
+        "--quiet"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_2_odd.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter_2_odd.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/bufref.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/config.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/prefix_limits.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/push.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/radix_sort/shaders/scatter.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/radix_sort/shaders/u96_scatter_2_odd.spv.h": "5a843aa6ac403a4b32acb968c712693de0164719e8acb208e63f7cd9e634878c"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/512",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/bvh/lbvh_generate_ir.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/lbvh_generate_ir.comp",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/lbvh_generate_ir.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/lbvh_generate_ir.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_debug.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv/spirv_internal_exts.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/lbvh_generate_ir.spv.h": "93169319061b82784560936b3604eb2cf6c57caa28fc47a0d7f8b179d80e99ca"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/513",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/bvh/lbvh_main.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/lbvh_main.comp",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/lbvh_main.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/lbvh_main.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_debug.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv/spirv_internal_exts.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/lbvh_main.spv.h": "6d6c7774430a8c47e30ed7947d06402f210d5c9090cc8abaa63da10d8f09f1c2"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/514",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/bvh/leaf.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.comp",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/leaf.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_debug.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv/spirv_internal_exts.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/leaf.spv.h": "83fc7f9d306a8da403b9830efc1ee0fa2cad62f2b1a3cc6df31087f568e842ca"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/515",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/bvh/morton.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/morton.comp",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/morton.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/morton.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_debug.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv/spirv_internal_exts.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/morton.spv.h": "4c1024e974659b52fadd5d38b89f7e99f73dce87d2712cb1a94440b9bc63f00a"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/516",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/bvh/ploc_internal.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/ploc_internal.comp",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/ploc_internal.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/ploc_internal.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_debug.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv/spirv_internal_exts.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/ploc_internal.spv.h": "942fd910c27e417b1be07c20e90046aa7a5bcbb110c2366b5c1c3d1dd9cd95b6"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/517",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/bvh/hploc_internal.spv.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/hploc_internal.comp",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/hploc_internal.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/hploc_internal.comp",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/leaf.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_debug.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv/spirv_internal_exts.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/bvh/hploc_internal.spv.h": "bda98035fcb04dcdec8ee4e6670120ac2939b860558b97f10408d4a4e4efa9e3"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/518",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-S",
+        "comp",
+        "-x",
+        "-o",
+        "src/vulkan/runtime/astc_spv.h",
+        "../../upstream/PS5_Mesa/src/compiler/glsl/astc_decoder.glsl",
+        "--quiet",
+        "--depfile",
+        "src/vulkan/runtime/astc_spv.h.d"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/astc_spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/glsl/astc_decoder.glsl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/runtime/astc_spv.h": "600852229ba929464bfe245e2985f9797785744ca70d53038daf10829a9bce54"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/542",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--proto",
+        "--weak",
+        "--out-h",
+        "src/vulkan/wsi/wsi_common_entrypoints.h",
+        "--out-c",
+        "src/vulkan/wsi/wsi_common_entrypoints.c",
+        "--prefix",
+        "wsi",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/wsi/wsi_common_entrypoints.h",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/wsi/wsi_common_entrypoints.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/wsi/wsi_common_entrypoints.h": "ca7a654bf309b67eec23f2b4dad9dbeb3321102b829a542df2c41d5548c5e80d",
+        "source/project/private/av2/toolchain/build-radv/src/vulkan/wsi/wsi_common_entrypoints.c": "6e499cd8c9a1d7cd9a06f4e32bb5f4058d4d63d5b6bdcb3dc9c7b21116790573"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/565",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx11.h",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx12.h",
+        "gfx11",
+        "packets_h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_packets_gfx11.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_packets_gfx11.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx11.h",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx12.h",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_packets_gfx11.h": "87e31201a97df308e25d64f6d3676f21a952e864417da126342420adebc431d6"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/566",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx11.h",
+        "gfx11",
+        "print_c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx11.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx11.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx11.h",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx11.c": "8ac54b696d1695bcb40dcea34dd5dc46123974d551f724f9f5fdcb0d56153f04"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/567",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx11.h",
+        "gfx11",
+        "print_h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx11.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx11.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx11.h",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx11.h": "01d0db7aecba2ab427de29964b9653e856bcf6cf674667a2f73931a2e2962ad5"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/568",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx11.h",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx12.h",
+        "gfx12",
+        "packets_h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_packets_gfx12.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_packets_gfx12.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx11.h",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx12.h",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_packets_gfx12.h": "56febe10a0ff570c7aefd443d8d544d7d1da3c7fe79b17f351a94f2681131dd0"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/569",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx12.h",
+        "gfx12",
+        "print_c"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx12.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx12.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx12.h",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx12.c": "059a5437769da6c53f2ecdf5532e5441bc1f446e8b17a47fb74f801c620321ef"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/570",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../packets/pm4_it_opcodes_gfx12.h",
+        "gfx12",
+        "print_h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx12.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx12.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/packets/parse_cp_pm4_table_data_json.py",
+        "../../upstream/PS5_Mesa/src/amd/packets/cp_pm4_table_data_gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/packets/pm4_it_opcodes_gfx12.h",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amd_cp_print_packet_gfx12.h": "36deb14d8305a9f1a44c29c01488baf2591090fb8da6a575b85325d5d9aecc5d"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/571",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/sid_tables.py",
+        "../../upstream/PS5_Mesa/src/amd/common/sid.h",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx6.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx7.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx8.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx81.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx9.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx940.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx10.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx103.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx115.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/pkt3.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx10-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx11-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx12-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/registers-manually-defined.json"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/sid_tables.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/sid_tables.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/common/sid_tables.py",
+        "../../upstream/PS5_Mesa/src/amd/common/sid.h",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx6.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx7.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx8.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx81.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx9.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx940.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx10.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx103.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx115.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/pkt3.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx10-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx11-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx12-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/registers-manually-defined.json",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/sid_tables.h": "d276de00e345f3828bff7be9f70b7374b750a731ca80c5a3cc2e59c5406fdec4"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/572",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/makeregheader.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx6.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx7.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx8.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx81.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx9.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx940.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx10.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx103.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx115.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/pkt3.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx10-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx11-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx12-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/registers-manually-defined.json",
+        "--sort",
+        "address",
+        "--guard",
+        "AMDGFXREGS_H"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amdgfxregs.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/amdgfxregs.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/registers/makeregheader.py",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx6.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx7.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx8.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx81.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx9.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx940.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx10.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx103.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx11.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx115.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx12.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/pkt3.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx10-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx11-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx12-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/registers-manually-defined.json",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/amdgfxregs.h": "1f9903b4fb7c62ad4641186aa7cf197170cb0f3d3e36f0e6ac09d88389f7d976"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/573",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/common/gfx10_format_table.py",
+        "../../upstream/PS5_Mesa/src/amd/common/../../util/format/u_format.yaml",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx10-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/common/../registers/gfx11-rsrc.json"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/gfx10_format_table.c"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/common/gfx10_format_table.c",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/common/gfx10_format_table.py",
+        "../../upstream/PS5_Mesa/src/util/format/u_format.yaml",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx10-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/gfx11-rsrc.json",
+        "../../upstream/PS5_Mesa/src/amd/registers/regdb.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/common/gfx10_format_table.c": "2cd48af0be39a81cf39f54772ea65b25bfe5ab71988a66fc49f0cb77a53b7267"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/648",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes_h.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_opcodes.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_opcodes.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes_h.py",
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_opcodes.h": "36f879b20a57eb9b306e98772e426b4b5f535eedd605072eb9c30dc455af9afc"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/649",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes_cpp.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_opcodes.cpp"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_opcodes.cpp",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes_cpp.py",
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_opcodes.cpp": "ee72444ffcd92238e9ba81e870ee6cc265afb41d04c2d80734e0d29158989ced"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/650",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_builder_h.py"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_builder.h"
+      ],
+      "stdout": "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_builder.h",
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_builder_h.py",
+        "../../upstream/PS5_Mesa/src/amd/compiler/aco_opcodes.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/compiler/aco_builder.h": "cee887b5e82705c31074acc59b0e23d01f49b3ee4c525a541611c6086fa2785f"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/696",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/radv_tracepoints.py",
+        "--import-path",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/util/perf/",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/util/",
+        "--src",
+        "src/amd/vulkan/radv_tracepoints.c",
+        "--entrypoints-src",
+        "src/amd/vulkan/radv_entrypoint_tracepoints.c",
+        "--perfetto-hdr",
+        "src/amd/vulkan/radv_tracepoints_perfetto.h",
+        "--hdr",
+        "src/amd/vulkan/radv_tracepoints.h",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_tracepoints.c",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_entrypoint_tracepoints.c",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_tracepoints_perfetto.h",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_tracepoints.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/radv_tracepoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/util/perf/u_trace.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_tracepoints.c": "3cb655d61af1cda3091880dd87599c703db07acf3f08721bfff48a68e1d24858",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_entrypoint_tracepoints.c": "1052a0769d68e6ea3c2bd1261acfbd7e71c017cec958177e6d6c0d3e03a209e3",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_tracepoints_perfetto.h": "a1ba8b651d150206dbcdcbcfb20651f508a81a5b75fbe5c094dde2fddc9da00a",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_tracepoints.h": "1073e1a732d7cf3265bdb9efa892eb7d3a9428ba9329d41588193687dae90689"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/697",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--proto",
+        "--weak",
+        "--out-h",
+        "src/amd/vulkan/radv_entrypoints.h",
+        "--out-c",
+        "src/amd/vulkan/radv_entrypoints.c",
+        "--beta",
+        "false",
+        "--prefix",
+        "radv",
+        "--device-prefix",
+        "sqtt",
+        "--device-prefix",
+        "rra",
+        "--device-prefix",
+        "rmv",
+        "--device-prefix",
+        "ctx_roll",
+        "--device-prefix",
+        "utrace",
+        "--device-prefix",
+        "annotate",
+        "--device-prefix",
+        "threaded"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_entrypoints.h",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_entrypoints.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_entrypoints.h": "6475bf5275a4d324d3f33e342a943730219be703326f55ccc25b04a40e60fd2f",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_entrypoints.c": "e8330212f39fe8d1173ebcb0fd01fc3b2a5fcfb8b4cf257a8abd4c624576b19f"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/698",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/radv_drirc_gen.py",
+        "--import-path",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/util",
+        "--drirc-src",
+        "src/amd/vulkan/radv_drirc.c",
+        "--drirc-hdr",
+        "src/amd/vulkan/radv_drirc.h",
+        "--validate",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/00-radv-defaults.conf"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_drirc.c",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_drirc.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/radv_drirc_gen.py",
+        "../../upstream/PS5_Mesa/src/util/drirc_gen.py",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/00-radv-defaults.conf",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_drirc.c": "95b1c0d46a94165dc97d60227362f76d1d6f3bf29701c11039534137e1358df6",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/radv_drirc.h": "ba4f4cd8acd8e132dd056cd27672fb9508ec48b14bb47f449d45c3322c60e8bc"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/699",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/copy_addrs.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/copy_addrs.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/copy_addrs.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/copy_addrs.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/copy_addrs.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/copy_addrs.spv.h": "fb618b08bcf51c0e75b0e87fe1fac239f111e8339adf331a925e2d21dcbf0e69"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/700",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/copy.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/copy.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/copy.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/copy.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/copy.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/copy.spv.h": "49a1199e100aff2eba890837d5424b835407a6f6f06c2b47c327003ec957a5ea"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/701",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/encode_gfx12.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode_gfx12.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/encode_gfx12.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/encode_gfx12.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode_gfx12.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/encode_gfx12.spv.h": "3d40a883e9a5893179a8deecff9f9ee15bfd194ecb1ae5b8466a818922b88f5d"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/702",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/encode_triangles_gfx12.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode_triangles_gfx12.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/encode_triangles_gfx12.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/encode_triangles_gfx12.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode_triangles_gfx12.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/encode_triangles_gfx12.spv.h": "68c36d334a61bc1ffac05b37510664651f2d61f9149e6a3c8399e7b912d0ae71"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/703",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/encode.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/encode.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/encode.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/encode.spv.h": "104e8d8b19a8f3886515d0606bc6613881b253bd8daddbec3dd50874d4f138c1"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/704",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/header.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/header.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/header.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/header.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/header.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/header.spv.h": "ef87205cc90db3b52407ba7f06d67a0033e2089b891f7a9023610622e92dc47f"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/705",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/update.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/update.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/update.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/update.spv.h": "3b61e97631fafa35de3f57d73e6ca908b3d12fcb74d2cfd0bf94c18bb86f02ce"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/706",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/update_gfx12.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update_gfx12.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/update_gfx12.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/update_gfx12.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update_gfx12.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/update_gfx12.spv.h": "c8cb03bc847a8a3062bde98361e477f6331e7e9874093c114145213f1974fdd8"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/707",
+      "argv": [
+        "${dependencies}/host-tools/glslangValidator",
+        "-V",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/spirv",
+        "--target-env",
+        "spirv1.5",
+        "-x",
+        "-o",
+        "src/amd/vulkan/bvh/radv_leaf.spv.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/leaf.comp",
+        "--depfile",
+        "src/amd/vulkan/bvh/radv_leaf.spv.h.d",
+        "--quiet",
+        "-P#extension GL_GOOGLE_include_directive : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require",
+        "-P#extension GL_EXT_shader_explicit_arithmetic_types_float16 : require",
+        "-P#extension GL_EXT_scalar_block_layout : require",
+        "-P#extension GL_EXT_buffer_reference : require",
+        "-P#extension GL_EXT_buffer_reference2 : require",
+        "-P#extension GL_KHR_memory_scope_semantics : require",
+        "-P#extension GL_KHR_shader_subgroup_arithmetic : require",
+        "-P#extension GL_KHR_shader_subgroup_basic : require",
+        "-P#extension GL_KHR_shader_subgroup_shuffle : require",
+        "-P#extension GL_KHR_shader_subgroup_ballot : require",
+        "-P#extension GL_KHR_shader_subgroup_clustered : require",
+        "-P#extension GL_KHR_shader_subgroup_vote : require",
+        "-P#extension GL_EXT_shader_atomic_int64 : require",
+        "-P#extension GL_EXT_spirv_intrinsics : require"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/radv_leaf.spv.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/leaf.comp",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_defines.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/bvh_helpers.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/encode.h",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/bvh/update.h",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/glslangValidator",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_defines.h",
+        "${run}/source/project/private/av2/upstream/PS5_Mesa/src/vulkan/runtime/bvh/vk_bvh_helpers.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/bvh/radv_leaf.spv.h": "95f2e038779277d50a899b690d4478c1c73da3f73e675fa0ec114d2f080c6d3e"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/708",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/layers/radv_annotate_layer_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/amd/vulkan/layers/radv_annotate_layer.c",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/layers/radv_annotate_layer.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/layers/radv_annotate_layer_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/layers/radv_annotate_layer_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/layers/radv_annotate_layer.c": "3ee2d5abe2e35f225eee4528fef300bfa58c09d1a488702950a974647cdab938"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/709",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/layers/radv_threaded_layer_gen.py",
+        "--xml",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "--out-c",
+        "src/amd/vulkan/layers/radv_threaded_layer_cmds.c",
+        "--beta",
+        "false"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/layers/radv_threaded_layer_cmds.c"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/layers/radv_threaded_layer_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/registry/vk.xml",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/layers/radv_threaded_layer_gen.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_entrypoints.py",
+        "../../upstream/PS5_Mesa/src/vulkan/util/vk_extensions.py",
+        "/usr/bin/python3.12"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/layers/radv_threaded_layer_cmds.c": "4aae39b27823b390e63560790dfeab739ea74ac6b17f7f5c3ee9aa52b5e76b84"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/710",
+      "argv": [
+        "${dependencies}/host-tools/mesa_clc",
+        "-o",
+        "src/amd/vulkan/libradv_cl.spv",
+        "--depfile",
+        "src/amd/vulkan/libradv_cl.spv.d",
+        "../../upstream/PS5_Mesa/src/amd/vulkan/cl/radv_gs_compute.cl",
+        "--",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/include",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/compiler/libcl",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src",
+        "-I${run}/source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan",
+        "-fmacro-prefix-map=../../upstream/PS5_Mesa/=",
+        "-fmacro-prefix-map=${run}/source/project/private/av2/upstream/PS5_Mesa/=",
+        "-fmacro-prefix-map=${run}/source/project/private/av2/toolchain/build-radv/=",
+        "-cl-std=cl2.0",
+        "-D__OPENCL_VERSION__=200",
+        "-DHAVE___BUILTIN_FFS",
+        "-DHAVE___BUILTIN_CLZ",
+        "-DNDEBUG"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/libradv_cl.spv"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/amd/vulkan/cl/radv_gs_compute.cl",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/mesa_clc"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/libradv_cl.spv": "5f90f0b6c3d95ddb9afc24b8585c8e22b08ee1979a4ef1c9e9f1c82d80f367b1"
+      },
+      "depends_on": []
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/140",
+      "argv": [
+        "${dependencies}/python/bin/python3",
+        "../../upstream/PS5_Mesa/src/compiler/builtin_types_h.py",
+        "src/compiler/builtin_types.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/compiler/builtin_types.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "../../upstream/PS5_Mesa/src/compiler/builtin_types_h.py",
+        "../../upstream/PS5_Mesa/src/compiler/builtin_types.py",
+        "/usr/bin/python3.12",
+        "src/util/format/u_format_gen.h"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/compiler/builtin_types.h": "bbd87e8770e7bad40740528b631d0e42a0d19275e304519a7444f17a716caded"
+      },
+      "depends_on": [
+        "generated/private/av2/toolchain/build-radv/39"
+      ]
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/414",
+      "argv": [
+        "${dependencies}/host-tools/vtn_bindgen2",
+        "src/poly/cl/libpoly.spv",
+        "src/poly/cl/libpoly.cpp",
+        "src/poly/cl/libpoly.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/poly/cl/libpoly.cpp",
+        "source/project/private/av2/toolchain/build-radv/src/poly/cl/libpoly.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "src/poly/cl/libpoly.spv",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/vtn_bindgen2",
+        "src/poly/cl/libpoly.spv"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/poly/cl/libpoly.cpp": "c6d603d4181304b8b49cc449a5f44a66e03d12f22a7e436707848c0cf3dc0dc5",
+        "source/project/private/av2/toolchain/build-radv/src/poly/cl/libpoly.h": "2abb58becda1f59d8e56f629a97aa802b9f6d22691f195147a8af2857f2caf06"
+      },
+      "depends_on": [
+        "generated/private/av2/toolchain/build-radv/413"
+      ]
+    },
+    {
+      "id": "generated/private/av2/toolchain/build-radv/711",
+      "argv": [
+        "${dependencies}/host-tools/vtn_bindgen2",
+        "src/amd/vulkan/libradv_cl.spv",
+        "src/amd/vulkan/libradv_cl.cpp",
+        "src/amd/vulkan/libradv_cl.h"
+      ],
+      "cwd": "source/project/private/av2/toolchain/build-radv",
+      "outputs": [
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/libradv_cl.cpp",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/libradv_cl.h"
+      ],
+      "stdout": null,
+      "inputs": [
+        "src/amd/vulkan/libradv_cl.spv",
+        "${run}/source/project/private/av2/toolchain/build-tools-bin/vtn_bindgen2"
+      ],
+      "requires_shell": false,
+      "output_sha256": {
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/libradv_cl.cpp": "a052796318f4b69c9b25b8b6ef5ee1ebab0be76a721aad4c07c24146fff6f9d3",
+        "source/project/private/av2/toolchain/build-radv/src/amd/vulkan/libradv_cl.h": "ed01814a22645580ee7c50968c09d74caa4da76c81b63ac7f71a97290740e45c"
+      },
+      "depends_on": [
+        "generated/private/av2/toolchain/build-radv/710"
+      ]
+    }
+  ],
+  "configure_generated_sha256": {},
+  "configuration_required": false,
+  "configuration_evidence": {
+    "id": "mesa-configure",
+    "argv": [
+      "${dependencies}/python/bin/python3",
+      "-m",
+      "mesonbuild.mesonmain",
+      "setup",
+      "${run}/source/project/private/av2/toolchain/build-radv",
+      "${run}/source/project/private/av2/upstream/PS5_Mesa",
+      "--cross-file",
+      "${run}/source/project/private/av2/toolchain/radv-constants.ini",
+      "--cross-file",
+      "${run}/source/project/private/av2/upstream/PS5_Vulkan/tooling/radv/ps5-cross.ini",
+      "-Dvulkan-drivers=amd",
+      "-Dgallium-drivers=",
+      "-Dplatforms=",
+      "-Dradv-winsys=ps5",
+      "-Dllvm=disabled",
+      "-Damd-use-llvm=false",
+      "-Dvideo-codecs=",
+      "-Dbuildtype=debugoptimized",
+      "-Db_ndebug=false",
+      "-Dglx=disabled",
+      "-Degl=disabled",
+      "-Dgbm=disabled",
+      "-Dopengl=false",
+      "-Dgles1=disabled",
+      "-Dgles2=disabled",
+      "-Dvalgrind=disabled",
+      "-Dlibunwind=disabled",
+      "-Dzstd=disabled",
+      "-Dzlib=enabled",
+      "-Dexpat=disabled",
+      "-Dxmlconfig=disabled",
+      "-Dshader-cache=enabled",
+      "-Dbuild-tests=false",
+      "-Dvulkan-layers=",
+      "-Dtools=",
+      "-Dmesa-clc=system",
+      "-Dradv-build-id=1ba9874f478657ccf6da72ce55f0260164cc0bd0",
+      "-Dforce_fallback_for=zlib"
+    ],
+    "cwd": "source/project",
+    "outputs": [
+      "source/project/private/av2/toolchain/build-radv/config.h"
+    ],
+    "requires": [
+      "pinned Mesa tree and Meson build metadata",
+      "radv-constants.ini regenerated for dependency roots",
+      "compatible SDK pkgconfig/zlib metadata",
+      "native mesa_clc host executable matching source pin"
+    ]
+  },
+  "external_host_tools": "host-tool-inputs.json",
+  "policy": "No precompiled editor objects/archives. Retained native compile graph already records configured compiler flags. All inventoried Mesa generated files are covered by these producers; no new configure needed when configure_generated_sha256 is empty. This graph has not yet been executed."
+}

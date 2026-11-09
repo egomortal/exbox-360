@@ -1,0 +1,1493 @@
+{
+  "schema": 1,
+  "copies": [
+    {
+      "root": "glm-source",
+      "path": "glm/simd/neon.h",
+      "input_sha256": [
+        "712e9a43cd94eb76d572311dee75288842e6795147f6c555fdc091a83fe844a1",
+        "e458da2625717f8efc4e3e63613f5f89cd3d4e5a2091e5d8164707026924c7b8"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/simd/neon.h",
+      "output_sha256": "712e9a43cd94eb76d572311dee75288842e6795147f6c555fdc091a83fe844a1"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/_swizzle.hpp",
+      "input_sha256": [
+        "c7fab561c416689a80e0654c327e5e302403b70fc08f9c780e2bd9697f462333",
+        "fadb252dc9dc51adea8df75b585cd8ab1c8af9cc7e41c777d080eb60798bd1ab"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/_swizzle.hpp",
+      "output_sha256": "fadb252dc9dc51adea8df75b585cd8ab1c8af9cc7e41c777d080eb60798bd1ab"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/_swizzle_func.hpp",
+      "input_sha256": [
+        "73bc73f1d5f0a7ec7a157a17a8fc9d9bdb102645a31f1119155343e455b93795",
+        "dce5a3275596f4f3298b61e195542d6a98a6e336a88e106331eceb1299b65257"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/_swizzle_func.hpp",
+      "output_sha256": "dce5a3275596f4f3298b61e195542d6a98a6e336a88e106331eceb1299b65257"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/type_vec_simd.inl",
+      "input_sha256": [
+        "0959568f5955c0caa4cad32bb2dc83892be1fb73d8c71968560e4a516d04f955",
+        "38f3dd5ae6681194bbdef1a0438be544316acca080291f7cf027bf55ea23587c"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/type_vec_simd.inl",
+      "output_sha256": "38f3dd5ae6681194bbdef1a0438be544316acca080291f7cf027bf55ea23587c"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/func_vector_relational_simd.inl",
+      "input_sha256": [
+        "279fd49fbd707a916e606d1f6fbb2e43e202334d6393dfab62fc7364f6234970",
+        "554eed2592a8c80fe0021a29ab546865edd250bb9e2620818670474ac0d9a1d2"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/func_vector_relational_simd.inl",
+      "output_sha256": "279fd49fbd707a916e606d1f6fbb2e43e202334d6393dfab62fc7364f6234970"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/func_common_simd.inl",
+      "input_sha256": [
+        "b2064130ffab84be87d242ceea71479769ac6a0843dec432509431de04fca5ab",
+        "b33d9f03e7bd90d2c9c2280da38b910225acd6ca0e096081c3a61217726f3fbe"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/func_common_simd.inl",
+      "output_sha256": "b2064130ffab84be87d242ceea71479769ac6a0843dec432509431de04fca5ab"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/simd/common.h",
+      "input_sha256": [
+        "8beab72e4b5be9f1048e32c49efa979904fdfffbb61260ae1507502a8f830d67",
+        "f8a08050730f8ddc3185de454b6f468fd569e80a5c0f35e2f6321d93c19b63a7"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/simd/common.h",
+      "output_sha256": "f8a08050730f8ddc3185de454b6f468fd569e80a5c0f35e2f6321d93c19b63a7"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/func_exponential_simd.inl",
+      "input_sha256": [
+        "3452b1cc5709ff9d74bc606e48a3f735f6ada3d343eac88e017ce77f01ebb984",
+        "3b6e7099bb23a55facce588cc830ee968564803c48331b1dd48cf61e1ad731b6"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/func_exponential_simd.inl",
+      "output_sha256": "3b6e7099bb23a55facce588cc830ee968564803c48331b1dd48cf61e1ad731b6"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/simd/exponential.h",
+      "input_sha256": [
+        "a77b298d19f08b7e1fdb74b7b0d37d8044c49198e4886416c9a8df12f057b8b8",
+        "e712431ac31ee2006032dd823f45fe7d2f69e6c617830304ffb0d45598a9b349"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/simd/exponential.h",
+      "output_sha256": "a77b298d19f08b7e1fdb74b7b0d37d8044c49198e4886416c9a8df12f057b8b8"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/func_geometric_simd.inl",
+      "input_sha256": [
+        "755c117bb1326c109b6d595ee72900f8d895ffe55d9d56a96df82de49b7560d9",
+        "c17554f92f38f8398e7e1fe2273e65da04c53c951f51706f34fb3ce6333e5808"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/func_geometric_simd.inl",
+      "output_sha256": "c17554f92f38f8398e7e1fe2273e65da04c53c951f51706f34fb3ce6333e5808"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/simd/geometric.h",
+      "input_sha256": [
+        "005fe2617e7b3dd506f7e8809dfcf0ee1640f3b8a62af6f6006bd94fa14104e9",
+        "9c76f2528252af574231b7e6e761a33e51ba5e22a1c5ed64121c1c23bbe2040c"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/simd/geometric.h",
+      "output_sha256": "005fe2617e7b3dd506f7e8809dfcf0ee1640f3b8a62af6f6006bd94fa14104e9"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/func_matrix_simd.inl",
+      "input_sha256": [
+        "40800dc664ad919c606a99cc3d1f41d3cd06a86e760f86fb7a5253dc282cb898",
+        "a7db5bdf1c68f3ce8101bf82a3d7d16b26c1b718a7af0960d46d00dddfcb8c20"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/func_matrix_simd.inl",
+      "output_sha256": "40800dc664ad919c606a99cc3d1f41d3cd06a86e760f86fb7a5253dc282cb898"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/simd/matrix.h",
+      "input_sha256": [
+        "45c2390434e52509519c4cd942ae2d6e75406629fcb37a84df90052997d65f7c",
+        "f0bf71b5928f8ce5912e1ceabf3a1bd296f0302f1ac90a7b4f27875723cc82c0"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/simd/matrix.h",
+      "output_sha256": "f0bf71b5928f8ce5912e1ceabf3a1bd296f0302f1ac90a7b4f27875723cc82c0"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/type_mat4x4_simd.inl",
+      "input_sha256": [
+        "48578deda435ea4f7157496dfee6b7bf4b7e0ab4eefa355473f10020f0fad422",
+        "cf8869491df7e6741c389d93f71121a31f2d8bd73070cc8b16b3afeca108c2bf"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/type_mat4x4_simd.inl",
+      "output_sha256": "cf8869491df7e6741c389d93f71121a31f2d8bd73070cc8b16b3afeca108c2bf"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/func_trigonometric_simd.inl",
+      "input_sha256": [
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/func_trigonometric_simd.inl",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/ext/quaternion_common_simd.inl",
+      "input_sha256": [
+        "0523f9574c853339956779054b85daafb1ba2947b0e8f7ba702b240311982e03",
+        "3927d5a7b625f600cd633ed10d4bb10c7ec128c758d32f06e327ba8bec7984a6"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/ext/quaternion_common_simd.inl",
+      "output_sha256": "3927d5a7b625f600cd633ed10d4bb10c7ec128c758d32f06e327ba8bec7984a6"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/detail/type_quat_simd.inl",
+      "input_sha256": [
+        "32b2560956a469f9166986b8e6f5ef3945967969ff6cc7f4a4ff92e4a82281ea",
+        "6de50aa77ac5198e56e16eff8c4e9e8e4511ff844503e4f0c53176b51ff718f8"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/detail/type_quat_simd.inl",
+      "output_sha256": "32b2560956a469f9166986b8e6f5ef3945967969ff6cc7f4a4ff92e4a82281ea"
+    },
+    {
+      "root": "glm-source",
+      "path": "glm/gtc/quaternion_simd.inl",
+      "input_sha256": [
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      "output": "source/project/private/av2/toolchain/glm/glm/gtc/quaternion_simd.inl",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_android.h",
+      "input_sha256": [
+        "78fab3e0a766fd6eba180fa2796b349fb0a99cb0a9299449bb30d8f65f92a0dc",
+        "e1ce5e4ab32b37ee26c21b3d32b64102d26e22bb607373c4f088d49d040f8448"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_android.h",
+      "output_sha256": "e1ce5e4ab32b37ee26c21b3d32b64102d26e22bb607373c4f088d49d040f8448"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_fuchsia.h",
+      "input_sha256": [
+        "57004582575a54b37810052fbb0baeec1718205b4145af1a5bbebf2c2bdb445a",
+        "c891e1d788af4c4a8c029dade2e76747c535348f5a50c95662dc8b526eb8f58b"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_fuchsia.h",
+      "output_sha256": "c891e1d788af4c4a8c029dade2e76747c535348f5a50c95662dc8b526eb8f58b"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_ios.h",
+      "input_sha256": [
+        "3753bd4811ab239095e63190c1d6c97be8b13e8425fe6dfb137487a62a355dca",
+        "7969c250ac9bba67739fcfcdb6ec7cdf544acde4d0c9671c89cc53fa9c77c76f"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_ios.h",
+      "output_sha256": "3753bd4811ab239095e63190c1d6c97be8b13e8425fe6dfb137487a62a355dca"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_macos.h",
+      "input_sha256": [
+        "45b7c4d4b4cd414fc39e41280e30904b9c5fbd2144a2a03ff7067f8d38f3b365",
+        "cb38d796487098a8de690a950b4eceefb277d7b163e2f555040041768679b361"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_macos.h",
+      "output_sha256": "cb38d796487098a8de690a950b4eceefb277d7b163e2f555040041768679b361"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_metal.h",
+      "input_sha256": [
+        "8988d72b50209ff66031a6caeafe7bb649cd30d593346416bf90185a8d216bb7",
+        "afa55b54122a392523867f1816894af6a631de3ea88dca4b3d1cbb1042519575"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_metal.h",
+      "output_sha256": "8988d72b50209ff66031a6caeafe7bb649cd30d593346416bf90185a8d216bb7"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_vi.h",
+      "input_sha256": [
+        "2a4c8a78190f8c9cffe4a5c0b26f167ec63b88e3bd6ec5f4a573e8c523efa93b",
+        "b0f1c42511ed8261e58b946fbd1abbb8e7112d1358d5822b3d17d3d2dffeb160"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_vi.h",
+      "output_sha256": "2a4c8a78190f8c9cffe4a5c0b26f167ec63b88e3bd6ec5f4a573e8c523efa93b"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_wayland.h",
+      "input_sha256": [
+        "31778a15a99e3b311d172d8e34f77be9d468aa252d81515dd7bda6eed8ec3f0a",
+        "6796535a0cd48f8abed4e0f69b20dc63a886a9b705ab8b0582dde59b0c46fa0e"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_wayland.h",
+      "output_sha256": "6796535a0cd48f8abed4e0f69b20dc63a886a9b705ab8b0582dde59b0c46fa0e"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_win32.h",
+      "input_sha256": [
+        "16587fd6b3a8b99808cbb6716ec70d3823dc3ae5f3a6bd7e3e7950d6cc477eee",
+        "256a5fb80fe43611f7218a63d8a1fc4d84e51d9e6b250f7254cae235d7c8d4a5"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_win32.h",
+      "output_sha256": "16587fd6b3a8b99808cbb6716ec70d3823dc3ae5f3a6bd7e3e7950d6cc477eee"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_xcb.h",
+      "input_sha256": [
+        "2900851c5f8dcdcac9c8b7b4ad33a18cc69fca482d4c259a38e386f7c5ecc32b",
+        "ef1649726548e795adec965fc48123be7362efcab10ac78bc8fe146ac5cadfd0"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_xcb.h",
+      "output_sha256": "2900851c5f8dcdcac9c8b7b4ad33a18cc69fca482d4c259a38e386f7c5ecc32b"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_xlib.h",
+      "input_sha256": [
+        "64c2aa82db9c3786dd6fccc47b3bf13593fb818d70e21c45cd87bcb754391555",
+        "84e3001d4a08d947fd8008cfef7588fba4866a222286eb537936e2f8f5fd4fea"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_xlib.h",
+      "output_sha256": "84e3001d4a08d947fd8008cfef7588fba4866a222286eb537936e2f8f5fd4fea"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_directfb.h",
+      "input_sha256": [
+        "4e64df52437585e95130b83d48405d945ac6c5af354604d4bdb52564a69149a3",
+        "acff0a733105be109396347c0e9030f745fbfcb616b9d4863625663412dbb1ba"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_directfb.h",
+      "output_sha256": "4e64df52437585e95130b83d48405d945ac6c5af354604d4bdb52564a69149a3"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_xlib_xrandr.h",
+      "input_sha256": [
+        "763c86cd7097713fff3ed6674addbb2a6d90aa828b79f4fca74a375b9a7b151c",
+        "a5d6e3fe02443dd249623f99bb66d2c03105e9180ce2cb94a051137020b17d4b"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_xlib_xrandr.h",
+      "output_sha256": "763c86cd7097713fff3ed6674addbb2a6d90aa828b79f4fca74a375b9a7b151c"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_ggp.h",
+      "input_sha256": [
+        "7c3be14b4f75174a8ca1b4a9ca45074ea13d41e284353fa5d2e65b78965a9048",
+        "b2623cef3f52da5cee783abb89506332ba67bb4841919dfc3a52c47d22947ead"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_ggp.h",
+      "output_sha256": "7c3be14b4f75174a8ca1b4a9ca45074ea13d41e284353fa5d2e65b78965a9048"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_screen.h",
+      "input_sha256": [
+        "3d5fa364a3456412be415547715b03de0a24b218017af724d4cc2622de487495",
+        "f4411512e20d48681994e2c77f970886284722748d37e47f48dec7623aa48b43"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_screen.h",
+      "output_sha256": "f4411512e20d48681994e2c77f970886284722748d37e47f48dec7623aa48b43"
+    },
+    {
+      "root": "avatar_editor",
+      "path": "thirdparty/plume/contrib/Vulkan-Headers/include/vulkan/vulkan_ohos.h",
+      "input_sha256": [
+        "17be4d9e20137e6586e2329c1ae7c692d7522233b011f9db71dc14409882dc91",
+        "abf6d409dfabbc97ac3afa1bc77fd065058b2ccb6069061cb33993a3d4e9e047"
+      ],
+      "output": "source/project/private/av2/q7-plume-source/contrib/Vulkan-Headers/include/vulkan/vulkan_ohos.h",
+      "output_sha256": "17be4d9e20137e6586e2329c1ae7c692d7522233b011f9db71dc14409882dc91"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_fuchsia.h",
+      "input_sha256": [
+        "8338f0ed34280b5f5e7766c79bf8999876b961ab2f31f1f1122296d3830d68bb",
+        "8a7a0c52e8c1ab41ede66bdabc32057255a7b385441d67dd4023121de5801194"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_fuchsia.h",
+      "output_sha256": "8a7a0c52e8c1ab41ede66bdabc32057255a7b385441d67dd4023121de5801194"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_ios.h",
+      "input_sha256": [
+        "6ae5dab8df3ec8633fdf592db1fa7e03725bbc66ea672d5cfbef6dce689f3d71",
+        "8bb052cc162b4086c0f1cd29a5ed11ccf921b8ee83551194394b86efd249c572"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_ios.h",
+      "output_sha256": "8bb052cc162b4086c0f1cd29a5ed11ccf921b8ee83551194394b86efd249c572"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_macos.h",
+      "input_sha256": [
+        "00f532e9b7229488ac9932c2b391d74e9e8566ed91d0dbbad10e15dc356c9293",
+        "c2193e23a1135a398c766c948103dcca9a252605339dbf3b0e6f9ebbecbe7556"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_macos.h",
+      "output_sha256": "00f532e9b7229488ac9932c2b391d74e9e8566ed91d0dbbad10e15dc356c9293"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_metal.h",
+      "input_sha256": [
+        "6218b7fc232c114d62643979c9a7c164c79874d2581c7387a72f8561b90db46f",
+        "8f84536896b8d3c6c49883ce34242f8922840617d0b184b338c0f83da5bfaaaa"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_metal.h",
+      "output_sha256": "8f84536896b8d3c6c49883ce34242f8922840617d0b184b338c0f83da5bfaaaa"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_vi.h",
+      "input_sha256": [
+        "683e3e0111151a5e447ad3b69db34d2abee312a6ec24b2125323e3adcf5a67d9",
+        "8caacbb6eccae5946fb367145ba5222b85d4747a3f8b30632fdfca0503f0c339"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_vi.h",
+      "output_sha256": "8caacbb6eccae5946fb367145ba5222b85d4747a3f8b30632fdfca0503f0c339"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_wayland.h",
+      "input_sha256": [
+        "d43ca1c45cd4b2e1119c168b780e2864205ad8119e5f42d9d99aa29d2654a3f2",
+        "e7a5c86176e3553f62bead239bec5119e2aba5905a9df987a39e958c623e4c2f"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_wayland.h",
+      "output_sha256": "d43ca1c45cd4b2e1119c168b780e2864205ad8119e5f42d9d99aa29d2654a3f2"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_win32.h",
+      "input_sha256": [
+        "0b11442e7efa0d5b6732b9964edf6dbdf3f6cf1dd58afe7572cc9b7f6de24317",
+        "44b000b0ed817cd82b8242f317a7db7e841dcc352103cc86ef48a13af63fe070"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_win32.h",
+      "output_sha256": "0b11442e7efa0d5b6732b9964edf6dbdf3f6cf1dd58afe7572cc9b7f6de24317"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_xcb.h",
+      "input_sha256": [
+        "1e1525fc64826ab3ea9e8a6ee6a618ef14db3e27397fcf8fb070bb1ddaf00c0b",
+        "4adc043b601c2d4ab757d43874e55523f22f5cdf174c48a05ddf13a790e642ad"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_xcb.h",
+      "output_sha256": "1e1525fc64826ab3ea9e8a6ee6a618ef14db3e27397fcf8fb070bb1ddaf00c0b"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_xlib.h",
+      "input_sha256": [
+        "25b689032e9594d6ede0483e009ca47eb918a7265b044a3dea1d807a7f1f9c56",
+        "82346aaa80a5c984b6a26f55c7c363c65be43029da539ba0fbdfea9840051cca"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_xlib.h",
+      "output_sha256": "82346aaa80a5c984b6a26f55c7c363c65be43029da539ba0fbdfea9840051cca"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_directfb.h",
+      "input_sha256": [
+        "1f6d6dfeb4bf6bf050e6df045f630d3a7240d93a46948181dab8061db14f1185",
+        "4c6be34ee27f2fce4870c4046304b0c53f1fe62b13a4c21da8d537ec4cf8b965"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_directfb.h",
+      "output_sha256": "4c6be34ee27f2fce4870c4046304b0c53f1fe62b13a4c21da8d537ec4cf8b965"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_xlib_xrandr.h",
+      "input_sha256": [
+        "3a86336bcb878c759a2875294076158467d8d66c605eb2996312c916b78fb9a8",
+        "da5d5311bcffa49c614e9f397784e44668466890aeaf4e54c2e0064c20259089"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_xlib_xrandr.h",
+      "output_sha256": "da5d5311bcffa49c614e9f397784e44668466890aeaf4e54c2e0064c20259089"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_ggp.h",
+      "input_sha256": [
+        "4c60230dbc2d1d2b01f4d6272b7b604f49a86bbfe80ec7de8e7fad17d3116bbc",
+        "97cb1776742a4d8aae9f258ce908da76d0466da8864a5036aaca834af5f62e8d"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_ggp.h",
+      "output_sha256": "97cb1776742a4d8aae9f258ce908da76d0466da8864a5036aaca834af5f62e8d"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_screen.h",
+      "input_sha256": [
+        "dfa2c0f63ad400f47244d1ffc406665e1f1257d2bf5c492c479be60926b67ad6",
+        "ffe2e63fbea5f0a9a7948a998eb7e1085e1f7cd5fd55b3d9a0146fe1aa8307bd"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_screen.h",
+      "output_sha256": "ffe2e63fbea5f0a9a7948a998eb7e1085e1f7cd5fd55b3d9a0146fe1aa8307bd"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_beta.h",
+      "input_sha256": [
+        "0c8306cc75db2a51fe5c29654afde8587f44fc84c2d123eaadf538e86dd0541c",
+        "5bbb21a07683a66b768b41e56d05dc5b626c46d8e511ec7ba9d24aee1e1697f5"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_beta.h",
+      "output_sha256": "0c8306cc75db2a51fe5c29654afde8587f44fc84c2d123eaadf538e86dd0541c"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/vulkan/vulkan_ohos.h",
+      "input_sha256": [
+        "9da9b4f1a23adc0b705450ce4b5c934dff2fd1eb8cdf4ac3273465420fc9475a",
+        "d1c98a1f0b442b9fbe90497e7dfd070117cfe53313efafd1c88f98ff0828ab91"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/vulkan/vulkan_ohos.h",
+      "output_sha256": "9da9b4f1a23adc0b705450ce4b5c934dff2fd1eb8cdf4ac3273465420fc9475a"
+    },
+    {
+      "root": "mesa-source",
+      "path": "include/drm-uapi/amdgpu_drm.h",
+      "input_sha256": [
+        "146e8ecc1e8149bef028018437a2bdb100eeb99d981a336f973885fcaefe5055",
+        "c8f5da9940e87db411b2e37a3e16a9b15a6aa3cc8bca3e17dd3b27facb7218e5"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/include/drm-uapi/amdgpu_drm.h",
+      "output_sha256": "146e8ecc1e8149bef028018437a2bdb100eeb99d981a336f973885fcaefe5055"
+    },
+    {
+      "root": "mesa-source",
+      "path": "src/amd/llvm/ac_llvm_util.h",
+      "input_sha256": [
+        "c4b4a9948e54d5111a853ff17f2d140565b412ab83ed094d16ee08c5d5edf53a",
+        "fd668f5b56a149a172f5e1c5f0b0f2626c72f82d58ee26d759714801d073744a"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/src/amd/llvm/ac_llvm_util.h",
+      "output_sha256": "c4b4a9948e54d5111a853ff17f2d140565b412ab83ed094d16ee08c5d5edf53a"
+    },
+    {
+      "root": "mesa-source",
+      "path": "src/amd/vulkan/winsys/amdgpu/radv_amdgpu_winsys_public.h",
+      "input_sha256": [
+        "54328fd2702b0f1823e075171f7133d04626d33a6ac0b145aa91dc6e382991a9",
+        "5ddd9e7e99d03afe32523edb9f6a195ddcc0ad7758d2c1242dadc5d535f724f9"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_Mesa/src/amd/vulkan/winsys/amdgpu/radv_amdgpu_winsys_public.h",
+      "output_sha256": "54328fd2702b0f1823e075171f7133d04626d33a6ac0b145aa91dc6e382991a9"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/libc.h",
+      "input_sha256": [
+        "7bc041c0252bba75ca7578aaf46f080ef5539855a01f5c29b59f31a35b6b14e8",
+        "885d32f343d83a783976f8b76b948a13a009d79a86eaa15ca369897b4c5026fb"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/libc.h",
+      "output_sha256": "7bc041c0252bba75ca7578aaf46f080ef5539855a01f5c29b59f31a35b6b14e8"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/cdefs.h",
+      "input_sha256": [
+        "4d57a1bc5c6cd4b0b0ae8d2d4d1486f868c03aeea02049610a49ce65a1f005b3",
+        "e85a86d760017a3abfebc5d281dbf6eb6c5b61e046931a842bbe5cf0e7898e63"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/cdefs.h",
+      "output_sha256": "4d57a1bc5c6cd4b0b0ae8d2d4d1486f868c03aeea02049610a49ce65a1f005b3"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_types.h",
+      "input_sha256": [
+        "2f8550bf75580c2685100d3da694da2bd8fa162a19bc94055568bf580b75ce93",
+        "c9208a7ca3cd4df8fde80729f59824b295c8716224e0cfcd64526fb7cde7c844"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_types.h",
+      "output_sha256": "2f8550bf75580c2685100d3da694da2bd8fa162a19bc94055568bf580b75ce93"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/_types.h",
+      "input_sha256": [
+        "28a99920e25187f2db6bbf815b21e3c956a2d30cec62fef8343fcbf4f5abfd16",
+        "63f231651adba5ddd62a7660769c5d3cbd417d4d9c6061ebcbd71ac1196397dc"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/_types.h",
+      "output_sha256": "28a99920e25187f2db6bbf815b21e3c956a2d30cec62fef8343fcbf4f5abfd16"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/_types.h",
+      "input_sha256": [
+        "65976701a171449e759e8b53f491fb3df47a098f8d80eb1bda0213b5e19f4131",
+        "7eb646e3624c19c866dddd87bee8cfa494e9eca8f97ffe1649bd2db71370ab8f"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/_types.h",
+      "output_sha256": "65976701a171449e759e8b53f491fb3df47a098f8d80eb1bda0213b5e19f4131"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/_limits.h",
+      "input_sha256": [
+        "58547753f69f560839903902509dfa0af123708df60ccef56ac0a270b58bedcb",
+        "def93e9415d66750ae3c00ada3feaa1e61f8bf8524c7d491adc743869fe82acc"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/_limits.h",
+      "output_sha256": "def93e9415d66750ae3c00ada3feaa1e61f8bf8524c7d491adc743869fe82acc"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/_limits.h",
+      "input_sha256": [
+        "2b07e7ccdeaa4decc9fb813de9ca3845a6922813085a4222ff20eaf9228d6610",
+        "46e8ac5bd498f07c0ad68452f4bc8675d6cb26fb375fd22251541cc9e30760de"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/_limits.h",
+      "output_sha256": "46e8ac5bd498f07c0ad68452f4bc8675d6cb26fb375fd22251541cc9e30760de"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/dirent.h",
+      "input_sha256": [
+        "5f12aadfe815bd473f4c504d1ce02a92547e2e434fdfecdbc4a8d987c0379f57",
+        "8e43c428f51c19e6b32b23ea2460ab5774f52e7e0cdb04e4b51aa0c555e3b93b"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/dirent.h",
+      "output_sha256": "8e43c428f51c19e6b32b23ea2460ab5774f52e7e0cdb04e4b51aa0c555e3b93b"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_null.h",
+      "input_sha256": [
+        "5d082b5e66ca2abd99b9ec2e857c41ca34377fd4e2ce004e1d25aad4abf89972",
+        "a99eb389e85e6670342c944eec802a42d65044c684100f1a4960a3778d34a97b"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_null.h",
+      "output_sha256": "a99eb389e85e6670342c944eec802a42d65044c684100f1a4960a3778d34a97b"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/_stdint.h",
+      "input_sha256": [
+        "a27b5b5a32e93cd0a49957014e3416f1e46839e900ac9837b59f78ee9273348b",
+        "b26f452e7ee438f154ebef9de66793869e62101f36eb26017726d871e3607068"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/_stdint.h",
+      "output_sha256": "b26f452e7ee438f154ebef9de66793869e62101f36eb26017726d871e3607068"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/_stdint.h",
+      "input_sha256": [
+        "366c09f7c1f564f26559909e51d3dfdb85d05fd86b3ef7304eaaa8e9ae34850d",
+        "bf8f518683a8c0d6aa269dfabf473d4d8840050cf9ebcbf58f6f9cb360a145ff"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/_stdint.h",
+      "output_sha256": "bf8f518683a8c0d6aa269dfabf473d4d8840050cf9ebcbf58f6f9cb360a145ff"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_stdint.h",
+      "input_sha256": [
+        "67671ac35e1f81ecf45e65bc67c7f9cff646a35f1d42a13ac89319fac0d6161a",
+        "db3746e6a31202371a96d044c7ac72d1d440a2a96bcdda5592790126f959855f"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_stdint.h",
+      "output_sha256": "67671ac35e1f81ecf45e65bc67c7f9cff646a35f1d42a13ac89319fac0d6161a"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_stdio.h",
+      "input_sha256": [
+        "14cca2adf244202c6b359f6064cc542cd4360ba37896e624b3073dfed656db63",
+        "c1c9038cc79e08ae75b995c8a9c19692f6ceda5d7ce301e20e33d5bafb82a482"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_stdio.h",
+      "output_sha256": "c1c9038cc79e08ae75b995c8a9c19692f6ceda5d7ce301e20e33d5bafb82a482"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/stat.h",
+      "input_sha256": [
+        "0802053f2b414000173e1f29bd64722022540f423b234d4735b34a95d4505f3c",
+        "33b19ac8d547c631f656b707fe2d6f737813884176aca1f71d593a35f3fd8365"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/stat.h",
+      "output_sha256": "33b19ac8d547c631f656b707fe2d6f737813884176aca1f71d593a35f3fd8365"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_timespec.h",
+      "input_sha256": [
+        "c1e83ea0516ae5b8fd1f6590ad0fcc97828781f8aea3f3d7d44106543ed06e6e",
+        "ffbc661bc94d6cb7f792620195d27e632f8a8ffbdf50be34eee6ccc6043b32aa"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_timespec.h",
+      "output_sha256": "ffbc661bc94d6cb7f792620195d27e632f8a8ffbdf50be34eee6ccc6043b32aa"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/time.h",
+      "input_sha256": [
+        "43666f7f2e781b152c6987f41cc3fda5f56269bab6a99a7b332872046ad7bac8",
+        "af814fb3b76c2934b0fae7d29e6ce56f64853b344f4ce5dad209bd461aca7427"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/time.h",
+      "output_sha256": "af814fb3b76c2934b0fae7d29e6ce56f64853b344f4ce5dad209bd461aca7427"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_timeval.h",
+      "input_sha256": [
+        "5be80e2278ab4e0f29e4fd8af30dc28159926f059f82513b68d4acab890c5074",
+        "f08cd24801a3d1ab3d8a9fd4d29047ee133ae2eb9b69755f87e83a1117d0a39c"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_timeval.h",
+      "output_sha256": "5be80e2278ab4e0f29e4fd8af30dc28159926f059f82513b68d4acab890c5074"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/types.h",
+      "input_sha256": [
+        "28ba8267ded38dc7162cf1886ba354eb685d9f62d3e7ace1ba0e93363723aeed",
+        "8c3c5962287dd7f23683f8c77563f79010f5eb874280953d852e07dab7de6fdd"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/types.h",
+      "output_sha256": "8c3c5962287dd7f23683f8c77563f79010f5eb874280953d852e07dab7de6fdd"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/endian.h",
+      "input_sha256": [
+        "1f50385d15244a95cb2d5ad34c81667e6ec01124587f8d35b97578261aa8b72c",
+        "620380af0fbe750459435f9037e47c326ab5cb2fa081652c98f88747dd2fcf37"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/endian.h",
+      "output_sha256": "1f50385d15244a95cb2d5ad34c81667e6ec01124587f8d35b97578261aa8b72c"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/endian.h",
+      "input_sha256": [
+        "4fbaecd51095a110c11055e7be51b388d799841b601b544d0026395ca6ccebd5",
+        "786900a84764b9742e3050aafba4fc479d07c73a6b0c998bd93f8c2b0dba5ee6"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/endian.h",
+      "output_sha256": "786900a84764b9742e3050aafba4fc479d07c73a6b0c998bd93f8c2b0dba5ee6"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_pthreadtypes.h",
+      "input_sha256": [
+        "116216248126e80b1b727666c3a63ff76dc25df52482053516af7753beb73d3f",
+        "bcc13ecd22fe966242a975090403901fa2cebb40984c66c7d9da6965b529f345"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_pthreadtypes.h",
+      "output_sha256": "116216248126e80b1b727666c3a63ff76dc25df52482053516af7753beb73d3f"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/select.h",
+      "input_sha256": [
+        "1247a088725bca7aaef653bdc9da6173addd73a9f43d7328f8146dc9177f806f",
+        "705983f0088caabacf0d9ea3b5ec1550e96231a79a223f5945644fdfa78e0425"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/select.h",
+      "output_sha256": "705983f0088caabacf0d9ea3b5ec1550e96231a79a223f5945644fdfa78e0425"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_sigset.h",
+      "input_sha256": [
+        "8001b1ada44a9ae16fbf8a6c8e62b300387c36108fc286e293ab79a5f294c24f",
+        "910da11ab45558cb313fc9095c2270a6ee5ed59dd7cbad4fcffb848a38030c5d"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_sigset.h",
+      "output_sha256": "910da11ab45558cb313fc9095c2270a6ee5ed59dd7cbad4fcffb848a38030c5d"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/timespec.h",
+      "input_sha256": [
+        "3541c41894e5357a509224cc4f168ad0d2d36fd12396e81c8cf949735d42cf33",
+        "b8804094349f4fed3dabff60d846fb34ba7616224633a4e4b70bb6fe2ccbab3f"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/timespec.h",
+      "output_sha256": "3541c41894e5357a509224cc4f168ad0d2d36fd12396e81c8cf949735d42cf33"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_time.h",
+      "input_sha256": [
+        "2f99046ab296d903a932c47e35285143b291b1f6263a1d8a8844d1dfe662672e",
+        "e93faa4c716197461c99923e9195003ffbe3b87a39208b5d7323ad178616dd4a"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_time.h",
+      "output_sha256": "2f99046ab296d903a932c47e35285143b291b1f6263a1d8a8844d1dfe662672e"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/statvfs.h",
+      "input_sha256": [
+        "28088fc74675537791bb53b14e85539d12b725fb6dbb4a77e92eb167ab1cb2a4",
+        "fa63e4e829edfff04d5f8b34c104674fe9958f5cf38e2d41c02e90903c8f72ac"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/statvfs.h",
+      "output_sha256": "28088fc74675537791bb53b14e85539d12b725fb6dbb4a77e92eb167ab1cb2a4"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_wchar.h",
+      "input_sha256": [
+        "6139258a80db9374fac192eddd39277530f3a14c5cb7ff276d5311a8ad55a6f9",
+        "b1ba22d6ef75ac6533d69c298722bde3897d8974673e60bc753472b3a4459942"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_wchar.h",
+      "output_sha256": "b1ba22d6ef75ac6533d69c298722bde3897d8974673e60bc753472b3a4459942"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_ctype.h",
+      "input_sha256": [
+        "1fe4bfd094bb060d2f09a20ef71c8a2d77a7aecf0ef2e8291d3c34d3ced1e668",
+        "44043cb01fa086f5b259478121db3be34961c03861fd9f42a9eda38ac343ca79"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_ctype.h",
+      "output_sha256": "44043cb01fa086f5b259478121db3be34961c03861fd9f42a9eda38ac343ca79"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_stdlib.h",
+      "input_sha256": [
+        "6f1ee84b9c24ce5a498a2b31011a93f3fe24f1419b53625fd76d128fd9a0e931",
+        "bcd5862ca3d97b15057e2e5004874d3efce132d57984120abc462bac5a2929ff"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_stdlib.h",
+      "output_sha256": "bcd5862ca3d97b15057e2e5004874d3efce132d57984120abc462bac5a2929ff"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/stdarg.h",
+      "input_sha256": [
+        "6967beeb289abdc3574d1d629bc945a4df31ef05f3f7631b27a456ce9f910840",
+        "ba5f50aa6857a50b71b8ad297e4da3540e8dc7e17bbf31c85c84e5c4fc92a522"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/stdarg.h",
+      "output_sha256": "6967beeb289abdc3574d1d629bc945a4df31ef05f3f7631b27a456ce9f910840"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_strings.h",
+      "input_sha256": [
+        "47e1b610cdda5c1236292c9ee4a85078bb5d17e86f3bdf9978fbf6de058fc31a",
+        "b05d977c9ac2d8a76d94093f10b2e6aaf69e1be237baf3711b8798638b994d4b"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_strings.h",
+      "output_sha256": "b05d977c9ac2d8a76d94093f10b2e6aaf69e1be237baf3711b8798638b994d4b"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_string.h",
+      "input_sha256": [
+        "5c2d14906843683224fe7b484ada45e654264675fb11b7fa9550d9151fd07138",
+        "6f24ae28a1a56883dd004b56738ff4fc809fe3485103ef1a0160b36982d5c873"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_string.h",
+      "output_sha256": "6f24ae28a1a56883dd004b56738ff4fc809fe3485103ef1a0160b36982d5c873"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/unistd.h",
+      "input_sha256": [
+        "28bc2f6412d18c4541d64d566159a66f3c2e142ecc759499a98e4252c430d738",
+        "80305ed345b9b43186d57a736c456aceab0f9c8987e20f6cf57c5244e52e4959"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/unistd.h",
+      "output_sha256": "80305ed345b9b43186d57a736c456aceab0f9c8987e20f6cf57c5244e52e4959"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/exec.h",
+      "input_sha256": [
+        "48cc113955c8c0fd028776a050b38e6d5ad5273d26ee646e7af905739b23bb03",
+        "e3e63d7503da3ceb78728b40e9c011ab04dc921d2dfd3d42769c649469b2b56d"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/exec.h",
+      "output_sha256": "e3e63d7503da3ceb78728b40e9c011ab04dc921d2dfd3d42769c649469b2b56d"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/kernel.h",
+      "input_sha256": [
+        "3042a8d81b5ca2668d477ea8c84eef0cfb01985d208c1678d17a52086feb7ffb",
+        "73f05352a667243d32992119c8ad801dbb7830c1a61aa9a4b72d8483cfb3d216"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/kernel.h",
+      "output_sha256": "3042a8d81b5ca2668d477ea8c84eef0cfb01985d208c1678d17a52086feb7ffb"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/fp.h",
+      "input_sha256": [
+        "5bbe3bf9dc53eabfe76dbd5e3c623ab44e4ef29c9b7e12905f9aa58113387ef3",
+        "a498006a4f35090dd9d715b048ba42f262f0daeb667b9d6e9d7b430c593a73f6"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/fp.h",
+      "output_sha256": "a498006a4f35090dd9d715b048ba42f262f0daeb667b9d6e9d7b430c593a73f6"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/heap.h",
+      "input_sha256": [
+        "e15598af8b6e446105c31330845006c4866be8e35f7e323d5694eba596972620",
+        "f9ace746646edccc32a6645fda4462c87b84826330f28b217ec6c0b29f6cd7d2"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/heap.h",
+      "output_sha256": "e15598af8b6e446105c31330845006c4866be8e35f7e323d5694eba596972620"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/limits.h",
+      "input_sha256": [
+        "4b000e9aaf4019e7f5eb062f856f2ad266a9274f8401e78c29a8c8001496a16c",
+        "9e5af188cfbd9ca8d3d514f92e4b3ef218a018f66fab4d29f7c8fc81c0f248a4"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/limits.h",
+      "output_sha256": "9e5af188cfbd9ca8d3d514f92e4b3ef218a018f66fab4d29f7c8fc81c0f248a4"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/syslimits.h",
+      "input_sha256": [
+        "109cc538df651767d5ce07b5f38be42e864fd0c53fdf2496c468f77eb0374f5f",
+        "24204dcea6a1d648a7569eb52abb013aa8100457bd471d999619ffcb4082586b"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/syslimits.h",
+      "output_sha256": "109cc538df651767d5ce07b5f38be42e864fd0c53fdf2496c468f77eb0374f5f"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/klog.h",
+      "input_sha256": [
+        "1455a29957eef8e6ca9a892eb1b2c8ed664b3b092ba007a30a7a54bca1216d29",
+        "deb2a2c24b915d2b637d12040f0c6e0dc7fd6f2da52e6482384a5ac3943c23d4"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/klog.h",
+      "output_sha256": "deb2a2c24b915d2b637d12040f0c6e0dc7fd6f2da52e6482384a5ac3943c23d4"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/net/if.h",
+      "input_sha256": [
+        "367d0a155e06e9537de3241a43fa85016f8cdace4a13f740e99b821a954daeba",
+        "888334ebb229e7aa045608976d9b93d420be64649480e217d4c3ab0d56739523"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/net/if.h",
+      "output_sha256": "367d0a155e06e9537de3241a43fa85016f8cdace4a13f740e99b821a954daeba"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/socket.h",
+      "input_sha256": [
+        "1cdd8d5bc11221a9d295055b3a66735de4db08b717ca2d89109c71205d4332bc",
+        "5dc1783b68e9790d6b07fd694e6e1b05d0c1fe6e0c467c1d0dec76c2767d096c"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/socket.h",
+      "output_sha256": "5dc1783b68e9790d6b07fd694e6e1b05d0c1fe6e0c467c1d0dec76c2767d096c"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_iovec.h",
+      "input_sha256": [
+        "1fbaf577de6f82a46c1f2eec92753370b04d0cb957fee59c017ff36a0f80c7ca",
+        "9d7e2dd57fca764186f12b0a1e635fc306a9992dffeabf2e66e13dfef4fe1436"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_iovec.h",
+      "output_sha256": "9d7e2dd57fca764186f12b0a1e635fc306a9992dffeabf2e66e13dfef4fe1436"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/_align.h",
+      "input_sha256": [
+        "3841540265ced172c38a89b5925abd99fceded0553e228c9b65452cfdcbe2809",
+        "f88e1971055e1785c9bf01ad17ee3aaba77b81f2d514e931ac30abcdd0f3eb10"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/_align.h",
+      "output_sha256": "f88e1971055e1785c9bf01ad17ee3aaba77b81f2d514e931ac30abcdd0f3eb10"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/_align.h",
+      "input_sha256": [
+        "190da6862aae34dac5ce7ea08463c40b2ddf067a54dfa6a7b5b1f3544d5fcfa0",
+        "626914211771b4efe1e6605c1e1a3d99ff7e656c2957272551a84c4b3ad95520"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/_align.h",
+      "output_sha256": "626914211771b4efe1e6605c1e1a3d99ff7e656c2957272551a84c4b3ad95520"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_sockaddr_storage.h",
+      "input_sha256": [
+        "5682f60d2d95d9db5cae02ff4c860f4f5736747012d130cdffe30bb707d5a9fd",
+        "fcd493f71f13975eaab67e5852d5f7b9685bc90c8d7a4a5ef03c964b2c968110"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_sockaddr_storage.h",
+      "output_sha256": "5682f60d2d95d9db5cae02ff4c860f4f5736747012d130cdffe30bb707d5a9fd"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_locale.h",
+      "input_sha256": [
+        "4bc47b9a1405eb135e6ea1f7325daee88a4bbf10ee838dc78ac4aa293f9fa815",
+        "9eb4d8e7c388c283adc8d198937449ccd35f1871e96a212ea6e5bfe05ae2920a"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_locale.h",
+      "output_sha256": "9eb4d8e7c388c283adc8d198937449ccd35f1871e96a212ea6e5bfe05ae2920a"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/mman.h",
+      "input_sha256": [
+        "9ce9852e714df1ddbdeae7579b2a73d1db97c2072870475998dfd6829806beb6",
+        "fccdab9a07612518eba04239b994ad51ba85bf87c4e259f291e3f2cda65711a8"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/mman.h",
+      "output_sha256": "9ce9852e714df1ddbdeae7579b2a73d1db97c2072870475998dfd6829806beb6"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/lock.h",
+      "input_sha256": [
+        "5f8c35e2891a2d90abd2dfa4fbdd1e1bb212ca74a7d589526a7e496f0931feaf",
+        "d0aeb27739fb3b1865c49839292a7421ed56b607f7cbb7a9b376791b15f797d7"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/lock.h",
+      "output_sha256": "d0aeb27739fb3b1865c49839292a7421ed56b607f7cbb7a9b376791b15f797d7"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/queue.h",
+      "input_sha256": [
+        "01f0d3cf50c5f8edf9cb45d4ade14ee6dbe039ad239a66e8e173422953a2e9f1",
+        "fadeaf6c9cfd22f9dc436d58b3184ca98133f49f26c201395c7158abde3bb79a"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/queue.h",
+      "output_sha256": "fadeaf6c9cfd22f9dc436d58b3184ca98133f49f26c201395c7158abde3bb79a"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_lock.h",
+      "input_sha256": [
+        "263c60707ce56077b2899addc0be96c9681ecc14dab97b0247f36b94895e4af0",
+        "340feac3d26275b8c7eb1fa02e69904093a169810a50aa026808c479fa21a43c"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_lock.h",
+      "output_sha256": "340feac3d26275b8c7eb1fa02e69904093a169810a50aa026808c479fa21a43c"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/ktr_class.h",
+      "input_sha256": [
+        "9e986ae5a8013fd2ab9a3c9650dfd7c0b240483fd38a48e23d8e5d794be704a0",
+        "a80a017591ab827c6183d21b660c598206503281212f306c765725557bc38b71"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/ktr_class.h",
+      "output_sha256": "a80a017591ab827c6183d21b660c598206503281212f306c765725557bc38b71"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/mutex.h",
+      "input_sha256": [
+        "184b507f61fc13fc617a5f4844477d40fa89b456b14664b9a2b5f49c782ce91e",
+        "baf865a2d5da5fd6f655c1bc7a684ef8a86e7759f6c2cf939b6c8512fb36ef55"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/mutex.h",
+      "output_sha256": "baf865a2d5da5fd6f655c1bc7a684ef8a86e7759f6c2cf939b6c8512fb36ef55"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_mutex.h",
+      "input_sha256": [
+        "1c1508ae16daf7986b2da2c21023cca9801653945ba136c9083caa007747cccd",
+        "8a1b3d4a00b39b1a971fbae1e288a7b25fc9fcf30ecb6ac49d9409a6abeb6ddd"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_mutex.h",
+      "output_sha256": "1c1508ae16daf7986b2da2c21023cca9801653945ba136c9083caa007747cccd"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/param.h",
+      "input_sha256": [
+        "45f6be6581cedde16968eec91974425d7ef6bf769d60c584e7bc821e2cd1a674",
+        "a8ca59296049f0fa4405916af67132bcf6eb0aaa846aec105c69692d6eb653e7"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/param.h",
+      "output_sha256": "a8ca59296049f0fa4405916af67132bcf6eb0aaa846aec105c69692d6eb653e7"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/pcpu.h",
+      "input_sha256": [
+        "608300fee7138ef71685d712a65461ac5e5ed120c3b976196b4106f7803b1fa2",
+        "789ca55bdba17cf13c98be6cdf8fd1d2b879cf781524fa0ee6cbfd4b0d7b0392"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/pcpu.h",
+      "output_sha256": "608300fee7138ef71685d712a65461ac5e5ed120c3b976196b4106f7803b1fa2"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_cpuset.h",
+      "input_sha256": [
+        "0f90e4ed654a690025711e5e612ab42d59d28a3f0101db25e69bca30a13e2813",
+        "6ba9bc8aded8288fc2548eb5fdd6b6b10a616c84e37d52790f546a502a31accc"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_cpuset.h",
+      "output_sha256": "6ba9bc8aded8288fc2548eb5fdd6b6b10a616c84e37d52790f546a502a31accc"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_bitset.h",
+      "input_sha256": [
+        "162dd50838f442a0c3096150610e03eb74b88684caf1677d23fee403050ead15",
+        "81d14e4ebd680b020c30db085480051088546d2df631f8cecef8066893673fc5"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_bitset.h",
+      "output_sha256": "162dd50838f442a0c3096150610e03eb74b88684caf1677d23fee403050ead15"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_sx.h",
+      "input_sha256": [
+        "0a64c044dd5dbc5b7df69e8f33f517c31e5bab707b83e0891a08965285077e73",
+        "14337e3636faa956563332e63640617cc481c2b2224c66b8c14242b3f48a7859"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_sx.h",
+      "output_sha256": "0a64c044dd5dbc5b7df69e8f33f517c31e5bab707b83e0891a08965285077e73"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_rmlock.h",
+      "input_sha256": [
+        "1af1342505ba3bf7f68a91bd62005b2d549f64beaaa638a270a60c7c493cee67",
+        "741e1d23476bfb89aedfcbedd2e468f1cae33f37df0ee049bb61e9094a0588ef"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_rmlock.h",
+      "output_sha256": "741e1d23476bfb89aedfcbedd2e468f1cae33f37df0ee049bb61e9094a0588ef"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/vmmeter.h",
+      "input_sha256": [
+        "9452e87df8f14c89f68a2936a4f3af7fce236402fd81b58a37586a2ed51e0021",
+        "a44a41e81adef4fe5c136798fd85033e4e9cb0a153441d9c1c868ffdeeaa2192"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/vmmeter.h",
+      "output_sha256": "9452e87df8f14c89f68a2936a4f3af7fce236402fd81b58a37586a2ed51e0021"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/resource.h",
+      "input_sha256": [
+        "26c9970247c9d0495998f1b8bb3af6422aa33acace04b0ec46ca38b44e25e37c",
+        "c25648e267291d5dd88867d3873ca51b9623955b8f6ee873911ef3b52ef11175"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/resource.h",
+      "output_sha256": "c25648e267291d5dd88867d3873ca51b9623955b8f6ee873911ef3b52ef11175"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/pcpu.h",
+      "input_sha256": [
+        "c4108c9e0dd0f6d583f0ecb21dacb84cb55a929bfb84dbde17f9ddca17ddb815",
+        "f92126c1dbafc2d9597293274317a7b478a0afcc2c94c0bcc1e25843b2fa2a53"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/pcpu.h",
+      "output_sha256": "c4108c9e0dd0f6d583f0ecb21dacb84cb55a929bfb84dbde17f9ddca17ddb815"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/lock_profile.h",
+      "input_sha256": [
+        "56e35a377e056d88b1bf35bef305bf36fb89b77ec0ec7ce8182344b3adfa0eef",
+        "baa3c78bb7e30073cfe9f13fb5ee157988a22d7bd5a344ca2b8d7c154143e0d1"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/lock_profile.h",
+      "output_sha256": "baa3c78bb7e30073cfe9f13fb5ee157988a22d7bd5a344ca2b8d7c154143e0d1"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/cpufunc.h",
+      "input_sha256": [
+        "81eb0e08f5e669cdc0d947fbeeef79f898f909c3dbf218a1660f44e6c7449519",
+        "d02f38f30a8f2601484d653076797c6bca45478c70986c05ebcd13799d6d1dc8"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/cpufunc.h",
+      "output_sha256": "d02f38f30a8f2601484d653076797c6bca45478c70986c05ebcd13799d6d1dc8"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/lockstat.h",
+      "input_sha256": [
+        "b5923eaeb64595da568d16db40c4e8d33df6b5142f8a74ffcac2d21c5bb9e899",
+        "c1da80c170e9fbc74becc04e27bd8aebf4e87908351cb919ccac561be5f25551"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/lockstat.h",
+      "output_sha256": "b5923eaeb64595da568d16db40c4e8d33df6b5142f8a74ffcac2d21c5bb9e899"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/param.h",
+      "input_sha256": [
+        "5320b88e72409c38ee5a5673783a9182e2e3136d0aedaa31c7af94dff286ca25",
+        "8a1558b96b3cb7add48a450fb89bfe81d80265200d84299756f9ae076c1877cb"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/param.h",
+      "output_sha256": "5320b88e72409c38ee5a5673783a9182e2e3136d0aedaa31c7af94dff286ca25"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/errno.h",
+      "input_sha256": [
+        "1fefa8eba3a0eaec642e0fca02f9a7e0535cc44b0b389fb90fd84e6e41ac3bb1",
+        "b61ad4e1df515735678c3234783331eabe35e43d65af2a6d38b49f4274518489"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/errno.h",
+      "output_sha256": "1fefa8eba3a0eaec642e0fca02f9a7e0535cc44b0b389fb90fd84e6e41ac3bb1"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/priority.h",
+      "input_sha256": [
+        "8089a8fef09dba652d5495f3ac3c0816b3a3d1e6507f7c94880412ecd3f0fba9",
+        "aca015654ba031781a5beda84da5584f35f10247d2448ef8f3e98cf041fd95e3"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/priority.h",
+      "output_sha256": "8089a8fef09dba652d5495f3ac3c0816b3a3d1e6507f7c94880412ecd3f0fba9"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/signal.h",
+      "input_sha256": [
+        "7fd3c39886cc8a5c83296abe04e4bba45613927bce52c76594a522dff84e8f23",
+        "8942fcbd8d9c99ad5ffce3ce78c65786c45d672322e92bc0bc1e181971b7367a"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/signal.h",
+      "output_sha256": "8942fcbd8d9c99ad5ffce3ce78c65786c45d672322e92bc0bc1e181971b7367a"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/signal.h",
+      "input_sha256": [
+        "2dc38da7666dd8aa1043ad311fac53727ab76fd6ab14704b05b28fb69336707f",
+        "e79a3e9435c326a0a1c432f769704619459ae6be4077949f12625306cc243c21"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/signal.h",
+      "output_sha256": "e79a3e9435c326a0a1c432f769704619459ae6be4077949f12625306cc243c21"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/signal.h",
+      "input_sha256": [
+        "3fa59ba086a1f11e394d9a70cf4c8304d88cdbd6da277c708e6f49d9a585b3e9",
+        "4c080edd020412bf10928719c5887206a2b8fa4cd406d2b5dbf50e909f53be0e"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/signal.h",
+      "output_sha256": "3fa59ba086a1f11e394d9a70cf4c8304d88cdbd6da277c708e6f49d9a585b3e9"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/trap.h",
+      "input_sha256": [
+        "17bb71d3633a364d03eba1fb323329b4ea8e3ee683654e79721828478f45d9af",
+        "7e44ce07631eb378c380880fb1e170a7e31f1f8e5d3840de9be4d4b10c2db362"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/trap.h",
+      "output_sha256": "17bb71d3633a364d03eba1fb323329b4ea8e3ee683654e79721828478f45d9af"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/trap.h",
+      "input_sha256": [
+        "72de99af6e5c4910df3ec031484debb1082982cd81da9b596aa28c1057a8c9cd",
+        "8096d4d52d80807026d02c4b88cba80090e3a14c1bac6bd5fe49994a67153d14"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/trap.h",
+      "output_sha256": "8096d4d52d80807026d02c4b88cba80090e3a14c1bac6bd5fe49994a67153d14"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/sdt.h",
+      "input_sha256": [
+        "84fae9777e66aba4a73f494db538aa4f5d4af78cbda75a59edd868018200f737",
+        "c496b0618dfd0bb2bce504f12dc001266a281b0929f6e663004f3ef2c290978a"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/sdt.h",
+      "output_sha256": "84fae9777e66aba4a73f494db538aa4f5d4af78cbda75a59edd868018200f737"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/linker_set.h",
+      "input_sha256": [
+        "439d7ea3b254f9c8ceb0d980fec91e142a7a433384a5f5e5e6d82aff8ab1cd48",
+        "b4525f3babf1d64dc9bdbdfdf6dc909777c433ef9842175f8f258f7272f1a9c8"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/linker_set.h",
+      "output_sha256": "439d7ea3b254f9c8ceb0d980fec91e142a7a433384a5f5e5e6d82aff8ab1cd48"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/atomic.h",
+      "input_sha256": [
+        "06711554ac8c163adc436a151409a47e9fdd15c16061192784193844a29a2967",
+        "f305110adf7f8b2ded264a943fcddd8cd691a919be0f4a1231acd7dcfa987146"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/atomic.h",
+      "output_sha256": "06711554ac8c163adc436a151409a47e9fdd15c16061192784193844a29a2967"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/atomic_common.h",
+      "input_sha256": [
+        "9635ac8210c9af3157042f0453b720209fe003d233fb3de44573db8c6528ff81",
+        "a2ef6812b725e7036f853873a3644c7385abf0e4796a9f489c91c93bf0eea589"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/atomic_common.h",
+      "output_sha256": "9635ac8210c9af3157042f0453b720209fe003d233fb3de44573db8c6528ff81"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/rangelock.h",
+      "input_sha256": [
+        "58bea169d0ff74c891d97261719d9f7bbb0061b2e331e20ec864cc281ff96084",
+        "68ab87e613efc09f3bec9396462a245266196649b0e13da9d7ec764b622c575e"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/rangelock.h",
+      "output_sha256": "68ab87e613efc09f3bec9396462a245266196649b0e13da9d7ec764b622c575e"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/vm/vm.h",
+      "input_sha256": [
+        "5fe49906cf666a6fe37b666c01c35974d840ddb55b7c4c2b322c3710ac8072f3",
+        "f325b9be4bff1bae7d598a22bccf164f53a95093782bf18c73c864f9faf2e595"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/vm/vm.h",
+      "output_sha256": "5fe49906cf666a6fe37b666c01c35974d840ddb55b7c4c2b322c3710ac8072f3"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/vm.h",
+      "input_sha256": [
+        "0953ab8defbd65f4069427efa4ca65a5241f8a9568cca29ea73c7d769b412c43",
+        "1c36fc4c8e5e48252b2f60ad2bcc1a22abc0540c86fd91f77b6afb4e64d38e6f"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/vm.h",
+      "output_sha256": "1c36fc4c8e5e48252b2f60ad2bcc1a22abc0540c86fd91f77b6afb4e64d38e6f"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/specialreg.h",
+      "input_sha256": [
+        "1fcbdd9b27943bd6a666db27a9c4c66c5f9d43ca980512be867d90e340abbfd3",
+        "aa904c8e8750bb138194b3c820d52d84909a60697351db28f9e9426d2c16fff6"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/specialreg.h",
+      "output_sha256": "1fcbdd9b27943bd6a666db27a9c4c66c5f9d43ca980512be867d90e340abbfd3"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/specialreg.h",
+      "input_sha256": [
+        "511a2e998573041d7c44c00abdb3c4a3d5888918c006cc12a26b358f3b0df557",
+        "5443e9dc7edb1526c1ab5eb50c9c4cce9de453b645f1c790aa43e9d91f344f28"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/specialreg.h",
+      "output_sha256": "511a2e998573041d7c44c00abdb3c4a3d5888918c006cc12a26b358f3b0df557"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/probe.h",
+      "input_sha256": [
+        "2c9725f1eb303bf08fa47c97372b582dfc8bb1d9851cfe47d584f57d86065617",
+        "63eecfb1b8733ca29dcb597e8b3e43ce43e677b2e2cbd3d28e8a0898fa9931e3"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/probe.h",
+      "output_sha256": "63eecfb1b8733ca29dcb597e8b3e43ce43e677b2e2cbd3d28e8a0898fa9931e3"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/setjmp.h",
+      "input_sha256": [
+        "b0413429582e0c047cb95513b1f08539117cde64ed63d910a950f75a8368ca47",
+        "f4d15069dcaae8df79c112b5d8ef0546c3a9e7c7b266236cd1feebc0531b1f4b"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/setjmp.h",
+      "output_sha256": "b0413429582e0c047cb95513b1f08539117cde64ed63d910a950f75a8368ca47"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/setjmp.h",
+      "input_sha256": [
+        "374e20ea84812f748f39cc1a254c6f76a8b3936ed27c158439def964ba1169ff",
+        "c40404b7d41348ccd080489c507347a78fe3879d83e483e2f6fdb48ec7c5e4f0"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/setjmp.h",
+      "output_sha256": "c40404b7d41348ccd080489c507347a78fe3879d83e483e2f6fdb48ec7c5e4f0"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/machine/ucontext.h",
+      "input_sha256": [
+        "8fc4e5fdc61f57702bc38cd45463c2751556647c45b8dad122a1eb171f4d9128",
+        "d17b109b226bd762f428ac824eef3ac4bf4178c7accf2047cba3c5c0f0b28a5b"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/machine/ucontext.h",
+      "output_sha256": "8fc4e5fdc61f57702bc38cd45463c2751556647c45b8dad122a1eb171f4d9128"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/x86/ucontext.h",
+      "input_sha256": [
+        "5253d5277b5b6ae56195b1ea72ff5693742f80f6d69be77ea7c7d4e5050dd27d",
+        "79c563fa40548bb5af5e16300fd715f4bf73b74f685b2de111305fd0763b6b9e"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/x86/ucontext.h",
+      "output_sha256": "79c563fa40548bb5af5e16300fd715f4bf73b74f685b2de111305fd0763b6b9e"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/_ucontext.h",
+      "input_sha256": [
+        "52edb03c099e78a4325c103188b6bf8fb1839103629bc2c01d915e6ec66da09b",
+        "e285f596e200949716748e5277913a59bcddb75460bb02d8f21800deac85f3e3"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/_ucontext.h",
+      "output_sha256": "52edb03c099e78a4325c103188b6bf8fb1839103629bc2c01d915e6ec66da09b"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/sysctl.h",
+      "input_sha256": [
+        "d7464a00e74c0cc4d26354dc0297469a0612dde584c99fdef919e099cd6b0be8",
+        "fa9df23b70f08b8659d33a30be77f1760a218b3db6901f9d63f640c464f4658c"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/sysctl.h",
+      "output_sha256": "fa9df23b70f08b8659d33a30be77f1760a218b3db6901f9d63f640c464f4658c"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/cpuset.h",
+      "input_sha256": [
+        "d7b80ad04929b6920bfe4bfb8e4a3145e0c82313d384bc54d2de2ed198e9f5ec",
+        "ed91edae9f544a68f0ad8bb331dcb3a8ef7a395a14892ecdcaae757b3da8bc60"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/cpuset.h",
+      "output_sha256": "ed91edae9f544a68f0ad8bb331dcb3a8ef7a395a14892ecdcaae757b3da8bc60"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/sys/bitset.h",
+      "input_sha256": [
+        "1d816b345059ddb667726d8120b27c0e528a61e4eb52ed85a9249f4c48679e4f",
+        "c6d82380ff34d1fab1f2880c5a588b6bd7114840df44d8952384e55418afeb9f"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/sys/bitset.h",
+      "output_sha256": "c6d82380ff34d1fab1f2880c5a588b6bd7114840df44d8952384e55418afeb9f"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/platform.h",
+      "input_sha256": [
+        "6dfe9f5850ef53f82eb4b089278b578e5e7f014f1c89a1daeb8c0422885792bf",
+        "d7a916faef90fc721b86f36824516898e318df8a37a8b254874220a8e67beacd"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/platform.h",
+      "output_sha256": "d7a916faef90fc721b86f36824516898e318df8a37a8b254874220a8e67beacd"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/context.h",
+      "input_sha256": [
+        "04b96a7ece974e3dd469caf2b2927a7084062f70b59f580cde9773ab053cd18c",
+        "50d723db0d39e4949d0425ebd9eec7c413e9936d73c274020b0002b633b11691"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/context.h",
+      "output_sha256": "50d723db0d39e4949d0425ebd9eec7c413e9936d73c274020b0002b633b11691"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/include/ps5platform/shm.h",
+      "input_sha256": [
+        "267c5eac9e76ea380d1170cc71a70309cb98e98e91432ed27e4329765fa1eaac",
+        "914784d6b558bec14f31b47adb73f2dfeb8293194ce222cf44b8c7267be6cad9"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/platform/include/ps5platform/shm.h",
+      "output_sha256": "914784d6b558bec14f31b47adb73f2dfeb8293194ce222cf44b8c7267be6cad9"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "include/freebsd/xlocale/_langinfo.h",
+      "input_sha256": [
+        "03a990a1f985153c6646facc5530250b4a719565b81b5624ffae47c8922776e4",
+        "83066baeb2967a2b8de3b42b519e8d01dc01a5b6835435aa3aa2d586098205ca"
+      ],
+      "output": "source/project/private/av2/upstream/PS5_PayloadSDK/include/freebsd/xlocale/_langinfo.h",
+      "output_sha256": "03a990a1f985153c6646facc5530250b4a719565b81b5624ffae47c8922776e4"
+    },
+    {
+      "root": "payload-sdk-source",
+      "path": "platform/src/dlmalloc/malloc.c",
+      "input_sha256": [
+        "83b62a245c7a2db2a10d10278b6cc56562a70d722a147ba10ce298336aac7f67",
+        "be7be56b40b4b31417e74e77687f9b96127ea6cae534cf236aee40a4c739508d"
+      ],
+      "output": "source/project/private/p2-release-diagnostics-20261103/src/malloc.c",
+      "output_sha256": "be7be56b40b4b31417e74e77687f9b96127ea6cae534cf236aee40a4c739508d"
+    },
+    {
+      "root": "app",
+      "path": "authored/project/tools/native_editor/diagnostics/raw_capture.h",
+      "input_sha256": [
+        "305cd83a4ae1f956b1b02826e882ad44b91b22c33b8ac26d52256237591cdb9d",
+        "ea5f9655df9b33bc24768800d8baab50625711a5785fa7ed0e6e42377b2da4a9"
+      ],
+      "output": "source/project/private/q7t-backtrace-20261103/raw_capture.h",
+      "output_sha256": "305cd83a4ae1f956b1b02826e882ad44b91b22c33b8ac26d52256237591cdb9d"
+    }
+  ]
+}

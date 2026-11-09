@@ -1,0 +1,948 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/edge.cpp",
+      "sha256": "1aea115fced5eb8566e640033be801e8a16a0744af36c769214b1522dda21c5e"
+    }
+  },
+  "operations": [
+    {
+      "authored_utf8": "#include \"native_pulse.h\"\n"
+    },
+    {
+      "authored_utf8": "#include \"gpu_edge_runtime.h\"\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 87
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 172,
+      "length": 17
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 191,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 213,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 236,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 262,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 292,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 319,
+      "length": 36
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 357,
+      "length": 31
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 390,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 416,
+      "length": 33
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 453,
+      "length": 11
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 468,
+      "length": 32
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 504,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 527,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 557,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 624,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 643,
+      "length": 116
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 761,
+      "length": 119
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 882,
+      "length": 60
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 944,
+      "length": 77
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 949,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\n"
+    },
+    {
+      "authored_utf8": "  av2::active_gpu_edge().fence_issued(r11.u32,r6.u32,r5.u32);\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1268,
+      "length": 116
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1386,
+      "length": 115
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1503,
+      "length": 46
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1551,
+      "length": 61
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 1556,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\n"
+    },
+    {
+      "authored_utf8": "  av2::active_gpu_edge().primary_kick(r24.u32,r11.u32);\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1817,
+      "length": 117
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1936,
+      "length": 91
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2029,
+      "length": 43
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 2034,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\n"
+    },
+    {
+      "authored_utf8": "  av2::active_gpu_edge().chunk_queued(r31.u32);\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2128,
+      "length": 117
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2247,
+      "length": 81
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2330,
+      "length": 28
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2360,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2401,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2427,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2455,
+      "length": 61
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2523,
+      "length": 117
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2642,
+      "length": 80
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2724,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2765,
+      "length": 42
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2809,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2863,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2905,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2932,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2959,
+      "length": 16
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 2977,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3006,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3035,
+      "length": 30
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3067,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3098,
+      "length": 62
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 1258,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3167,
+      "length": 17
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3191,
+      "length": 115
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3308,
+      "length": 61
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3371,
+      "length": 25
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3400,
+      "length": 46
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3448,
+      "length": 47
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3499,
+      "length": 82
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2_native_pulse_register(callback,user_data);\n"
+    },
+    {
+      "authored_utf8": "  av2::set_gpu_interrupt(callback,user_data);\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3583,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3624,
+      "length": 41
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3672,
+      "length": 70
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3744,
+      "length": 13
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3759,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3784,
+      "length": 90
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3876,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3896,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 619,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3927,
+      "length": 29
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 3960,
+      "length": 102
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4064,
+      "length": 86
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 4152,
+      "length": 104
+    },
+    {
+      "copy": "upstream",
+      "offset": 81,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/p3-native-pulse-20261103/pulse-integration/edge.cpp",
+  "output_sha256": "39ed3fd5368943001f8668c3d351df14eb17d552cd615e8284589fd768c50468"
+}

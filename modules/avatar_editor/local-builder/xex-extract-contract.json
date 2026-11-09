@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "xex_sha256": "5593985c1e9b980ea3587a838583571d3acc2d7cd1f808ec22c856f9760337cb",
+  "image_base": 2449473536,
+  "provided_tool_source_files": {
+    "src/basefile.cpp": "3ec136a8af90b9f3fe21bdc174609a425daa402b70badc568beeb3b29e46ffce",
+    "src/basefile.h": "6c3b85d83a43bee93da3997be52e3aa7edf53884922ae136a3676a9a10abd3e6",
+    "src/byteio.h": "dd8ac59d3d8e9c527ba17210499650eeaa3f8d0dc2653116aee6aeda57c8c43c",
+    "src/compress/lzx.cpp": "f3f85f0087ce2db21ea79aeb03335aa39bf21b9a166c2e50416a1f2a4eeeab7a",
+    "src/compress/lzx.h": "f3275cfbc11b115bb3c64dfdeb57eb18b880ff6eaebd27d6f9a05297f4b03d37",
+    "src/compress/lzx_encode.cpp": "cc7934078b185faab57336dee7b6a363116bb51ee10605257ab67ccf7b124081",
+    "src/compress/lzx_encode.h": "9a7180d6e458d167bee495ae13a7c3887cfb4b22bf50f84dba67d84db8b6a89c",
+    "src/convert.cpp": "e217b6b72e8f3f0889ea72703cd5caff200a4298191fc990db244c2defba35fa",
+    "src/convert.h": "3a04db967e4b370f993fa0e21b3e8bf3a92aa1882b887e11dab8c175fdeb19ee",
+    "src/crypto/aes.cpp": "548de91afa0e8d0d95d9f088309687ac7f4439f4e3d8296442472bd9e8d14720",
+    "src/crypto/aes.h": "48aa4445b4de03c752406873657b0163443186b4d4b135226f5542f56c79c439",
+    "src/crypto/keys.cpp": "f56438367ffe3aae5a7ad334d20f2101ca5f56b21ad8ef5a69a921e015039bbf",
+    "src/crypto/keys.h": "76f2fc1cd12c02e5b8b7436234d8e9c81ec127ab98e38c2dfc15a97e247b821b",
+    "src/crypto/sha1.cpp": "b90b50e089543be93f9cc4dc473192372a920034e29accb89b20bd77c59972f3",
+    "src/crypto/sha1.h": "9e70eda6fd02b7cc462dcc2a5f80ca0fb284488ddf367e7a99823f5342a46961",
+    "src/crypto/xex_sign.cpp": "7c18485df52c5dacd69c02285af9166fd2c8dec95da414ee22f342f44ba5f344",
+    "src/crypto/xex_sign.h": "a9374289ae7c7bc0ebb0713ee10239eee2f3e47347adea53f028e4a4e6ec74cc",
+    "src/extract.cpp": "86ad2e5e984eea1cab12d54922662bde05b9edf41abb5cab5fe278e0d971101a",
+    "src/extract.h": "085011e7d95a9c5be790d6b1a789ff56954a02b97aa4a9cb53fa61cef61e9d99",
+    "src/gui/gui.cpp": "eeb815f618ec54c9d570faecf9a060942f1216f1e3b705831195b335febffd6a",
+    "src/idc.cpp": "155ab93a97a2804a5a32f0c84b2db621020f5504b9cda5702019f1a9739dc6ba",
+    "src/idc.h": "050a18771d55a902783d99fad0bed85ac0102c26700b07287362ab7d5fe59021",
+    "src/idc_boilerplate.h": "53e0cc566d9e88232b7c8724f3520cdcdd25a6ea9c9ae8d9fb68f3d9803a0fed",
+    "src/info.cpp": "06ee2deeb869359be33708e11b5c749c3b9dd4615546423e93b98855a3aed328",
+    "src/info.h": "717f51900859c8b262ca188537435afefc8ae9cef9cec5b1aa8417e139577486",
+    "src/main.cpp": "7be74d2771dcadb46ab87a7b79c08beabd7e53c29702f47c1c595baae4e5d530",
+    "src/modify.cpp": "bbd9ce857f6aa7643aec7d04995baf83bd86412bb8f718e1f10120c67360d059",
+    "src/modify.h": "44795b3aae0a219ee18445ca61e2ef3b9984a5cb90be56dbd284c59ad7e9b27a",
+    "src/patch.cpp": "b5dbe55cb3bb6a4db9109fd8f9afe498b04c4f05a757d96bd56a80555eb400db",
+    "src/patch.h": "854019919203965bf997ee8c7608cf19bc73d6f7fd14731731708a316d204025",
+    "src/selftest.cpp": "8223be4aac989e8c2d2852c3e330936ee69557a34bb6f184f3d0a9db2fbe5a90",
+    "src/special.cpp": "74f00559962ee18d0cef706ffc40259c723b757380bc4ad50a656b1dfec640cd",
+    "src/special.h": "709816f283e15d72d1ed4218155095bdae7ff2d37efb3ab31a3bc3d747365454",
+    "src/xex_file.cpp": "ee4364db1374452b4981fe2ec0301f6161900d900af5873e5ce32fd2b1303596",
+    "src/xex_file.h": "d729c656313f0c3b9af2c5d39c6cd6374d0c629a38e70af3f19836e4d83482f1",
+    "src/xex_format.h": "5ea1440958c97076904a6ba2ccfc01766bc0c8740843793d001b0f2c9fbc62e2",
+    "src/xml.cpp": "c66c34cce5251b2ad12aa5d604e99896cb86575af393c02298ccdfef8d49f695",
+    "src/xml.h": "f4bbf1780e932578607569ee5d02deb835ed031b575efabe458ecf86f42714d7",
+    "LICENSE": "adc8d865d699901608137f9b53a960651e38fe4c3df365e4c8f6fa219f332538"
+  },
+  "provided_tool_source_note": "User supplies all extraction tool source and its license separately. No source, keys, executable or assets are bundled.",
+  "resource_archives": [
+    {
+      "name": "MEDIA",
+      "virtual_address": 2490464640,
+      "size": 13512888,
+      "sha256": "bc90e23179bd7a46f2b33174c818cb31f16e2da3aff1da144398bc161a4e9950",
+      "pngs": [
+        "dialog_bg.png",
+        "option_dialog_yes_selected.png",
+        "option_dialog_yes_unselected.png",
+        "option_dialog_no_selected.png",
+        "option_dialog_no_unselected.png",
+        "ico_64x_Back.png"
+      ]
+    },
+    {
+      "name": "controlp",
+      "virtual_address": 2489834880,
+      "size": 629698,
+      "sha256": "cdf32cf8febf8dde0f8ec4331c785359bcca0ab06af74907c7743eb5a78503da",
+      "pngs": [
+        "Legend_A.png",
+        "Legend_B.png",
+        "Legend_Y.png"
+      ]
+    }
+  ]
+}

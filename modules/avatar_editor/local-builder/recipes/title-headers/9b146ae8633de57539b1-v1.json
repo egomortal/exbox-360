@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/catalog_search.h",
+      "sha256": "cf606820b2cbe54cf8ed5f27ff138094580b59c77b14208aaab438eebf65b6a8"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/catalog_search.h",
+  "output_sha256": "b839662ed4b5cf2ed3254b6b916c5f2dbcc16dfddd0ba89892c2ab389d531c05",
+  "operations": [
+    {
+      "authored_utf8": "// catalog_search.h: the Ctrl+F finder's input side. Typed text becomes the\n// catalog filter and the heading's status line; while the box is open the\n// listener sits topmost so keys never reach the pad drivers.\n#pragma once\n\n#include <cstdint>\n#include <string>\n\n#include <rex/ui/window.h>\n#include <rex/ui/window_listener.h>\n\nnamespace ae_search {\n\nclass Controller : public rex::ui::WindowInputListener {\n public:\n  // Registers on the window above every other listener.\n  void Attach(rex::ui::Window* window);\n  void Detach();\n\n  bool open() const { return open_; }\n  // Re-post the overlay; the tick calls it when a store match count arrives.\n  void Refresh() { Push(); }\n  void SetFilterTextInput(bool active) {\n    if (window_) window_->SetTextInputActive(active);\n  }\n\n  void OnKeyDown(rex::ui::KeyEvent& e) override;\n  void OnKeyUp(rex::ui::KeyEvent& e) override;\n  void OnKeyChar(rex::ui::KeyEvent& e) override;\n\n private:\n  void Toggle();\n  void Apply(bool clear);\n  void Push();\n\n  rex::ui::Window* window_ = nullptr;\n  bool open_ = false;\n  bool applied_ = false;\n  bool store_mode_ = false;  // the box was opened on a store page\n  bool games_list_ = false;  // ...and that page is the Game Styles list\n  std::string query_;\n};\n\nController& Get();\n\n// The open store page, reported per frame by the title tick: the Game Styles\n// list filters through FindGames, an item page through FindGameOffers, and\n// Enter has the tick re-enter the page so the list is fetched again.\nenum class StorePage { kNone, kGamesList, kItems };\nvoid SetStorePage(StorePage page);\nStorePage CurrentStorePage();\nbool ConsumeGamesReloadRequest();\nbool HandleFilterPad(uint16_t virtual_key, uint16_t flags);\nbool FilterMenuOpen();\nbool FilterMenuType(char ch);\n\n}  // namespace ae_search\n"
+    }
+  ]
+}

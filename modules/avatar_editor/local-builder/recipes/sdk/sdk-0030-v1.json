@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "rexglue_sdk",
+      "path": "src/core/socket_posix.cpp",
+      "sha256": "39d4660675a8c6b3db0b3a7fe0721bc76a575e0f96688b8f620fffa4ede32e60"
+    }
+  },
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 27
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 26
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 58,
+      "length": 52
+    },
+    {
+      "copy": "upstream",
+      "offset": 90,
+      "length": 17
+    },
+    {
+      "authored_utf8": "PS5"
+    },
+    {
+      "copy": "upstream",
+      "offset": 110,
+      "length": 29
+    },
+    {
+      "authored_utf8": "\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 143,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 167,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 190,
+      "length": 20
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 214,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 255,
+      "length": 41
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 298,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 303,
+      "length": 67
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 372,
+      "length": 51
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 298,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 430,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 28,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/av2/sdk-ps5-core-source/src/core/socket_posix.cpp",
+  "output_sha256": "75fd402a0be95469830063e66495c071ab37f0d2f9211250ee48b8b98ba6cbbc"
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/guest_animation.h",
+      "sha256": "c192cdefe675dcb36163ae14262221e29622b185314db456d2dd07a74457c368"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/kernel/xam/avatars/guest_animation.h",
+  "output_sha256": "c192cdefe675dcb36163ae14262221e29622b185314db456d2dd07a74457c368",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 3377
+    }
+  ]
+}

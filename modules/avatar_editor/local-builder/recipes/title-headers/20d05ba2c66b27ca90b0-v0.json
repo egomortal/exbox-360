@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/gpu/gpu_cmdbuf.h",
+      "sha256": "5434f403abf21d6edc1f606b78812a2986eb6d25372793b02edfee93496d2cef"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/gpu/gpu_cmdbuf.h",
+  "output_sha256": "5434f403abf21d6edc1f606b78812a2986eb6d25372793b02edfee93496d2cef",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1808
+    }
+  ]
+}

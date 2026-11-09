@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/fault_diag.h",
+      "sha256": "5680e0901d4cc079b288a3099c3f71da6bd9116a69e1164f724be08793689b4b"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/fault_diag.h",
+  "output_sha256": "5680e0901d4cc079b288a3099c3f71da6bd9116a69e1164f724be08793689b4b",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 293
+    }
+  ]
+}

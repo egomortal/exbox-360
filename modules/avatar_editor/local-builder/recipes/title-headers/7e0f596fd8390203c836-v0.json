@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/rex/kernel/util/xfiletime.h",
+      "sha256": "987395d23a26d51881dda5ea2a5c8953045fd552a598db1f549fc35003a48a38"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/rex/kernel/util/xfiletime.h",
+  "output_sha256": "987395d23a26d51881dda5ea2a5c8953045fd552a598db1f549fc35003a48a38",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1518
+    }
+  ]
+}

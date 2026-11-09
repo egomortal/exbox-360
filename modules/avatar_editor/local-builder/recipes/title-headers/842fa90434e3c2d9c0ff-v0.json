@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/rex/kernel/xam/tile_icon.h",
+      "sha256": "a4e7f1d457146948a760e22b8c933b0ce3632c6024ee5d16c311e73f3f0ea37d"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/rex/kernel/xam/tile_icon.h",
+  "output_sha256": "a4e7f1d457146948a760e22b8c933b0ce3632c6024ee5d16c311e73f3f0ea37d",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1105
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/input_hooks.h",
+      "sha256": "f4be0968276c251b96eadeb44643279840d5a87102bdde1a749eb561d7766b32"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/input_hooks.h",
+  "output_sha256": "f4be0968276c251b96eadeb44643279840d5a87102bdde1a749eb561d7766b32",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 357
+    }
+  ]
+}

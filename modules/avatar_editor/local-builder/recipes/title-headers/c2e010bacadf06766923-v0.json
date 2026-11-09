@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/xe_compat.h",
+      "sha256": "f22a6c91f1694b4859690ab984a30a6d512ae83500d5afc2f431f4abcaa88ac0"
+    }
+  },
+  "output": "source/project/private/av2/title-native-source/kernel/xam/avatars/xe_compat.h",
+  "output_sha256": "f22a6c91f1694b4859690ab984a30a6d512ae83500d5afc2f431f4abcaa88ac0",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 2183
+    }
+  ]
+}

@@ -1,0 +1,3469 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/patches.cpp",
+      "sha256": "bad79cbb8056843f60c1fc726c7aec48e065fcc4a084bce8b0f8d6c509098af3"
+    }
+  },
+  "operations": [
+    {
+      "authored_utf8": "#include \"gpu_edge_runtime.h\"\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 66
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 68,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 86,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 105,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 124,
+      "length": 14
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 139,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 156,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 175,
+      "length": 23
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 200,
+      "length": 27
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 228,
+      "length": 27
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 256,
+      "length": 6
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 263,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 280,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 256,
+      "length": 6
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "// Q5: Windows fault reporter replaced by runtime POSIX routing.\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 326,
+      "length": 33
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 360,
+      "length": 38
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 399,
+      "length": 35
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 436,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 458,
+      "length": 37
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 496,
+      "length": 24
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 521,
+      "length": 24
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 546,
+      "length": 36
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 583,
+      "length": 22
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 607,
+      "length": 73
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 681,
+      "length": 55
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 737,
+      "length": 43
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 742,
+      "length": 19
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 781,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 806,
+      "length": 44
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 811,
+      "length": 20
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 781,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 876,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 953,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1032,
+      "length": 38
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1071,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1084,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1143,
+      "length": 84
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1228,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1250,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1267,
+      "length": 61
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1329,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1344,
+      "length": 63
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1408,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1467,
+      "length": 87
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1228,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1250,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1594,
+      "length": 36
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1631,
+      "length": 64
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1696,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1715,
+      "length": 42
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1329,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1777,
+      "length": 37
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1815,
+      "length": 97
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1913,
+      "length": 36
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1953,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2031,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2109,
+      "length": 19
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2129,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2164,
+      "length": 55
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2220,
+      "length": 53
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2277,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2319,
+      "length": 61
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2384,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2439,
+      "length": 85
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2525,
+      "length": 20
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2549,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2625,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2701,
+      "length": 33
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2735,
+      "length": 37
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2773,
+      "length": 52
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2826,
+      "length": 10
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2837,
+      "length": 33
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2871,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2916,
+      "length": 15
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2933,
+      "length": 41
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 2938,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2975,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3006,
+      "length": 70
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3077,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3132,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3210,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3241,
+      "length": 90
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3332,
+      "length": 92
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3425,
+      "length": 81
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3510,
+      "length": 42
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 3515,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2975,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3241,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3601,
+      "length": 90
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3692,
+      "length": 87
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3780,
+      "length": 79
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3860,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3922,
+      "length": 45
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 3927,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2975,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3241,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4016,
+      "length": 89
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4106,
+      "length": 86
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4193,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3860,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4333,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4410,
+      "length": 80
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4491,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4522,
+      "length": 46
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4569,
+      "length": 92
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4663,
+      "length": 54
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktNetPoll\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4718,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4760,
+      "length": 48
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4809,
+      "length": 99
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4909,
+      "length": 37
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4947,
+      "length": 93
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5041,
+      "length": 87
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5132,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 5137,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5190,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5272,
+      "length": 41
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 5277,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 4760,
+      "length": 48
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5363,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3077,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3132,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 3210,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5602,
+      "length": 100
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5703,
+      "length": 91
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5798,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktNetClose\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5837,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5895,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 5973,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6052,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6130,
+      "length": 47
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6178,
+      "length": 75
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 6183,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6254,
+      "length": 70
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6325,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6400,
+      "length": 71
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6472,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6514,
+      "length": 31
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6546,
+      "length": 95
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6642,
+      "length": 12
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6655,
+      "length": 100
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6756,
+      "length": 5
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6766,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6844,
+      "length": 50
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6898,
+      "length": 41
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 6903,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6940,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6971,
+      "length": 87
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7059,
+      "length": 89
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7149,
+      "length": 40
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7193,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7271,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7348,
+      "length": 49
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7398,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7477,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7556,
+      "length": 79
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7636,
+      "length": 35
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7672,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7728,
+      "length": 43
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7772,
+      "length": 53
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7826,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7881,
+      "length": 94
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 7976,
+      "length": 73
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8050,
+      "length": 38
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8089,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8155,
+      "length": 56
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktItemFetch\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8212,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8247,
+      "length": 51
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8299,
+      "length": 54
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8354,
+      "length": 55
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8410,
+      "length": 55
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8470,
+      "length": 104
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8575,
+      "length": 83
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8659,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8738,
+      "length": 70
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8812,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8887,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 8963,
+      "length": 72
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9036,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9113,
+      "length": 58
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktPageError\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9172,
+      "length": 63
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9236,
+      "length": 72
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9312,
+      "length": 73
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9386,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9465,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9541,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9619,
+      "length": 49
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9669,
+      "length": 89
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktCatFetch\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9759,
+      "length": 26
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9786,
+      "length": 28
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9815,
+      "length": 95
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9911,
+      "length": 87
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 9999,
+      "length": 94
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10094,
+      "length": 83
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10178,
+      "length": 91
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10270,
+      "length": 80
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10351,
+      "length": 81
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10433,
+      "length": 69
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10503,
+      "length": 27
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10531,
+      "length": 14
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10546,
+      "length": 60
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10610,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10688,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10764,
+      "length": 14
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10779,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 10784,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10837,
+      "length": 52
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10890,
+      "length": 88
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 10979,
+      "length": 99
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11079,
+      "length": 97
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11177,
+      "length": 48
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11229,
+      "length": 72
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11302,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11378,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11453,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11528,
+      "length": 72
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11601,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11678,
+      "length": 70
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11749,
+      "length": 42
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 11754,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11792,
+      "length": 62
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11858,
+      "length": 79
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11938,
+      "length": 32
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 11971,
+      "length": 42
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 11976,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12014,
+      "length": 86
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12101,
+      "length": 88
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12193,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12269,
+      "length": 79
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12349,
+      "length": 57
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 12354,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12407,
+      "length": 51
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12459,
+      "length": 82
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12542,
+      "length": 100
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12643,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12721,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12797,
+      "length": 73
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12871,
+      "length": 53
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12925,
+      "length": 54
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktMarshal\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 12980,
+      "length": 33
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13014,
+      "length": 39
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13054,
+      "length": 67
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13122,
+      "length": 99
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13222,
+      "length": 35
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13258,
+      "length": 88
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13347,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13406,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13465,
+      "length": 58
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13524,
+      "length": 67
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13595,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13673,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13752,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13830,
+      "length": 44
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13875,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktWearStart\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13915,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13957,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14008,
+      "length": 90
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14102,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktWearStep\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13915,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13957,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14234,
+      "length": 89
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14327,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14402,
+      "length": 65
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14468,
+      "length": 53
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14523,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktOwnStatus\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14563,
+      "length": 38
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14602,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14624,
+      "length": 80
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14705,
+      "length": 14
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14723,
+      "length": 58
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 14728,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14563,
+      "length": 38
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14602,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14843,
+      "length": 73
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14917,
+      "length": 32
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14950,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14969,
+      "length": 91
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15061,
+      "length": 74
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14705,
+      "length": 14
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15154,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15230,
+      "length": 76
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15307,
+      "length": 78
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15386,
+      "length": 45
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15432,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_MktPurchase\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15471,
+      "length": 31
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14950,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15522,
+      "length": 95
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15618,
+      "length": 29
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15664,
+      "length": 44
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15709,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15801,
+      "length": 55
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15857,
+      "length": 84
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15942,
+      "length": 34
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 15993,
+      "length": 63
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16057,
+      "length": 77
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16135,
+      "length": 83
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16219,
+      "length": 60
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16280,
+      "length": 88
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16372,
+      "length": 72
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16445,
+      "length": 69
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16515,
+      "length": 40
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 16520,
+      "length": 16
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16556,
+      "length": 41
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16598,
+      "length": 30
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16645,
+      "length": 36
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16682,
+      "length": 90
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16776,
+      "length": 44
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 16781,
+      "length": 20
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16821,
+      "length": 32
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 14705,
+      "length": 14
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16872,
+      "length": 59
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 16877,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16932,
+      "length": 47
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 16980,
+      "length": 97
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 17078,
+      "length": 82
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19499,
+      "length": 75
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19575,
+      "length": 35
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19611,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\"AE_TileSizeHint\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19651,
+      "length": 43
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19695,
+      "length": 69
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19765,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 13992,
+      "length": 11
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19793,
+      "length": 20
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19814,
+      "length": 31
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19846,
+      "length": 51
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19898,
+      "length": 40
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19939,
+      "length": 12
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 6756,
+      "length": 5
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19958,
+      "length": 23
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 2975,
+      "length": 17
+    },
+    {
+      "authored_utf8": "pixels="
+    },
+    {
+      "copy": "upstream",
+      "offset": 20022,
+      "length": 18
+    },
+    {
+      "authored_utf8": "\"PREVIEW\",7)==0?128u:64u;\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 19986,
+      "length": 36
+    },
+    {
+      "authored_utf8": "pixels);\n"
+    },
+    {
+      "authored_utf8": "  av2::active_gpu_edge().tile_size(pixels);\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 20078,
+      "length": 69
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 20148,
+      "length": 21
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 20170,
+      "length": 42
+    },
+    {
+      "copy": "upstream",
+      "offset": 66,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2::note_title_hook(\""
+    },
+    {
+      "copy": "upstream",
+      "offset": 20175,
+      "length": 17
+    },
+    {
+      "authored_utf8": "\");\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 20213,
+      "length": 26
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 20240,
+      "length": 22
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 1758,
+      "length": 3
+    },
+    {
+      "authored_utf8": "\r\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 803,
+      "length": 1
+    },
+    {
+      "authored_utf8": "\r\n"
+    }
+  ],
+  "output": "source/project/private/av2/title-port-source/patches.cpp",
+  "output_sha256": "25b83ab72fe3bdf55b1896a31aa3917b98ca381e98319d6f26d992fb81ac57d4"
+}

@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "sources": {
+    "source/project/private/av2/title-port-source/catalog_search.cpp": "cb74a9b7dddb7f66edfd8862f937e6538fdfef0f1c8322ee95818b2008fdfac3",
+    "source/project/private/av2/title-port-source/catalog_search.h": "b839662ed4b5cf2ed3254b6b916c5f2dbcc16dfddd0ba89892c2ab389d531c05",
+    "source/project/private/av2/title-native-source/catalog_search.h": "b839662ed4b5cf2ed3254b6b916c5f2dbcc16dfddd0ba89892c2ab389d531c05",
+    "source/project/private/av2/title-port-source/search_state.cpp": "537f9fc5e6195ab03213924946e7923ef99b4d8d095fe8a17b800248dc12439b",
+    "source/project/private/av2/title-port-source/search_state.h": "3ed2b6eb56693b08444c5b8a7d96484286da546b37086d5a9d0b5334fb5660de",
+    "source/project/private/av2/title-native-source/search_state.h": "3ed2b6eb56693b08444c5b8a7d96484286da546b37086d5a9d0b5334fb5660de",
+    "source/project/private/av2/title-native-source/input_hooks.cpp": "3cea2f1b3096704a26c9adb328cd0f0dff477bdcdbe8407fd75c4c4cacd3daad",
+    "source/project/private/av2/title-native-source/xui_hooks.cpp": "1223b0d873095902e1f6cf1fe800152bb64f861e8f4ad2dfe840bcc338570a72",
+    "source/project/private/av2/title-native-source/kernel/xam/xam_avatar.cpp": "99d968733816a11e6c1c704b2166809c3c101abb84a186acdba84ca964c8271b",
+    "source/project/private/av2/title-port-source/rex/kernel/xam/avatar_search.h": "d42bed0d2d64a08d5594217177ed83ebe086e5be0be02c1766df31bf795725c5",
+    "source/project/private/av2/title-native-source/rex/kernel/xam/avatar_search.h": "d42bed0d2d64a08d5594217177ed83ebe086e5be0be02c1766df31bf795725c5",
+    "source/project/private/av2/title-native-source/closet_filter.h": "deceff87677b35bf945d317e07bd26bde6b35b94311110e38bc542eb3559fde3",
+    "source/project/private/av2/title-native-source/filter_controls.h": "eba33f87ff1a0956eacf09a5ed810f6072822f2d56183e1711db9d36474bab67",
+    "source/project/private/av2/title-port-source/closet_filter.h": "deceff87677b35bf945d317e07bd26bde6b35b94311110e38bc542eb3559fde3",
+    "source/project/private/av2/title-port-source/filter_controls.h": "eba33f87ff1a0956eacf09a5ed810f6072822f2d56183e1711db9d36474bab67",
+    "source/project/private/av2/title-native-source/closet_filter.cpp": "b8da384da31baadafdfeb7c09850b83ddd9e55e56cf8dbcbb3c5ca3cc793668a",
+    "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/gpu_renderer.cpp": "ed3040b1e681751cba0a5f81443fde29df9fca5467b3e3c959dab6ddec22f7a9",
+    "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/sort_filter_legend.h": "24865a4be6b030f23bbf5edc9b6d7393ca3e24b33119bfd715fbd00e3642fe49",
+    "source/project/private/av2/title-native-source/filter_legend_state.cpp": "23b4f5c8801d78905340ac733c7e7e60c449d14ec1b396b58338b922ad338f6b",
+    "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src/asset.h": "fa0e02cf79e92fdd544d9714adae88e00efd8991e69d1790890c717ada525dd8"
+  },
+  "tests": {
+    "tests/filter_controls_test.cpp": "8a6a6c5a044b766c2a8ec13caf2d6b9f3e1ca68efee0d35da7b2236d0fe6dad5",
+    "tests/closet_filter_test.cpp": "739c207706672272a0ab1d795c1f20e8b665771b8c166c127c89395178ac58be",
+    "tests/pad_prefix.cpp": "9d8c2a08db4a09a3f9c960e2f2855e359f22727864379ce8fa3824fa0b67f882",
+    "tests/pad_suffix.cpp": "b2dcc6caf59db00ca0d6bf4fd783af45481d28041179f441f6dd90be9e7176f9",
+    "tests/filter_legend_test.cpp": "fe8f5080091a75a54022353d7bd0ff7de9f6490619253675bbab62767af030ab"
+  },
+  "jobs": [
+    {
+      "name": "filter-model",
+      "includes": [
+        "source/project/private/av2/title-native-source"
+      ],
+      "sources": [
+        "source/project/private/av2/title-native-source/closet_filter.cpp"
+      ],
+      "test": "tests/closet_filter_test.cpp"
+    },
+    {
+      "name": "filter-controls",
+      "includes": [
+        "source/project/private/av2/title-native-source"
+      ],
+      "sources": [],
+      "test": "tests/filter_controls_test.cpp"
+    },
+    {
+      "name": "filter-controller",
+      "includes": [
+        "source/project/private/av2/title-port-source",
+        "source/project/private/av2/sdk-host-source/include"
+      ],
+      "sources": [],
+      "test": "tests/pad_suffix.cpp",
+      "extract": {
+        "source": "source/project/private/av2/title-port-source/catalog_search.cpp",
+        "start": "namespace ae_search {",
+        "end": "Controller& Get()",
+        "prefix": "tests/pad_prefix.cpp",
+        "suffix": "tests/pad_suffix.cpp"
+      }
+    },
+    {
+      "name": "original-y-legend",
+      "includes": [
+        "source/project/private/a1-dashboard-followup-20261104/exit-v2/combined/src",
+        "source/project/private/av2/title-port-source"
+      ],
+      "sources": [
+        "source/project/private/av2/title-native-source/filter_legend_state.cpp"
+      ],
+      "test": "tests/filter_legend_test.cpp",
+      "run_args": [
+        "${output}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/xam_loader.cpp",
+      "sha256": "ebef98674a76d713fc0290b2c9800b95b72fec0eff2c394e6517285a7eaea1f7"
+    }
+  },
+  "operations": [
+    {
+      "authored_utf8": "#include \"normal_exit_api.h\"\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 153
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 155,
+      "length": 21
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 177,
+      "length": 24
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 202,
+      "length": 36
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 239,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 263,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 279,
+      "length": 18
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 298,
+      "length": 15
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 315,
+      "length": 48
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 364,
+      "length": 86
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 451,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 490,
+      "length": 97
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 588,
+      "length": 38
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 627,
+      "length": 10
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 638,
+      "length": 81
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 627,
+      "length": 3
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "authored_utf8": "  av2_normal_exit_route(3);\n"
+    },
+    {
+      "authored_utf8": "  av2_normal_exit_request(3); // Active frontend parks before stock teardown.\n"
+    },
+    {
+      "copy": "upstream",
+      "offset": 724,
+      "length": 39
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 532,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 767,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 787,
+      "length": 22
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 810,
+      "length": 19
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    },
+    {
+      "copy": "upstream",
+      "offset": 831,
+      "length": 89
+    },
+    {
+      "copy": "upstream",
+      "offset": 76,
+      "length": 1
+    }
+  ],
+  "output": "source/project/private/a1-dashboard-followup-20261104/exit-v2/src/xam_loader.cpp",
+  "output_sha256": "c941a4e617cfa5d4cf5be7ea0c173e55a93dc8d07f837236ebad95a1cfb987e4"
+}

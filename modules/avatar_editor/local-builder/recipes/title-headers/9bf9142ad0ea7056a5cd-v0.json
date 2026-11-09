@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/strb.h",
+      "sha256": "7ddbc997754b51835e22cd895310e0bafb88c780133a1a2adce30f91f64ac42e"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/strb.h",
+  "output_sha256": "7ddbc997754b51835e22cd895310e0bafb88c780133a1a2adce30f91f64ac42e",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1656
+    }
+  ]
+}

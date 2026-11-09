@@ -1,0 +1,500 @@
+{
+  "schema": 1,
+  "transforms": [
+    {
+      "variants": [
+        {
+          "path": "title_0_1-xui_hooks-v0.json",
+          "sha256": "f2cbd6f4899eae25c4f1a40dbbca7f7dbd3acd456271ffd91e075a6bf6a3954e"
+        },
+        {
+          "path": "title_0_1-xui_hooks-v1.json",
+          "sha256": "bb6caa60afbf3a9b36b1234b3aecb1f33230db241ef6b9005b1042185b0113f5"
+        }
+      ],
+      "label": "src/xui_hooks.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_1_0-patches-v0.json",
+          "sha256": "89d3795a8737e6944a0f032f294f767cc5848c8a083868e7b860e30a8b9a1389"
+        },
+        {
+          "path": "title_1_0-patches-v1.json",
+          "sha256": "2a179a61bafeda516fba9665ba3dc1c577d0fb031f33991b7952dd5f6c949535"
+        }
+      ],
+      "label": "src/patches.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_2_2-search_state-v0.json",
+          "sha256": "ec9d36c7527b61b6d51653fa842ecfd51ab0df960cdcfdee28988c436a5f24ee"
+        },
+        {
+          "path": "title_2_2-search_state-v1.json",
+          "sha256": "9e06e6f6f3164e1a237881f73b146d81cbb105c661004fea4d76a3fda9799a11"
+        }
+      ],
+      "label": "src/search_state.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_3_3-catalog_search-v0.json",
+          "sha256": "b3419e2a83b38d271a8d8253929ea8c0224c7c81a167427656e3177315bfc4d7"
+        },
+        {
+          "path": "title_3_3-catalog_search-v1.json",
+          "sha256": "d308ecf733f0d841d43fc988d35900809b8c93f7afee24db2c88da57c5dc609a"
+        }
+      ],
+      "label": "src/catalog_search.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_4_4-input_hooks-v0.json",
+          "sha256": "b16f23957460b3f868a781ae73a8e9937a0b9e8f289c4da255b4463ee70da696"
+        },
+        {
+          "path": "title_4_4-input_hooks-v1.json",
+          "sha256": "10cdb9365e52b63b51991e1f6f4c16c6730b86cc878ee8a19f66d108b35dd02f"
+        }
+      ],
+      "label": "src/input_hooks.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_5_5-notify_hooks-v0.json",
+          "sha256": "d2ce5ff954c2399ac145242290936d44247665f9b741dc7ce9a34351e596bb94"
+        },
+        {
+          "path": "title_5_5-notify_hooks-v1.json",
+          "sha256": "99decf9ab1d180bb96fe527d4060847687f5aa1dc92138a0fbab1b4a8c9c547d"
+        }
+      ],
+      "label": "src/notify_hooks.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_6_6-edge-v0.json",
+          "sha256": "e9b00f286a7c16ae0ca9430f361281bcc869f679f9399561d46a2d77f7806eba"
+        },
+        {
+          "path": "title_6_6-edge-v1.json",
+          "sha256": "0bb2e0364b33e0bf1c3b6080285287a2d4e536f7cdf83ffea5749d755f75c064"
+        }
+      ],
+      "label": "src/gpu/edge.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_7_7-xam_avatar-v0.json",
+          "sha256": "ca109356d8f33fa9bbd72219e1941f0ee8b35a078571cfddbd54a665e798a79b"
+        },
+        {
+          "path": "title_7_7-xam_avatar-v1.json",
+          "sha256": "f80ee5df0b58d7a2d1f71d93a1a20fe55e245ead3ec32a6a0b2dd39d4d7ade06"
+        }
+      ],
+      "label": "src/kernel/xam/xam_avatar.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_8_8-xam_user-v0.json",
+          "sha256": "f14b867e94e9bce2e6e9be8b418dc86f851d35b49539eefcfe9daa4ca3037919"
+        },
+        {
+          "path": "title_8_8-xam_user-v1.json",
+          "sha256": "3e0dab29e1d645dc85f49aea0b42566c53cf9decd045f740f94357fca29fac6a"
+        }
+      ],
+      "label": "src/kernel/xam/xam_user.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_9_9-xam_loader-v0.json",
+          "sha256": "eb59f27ac1065c8d4e7f14cd9e7352c7e27909331a805dbeb578a88f081b2dc8"
+        },
+        {
+          "path": "title_9_9-xam_loader-v1.json",
+          "sha256": "af72523f8b55ac8c739ccecbef578993c301d040b48b8332fcdb0e8fa0b593ef"
+        }
+      ],
+      "label": "src/kernel/xam/xam_loader.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_10_10-xam_ui-v0.json",
+          "sha256": "b1bf3e184dea03b74f147b68f3e4499ecf57632800c9f288d2da9556f06d01c3"
+        },
+        {
+          "path": "title_10_10-xam_ui-v1.json",
+          "sha256": "6245b8a4bdbd9a30e6295adebf5762a0cc0cc353b80d8d214b470e1f4c5bf535"
+        }
+      ],
+      "label": "src/kernel/xam/xam_ui.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_11_11-xhttp-v0.json",
+          "sha256": "283ec4e88644cd6377f70386f2b6a7d6edc013d7ada50862c01d363bf18c4c7b"
+        },
+        {
+          "path": "title_11_11-xhttp-v1.json",
+          "sha256": "9ef6d0c34b459f439c0f598ca50af32672d05df9b77129efe48a0217a436e220"
+        }
+      ],
+      "label": "src/kernel/xam/xhttp.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_12_12-xlivebase_app-v0.json",
+          "sha256": "4d4e7595158b2f1f80634b116dfaf47a0d3432fdecf79aa36ae37f0e21df9521"
+        },
+        {
+          "path": "title_12_12-xlivebase_app-v1.json",
+          "sha256": "21e69fdcdf0bdeb776fee8bc4513a969d6789f42d65b3d646926ce7c148ebe12"
+        }
+      ],
+      "label": "src/kernel/xam/apps/xlivebase_app.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_13_14-asset_pack-v0.json",
+          "sha256": "b5819370e5a182d8e2acd5fa464cafd863976dd5207c84553b2a36c9c6f2db6c"
+        },
+        {
+          "path": "title_13_14-asset_pack-v1.json",
+          "sha256": "e2dc2ba0dd9e549f74249f603dc833c80b0d3e3b2f3d28a18b729fd6d2d4f6df"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/asset_pack.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_14_13-animation-v0.json",
+          "sha256": "6cb9312b028efb54cb7604a298a3048b8d40fa097851f8061842b34546058a69"
+        },
+        {
+          "path": "title_14_13-animation-v1.json",
+          "sha256": "5f0935f89e23f09e7a789a527d25440a2eab9d2e03ebb1d46b4ede6f0da94bad"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/animation.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_15_15-bit_stream-v0.json",
+          "sha256": "aef8a2e5cdbfa6b7043dfe376328c42570a3ce91dad115ce94824e09073896b2"
+        },
+        {
+          "path": "title_15_15-bit_stream-v1.json",
+          "sha256": "faf2d1bb087821214dea14aca232782107c76bb3b0f25fe1b90cc042ccd2119b"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/bit_stream.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_16_16-blend_shape-v0.json",
+          "sha256": "074e03463adf0cb2f6c0548d4de8490672d3d0859076fd98fa649a35bfe28cd1"
+        },
+        {
+          "path": "title_16_16-blend_shape-v1.json",
+          "sha256": "948c0dec4384a28dfb256b2bd65b6bd6c05e04c90199e0127a7a3df9e00e1341"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/blend_shape.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_17_17-blend_shape_apply-v0.json",
+          "sha256": "7a39e10963428f31a40302455ce6cdf16597ef31c3db6868a98b32b10070b8f9"
+        },
+        {
+          "path": "title_17_17-blend_shape_apply-v1.json",
+          "sha256": "41ae622aaad8ec3692144bb6744fbf3c2d3ba2ddde6c08f627b31bbcb839a5f2"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/blend_shape_apply.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_18_18-closet-v0.json",
+          "sha256": "74cff652774a5679de74ce7bcfb7815a649e0311773bec73083b59cd623b0c2d"
+        },
+        {
+          "path": "title_18_18-closet-v1.json",
+          "sha256": "3c8c3f257e7af8d68b6a83852fb3bfb214aa20bc9695f647fcba7728451b3cb5"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/closet.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_19_19-compression-v0.json",
+          "sha256": "bd2a3731edce0b0c0c569efeb53626a340ae1922a88b7ead35be155ea2038ed7"
+        },
+        {
+          "path": "title_19_19-compression-v1.json",
+          "sha256": "4cca807f8cc7befe7fe57fb5181f94e84b65abd5ec9d72c872469fa90eb66da2"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/compression.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_20_20-guest_load_animation-v0.json",
+          "sha256": "fb7a779f7d88ab32b379be6c77431d8319642bd0374bac7705a1c78e985d4433"
+        },
+        {
+          "path": "title_20_20-guest_load_animation-v1.json",
+          "sha256": "1ade19002e8b11066f8863914f799c6703db5a3a7e04bf52afd731a084745a1b"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/guest_load_animation.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_21_21-guest_load_asset-v0.json",
+          "sha256": "fb1a9a2c99af39ea411b5ee741bd172f4cffc51e9ee767289726520c91dc0d31"
+        },
+        {
+          "path": "title_21_21-guest_load_asset-v1.json",
+          "sha256": "5d7d8d789076c074fed3d47248f9ae1fd9285761d0f54367c6eeb589e3a3ab46"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/guest_load_asset.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_22_22-model-v0.json",
+          "sha256": "83ca846253f797c48b9aba381d056640a48cda2a19bf7c57cdf62e4c8a114eea"
+        },
+        {
+          "path": "title_22_22-model-v1.json",
+          "sha256": "4de64bc91a46efc142303b718d185936c54a1192a752f7a337e0075228608e8f"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/model.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_23_23-prop-v0.json",
+          "sha256": "142d32389f48310cacb4db87c4476a17ba1aae4e2674febe89e8888d69b52f5f"
+        },
+        {
+          "path": "title_23_23-prop-v1.json",
+          "sha256": "df9fb052be78e3d3da50dfe6177ad7d6b3f24799ed478862417a76e4c11aa467"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/prop.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_24_24-skeleton-v0.json",
+          "sha256": "0cff9882340704d65f2837aa0b60a79e729766e71da5f6250ae2b5e73fffb530"
+        },
+        {
+          "path": "title_24_24-skeleton-v1.json",
+          "sha256": "9fd30f505b3a359c39354fa95aa01df9f9192b726e940b426ad65d8537ddf877"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/skeleton.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_25_25-skeleton_data-v0.json",
+          "sha256": "3da9114afb1b87d9235baf63dc3cd5c03a3df2ab53b9252a28b18d103ffc1ebf"
+        },
+        {
+          "path": "title_25_25-skeleton_data-v1.json",
+          "sha256": "7a77f52fa093ab3e0dbd73bcc19ad008ba3e0b34e89959a20fbb663b838324bd"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/skeleton_data.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_26_26-skeleton_scaling-v0.json",
+          "sha256": "1340c74608a024224c1668a67108a07da9275d431d880e57053ce35f1d20c4f9"
+        },
+        {
+          "path": "title_26_26-skeleton_scaling-v1.json",
+          "sha256": "0187fe849bf118a2df03c8b8200cf20ccf66440f46f64d3242af63aa970f8046"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/skeleton_scaling.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_27_27-strb-v0.json",
+          "sha256": "2cc4ea688bd79898fc7f5c489339f99080d0a724e87a7886712ffcd2765184cb"
+        },
+        {
+          "path": "title_27_27-strb-v1.json",
+          "sha256": "fd748ea0adc97b4d1087fd24825e9b211f210ba7907284d9392755b7f1db983b"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/strb.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_28_28-texture-v0.json",
+          "sha256": "2235d9eb9f9b29ed73eac9dcbee0d9159c765cf4f8aa4c423bb72fa3516de93a"
+        },
+        {
+          "path": "title_28_28-texture-v1.json",
+          "sha256": "1cfed3e2ec855bd1f3e7a8c4e5fb213896a3a0288d052ef2f4d2221e6f0805d7"
+        }
+      ],
+      "label": "src/kernel/xam/avatars/texture.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_29_29-gpu_capture-v0.json",
+          "sha256": "6a8e28f35e4965e3068e357ca2809a1609367303574d410b74e6f70531891aef"
+        },
+        {
+          "path": "title_29_29-gpu_capture-v1.json",
+          "sha256": "9c597a54d2f5e882baac42f989bfb1753309b1ea4717f6554a49b85e4ecb9f9a"
+        }
+      ],
+      "label": "src/gpu/gpu_capture.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_30_30-gpu_cmdbuf-v0.json",
+          "sha256": "0a41e7f1869244d55126c6a6bfe7766e0c91e8a90918400c77d19f43205e3b8b"
+        },
+        {
+          "path": "title_30_30-gpu_cmdbuf-v1.json",
+          "sha256": "dc5967668c8457b4f55c56d2aeae756b2f65b980cfd3b4f0e902fd1201bd6d37"
+        }
+      ],
+      "label": "src/gpu/gpu_cmdbuf.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_31_31-gpu_draw-v0.json",
+          "sha256": "8e77657e396a3bf604eb5a75ae711ee63db8fd7469b02eac4ade6bac02b361ae"
+        },
+        {
+          "path": "title_31_31-gpu_draw-v1.json",
+          "sha256": "eb42d7178617f8875e374c6e197814ac125e27bc5a3fb68eb5053f7732b7a34b"
+        }
+      ],
+      "label": "src/gpu/gpu_draw.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_32_32-gpu_formats-v0.json",
+          "sha256": "569a325a1218e38d575f3b811288862c69c40d7ac84f388a196c756141c1d8f9"
+        },
+        {
+          "path": "title_32_32-gpu_formats-v1.json",
+          "sha256": "468360b03e82bdbf82818613f51967055fc80f136217aa53ad6cae199b4d4d32"
+        }
+      ],
+      "label": "src/gpu/gpu_formats.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_33_33-gpu_memory-v0.json",
+          "sha256": "1e7b88eb8c9afa342e1d3b089f4cd2ded5f8cc7ddbf7f8690796c7e0d074f356"
+        },
+        {
+          "path": "title_33_33-gpu_memory-v1.json",
+          "sha256": "94fec1fe50e1d51e69161fea80df2f1ce1b6e4e7328380fd6db4da3d78e5f2c6"
+        }
+      ],
+      "label": "src/gpu/gpu_memory.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_35_35-gpu_shader_pack-v0.json",
+          "sha256": "b326d0a9b2dfc741a977fda0dfcaafc3d3f0abd31ecbe8686b9710a6730ff8c0"
+        },
+        {
+          "path": "title_35_35-gpu_shader_pack-v1.json",
+          "sha256": "100410a0e1ed7a6356d823e77a7c67b8fc1183fff4196d867210d377f20bc2a6"
+        }
+      ],
+      "label": "src/gpu/gpu_shader_pack.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_36_36-gpu_texture_decode-v0.json",
+          "sha256": "fd829249462afc10dbb521dcd65b0f0e69f07e6694b1ff729c7e51c240322a31"
+        },
+        {
+          "path": "title_36_36-gpu_texture_decode-v1.json",
+          "sha256": "07822cbd49e96c4bfe00877ff61b2eefc231ccba9a12a3e1855f425cd421af57"
+        }
+      ],
+      "label": "src/gpu/gpu_texture_decode.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "title_37_37-gpu_tracker-v0.json",
+          "sha256": "a626ca5d50c4c3590474ffb6d2dff71ad9d5d9c357c5db7affcfb4e3ba1054ad"
+        },
+        {
+          "path": "title_37_37-gpu_tracker-v1.json",
+          "sha256": "b46b99a8cfcbbe406e5fda3a4ea9fd6da8838d76a529fb6ff4ca433e839446c0"
+        }
+      ],
+      "label": "src/gpu/gpu_tracker.cpp"
+    },
+    {
+      "variants": [
+        {
+          "path": "current-chain-direct_15_34-gpu_renderer-v0.json",
+          "sha256": "0fcfc46a3e3371b411ad1910bf6f1c2a72bc9999dd86426dcc3939fc071edc99"
+        },
+        {
+          "path": "current-chain-direct_15_34-gpu_renderer-v1.json",
+          "sha256": "a46cf93d72c02bc5c40ae107bdd058a22e17affb089bd37ef5baf26a0f2a5f31"
+        }
+      ],
+      "label": "src/gpu/gpu_renderer.cpp"
+    }
+  ],
+  "upstream_commit": "c7910196da96d0c5b6e3170f77c3c928156a214c"
+}

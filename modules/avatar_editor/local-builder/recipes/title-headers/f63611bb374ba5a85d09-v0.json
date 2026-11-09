@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "inputs": {
+    "upstream": {
+      "root": "avatar_editor",
+      "path": "src/kernel/xam/avatars/compression.h",
+      "sha256": "296eb238452f77dd54455155e55bc3c620491386f4852e3c52aad6757ab1f2fb"
+    }
+  },
+  "output": "source/project/private/av2/title-port-source/kernel/xam/avatars/compression.h",
+  "output_sha256": "296eb238452f77dd54455155e55bc3c620491386f4852e3c52aad6757ab1f2fb",
+  "operations": [
+    {
+      "copy": "upstream",
+      "offset": 0,
+      "length": 1041
+    }
+  ]
+}

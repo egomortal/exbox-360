@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "roles": [
+    {
+      "role": "mesa-source",
+      "git_commit": "1ba9874f478657ccf6da72ce55f0260164cc0bd0",
+      "pin_policy": "Per-file hashes in external-source-manifest.json are authoritative; commit is provenance only",
+      "files": 1756
+    },
+    {
+      "role": "payload-sdk-source",
+      "git_commit": "b83202be73e930050e00de0f1b4d9ec46c0391bf",
+      "pin_policy": "Per-file hashes in external-source-manifest.json are authoritative; commit is provenance only",
+      "files": 291
+    },
+    {
+      "role": "vulkan-port-source",
+      "git_commit": "f410e67a0241b3e8edcdbcd2a9b285dfc4a412ed",
+      "pin_policy": "Per-file hashes in external-source-manifest.json are authoritative; commit is provenance only",
+      "files": 2
+    },
+    {
+      "role": "glm-source",
+      "git_commit": null,
+      "pin_policy": "Per-file hashes in external-source-manifest.json are authoritative; commit is provenance only",
+      "files": 161
+    },
+    {
+      "role": "fast-float-source",
+      "git_commit": "50a80a73ab2ab256ba1c3bf86923ddd8b4202bc7",
+      "pin_policy": "Per-file hashes in external-source-manifest.json are authoritative; commit is provenance only",
+      "files": 9
+    },
+    {
+      "role": "native-sdk",
+      "files": 943,
+      "pin_policy": "User-supplied compatible SDK; required staged headers pinned individually; no binaries redistributed"
+    }
+  ],
+  "manifest": "external-source-manifest.json",
+  "manifest_sha256": "a1d4c8d051073e8ad1abbcfe101856a09dde7574b4cab2e78654a0cf06ea9caa"
+}
