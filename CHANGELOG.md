@@ -5,6 +5,12 @@ on the PC test harness but has not been accepted on the TV yet.
 
 ## 2026-11-09: editor builder, Games integration, docs
 
+### Names and icons
+- The two apps are now called **Ex-Box 360** and **Ex-Box Avatars** on the PS5 home screen.
+- New home-screen icons, chosen in the installer under **Icons**: "Xbox style (from my files)", made on your
+  PC from your own loading art and avatar, or "Ex-Box default", our own artwork in `dashboard/installer-icons/`.
+  The generator is `dashboard/tools/make_app_icons.py`.
+
 ### Added to this repository
 - **`avatar-editor/local-builder/`**: a source-only builder for the native Avatar Editor.
   It builds from your own original files on your own PC (Windows + WSL). It ships no editor binary,
