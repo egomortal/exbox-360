@@ -1,0 +1,29 @@
+#version 450
+layout(local_size_x=8, local_size_y=8) in;
+layout(set=0,binding=0,std430) buffer Target { uint dst[]; };
+layout(set=0,binding=1,std430) readonly buffer Source { uint src[]; };
+layout(push_constant) uniform Push {
+ ivec4 rect; ivec4 clip;
+ uvec4 colors; // top,bottom,opacity,kind
+ uvec4 texture; // word offset,width,height,pitch words
+} p;
+uvec4 unpackc(uint c) {return uvec4(c&255u,(c>>8)&255u,(c>>16)&255u,c>>24);}
+uint packc(uvec4 c) {return c.x|(c.y<<8)|(c.z<<16)|(c.w<<24);}
+void main() {
+ ivec2 q=p.clip.xy+ivec2(gl_GlobalInvocationID.xy);
+ if(q.x>=p.clip.z || q.y>=p.clip.w) return;
+ uvec4 c=unpackc(p.colors.x);
+ if(p.colors.w==1u) {
+  uint den=uint(max(p.rect.w-1,1));
+  uint t=uint(q.y-p.rect.y);
+  c=(c*(den-t)+unpackc(p.colors.y)*t+den/2u)/den;
+ } else if(p.colors.w==2u) {
+  uint x=uint(q.x-p.rect.x)*p.texture.y/uint(p.rect.z);
+  uint y=uint(q.y-p.rect.y)*p.texture.z/uint(p.rect.w);
+  c=unpackc(src[p.texture.x+y*p.texture.w+x]);
+ }
+ c.w=(c.w*p.colors.z+127u)/255u;
+ uint at=uint(q.y)*3840u+uint(q.x); uvec4 d=unpackc(dst[at]);
+ // Straight source onto an always opaque target: deterministic nearest rounding.
+ dst[at]=packc(uvec4((c.xyz*c.w+d.xyz*(255u-c.w)+127u)/255u,255u));
+}

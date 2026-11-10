@@ -1,11 +1,50 @@
-# Current native dashboard source export
+# Building Ex-Box 360
 
-This snapshot carries installed N4 dashboard source (PPSA99735, e5e9f299), including N2 native audio. Reviewed standalone host-bridge and decoder include relocations are preserved. Independent X-track candidates are not combined. No console packages, original/derived artwork, generated guest code or AvatarEditorRecomp sources are included.
+This repository carries the dashboard source for the build installed on the owner's console
+(r23, plus the r24 Theater Party changes). No console packages, original or derived artwork,
+generated guest code or AvatarEditorRecomp sources are included.
 
-`make host build/test_dash build/test_library` builds desktop validation. `make native` stops with a dependency explanation. The old loader eboot target was removed so it cannot be mistaken for PPSA99735.
+## PC test build and tests
 
-## Native build closure pending
+From `dashboard/`:
 
-Internal N4 uses a pinned native SDK, separately built SDL/static libraries, platform compatibility archives, native startup/link support and packaging tool. Source recipes, transitive licences and clean-machine dependency closure are not yet included. Inherited sce_module/libc.prx needs a documented user-input or redistributable-source provenance decision and is excluded. Editor PPSA99734 needs its own build contract from the editor chat. A staged-package installer does not close these gaps.
+```bash
+make host build/test_dash build/test_library
+```
 
-No Git or publishing actions were performed. Claude reviews/publishes updates. Host results and source manifest are adjacent to this export. Frozen fallback and N4 packages remain unchanged.
+This builds the desktop validation build and the model and library tests. The tests need no SDK.
+
+## Native dashboard (PPSA99735)
+
+The native build works from this repository, given a dependencies folder:
+
+```bash
+python3 dashboard/native/build_native.py --deps <dependencies folder> --out <fresh output folder>
+```
+
+It compiles every unit from source, links, checks imports and layout, and signs the eboot. See
+[`dashboard/native/README.md`](../dashboard/native/README.md) for the folder layout, the checks and
+what is still open. `make native` in `dashboard/` prints the same pointer.
+
+Checked on 2026-11-10: a full from-source build of this tree with the reference dependencies
+produced a signed eboot with 408 imports and a passing layout. It was not run on a console.
+
+## What is still open
+
+- **Tool provisioning.** The SDKs and libraries in the dependencies folder are not fetched or built
+  for you yet. The installer is taking this on for both titles.
+- **RADV archive recipe.** `libvulkan_radeon.a` (RADV for the PS5 window system with the HDR
+  presenter change) and the small platform archives have no written recipe in this repository yet.
+- **Title folder.** `sce_sys/param.json` and `sce_sys/icon0.png` are produced at install time by
+  Setup; they are not built here.
+
+## Decided: libc.prx is built locally
+
+`sce_module/libc.prx` is never redistributed. It is the PS5_Vulkan clean-room runtime shim
+(GPL-3.0), built on the user's PC by the Avatar Editor builder's `build_libc()` with pinned hashes,
+and the same output is used for both the dashboard and the Avatar Editor.
+
+## Avatar Editor (PPSA99734)
+
+Built on the user's PC from their own original files with `avatar-editor/local-builder/`. See its
+`README.md`. It uses the same dependencies folder layout.

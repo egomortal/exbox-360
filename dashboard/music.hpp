@@ -4,7 +4,7 @@
 //
 // Header-only, and it compiles the decoders (dr_mp3, dr_flac, dr_wav: public
 // domain / MIT-0; stb_vorbis: public domain / MIT; see
-// ../third_party/audio/NOTICE-EXBOX.md), so include it from exactly one
+// vendor/audio/NOTICE-EXBOX.md), so include it from exactly one
 // translation unit per program (main.cpp, or a test). No SDL: the dashboard
 // calls Player::mix from its audio callback.
 //
@@ -58,11 +58,11 @@
 #define DR_FLAC_NO_OGG
 #define DR_FLAC_NO_WCHAR
 #define DR_WAV_NO_WCHAR
-#include "../third_party/audio/dr_mp3.h"
-#include "../third_party/audio/dr_flac.h"
-#include "../third_party/audio/dr_wav.h"
+#include "vendor/audio/dr_mp3.h"
+#include "vendor/audio/dr_flac.h"
+#include "vendor/audio/dr_wav.h"
 #define STB_VORBIS_NO_PUSHDATA_API
-#include "../third_party/audio/stb_vorbis.c"
+#include "vendor/audio/stb_vorbis.c"
 // stb_vorbis leaves its internal macros defined; they would clash with ordinary names.
 #undef C
 #undef CHECK

@@ -1,0 +1,33 @@
+{
+  "about": "Hashes of the dependency set that produced the installed build. A different set can still build; the manifest then lists what differs and the eboot hash will differ.",
+  "reference_build": {
+    "name": "r24 (Theater Party)",
+    "eboot_sha256": "73af85046f36be3ec1777b26e63d56712903ae763f363275ddee432bb45d687d"
+  },
+  "reference_hashes": {
+    "dashboard/libvulkan_radeon.a": "2bb567dab75d52ae30f0ba157d701f60b368a2f1d451bdd358dc837b5e8a704e",
+    "dashboard/libav2_locale_accessor.a": "6b38f8917e3ed36ff597eb598121543ed08fe57d25aa7ac70d28f96fffe0b75e",
+    "dashboard/libav2_tempfile_compat.a": "c8d45c31d4291b75e8e80c22596a8312516f0f6e3c584c3bea57cbb0f4abfb4e",
+    "dashboard/stubs/libSceAgc.so": "af421cb134f9f958878738fe59ea9702d6d25e8f3ebe5cb44f9d2d09abb59012",
+    "dashboard/stubs/libSceAgcDriver.so": "9c57a49ea7f654aede41b57b436bb07d7109ccb4ae7b22778fe598e9d7be35fb",
+    "native-tools/ps5-native-tool": "48bb5f0be20b125e61542b5926daee4013a9f06b7c377b258c1bb4cc852922cc",
+    "native-sdk/target/lib/libps5platform.a": "2d1e0e5eed29ad9a8557e2f33439e7c7a3c930f39b6795d393d3bc79f2df9c30",
+    "native-sdk/target/lib/libc++.a": "b1480e6edcb7cffba5ea999cb13da0d40b0def4c215ead442649bba71d32414f",
+    "native-sdk/target/lib/libc++abi.a": "bbe4f851bbda2333f1d0ed9de6273f3bf3cffe2a1fa8f6ec0201a3099ac3806f",
+    "native-sdk/target/lib/libunwind.a": "9f31a2dfde175f041f899ea37b9d28ba888898e90c7f238a5576c1cd62bbd742",
+    "native-sdk/bin/prospero-clang++": "cc4b59b834f5fb164e4900cdaf44fca17a661f9e8d5f3fcb98c3d68131293e33",
+    "native-sdk/bin/prospero-lld": "080681c002986c29952c5d3832519dc8743c593f2eaf0549f226aa09c568f7c2",
+    "payload-sdk/target/user/homebrew/lib/libSDL2_ttf.a": "66e7f71d075c46bbe441c9adad0672496b6978ef804194f69ef030af75c98d68",
+    "payload-sdk/target/user/homebrew/lib/libSDL2_image.a": "652b7f67667b4660111cccb31b8b15699399acf1e5102963f2d7142a7e348eea",
+    "payload-sdk/target/user/homebrew/lib/libSDL2.a": "613026bf2e40b3a7d360ea72da669f8cca05fb278b69b2c13d3cc3b639333095",
+    "payload-sdk/target/user/homebrew/lib/libfreetype.a": "49ce46bbf653c1edab34d7a905ade453b1e7029eb7af01482bfd8a8fe0b03167",
+    "payload-sdk/target/user/homebrew/lib/libharfbuzz.a": "771edcb0448f773192399ce1ee59dd9b71a702abc4b8787fa2026a4ca070b119",
+    "payload-sdk/target/user/homebrew/lib/libpng.a": "394d54a83d5e8c0e0ddd8cf3cb19b3dfb1bd988c6d90fd587642946555f648a3",
+    "payload-sdk/target/user/homebrew/lib/libjpeg.a": "0f3a77f3a1c1dc60af5784cc1dd45fb902edb75d264f0d37b3a11ebd6742db11",
+    "payload-sdk/target/user/homebrew/lib/libwebpdemux.a": "f0aa7b432781c7d6a6d7f5ebf729354fa3ced09ac5a4856de6eb1a6ce32fb6cd",
+    "payload-sdk/target/user/homebrew/lib/libwebp.a": "b964218c6fb86ea50ede5ab95ef46ab55ccba5ce52fada28cac63d21e771587c",
+    "payload-sdk/target/user/homebrew/lib/libbz2.a": "f4565fea22b334b64332b5b506feb68e929d80d40e911fa0df2b8b30e3f89e04",
+    "payload-sdk/target/user/homebrew/lib/libsamplerate.a": "ed3f67db64c1f3fbb35c43b85055a754ad1d4a9b27833f4125afff0f74688e7d",
+    "payload-sdk/target/user/homebrew/lib/libiconv.a": "4d32ede7bc29e5087b4bd22ee1728f040b5d14e45a220d77ddbdc6f04b8e0f14"
+  }
+}

@@ -22,7 +22,8 @@ __pycache__/
 /backups/
 /dashboard/backups/
 /assets/
-/dashboard/assets/
+/dashboard/assets/*
+!/dashboard/assets/*.inc.hpp
 /generated/
 /dashboard/generated/
 **/aer-work/
