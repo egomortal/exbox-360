@@ -33,7 +33,7 @@ otherwise the Ex-Box default icons are used and Setup says so).
 | Shared artwork | `shrdres.xzp` or prepared shared art | same |
 | Fonts | `xenonclatin.xtt`, or files in a `fonts` folder | `.../private_art/fonts` |
 | Avatar kit | a `.nxak` kit | `.../private_art/avatar/kit360.nxak` |
-| Avatar Editor | a finished build (`PPSA99734/` or the builder's ZIP), **or** the three originals plus a `dependencies` tools folder (built headless with `avatar-editor/local-builder/builder.py`) | `/data/homebrew/PPSA99734` |
+| Avatar Editor | a finished build (`PPSA99734/` or the builder's ZIP), **or** the three originals plus your own `rexglue-sdk` and `XexTool-RE` folders (Setup then sets up the build tools itself and builds headless with `avatar-editor/local-builder/builder.py`), **or** the three originals plus a ready `dependencies` tools folder | `/data/homebrew/PPSA99734` |
 | Trailers | `manifest.tsv` + `packed/` from the trailer tool | `/data/homebrew/ExBox360/trailers` |
 | Music | mp3 / flac / ogg / wav | `/data/nxe/music` |
 | PS5X360 (optional, ticked) | nothing needed: fetched from the official release. `PPSA50011.zip` in the folder skips the download | `/data/homebrew/PPSA50011` |
@@ -67,13 +67,57 @@ otherwise the Ex-Box default icons are used and Setup says so).
   detect ShadowMountPlus or confirm titles are registered, and FTP gives no free-space figure.
 - Preparing art from *raw* originals calls the existing `setup.py` pipeline; that path is wired but
   only the already-prepared path has been exercised with real files.
-- The editor build needs the user's own tools folder; a self-provisioned toolchain (brief section 2.3)
-  is not built. In a practice run the build is described, not started (`--build-editor` starts it).
+- The self-provisioned build tools (`toolchain/provision.py`, below) are written and unit-tested, but
+  have **not yet been run end to end**: that run downloads third-party sources and runs their build
+  scripts, which needs the owner's go-ahead in this session. In a practice run the tool setup and the
+  editor build are described, not started (`--build-editor` starts them).
 - Raw videos are found but not converted (run `import_trailers.py` first). Dashboard loading-screen
   images from `splash_360.png` are not generated here.
 - Repair is "press Install again" (it re-sends only what Doctor found wrong); there is no separate button.
 - Not packaged as a single Windows download; it runs from the repository with Python.
 - No release has been cut yet, so the dashboard app's release pin is empty (see below).
+
+## Build tools set up by Setup (`toolchain/`)
+
+Building the Avatar Editor (and, later, the dashboard's native build on `main`) needs a `dependencies`
+folder: the PS5 SDKs, LLVM 21, shader tools, Mesa's shader compilers, ReXGlue and so on. Setup now
+builds that folder itself, inside WSL, with no admin rights:
+
+- `toolchain/toolchain.json` pins every item to its **official upstream** at an exact commit or a
+  SHA-256-checked release file (GitHub, apt.llvm.org, zlib.net, PyPI with `--require-hashes`).
+  Nothing is rehosted by Ex-Box. Every fetched source is then checked file by file against the
+  editor builder's own pins (`external-source-manifest.json`, `recipes/*/manifest.json`).
+- `toolchain/provision.py` runs the steps in order with progress lines, remembers finished steps in
+  `<deps>/.provision/state.json` (safe to stop and resume), and lays out the folder the builder
+  expects. Default location: `~/.local/share/exbox-toolchain/dependencies` inside WSL.
+- **One-time admin step.** It never uses `sudo`. If Ubuntu packages are missing it stops and prints
+  the exact commands, with why: the Ubuntu 24.04 build packages (including `python3-pil`, whose exact
+  Pillow 10.2.0 build the editor's images are checked against) and the pinned LLVM 21.1.8 packages
+  from apt.llvm.org (`1:21.1.8~++20251221032922+2078da43e25a-1~exp1~20251221153059.70`, still served).
+- **SDK**: the SDK fork's own `platform/tools/setup-sdk.sh` at its pinned commit, which installs the
+  official payload SDK v0.42 release (SHA-256 checked) with the fork's headers and platform library
+  built over it. The same SDK serves both `native-sdk` and `payload-sdk`.
+
+### The blocker: two sources contain the Xbox 360 decryption key
+
+`rexglue-sdk` (`src/system/xex_module.cpp`) and `XexTool-RE` (`src/crypto/keys.cpp`) both contain the
+Xbox 360 executable decryption key in their source code. The editor build compiles ReXGlue into the
+editor and uses XexTool-RE to read the user's `avatareditor.xex`, so neither is optional. Setup
+**never downloads them**; the user supplies their own copies (ReXGlue 0.10.0 at commit `c94f5ebd`,
+with its submodules; XexTool-RE at commit `c421d377`). Setup recognises the folders in the picked
+folder, checks every pinned file, and says plainly what is missing. Everything else is fetched.
+Whether this rule should treat public emulator source differently is the owner's decision.
+
+### Decided: `libc.prx` is always built on the user's PC
+
+Main session, delegated by the owner (2026-11-10): `sce_module/libc.prx` is never redistributed. It is
+the PS5_Vulkan clean-room runtime shim (GPL-3.0, `tooling/native/libc_builder.cpp`), built with
+`companion_producer.build_libc()` to its pinned hashes (raw ELF `8ee6e124...`, signed prx
+`e6ff45d1...`). Setup builds it **once per run** with the provisioned tools and places the same
+file in both titles: the Avatar Editor build already produces it, and the dashboard step adds it to
+`PPSA99735/sce_module/` whenever the dashboard package does not carry it (a release asset must never
+include it). If the PS5 already has one, it is kept. The installed dashboard copy reads back over FTP
+as `7e82ce9a...`, the FTP view of the same raw ELF.
 
 ## How the apps get into the build (no binaries in git)
 
@@ -123,5 +167,4 @@ Still to do for this to work in a public release:
    another project; keep its `COPYING`/credit files and the repo's `THIRD_PARTY_NOTICES.md`). Setup
    recognises it by a `Makefile` beside `main.c` that builds `nxe_dashboard_daemon.elf`. This step is
    the owner's because the helper is privileged code, which Setup does not author, package or ship.
-2. The build needs the PS5 payload SDK (same toolchain as the editor build). Setup does not provision
-   that toolchain; the user installs it once, as the editor builder's README describes.
+2. The build needs the PS5 payload SDK. Setup's tool setup (`toolchain/provision.py`) provides it.

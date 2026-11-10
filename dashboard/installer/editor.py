@@ -18,12 +18,15 @@ PACKAGE = "native-work/package"
 ORIGINALS = ("avatareditor.xex", "xenonclatin.xtt", "splash_360.png")
 
 
-def _wsl(path: Path) -> str:
+def _wsl(path) -> str:
+    """A Windows path as WSL sees it. Linux paths (the provisioned tools in WSL) pass through."""
+    if str(path).startswith("/"):
+        return str(path)
     resolved = Path(path).resolve()
     return "/mnt/" + resolved.drive[0].lower() + resolved.as_posix()[2:]
 
 
-def command(originals: Path, dependencies: Path, work: Path) -> list[str]:
+def command(originals: Path, dependencies, work) -> list[str]:
     if sys.platform == "win32":
         return ["wsl.exe", "--exec", "python3", "-u", _wsl(BUILDER / "builder.py"), "--inputs", _wsl(originals),
                 "--dependencies", _wsl(dependencies), "--work", _wsl(work)]
@@ -31,8 +34,13 @@ def command(originals: Path, dependencies: Path, work: Path) -> list[str]:
             "--dependencies", str(dependencies), "--work", str(work)]
 
 
-def build(originals: dict, dependencies: Path, work: Path, log=print, progress=None, runner=subprocess.Popen) -> Path:
-    """Build the editor from the user's three files. Returns the finished package ZIP."""
+def build(originals: dict, dependencies, work: Path, log=print, progress=None, runner=subprocess.Popen,
+          linux_work: str | None = None, copier=subprocess.run) -> Path:
+    """Build the editor from the user's three files. Returns the finished package ZIP.
+
+    dependencies may be a Linux path (the provisioned tools in WSL). linux_work, when given, is a
+    fresh Linux folder where the 1,200-unit compile runs (much faster than the Windows drive); the
+    finished package is then copied back into `work`."""
     missing = [name for name in ORIGINALS if name not in originals]
     if missing:
         raise RuntimeError("The Avatar Editor build needs: " + ", ".join(missing))
@@ -43,7 +51,7 @@ def build(originals: dict, dependencies: Path, work: Path, log=print, progress=N
     staged.mkdir()
     for name in ORIGINALS:  # copies; the user's own files are never changed
         shutil.copyfile(originals[name], staged / name)
-    out = work / "out"
+    out = linux_work or (work / "out")
     process = runner(command(staged, dependencies, out), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                      text=True, encoding="utf-8", errors="replace")
     lines = 0
@@ -56,7 +64,15 @@ def build(originals: dict, dependencies: Path, work: Path, log=print, progress=N
                 progress(min(lines / 4000, 0.95), text[:90])
     if process.wait():
         raise RuntimeError(f"The Avatar Editor build stopped with a problem. Its log is {work / 'build.log'}")
-    packages = sorted((out).glob("build-*/" + PACKAGE + "/*.zip"))
+    if linux_work:
+        copied = work / "editor-package.zip"
+        find = (f'cp "$(ls -1 {linux_work}/build-*/{PACKAGE}/*.zip | tail -n 1)" "{_wsl(copied)}"')
+        argv = (["wsl.exe", "--exec", "sh", "-c", find] if sys.platform == "win32" else ["sh", "-c", find])
+        if copier(argv).returncode or not copied.is_file():
+            raise RuntimeError("The Avatar Editor was built, but its package could not be copied back.")
+        log("Avatar Editor built on this PC.")
+        return copied
+    packages = sorted(Path(out).glob("build-*/" + PACKAGE + "/*.zip"))
     if not packages:
         raise RuntimeError("The Avatar Editor build finished without a package.")
     log("Avatar Editor built on this PC.")

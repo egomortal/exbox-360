@@ -17,7 +17,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import VERSION, catalog, editor, ps5x360, release
+from . import VERSION, catalog, editor, ps5x360, release, toolchain
 from .targets import FtpLike, LocalTarget, Target
 
 DASHBOARD = Path(__file__).resolve().parents[1]
@@ -194,6 +194,8 @@ class Installer:
         self.hasher = catalog.Hasher(home() / "hash-cache.json")
         self.cancel = False
         self.restart_needed = False
+        self.tools = None   # the provisioned build tools (a WSL path), once set up in this run
+        self.libc = None    # sce_module/libc.prx built on this PC, shared by both titles
 
     # ----- reporting -----
     def log(self, text: str):
@@ -323,7 +325,7 @@ class Installer:
         step("trailers", "Install your trailers", s["trailers_packed"], by_id["trailers"]["detail"]
              or by_id["trailers"]["missing"])
         step("music", "Install your music", s["music"], by_id["music"]["missing"])
-        step("editor", "Build and install the Avatar Editor" if s.get("editor_mode") == "build"
+        step("editor", "Build and install the Avatar Editor" if s.get("editor_mode") in ("build", "provision")
              else "Install the Avatar Editor", s.get("editor_mode"), by_id["editor"]["detail"]
              or by_id["editor"]["missing"])
         step("ps5x360", "Install PS5X360 (Xbox 360 games)", o["ps5x360"], "You chose not to install PS5X360.")
@@ -440,8 +442,18 @@ class Installer:
                                     lambda done, size: self.tick(index, total, title, 0.5 * done / size,
                                                                  "Downloading from the Ex-Box release"))
         files = tree(Path(package), TITLES["dashboard"])
+        note = ""
+        libc_remote = f"{TITLES['dashboard']}/sce_module/libc.prx"
+        if libc_remote not in files:
+            if self.target.size(libc_remote) is not None:
+                note = " Kept the libc.prx already on your PS5."
+            elif not self.options["build_editor"]:
+                note = " Practice run: libc.prx (never shipped) would be built on this PC and added."
+            else:
+                files[libc_remote] = Src(self.shared_libc(index, total, title))
+                note = " libc.prx was built on this PC and added."
         counts = self.put_all(files, "dashboard-app", index, total, title)
-        return "done", self._counts(counts, f"{len(files)} dashboard file(s)")
+        return "done", self._counts(counts, f"{len(files)} dashboard file(s)") + note
 
     def _art(self, index, total, title):
         private = self.src["prepared_art"]
@@ -499,15 +511,45 @@ class Installer:
         files = {f"/data/nxe/music/{p.relative_to(common).as_posix()}": Src(p) for p in songs}
         return "done", self._counts(self.put_all(files, "music", index, total, title), f"{len(files)} song(s)")
 
+    def ensure_tools(self, index, total, title, with_sources=False) -> str:
+        """Set up the build tools in WSL once per run (resumable). Returns their Linux path."""
+        if self.tools and not with_sources:
+            return self.tools
+        result = toolchain.provision(
+            rexglue=Path(self.src["rexglue_source"]) if with_sources and self.src.get("rexglue_source") else None,
+            xex=Path(self.src["xex_tool_source"]) if with_sources and self.src.get("xex_tool_source") else None,
+            progress=lambda fraction, text: self.tick(index, total, title, fraction * 0.4, text), log=self.log)
+        ready = result.get("status") == "ready" or (result.get("status") == "needs-user-sources" and not with_sources)
+        if not ready:
+            raise RuntimeError(toolchain.explain(result))
+        self.tools = result["dependencies"]
+        return self.tools
+
+    def shared_libc(self, index, total, title) -> Path:
+        """sce_module/libc.prx, built once on this PC and used for both Ex-Box titles."""
+        if self.libc is None:
+            tools = self.ensure_tools(index, total, title)
+            self.tick(index, total, title, 0.45, "Building libc.prx on this PC")
+            self.libc = toolchain.build_libc(tools, self.work)
+        return self.libc
+
     def _editor(self, index, total, title):
         package = self.src["editor_package"]
-        if self.src.get("editor_mode") == "build":
+        mode = self.src.get("editor_mode")
+        if mode in ("build", "provision"):
             if not self.options["build_editor"]:
+                first = "set up the build tools from their official sources, then " if mode == "provision" else ""
                 return "simulated", ("Practice run: the Avatar Editor build was not started (it takes a long "
-                                     "time). A real install builds it here from your three files.")
-            package = editor.build(self.src["editor_originals"], Path(self.src["editor_dependencies"]),
-                                   self.work / "editor-build", self.log,
-                                   lambda fraction, detail: self.tick(index, total, title, fraction * 0.8, detail))
+                                     f"time). A real install would {first}build it here from your three files.")
+            if mode == "provision":
+                tools = self.ensure_tools(index, total, title, with_sources=True)
+                package = editor.build(self.src["editor_originals"], tools, self.work / "editor-build", self.log,
+                                       lambda fraction, detail: self.tick(index, total, title, 0.4 + fraction * 0.4, detail),
+                                       linux_work=f"{tools}/../editor-builds/{self.run_id}")
+            else:
+                package = editor.build(self.src["editor_originals"], Path(self.src["editor_dependencies"]),
+                                       self.work / "editor-build", self.log,
+                                       lambda fraction, detail: self.tick(index, total, title, fraction * 0.8, detail))
         files = editor.package_files(Path(package), TITLES["editor"], Src)
         counts = self.put_all(files, "editor", index, total, title)
         return "done", self._counts(counts, f"{len(files)} Avatar Editor file(s)")

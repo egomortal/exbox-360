@@ -218,8 +218,10 @@ def checklist_template() -> list[dict]:
               "The Avatar Editor, installed as \"Ex-Box Avatars\": change clothes, features and props.",
               "No Avatar Editor. The dashboard and your current avatar still work.",
               "Built on your PC from your own copy of the Xbox 360 Avatar Editor (avatareditor.xex), "
-              "its font (xenonclatin.xtt) and the Xbox 360 start-up picture (splash_360.png), plus the "
-              "build tools listed in the editor builder's README."),
+              "its font (xenonclatin.xtt) and the Xbox 360 start-up picture (splash_360.png). Setup sets up "
+              "the build tools itself from their official sources. You also supply your own copies of ReXGlue "
+              "0.10.0 and XexTool-RE: Setup never downloads those, because their code contains the Xbox 360 "
+              "decryption key."),
         _item("trailers", "Media", "Trailers",
               "Video trailers that play on the dashboard.",
               "The trailer spots stay empty.",
@@ -266,7 +268,8 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                          dashboard_package=None, prepared_art=None, kit=None, fonts=[], trailers_packed=None,
                          trailer_videos=[], music=[], music_root=None, loading=None, avatar_render=None,
                          ps5x360_zip=None, companion=None, companion_source=None, shared=None, games=[],
-                         dashboard_inputs=[], dashboard_release=False)
+                         dashboard_inputs=[], dashboard_release=False,
+                         rexglue_source=None, xex_tool_source=None)
     wrong: list[str] = []
     total = 0
 
@@ -292,6 +295,18 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
             continue
         if any(p in ("ppsa99735", "ppsa99734", "ppsa50011") for p in parts[:-1]):
             continue  # the rest of a package folder is installed with it, not scanned as inputs
+
+        # --- your own ReXGlue / XexTool-RE source folders (never downloaded by Setup) ---
+        if name == "xex_module.cpp" and len(parts) >= 3 and parts[-2] == "system" and parts[-3] == "src":
+            top = path.parent.parent.parent
+            if (top / "src" / "rexglue" / "CMakeLists.txt").is_file() and sources["rexglue_source"] is None:
+                sources["rexglue_source"] = str(top)
+            continue
+        if name == "keys.cpp" and len(parts) >= 3 and parts[-2] == "crypto" and parts[-3] == "src":
+            top = path.parent.parent.parent
+            if (top / "src" / "extract.cpp").is_file() and sources["xex_tool_source"] is None:
+                sources["xex_tool_source"] = str(top)
+            continue
 
         # --- editor inputs ---
         if name == "avatareditor.xex":
@@ -524,13 +539,21 @@ def _fill(items, found, sources, pins):
         done("editor", "Your three editor files and the build tools were found. The editor is built on "
                        "this PC during Install (this can take a while).")
         sources["editor_mode"] = "build"
+    elif all(name in originals for name in needed) and sources["rexglue_source"] and sources["xex_tool_source"]:
+        done("editor", "Your three editor files, ReXGlue and XexTool-RE were found. During Install, Setup first sets "
+                       "up the build tools on this PC from their official sources (one time, roughly an hour), then "
+                       "builds the editor.")
+        sources["editor_mode"] = "provision"
     elif originals:
         lacking = [name for name in needed if name not in originals]
         text = []
         if lacking:
             text.append("still needed: " + ", ".join(lacking))
-        if not sources["editor_dependencies"]:
-            text.append("the build tools folder (\"dependencies\") was not found")
+        own = [label for key, label in (("rexglue_source", "ReXGlue 0.10.0 (rexglue-sdk, with its submodules)"),
+                                        ("xex_tool_source", "XexTool-RE")) if not sources[key]]
+        if own:
+            text.append("your own copy of " + " and ".join(own) + " was not found. Setup cannot download these "
+                        "because their code contains the Xbox 360 decryption key")
         done("editor", "Some editor files were found, but " + "; ".join(text) + ". The editor is skipped.",
              status="partial")
         sources["editor_mode"] = None

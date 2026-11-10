@@ -6,7 +6,7 @@ import hashlib, io, json, os, shutil, sys, tempfile, unittest, urllib.error, url
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from installer import catalog, editor, engine, helper, ps5x360, release, server, targets
+from installer import catalog, editor, engine, helper, ps5x360, release, server, targets, toolchain
 
 PARAM = {"titleId": "X", "localizedParameters": {"defaultLanguage": "en-US", "en-US": {"titleName": "Old name"}}}
 
@@ -127,7 +127,8 @@ class Scan(Base):
         item = next(i for i in result["items"] if i["id"] == "editor")
         self.assertEqual(item["status"], "partial")
         self.assertIn("xenonclatin.xtt", item["detail"])
-        self.assertIn("build tools", item["detail"])
+        self.assertIn("ReXGlue", item["detail"])
+        self.assertIn("decryption key", item["detail"])
 
     def test_wrong_ps5x360_file_is_rejected(self):
         self.folder.mkdir()
@@ -411,6 +412,127 @@ class Dashboard(Base):
             self.assertIsNone(self.on_console("/data/homebrew/PPSA99735/eboot.bin"))
         finally:
             release.RELEASE = real
+
+
+class Tools(Base):
+    """Self-provisioned build tools and the shared libc.prx, with the WSL side faked."""
+
+    def _editor_folder(self):
+        data = {"avatareditor.xex": b"XEX2 pretend editor", "xenonclatin.xtt": b"pretend font",
+                "splash_360.png": b"\x89PNG\r\n\x1a\n pretend splash"}
+        for name, content in data.items():
+            write(self.folder / "originals" / name, content)
+        write(self.folder / "rexglue-sdk/src/system/xex_module.cpp", "// your own copy\n")
+        write(self.folder / "rexglue-sdk/src/rexglue/CMakeLists.txt", "add_executable(rexglue main.cpp)\n")
+        write(self.folder / "XexTool-RE/src/crypto/keys.cpp", "// your own copy\n")
+        write(self.folder / "XexTool-RE/src/extract.cpp", "// your own copy\n")
+        pins = catalog._pins()
+        fake = dict(pins, editor_xex=hashlib.sha256(data["avatareditor.xex"]).hexdigest(),
+                    font_xtt=hashlib.sha256(data["xenonclatin.xtt"]).hexdigest(),
+                    splash=hashlib.sha256(data["splash_360.png"]).hexdigest())
+        real = catalog._pins
+        catalog._pins = lambda: fake
+        self.addCleanup(setattr, catalog, "_pins", real)
+
+    def _fake_wsl(self, status="ready"):
+        calls = {}
+        deps = "/home/user/.local/share/exbox-toolchain/dependencies"
+        def provision(rexglue=None, xex=None, progress=None, log=None, **_):
+            calls.setdefault("provision", []).append((rexglue, xex))
+            if progress:
+                progress(0.5, "Building SPIR-V tools")
+            return dict(status=status, dependencies=deps, commands=["sudo apt-get install -y spirv-tools"],
+                        needs=[dict(role="rexglue_sdk", upstream="u", commit="c")])
+        def build_libc(tools, out_dir):
+            calls["libc"] = tools
+            path = out_dir / "libc-a.prx"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"\x7fELF libc built here")
+            return path
+        def build(originals, dependencies, work, log=None, progress=None, linux_work=None, **_):
+            calls["editor"] = (dependencies, linux_work)
+            package = work.parent / "editor.zip"
+            with zipfile.ZipFile(package, "w") as z:
+                z.writestr("PPSA99734/eboot.bin", b"editor built from your files")
+                z.writestr("PPSA99734/sce_module/libc.prx", b"\x7fELF libc built here")
+            return package
+        for module, name, value in ((toolchain, "provision", provision), (toolchain, "build_libc", build_libc),
+                                    (editor, "build", build)):
+            real = getattr(module, name)
+            setattr(module, name, value)
+            self.addCleanup(setattr, module, name, real)
+        return calls
+
+    def test_scan_offers_the_set_up_and_build_path(self):
+        self._editor_folder()
+        result = catalog.scan(self.folder)
+        item = next(i for i in result["items"] if i["id"] == "editor")
+        self.assertEqual(item["status"], "found")
+        self.assertEqual(result["sources"]["editor_mode"], "provision")
+        self.assertTrue(result["sources"]["rexglue_source"].endswith("rexglue-sdk"))
+        self.assertTrue(result["sources"]["xex_tool_source"].endswith("XexTool-RE"))
+
+    def test_practice_run_describes_but_does_not_set_up(self):
+        self._editor_folder()
+        calls = self._fake_wsl()
+        outcome = self.install()
+        step = next(s for s in outcome["steps"] if s["id"] == "editor")
+        self.assertEqual(step["status"], "simulated")
+        self.assertIn("set up the build tools", step["text"])
+        self.assertEqual(calls, {})
+
+    def test_real_run_sets_up_tools_builds_editor_and_shares_libc(self):
+        fake_folder(self.folder, full=False)  # dashboard package without libc.prx
+        self._editor_folder()
+        calls = self._fake_wsl()
+        result = catalog.scan(self.folder)
+        outcome = engine.Installer(self.console, result, dict(build_editor=True, ps5x360=False), log=None).run()
+        self.assertTrue(outcome["ok"], outcome)
+        self.assertIn("libc.prx was built on this PC", next(s for s in outcome["steps"] if s["id"] == "dashboard")["text"])
+        self.assertEqual(self.on_console("/data/homebrew/PPSA99735/sce_module/libc.prx"), b"\x7fELF libc built here")
+        self.assertEqual(self.on_console("/data/homebrew/PPSA99734/sce_module/libc.prx"), b"\x7fELF libc built here")
+        self.assertEqual(self.on_console("/data/homebrew/PPSA99734/eboot.bin"), b"editor built from your files")
+        self.assertTrue(calls["editor"][1].endswith("/editor-builds/" + outcome["run"]))
+        self.assertTrue(any(r and x for r, x in calls["provision"]), "the editor step passes your two folders")
+
+    def test_libc_already_on_the_ps5_is_kept(self):
+        fake_folder(self.folder, full=False)
+        write(self.tmp / "console/data/homebrew/PPSA99735/sce_module/libc.prx", b"already there")
+        calls = self._fake_wsl()
+        outcome = engine.Installer(self.console, catalog.scan(self.folder), dict(build_editor=True, ps5x360=False),
+                                   log=None).run()
+        self.assertIn("Kept the libc.prx", next(s for s in outcome["steps"] if s["id"] == "dashboard")["text"])
+        self.assertNotIn("libc", calls)
+
+    def test_tool_setup_problems_are_explained_plainly(self):
+        self._editor_folder()
+        self._fake_wsl(status="needs-apt")
+        outcome = engine.Installer(self.console, catalog.scan(self.folder), dict(build_editor=True, ps5x360=False),
+                                   log=None).run()
+        step = next(s for s in outcome["steps"] if s["id"] == "editor")
+        self.assertEqual(step["status"], "failed")
+        self.assertIn("sudo apt-get install -y spirv-tools", step["text"])
+        self.assertIn("decryption key", toolchain.explain(dict(status="needs-user-sources", needs=[
+            dict(role="xex-tool", upstream="https://github.com/mrtitanic777/XexTool-RE.git", commit="c421d377")])))
+
+    def test_progress_and_result_lines_are_read(self):
+        lines = ["PROGRESS 2 16 sources Fetching the pinned public sources\n", "plain log line\n",
+                 'RESULT {"status": "ready", "dependencies": "/home/u/deps"}\n']
+        class Fake:
+            def __init__(self, argv, **_):
+                self.argv, self.stdout = argv, iter(lines)
+            def wait(self):
+                return 0
+        seen, logged = [], []
+        result = toolchain.provision(rexglue=self.tmp / "r", progress=lambda f, t: seen.append((round(f, 3), t)),
+                                     log=logged.append, runner=Fake)
+        self.assertEqual(result["status"], "ready")
+        self.assertEqual(seen, [(0.125, "Fetching the pinned public sources")])
+        self.assertEqual(logged, ["plain log line"])
+
+    def test_wsl_paths(self):
+        self.assertEqual(toolchain.wsl("/home/u/x"), "/home/u/x")
+        self.assertEqual(editor._wsl("/home/u/x"), "/home/u/x")
 
 
 class Safety(Base):
