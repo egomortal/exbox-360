@@ -17,7 +17,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import VERSION, catalog, editor, ps5x360
+from . import VERSION, catalog, editor, ps5x360, release
 from .targets import FtpLike, LocalTarget, Target
 
 DASHBOARD = Path(__file__).resolve().parents[1]
@@ -314,7 +314,7 @@ class Installer:
         def step(step_id, title, do, why=""):
             steps.append(dict(id=step_id, title=title, do=bool(do), why="" if do else why))
 
-        step("dashboard", "Install the Ex-Box 360 dashboard", s["dashboard_package"],
+        step("dashboard", "Install the Ex-Box 360 dashboard", s["dashboard_package"] or s["dashboard_release"],
              "Already on your PS5; kept as it is." if on_console else by_id["dashboard-app"]["missing"])
         art = s["prepared_art"] or (s["dashboard_inputs"] and o["prepare_art"])
         step("art", "Install your dashboard art", art, "No dashboard art in your folder; Ex-Box uses its plain look.")
@@ -430,7 +430,16 @@ class Installer:
         return "done", " ".join(notes)
 
     def _dashboard(self, index, total, title):
-        files = tree(Path(self.src["dashboard_package"]), TITLES["dashboard"])
+        package = self.src["dashboard_package"]
+        if not package:
+            if not self.options["allow_download"]:
+                return "simulated", (f"Practice run: the dashboard app was not downloaded. A real install "
+                                     f"fetches it from the Ex-Box release ({release.tag()}) and checks it.")
+            self.log(f"Downloading the Ex-Box 360 dashboard from the release ({release.tag()})")
+            package = release.fetch(home() / "downloads",
+                                    lambda done, size: self.tick(index, total, title, 0.5 * done / size,
+                                                                 "Downloading from the Ex-Box release"))
+        files = tree(Path(package), TITLES["dashboard"])
         counts = self.put_all(files, "dashboard-app", index, total, title)
         return "done", self._counts(counts, f"{len(files)} dashboard file(s)")
 

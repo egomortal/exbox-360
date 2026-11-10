@@ -15,7 +15,7 @@ import stat
 import zipfile
 from pathlib import Path
 
-from . import helper, ps5x360
+from . import helper, ps5x360, release
 
 HERE = Path(__file__).resolve().parent
 DASHBOARD = HERE.parent
@@ -266,7 +266,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                          dashboard_package=None, prepared_art=None, kit=None, fonts=[], trailers_packed=None,
                          trailer_videos=[], music=[], music_root=None, loading=None, avatar_render=None,
                          ps5x360_zip=None, companion=None, companion_source=None, shared=None, games=[],
-                         dashboard_inputs=[])
+                         dashboard_inputs=[], dashboard_release=False)
     wrong: list[str] = []
     total = 0
 
@@ -450,6 +450,13 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
         if (extra / "PPSA99735" / "eboot.bin").is_file() and not sources["dashboard_package"]:
             sources["dashboard_package"] = str(extra / "PPSA99735")
             items["dashboard-app"]["notes"].append("Included with Ex-Box Setup.")
+    if not sources["dashboard_package"]:
+        bundled = release.local_package()  # dashboard title bundled in this installer download
+        if bundled:
+            sources["dashboard_package"] = str(bundled)
+            items["dashboard-app"]["notes"].append("Included with Ex-Box Setup.")
+        elif release.configured():
+            sources["dashboard_release"] = True  # will be fetched from the pinned Ex-Box release
 
     if sources["prepared_art"]:  # art already prepared by Ex-Box's own tools counts for its look
         private = Path(sources["prepared_art"])
@@ -492,6 +499,10 @@ def _fill(items, found, sources, pins):
 
     if sources["dashboard_package"]:
         done("dashboard-app", "Ready to install.")
+    elif sources["dashboard_release"]:
+        items["dashboard-app"]["status"] = "download"
+        items["dashboard-app"]["detail"] = (f"Will be downloaded from the Ex-Box release ({release.tag()}) "
+                                            "and checked. (Our own app; its files come from the release.)")
     for item_id, title, _revision in ERAS:
         if found[item_id]:
             ready = found[item_id][0]["name"].endswith("/")
@@ -564,7 +575,7 @@ def preview(items: list[dict], sources: dict) -> dict:
     by_id = {item["id"]: item for item in items}
     get, skip = [], []
     eras = [title for item_id, title, _ in ERAS if by_id[item_id]["status"] == "found"]
-    if by_id["dashboard-app"]["status"] == "found":
+    if by_id["dashboard-app"]["status"] in ("found", "download"):
         get.append("Ex-Box 360 dashboard on your PS5 home screen.")
     if eras:
         get.append("Real dashboard looks: " + ", ".join(eras) + ".")
@@ -581,7 +592,7 @@ def preview(items: list[dict], sources: dict) -> dict:
         else:
             skip.append(f"{item['title']}: {item['missing']}")
     return dict(get=get, skip=skip, eras=eras, games=len(sources["games"]),
-                can_install=by_id["dashboard-app"]["status"] == "found")
+                can_install=by_id["dashboard-app"]["status"] in ("found", "download"))
 
 
 def folder_fingerprint(result: dict) -> dict:

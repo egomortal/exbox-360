@@ -73,8 +73,26 @@ otherwise the Ex-Box default icons are used and Setup says so).
   images from `splash_360.png` are not generated here.
 - Repair is "press Install again" (it re-sends only what Doctor found wrong); there is no separate button.
 - Not packaged as a single Windows download; it runs from the repository with Python.
-- The dashboard package is not in the repository (no prebuilt binaries). A release must place it in
-  `dashboard/installer/payload/PPSA99735/`.
+- No release has been cut yet, so the dashboard app's release pin is empty (see below).
+
+## How the apps get into the build (no binaries in git)
+
+The repo holds source only. The two Ex-Box titles reach the user without ever being committed:
+
+- **Ex-Box dashboard (PPSA99735)** - our own code, may ship prebuilt. `installer/release.py` gives it
+  two routes, and Setup uses whichever is there:
+  1. **Bundled**: the Windows download's build step drops the built title in
+     `dashboard/installer/payload/PPSA99735/` (git-ignored). Setup installs it with no network.
+  2. **Release asset**: tag an Ex-Box GitHub release, upload the title as a zip, and fill `RELEASE`
+     in `release.py` (tag, asset, size, SHA-256). Setup downloads it from the official release and
+     verifies the SHA-256 - the same safe path PS5X360 uses. One repo, no rename needed.
+- **Avatar Editor (PPSA99734)** - built on the user's PC from *their* `avatareditor.xex` (it can't be
+  a single prebuilt binary, since it's assembled from the user's own files). It can also be installed
+  from a finished package the user already built.
+- **Launch helper** - built from source shipped in `launch-helper/` (see below).
+
+So a release is: cut a tag, attach the dashboard zip (and optionally the PS5 payload SDK pointer),
+set the pin, and package the installer. Binaries live in the release and the download, never in git.
 
 ## Decided: the launch helper (companion) is built on the user's own PC
 

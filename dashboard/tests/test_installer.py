@@ -6,7 +6,7 @@ import hashlib, io, json, os, shutil, sys, tempfile, unittest, urllib.error, url
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from installer import catalog, editor, engine, helper, ps5x360, server, targets
+from installer import catalog, editor, engine, helper, ps5x360, release, server, targets
 
 PARAM = {"titleId": "X", "localizedParameters": {"defaultLanguage": "en-US", "en-US": {"titleName": "Old name"}}}
 
@@ -334,6 +334,83 @@ class Helper(Base):
                              b"\x7fELF built from the shipped source")
         finally:
             helper.BUNDLED = real
+
+
+class Dashboard(Base):
+    """The Ex-Box dashboard app: bundled with Setup, or fetched from the pinned Ex-Box release."""
+
+    def _dash_zip(self, path):
+        with zipfile.ZipFile(path, "w") as z:
+            z.writestr("PPSA99735/eboot.bin", b"\x7fELF dashboard from the release")
+            z.writestr("PPSA99735/sce_sys/param.json", json.dumps(dict(PARAM, titleId="PPSA99735")))
+        return path
+
+    def _scan(self, payload=None):
+        return catalog.scan(self.folder, package_dirs=[payload] if payload else None)
+
+    def test_bundled_payload_is_used_with_no_network(self):
+        self.folder.mkdir()
+        write(self.folder / "music/song.mp3", b"ID3 song")
+        payload = self.tmp / "payload"
+        write(payload / "PPSA99735/eboot.bin", b"\x7fELF our dashboard")
+        write(payload / "PPSA99735/sce_sys/param.json", json.dumps(dict(PARAM, titleId="PPSA99735")))
+        real = release.PAYLOAD
+        release.PAYLOAD = payload
+        try:
+            result = catalog.scan(self.folder)
+            item = next(i for i in result["items"] if i["id"] == "dashboard-app")
+            self.assertEqual(item["status"], "found")
+            self.assertTrue(result["preview"]["can_install"])
+            outcome = engine.Installer(self.console, result, log=None).run()
+            self.assertEqual(self.on_console("/data/homebrew/PPSA99735/eboot.bin"), b"\x7fELF our dashboard")
+        finally:
+            release.PAYLOAD = real
+
+    def test_pinned_release_is_fetched_verified_and_installed(self):
+        self.folder.mkdir()
+        write(self.folder / "music/song.mp3", b"ID3 song")
+        zip_path = self._dash_zip(self.tmp / "ExBox360-PPSA99735.zip")
+        sha = hashlib.sha256(zip_path.read_bytes()).hexdigest()
+        real = release.RELEASE
+        release.RELEASE = dict(tag="v1.0", asset="ExBox360-PPSA99735.zip", size=zip_path.stat().st_size, sha256=sha)
+        try:
+            result = catalog.scan(self.folder)
+            item = next(i for i in result["items"] if i["id"] == "dashboard-app")
+            self.assertEqual(item["status"], "download")
+            self.assertIn("v1.0", item["detail"])
+            self.assertTrue(result["preview"]["can_install"])
+
+            class Reply(io.BytesIO):
+                def __enter__(self): return self
+                def __exit__(self, *_): return False
+            installer = engine.Installer(self.console, result, dict(allow_download=True, ps5x360=False), log=None)
+            # feed the fetch a fake network response instead of a real download
+            orig = release.fetch
+            release.fetch = lambda cache, progress=None: orig(cache, progress,
+                                                               opener=lambda req, timeout: Reply(zip_path.read_bytes()))
+            try:
+                outcome = installer.run()
+            finally:
+                release.fetch = orig
+            self.assertTrue(outcome["ok"], outcome)
+            self.assertEqual(self.on_console("/data/homebrew/PPSA99735/eboot.bin"),
+                             b"\x7fELF dashboard from the release")
+        finally:
+            release.RELEASE = real
+
+    def test_practice_run_does_not_download_the_dashboard(self):
+        self.folder.mkdir()
+        write(self.folder / "music/song.mp3", b"ID3 song")
+        real = release.RELEASE
+        release.RELEASE = dict(tag="v1.0", asset="x.zip", size=10, sha256="0" * 64)
+        try:
+            result = catalog.scan(self.folder)
+            outcome = engine.Installer(self.console, result, log=None).run()  # practice: allow_download False
+            step = next(s for s in outcome["steps"] if s["id"] == "dashboard")
+            self.assertEqual(step["status"], "simulated")
+            self.assertIsNone(self.on_console("/data/homebrew/PPSA99735/eboot.bin"))
+        finally:
+            release.RELEASE = real
 
 
 class Safety(Base):
