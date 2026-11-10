@@ -76,22 +76,21 @@ otherwise the Ex-Box default icons are used and Setup says so).
 - The dashboard package is not in the repository (no prebuilt binaries). A release must place it in
   `dashboard/installer/payload/PPSA99735/`.
 
-## Open decision: how the launch helper (companion) ships
+## Decided: the launch helper (companion) is built on the user's own PC
 
-The helper is what lets Ex-Box open the Avatar Editor and Xbox 360 games itself. It is privileged
-code, so the public release must not carry a ready-made copy.
+Owner decision, 2026-11-10. The helper is what lets Ex-Box open the Avatar Editor and Xbox 360 games
+itself. It is privileged code, so the public release never carries a ready-made copy.
 
-**Recommendation: build it on the user's own PC**, the same way the Avatar Editor is built, from its
-GPL source, and let Setup install the result. Setup already works this way: it never contains or
-downloads the helper; it only installs an `exbox360-daemon.elf` the user built and put in their
-folder, and writes the autoload line. Without it nothing breaks - the checklist says to open the
-editor and PS5X360 from the PS5 home screen instead.
+- Users build it on their own PC from its GPL source, the same way the Avatar Editor is built.
+- Setup never contains, downloads or builds the helper. It installs an `exbox360-daemon.elf` the
+  user built and put in their folder, and writes the one bare-name autoload line (backed up first).
+- Without it nothing breaks: the checklist says to open the editor and PS5X360 from the PS5 home
+  screen instead.
+- Adopting a community launcher payload (the other option in the brief) is not used.
 
-What the owner still has to decide:
+Still to do for this to work in a public release:
 
-1. Publish the helper's source so users can build it (recommended), or leave the helper out of the
-   public release entirely for now.
-2. If published: whether Setup should run that build for the user (needs the same toolchain as the
-   editor) or only accept a file they built themselves (what it does today).
-3. The alternative in the brief - adopting an existing community launcher payload - is not
-   recommended: it adds a third-party privileged dependency we cannot review or pin as easily.
+1. The helper's source is not in this repository yet. It has to be published (by the owner) with
+   plain build steps before users can build it.
+2. Open: should Setup start that build for the user (needs the same toolchain as the editor build),
+   or keep accepting only a file they built themselves, as it does today?
