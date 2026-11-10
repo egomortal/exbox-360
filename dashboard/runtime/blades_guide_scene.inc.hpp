@@ -10,13 +10,17 @@
 // white, and the true colour and coverage are recovered from the pair; the
 // result is cached and only repainted when what it shows changes.
 namespace guide_scene {
+std::uint64_t cpu_paints=0;
 std::uint64_t render_epoch=0; // Advances once per dashboard frame, even while the Guide is closed.
 std::string font_path;
 // One era's Guide: its pack, painter and the cached, colour-recovered state.
 struct Core {
     xui::Scene scene;
     xui::Renderer painter;
+    xui::GpuResources gpu_resources;Extractor gpu_packet;
+    bool gpu_ready=false,gpu_dirty=true,cpu_valid=false;
     bool ready=false,tried=false;
+    int raster_density=0;
     std::string art_directory,last_key;
     SDL_Surface *cached=nullptr,*black=nullptr,*white=nullptr,*first=nullptr;
     Uint32 last_draw=0,last_tick=0;
@@ -35,13 +39,15 @@ struct Core {
     void show(const char *id,bool on,int ancestor=-1) {scene.bind_show(node(id,ancestor),on);}
     void text_of(int n,const std::string &value) {if (n>=0) scene.bind_string(n,xui::Text,value);}
     void clear() {
-        painter.clear();orbs.clear();
+        gpu_resources.clear();gpu_packet=Extractor{};gpu_ready=false;gpu_dirty=true;cpu_valid=false;
+        render_density::forget_surface(painter.canvas);painter.clear();orbs.clear();
         for (auto **s:{&cached,&black,&white,&first}) {SDL_FreeSurface(*s);*s=nullptr;}
         ready=false;last_epoch=0;last_key.clear();
     }
     bool load(const char *folder,const char *pack,SDL_Rect where,xui::Matrix view,const char *label) {
-        if (tried) return ready;
-        tried=true;area=where;to_screen=view;
+        if (tried && raster_density==render_density::factor) return ready;
+        if (tried) clear();
+        raster_density=render_density::factor;tried=true;area=where;to_screen=view;
         std::string base=std::string(root)+"era-skins/";
 #ifndef __PROSPERO__
         if (const char *override=getenv("NXE_ERA_SKIN_ROOT")) base=std::string(override)+"/";
@@ -49,18 +55,22 @@ struct Core {
         art_directory=base+folder+"/";
         char line[160];
         if (!scene.load((art_directory+pack).c_str())) {std::snprintf(line,sizeof line,"%s Guide scene: not installed",label);log(line);return false;}
-        if (!painter.prepare(scene,area.w,area.h,font_path.c_str(),source_blades::kWorkers)) {std::snprintf(line,sizeof line,"%s Guide scene: painter failed",label);log(line);return false;}
+        if (!painter.prepare(scene,area.w*raster_density,area.h*raster_density,font_path.c_str(),source_blades::kWorkers)) {std::snprintf(line,sizeof line,"%s Guide scene: painter failed",label);log(line);return false;}
+        render_density::tag(painter.canvas,raster_density);
         painter.bind_font("Convection",font_path);
+        gpu_ready=gpu_resources.prepare(scene,font_path.c_str());
+        if(gpu_ready)gpu_resources.bind_font("Convection",font_path);
         const std::string dir=art_directory;
-        painter.bind_bitmaps([dir](const std::string &key)->SDL_Surface * {
+        auto bitmap_loader=[dir](const std::string &key)->SDL_Surface * {
             std::string name=key;
             for (const char *prefix:{"sharedres://","file://","common://","xam://"}) if (!name.rfind(prefix,0)) name=name.substr(std::strlen(prefix));
             if (name.empty() || name.find("..")!=std::string::npos || name.find('/')!=std::string::npos) return nullptr;
             SDL_Surface *raw=IMG_Load((dir+name).c_str());
             if (!raw) return nullptr;
             SDL_Surface *out=SDL_ConvertSurfaceFormat(raw,SDL_PIXELFORMAT_ARGB8888,0);SDL_FreeSurface(raw);return out;
-        });
-        for (auto **s:{&black,&white,&cached,&first}) *s=SDL_CreateRGBSurfaceWithFormat(0,area.w,area.h,32,SDL_PIXELFORMAT_ARGB8888);
+        };
+        painter.bind_bitmaps(bitmap_loader);if(gpu_ready)gpu_resources.bind_bitmaps(bitmap_loader);
+        for (auto **s:{&black,&white,&cached,&first}) *s=render_density::create(area.w,area.h);
         if (!black || !white || !cached || !first) {clear();return false;}
         SDL_SetSurfaceBlendMode(first,SDL_BLENDMODE_NONE);
         SDL_FillRect(black,nullptr,0xff000000u);SDL_FillRect(white,nullptr,0xffffffffu);
@@ -73,19 +83,20 @@ struct Core {
         ready=true;std::snprintf(line,sizeof line,"%s Guide scene: on",label);log(line);
         return true;
     }
-    xui::Matrix view() const {auto m=to_screen;m.a[0][3]-=float(area.x);m.a[1][3]-=float(area.y);return m;}
+    xui::Matrix view() const {auto m=to_screen;m.a[0][3]-=float(area.x);m.a[1][3]-=float(area.y);return xui::Matrix::scale(float(raster_density),float(raster_density))*m;}
     // The painter blends opaquely, so a state is painted twice, over black and
     // over white, and the true colour and coverage are recovered from the pair.
     void paint() {
+        ++cpu_paints;
         painter.draw(scene,view(),true,black);
-        SDL_BlitSurface(painter.canvas,nullptr,first,nullptr);
+        SDL_UpperBlit(painter.canvas,nullptr,first,nullptr);
         painter.draw(scene,view(),true,white);
         SDL_LockSurface(cached);
-        for (int y=0;y<area.h;y++) {
+        for (int y=0;y<cached->h;y++) {
             const auto *b=reinterpret_cast<const Uint32 *>(static_cast<const Uint8 *>(first->pixels)+y*first->pitch);
             const auto *w=reinterpret_cast<const Uint32 *>(static_cast<const Uint8 *>(painter.canvas->pixels)+y*painter.canvas->pitch);
             auto *out=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(cached->pixels)+y*cached->pitch);
-            for (int x=0;x<area.w;x++) {
+            for (int x=0;x<cached->w;x++) {
                 int a=0;
                 for (int s:{0,8,16}) a=std::max(a,255-(int((w[x]>>s)&255)-int((b[x]>>s)&255)));
                 a=std::clamp(a,0,255);
@@ -115,13 +126,26 @@ struct Core {
         focused=target;
     }
     void finish(bool changed,float frames) {
-        bool animating=false;
-        for (const auto &p:scene.playback) animating=animating || p.playing;
-        if (animating) scene.advance(frames);
-        if (changed || animating) {scene.evaluate();paint();}
-        SDL_Rect to=area;
-        SDL_BlitSurface(cached,nullptr,screen,&to);
+        bool animating=false;for(const auto&p:scene.playback)animating=animating||p.playing;
+        if(animating)scene.advance(frames);
+        if(changed||animating){scene.evaluate();gpu_dirty=true;cpu_valid=false;}
+        const bool gpu=x21hook::recording(screen);
+        if(gpu){
+            if(!gpu_ready)x21hook::active->packet.unsupported.push_back("guide_resources_unavailable");
+            else {
+                if(gpu_dirty){gpu_packet=Extractor{};gpu_packet.extract(scene,gpu_resources,view(),area.w*raster_density,area.h*raster_density,true,false);gpu_dirty=false;}
+                for(const auto&why:gpu_packet.unsupported)x21hook::active->packet.unsupported.push_back("guide:"+why);
+                auto at=render_density::pixel_rect(area,raster_density);size_t first=x21hook::active->packet.commands.size();
+                if(x21hook::active->target!=0||!exbox_guide_commands(x21hook::active->packet.commands,gpu_packet.commands,screen->w,screen->h,{at.x,at.y,at.w,at.h}))x21hook::active->packet.unsupported.push_back("guide_group_unavailable");
+                else {x21hook::active->packet.publications.insert(x21hook::active->packet.publications.end(),gpu_packet.publications.begin(),gpu_packet.publications.end());const auto clip=screen->clip_rect;x21hook::active->packet.commands.back().clip={clip.x,clip.y,clip.w,clip.h};x21hook::snapshot_commands(first);}
+            }
+            if(!x21hook::audit_cpu())return;
+        }
+        x21hook::Pause audit(gpu);
+        if(!cpu_valid){paint();cpu_valid=true;}
+        SDL_Rect to=area;SDL_BlitSurface(cached,nullptr,screen,&to);
     }
+
     // The legend orbs are the same glyphs the rest of Ex-Box draws for the
     // Button Style setting, so opening the Guide never changes the buttons;
     // the glyph carries its own letter, so the scene's letter is hidden.
@@ -132,7 +156,7 @@ struct Core {
         if (!art) {scene.unbind(image,xui::Texture);scene.unbind(image,xui::ImageMode);return;}
         scene.bind_image_mode(image,16);   // fitted, centred
         const std::string name="host:button-"+std::to_string(model.button_style)+"-"+std::to_string(int(b));
-        if (!orbs.count(name)) if (SDL_Surface *copy=SDL_ConvertSurfaceFormat(art,SDL_PIXELFORMAT_ARGB8888,0)) {painter.bind_bitmap(name,copy);orbs.insert(name);}
+        if (!orbs.count(name)) if (SDL_Surface *copy=SDL_ConvertSurfaceFormat(art,SDL_PIXELFORMAT_ARGB8888,0)) {if(gpu_ready)gpu_resources.bind_bitmap(name,SDL_ConvertSurfaceFormat(copy,SDL_PIXELFORMAT_ARGB8888,0));painter.bind_bitmap(name,copy);orbs.insert(name);gpu_dirty=true;cpu_valid=false;}
         scene.bind_string(image,xui::Texture,name);
     }
     std::set<std::string> orbs;
@@ -145,12 +169,13 @@ struct Core {
         if (image<0 || (!edited_avatar::gamerpic && gamerpics.empty())) return;
         SDL_Surface *pic=SDL_ConvertSurfaceFormat(edited_avatar::gamerpic?edited_avatar::gamerpic:gamerpics[size_t(gamerpic)%gamerpics.size()],SDL_PIXELFORMAT_ARGB8888,0);
         const std::string name="host:gamerpic"; // replace the same binding when the editor save changes
-        if (pic) {painter.bind_bitmap(name,pic);scene.bind_string(image,xui::Texture,name);}
+        if (pic) {if(gpu_ready)gpu_resources.bind_bitmap(name,SDL_ConvertSurfaceFormat(pic,SDL_PIXELFORMAT_ARGB8888,0));painter.bind_bitmap(name,pic);scene.bind_string(image,xui::Texture,name);gpu_dirty=true;cpu_valid=false;}
     }
 };
 Core blades_launch,blades_late;
+std::map<std::pair<std::string,int>,TTF_Font *> legend_fonts;
 void clear_tabbed();
-void clear() {blades_launch.clear();blades_late.clear();clear_tabbed();}
+void clear() {blades_launch.clear();blades_late.clear();clear_tabbed();for(auto& entry:legend_fonts)if(entry.second)TTF_CloseFont(entry.second);legend_fonts.clear();}
 // ---- The Blades Guides: launch (1888) and late (6770, from the fall 2007 update)
 // Both are hudbkgnd + MainMenuSignedIn with the Mini Media Player, the
 // Community bar and the GamerCard; 6770 adds Chat and IM, a stop button and
@@ -320,8 +345,10 @@ bool prepare_tabbed(Tabbed &g) {
         if (song<0 || controls<0) continue;
         g.media_tab=t;
         g.player=c.scene.world[size_t(controls)].matrix.point(0,0).y<c.scene.world[size_t(song)].matrix.point(0,0).y?1:2;
-        // No volume slider: the PS5 keeps its own volume.
-        for (const char *hidden:{"sliderVolume","imgVolume","btnDismissVolumeSliderA","btnDismissVolumeSliderB"}) c.show(hidden,false,music);
+        // Ex-Box reuses the authored volume button/slider for its music bus.
+        // It never changes game audio or the PS5 system mixer.
+        for (const char *hidden:{"btnDismissVolumeSliderA","btnDismissVolumeSliderB"}) c.show(hidden,false,music);
+        c.show("sliderVolume",false,music);c.show("imgVolume",false,music);
     }
     return true;
 }
@@ -331,10 +358,9 @@ const char *tab_rest(int tab) {
 }
 // A label's width in HUD units at its point size (the painter's own measure).
 float legend_width(const std::string &face,const std::string &label,float points) {
-    static std::map<std::pair<std::string,int>,TTF_Font *> fonts;
     const int size=std::max(1,int(std::lround(points*4/3*8)));
-    auto found=fonts.find({face,size});
-    if (found==fonts.end()) found=fonts.emplace(std::make_pair(face,size),TTF_OpenFont(face.c_str(),size)).first;
+    auto found=legend_fonts.find({face,size});
+    if (found==legend_fonts.end()) found=legend_fonts.emplace(std::make_pair(face,size),TTF_OpenFont(face.c_str(),size)).first;
     int w=0;if (found->second) TTF_SizeUTF8(found->second,label.c_str(),&w,nullptr);
     return float(w)/8;
 }
@@ -352,7 +378,8 @@ bool draw_tabbed(Tabbed &g) {
     const bool player=g.player && tab==g.media_tab;
     int rows_n=0;
     while (rows_n<count && entries[size_t(rows_n)].node[0]) ++rows_n;
-    std::string key=std::to_string(model.button_style)+"/"+std::to_string(blade)+"|"+std::to_string(item)+"|"+clock_text()+"|"+model.player+"|"+std::to_string(gamerpic)+"|"+edited_avatar::signature;
+    std::string key=std::to_string(model.button_style)+"/"+std::to_string(blade)+"|"+std::to_string(item)+"|"+clock_text()+"|"+model.player+"|"+std::to_string(gamerpic)+"|"+edited_avatar::signature+
+        "|volume="+std::to_string(model.music_volume)+"/"+std::to_string(model.guide_volume_open);
     for (const auto &entry:entries) key+="|"+entry.label;
     for (const auto &hint:model.hints()) key+="|"+hint.label;
     float frames=0;
@@ -411,10 +438,17 @@ bool draw_tabbed(Tabbed &g) {
                     if (FILE *f=fopen((c.art_directory+look).c_str(),"rb")) {fclose(f);c.scene.bind_string(mode,xui::Texture,look);}
                     else c.scene.unbind(mode,xui::Texture);
                 }
+                const int volume=c.node("imgVolume",music),slider=c.node("sliderVolume",music);
+                c.scene.bind_show(volume,model.now_playing>=0);
+                c.scene.bind_show(slider,model.guide_volume_open);
+                if (const int bar=c.node("Bar_mid",slider);bar>=0) {
+                    const float full=c.scene.nodes[size_t(bar)].p[xui::Width].v[0];
+                    c.scene.bind_width(bar,full*float(model.music_volume)/10.f);
+                }
                 if (item>=rows_n && item<count) {
                     const A a=entries[size_t(item)].action;
                     const char *node_id=a==A::Music?"btnPlaylist":a==A::MusicPause?"btnPlay":a==A::MusicPrevious?"btnPrev":
-                                        a==A::MusicStop?"btnStop":a==A::MusicNext?"btnNext":"btnPlaybackMode";
+                                        a==A::MusicStop?"btnStop":a==A::MusicNext?"btnNext":a==A::MusicVolume?"imgVolume":"btnPlaybackMode";
                     target=c.node(node_id,music);
                 }
             }
@@ -455,10 +489,10 @@ bool draw_closing(int era,bool fresh) {
     // At most four frames a step, so a slow paint cannot skip the slide.
     const float frames=std::min(4.f,float(now-c->last_tick)*60/1000);
     c->last_tick=now;c->last_draw=0;   // reopening is always a fresh open
-    c->scene.advance(frames);c->scene.evaluate();c->paint();
-    SDL_Rect to=c->area;
-    SDL_BlitSurface(c->cached,nullptr,screen,&to);
+    // Use the same authored playback and dual-pass GPU route as an open Guide.
+    c->finish(true,frames);
     return true;
 }
 void clear_tabbed() {for (Tabbed *g:{&nxe_guide,&kinect_guide,&metro1_guide,&metro2_guide}) g->core.clear();}
 }
+

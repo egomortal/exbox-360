@@ -184,7 +184,7 @@ void edit(dash::MusicOp op, int target) {
         set_order();
         locked([&] {music_player.play(q,at);});
         music_player.pump();
-        if (trailer_audio) SDL_ClearQueuedAudio(trailer_audio); // the music takes over
+        invalidate_trailer_audio_for_music(); // the music takes over
     };
     auto add=[](const std::vector<music::Song> &q) {
         if (q.empty()) return;
@@ -235,6 +235,29 @@ void edit(dash::MusicOp op, int target) {
         }
         browse();
         break;
+    case Op::RandomAlbum: {
+        // Reuse the library's exact album identities/order; no scan or artwork I/O.
+        const auto albums=groups(1);
+        std::vector<std::string> keys;keys.reserve(albums.size());
+        for(const auto& album:albums)keys.push_back(music::folded(album.name));
+        static random_album::Picker picker(SDL_GetPerformanceCounter());
+        const int chosen=picker.choose(keys);
+        if(chosen<0){show_toast("Random album","No albums available",&sfx::toast_clip);break;}
+        const auto queue=queue_of(albums[size_t(chosen)].songs);
+        if(queue.empty())break;
+        sfx::open();set_order();
+        locked([&]{music_player.play(queue,0);});music_player.pump();
+        if(!music_player.active()){
+            model.now_playing=-1;
+            show_toast("Random album","This album could not be played",&sfx::toast_clip);
+            break;
+        }
+        picker.played(keys[size_t(chosen)]);
+        model.music_paused=false;
+        invalidate_trailer_audio_for_music();
+        show_toast("Random album",albums[size_t(chosen)].name,&sfx::toast_clip);
+        break;
+    }
     case Op::PlayGroup: start(queue_of(group_songs()),0); break;
     case Op::AddGroup: add(queue_of(group_songs())); break;
     case Op::PlaySong: browse(); start(queue_of(page_list),page_list_at); break;

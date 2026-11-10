@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "dash_model.hpp"
 #include "dashboard_layout.hpp"
+#include "modules/games_frontend/rom_guide_input.hpp"
 
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 #include <cstdio>
 #include <cstdlib>
 
@@ -29,6 +31,11 @@ const Fixed kMyXbox[] = {
 const Fixed kFriends[] = {
     {"Friends", IconFriends, Goal::Unavailable},
     {"Messages", IconMessages, Goal::Unavailable},
+};
+const Fixed kMetroSocial[] = {
+    {"Friends", IconFriends, Goal::Unavailable},
+    {"Social Apps", IconMessages, Goal::Unavailable},
+    {"Sign In or Out", IconAvatar, Goal::Unavailable},
 };
 const Fixed kMedia[] = {
     {"Music", IconMusic, Goal::ToMusic},
@@ -164,7 +171,7 @@ std::string Model::blade_title(int blade) const
 {
     switch (blade)
     {
-    case BladeApps: return era>=1 && !guide_host?"Marketplace":"Apps";
+    case BladeApps: return era>=1?"Marketplace":"Apps";
     case BladeGames: return era==3 && !metro_v1() ? "Games & Apps" : "Games";
     case BladeHome: return player.empty() ? "Player" : player;
     case BladeMedia: return "Media";
@@ -215,24 +222,42 @@ std::vector<GuideEntry> Model::blades_items(int which) const
 
 std::vector<GuideEntry> Model::blade_entries(int blade) const
 {
-    if (guide_host) return host_blade_entries(blade);
+    if (blade==BladeHome && guide_exbox_page) return exbox_guide_entries();
+    // Music drill-down remains inside the ordinary Media blade. It is not a
+    // second menu system and uses the same renderer, focus and blade chrome.
+    if(blade==BladeMedia && guide_music_page>0)return host_blade_entries(blade,true);
+    using A=GuideAction;
+    std::vector<GuideEntry> out;
+    const auto append_unique=[&](const std::vector<GuideEntry>& additions) {
+        for(const GuideEntry &utility:additions){
+            const bool duplicate=std::any_of(out.begin(),out.end(),[&](const GuideEntry &existing){
+                if(existing.label==utility.label)return true;
+                return utility.action!=A::Unavailable&&existing.action==utility.action&&existing.app==utility.app;
+            });
+            if(!duplicate)out.push_back(utility);
+        }
+    };
     if (era==0) {
         if (blade!=BladeHome) return host_blade_entries(blade);
         // Original CommunityBar positions must not launch unrelated host apps.
         // Xbox network services are unavailable; retain the source semantics.
-        using A=GuideAction;
-        return {{"Messages",A::Unavailable,-1,"btnMessages"},
+        out={{"Messages",A::Unavailable,-1,"btnMessages"},
                 {"Friends",A::Unavailable,-1,"btnFriends"},
                 {"Players",A::Unavailable,-1,"btnRecentPlayers"},
                 {dashboard_build>=5759?"Chat and IM":"Private Chat",A::Unavailable,-1,"btnQuickChat"},
                 {"Personal Settings",A::OpenGuideSettings,-1,"btnOptions"},
                 {"Select Music",A::Music,-1,"btnPlaylist"},
                 {"Xbox Dashboard",A::MyXbox,-1,"btnGameBanner"}};
+        // Keep the dashboard-owned page in the seven visible Blades rows. The
+        // first three Community buttons retain their special horizontal group.
+        out.insert(out.begin()+3,{"Ex-Box Menu",A::OpenExBoxMenu});
+        const GuideEntry play=preferred_guide_play();
+        if(play.action!=A::Unavailable)out.insert(out.begin()+4,play);
+        append_unique(host_blade_entries(blade,true));
+        return out;
     }
     // hud/GuideMain and *TabSignedIn.xur, 9199/13604/15574/17559.
     // Preserve scene order; source-hidden conditional/debug rows stay hidden.
-    using A=GuideAction;
-    std::vector<GuideEntry> out;
     auto row=[&](const char *id,const char *label,A action=A::Unavailable) {
         out.push_back({label,action,-1,id});
     };
@@ -240,35 +265,43 @@ std::vector<GuideEntry> Model::blade_entries(int blade) const
     case BladeApps:
         if (era==3 && !metro_v1()) break;
         if (era>=2) {
-            row("btnActiveDownloads","Active Downloads");row("btnRedeemCode","Redeem Code");
+            row("btnActiveDownloads","Refresh Homebrew",A::Refresh);row("btnRedeemCode","Library Summary",A::LibrarySummary);
         }
-        row("btnGameMarketplace","Game Marketplace");
-        if (era<3) row("btnVideoMarketplace","Video & Music Marketplace");
-        row("btnAvatarMarketplace","Avatar Marketplace");
+        row("btnGameMarketplace","Apps",A::Apps);
+        if (era<3) row("btnVideoMarketplace","Media",A::Media);
+        row("btnAvatarMarketplace",avatar_editable||external_avatar_editor?"Avatar Editor":"My Avatar",avatar_editable||external_avatar_editor?A::AvatarEdit:A::Avatar);
         if (era==1) {
-            row("btnActiveDownloads","Active Downloads");row("btnRedeemCode","Redeem Code");
+            row("btnActiveDownloads","Refresh Homebrew",A::Refresh);row("btnRedeemCode","Library Summary",A::LibrarySummary);
         }
         break;
     case BladeGames:
         row("btnAchievements","Achievements",A::Achievements);
-        row("btnAvatarAwards","Awards");
+        row("btnAvatarAwards","Refresh Games & Homebrew",A::Refresh);
         if (era>=2) row("btnQuickLaunch",era==2?"Quick Launch":metro_v1()?"Quickplay":"Recent",A::RecentGames);
         row("btnGamesLibrary",era<3?"Game Library":"My Games",A::AllGames);
-        if (era==3 && !metro_v1()) {
-            row("btnActiveDownloads","Active Downloads");row("btnRedeemCode","Redeem Code");
-        }
         break;
     case BladeHome:
         row("btnDashboard",era<3?"Xbox Dashboard":"Xbox Home",A::MyXbox);
         if (era==1) row("btnJumpIn","Quick Launch",A::RecentGames);
-        row("btnConnectToLive",era==3 && !metro_v1()?"Connect to Xbox Live":"Connect to Xbox LIVE");
-        row("btnDiscInTray","Disc in Tray");
+        row("btnConnectToLive","Notifications",A::NotificationHistory);
+        {
+            const GuideEntry play=preferred_guide_play();
+            if(play.action==A::Unavailable)row("btnDiscInTray","Disc in Tray");
+            else out.push_back({play.label,play.action,play.app,"btnDiscInTray"});
+        }
         break;
     case BladeMedia:
         row("btnVideoLibrary",era<3?"Video Library":metro_v1()?"Video Player":"System Video Player",A::Videos);
         row("btnMusicLibrary",era<3?"Music Library":metro_v1()?"Music Player":"System Music Player",A::Music);
         row("btnPictureLibrary",era<3?"Picture Library":"Picture Viewer",A::Pictures);
-        row("btnMCX","Windows Media Center");
+        // Media Center is not present on PS5. Reuse its native row for the
+        // dashboard's recorder instead of appending another utility panel.
+        if(recorder_busy)row("btnMCX","Screen Recorder Working...",A::RecordScreen);
+        else if(recorder_recording){
+            const int total=std::max(0,int(recorder_seconds));char time[16];
+            std::snprintf(time,sizeof time,"%02d:%02d",total/60,total%60);
+            row("btnMCX",(std::string(recorder_paused?"Recording Paused ":"Recording ")+time).c_str(),A::RecordScreen);
+        }else row("btnMCX",recorder_available?"Start Recording":"Record Screen (Create)",A::RecordScreen);
         // Keep the existing scene-driven mini player's ordering and actions.
         if (media_player) {
             const GuideEntry song{now_playing>=0?now_playing_title:"Select Music",A::Music};
@@ -277,28 +310,89 @@ std::vector<GuideEntry> Model::blade_entries(int blade) const
                 out.push_back({music_paused?"Resume Music":"Pause Music",A::MusicPause});
                 out.push_back({"Previous Song",A::MusicPrevious});out.push_back({"Stop Music",A::MusicStop});
                 out.push_back({"Next Song",A::MusicNext});out.push_back({music_shuffle?"Shuffle Off":"Shuffle On",A::MusicShuffle});
+                out.push_back({"Volume " + std::to_string(music_volume * 10) + "%",A::MusicVolume});
             }
             if (media_player==1) out.push_back(song);
         }
         break;
     default:
         row("btnProfile","Profile",A::Profile);
-        if (era==1) row("btnNotifications","Notifications");
-        row("btnPersonalSettings","Preferences");row("btnFamilySettings","Family Settings");
+        if (era==1) row("btnNotifications","Notifications",A::NotificationHistory);
+        row("btnPersonalSettings","Themes",A::SelectTheme);
+        row("btnFamilySettings","Controller Map",A::ControllerMap);
         row("btnSystemSettings","System Settings",A::SystemSettings);
-        row("btnAccountManagement","Account Management");
-        if (era==3) row("btnKinectTuner","Kinect Tuner");
+        row("btnAccountManagement",avatar_editable||external_avatar_editor?"Avatar Editor":"Avatar Settings",avatar_editable||external_avatar_editor?A::AvatarEdit:A::Avatar);
+        if (era==3) row("btnKinectTuner","Notifications",A::NotificationHistory);
         row("btnShutdown","Turn Off Console",A::ExitToPs5);
         break;
     }
+    // The clean Home-blade subpage is the immediate route to Ex-Box features.
+    // Retain the existing contextual rows as well: old return paths, pinned
+    // entries and direct game/app launching must remain compatible.
+    if(blade==BladeHome) out.push_back({"Ex-Box Menu",A::OpenExBoxMenu});
+    append_unique(host_blade_entries(blade,true));
+    // Metro V2 calls this blade "Games & Apps" and has no separate Apps tab.
+    // Keep the app launch/refresh rows native to that combined blade instead of
+    // requiring the retired secondary Utilities menu.
+    if(blade==BladeGames && era==3 && !metro_v1())
+        append_unique(host_blade_entries(BladeApps,true));
     return out;
 }
 
-// Ex-Box addition: no 360 original. Existing utilities, grouped in one host menu.
-std::vector<GuideEntry> Model::host_blade_entries(int blade) const
+GuideEntry Model::preferred_guide_play() const
+{
+    using A=GuideAction;
+    // Match the 360's "Play <disc>" idea with the owner's most relevant local
+    // title. Recent activity wins, then installed games, then game-classified
+    // homebrew. A non-tool homebrew remains a useful final fallback.
+    for(const std::string &key:recent){
+        const int g=game_index(games,key);if(g>=0)return {"Play "+games[std::size_t(g)].title,A::LaunchTitle,g};
+        const int a=app_index(apps,key);if(a>=0)return {"Play "+apps[std::size_t(a)].title,A::Launch,a};
+    }
+    const auto ordered=game_order();
+    if(!ordered.empty()){const int g=ordered.front();return {"Play "+games[std::size_t(g)].title,A::LaunchTitle,g};}
+    const auto classified=game_homebrew();
+    if(!classified.empty()){const int a=classified.front();return {"Play "+apps[std::size_t(a)].title,A::Launch,a};}
+    const auto utility=[](std::string value){
+        std::transform(value.begin(),value.end(),value.begin(),[](unsigned char c){return char(std::tolower(c));});
+        for(const char *token:{"ftp","payload","websrv","itemzflow","omni","kstuff","loader","manager","tool"})
+            if(value.find(token)!=std::string::npos)return true;
+        return false;
+    };
+    for(const int a:app_homebrew())if(!utility(apps[std::size_t(a)].title+" "+apps[std::size_t(a)].executable))
+        return {"Play "+apps[std::size_t(a)].title,A::Launch,a};
+    return {"Disc in Tray",A::Unavailable};
+}
+
+std::vector<GuideEntry> Model::exbox_guide_entries() const
+{
+    using A=GuideAction;
+    std::vector<GuideEntry> out;
+    const GuideEntry play=preferred_guide_play();
+    if(play.action!=A::Unavailable)out.push_back(play);
+    out.push_back({"Games & Homebrew",A::Games});
+    out.push_back({"Apps",A::Apps});
+    out.push_back({"Profile",A::Profile});
+    out.push_back({"My Avatar",A::Avatar});
+    if(avatar_editable||external_avatar_editor)out.push_back({"Avatar Editor",A::AvatarEdit});
+    out.push_back({"System Settings",A::SystemSettings});
+    out.push_back({"Exit to PS5 Home",A::ExitToPs5});
+    return out;
+}
+
+// Ex-Box additions expressed as ordinary Guide rows and nested blade pages.
+std::vector<GuideEntry> Model::host_blade_entries(int blade,bool full) const
 {
     using A = GuideAction;
     std::vector<GuideEntry> out;
+    const auto record_label=[&] {
+        if(recorder_busy)return std::string("Screen Recorder Working...");
+        if(recorder_recording){const int total=std::max(0,int(recorder_seconds));char time[16];std::snprintf(time,sizeof time,"%02d:%02d",total/60,total%60);return std::string(recorder_paused?"Screen Recording Paused ":"Screen Recording ")+time;}
+        return std::string(recorder_available?"Start Screen Recording":"Record Screen (Create)");
+    };
+    const auto append_recording=[&] {
+        out.push_back({record_label(),A::RecordScreen});
+    };
     if (era==0 && blade==BladeHome) return {
         {"Messages",A::NotificationHistory},{"Avatar",A::Avatar},{"Games",A::Games},
         {"PS5 Home",A::ExitToPs5},{"Personal Settings",A::OpenGuideSettings},
@@ -321,6 +415,7 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
             out.push_back({apps[std::size_t(i)].title, A::Launch, i});
         if (era==3) for (int i : app_homebrew())
             out.push_back({apps[std::size_t(i)].title, A::Launch, i});
+        out.push_back({"Refresh Games & Homebrew",A::Refresh});
         // The PS5's own game apps, last.
         out.push_back({kSystemApps[0].title, A::LaunchSystem, 0});
         out.push_back({kSystemApps[1].title, A::LaunchSystem, 1});
@@ -385,6 +480,47 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
         out.push_back({"Exit to PS5 Home", A::ExitToPs5});
         break;
     case BladeMedia:
+        if (guide_music_page==5)
+        {
+            out.push_back({"Albums",A::GuideMusicAlbums});
+            out.push_back({"Songs",A::GuideMusicSongs});
+            out.push_back({"Current Queue",A::GuideMusicQueue});
+            out.push_back({"Search Music",A::GuideMusicSearch});
+            out.push_back({"Open Full Music",A::GuideMusicOpenFull});
+            if (now_playing>=0)
+            {
+                out.push_back({"Now Playing: " + now_playing_title,A::GuideMusicQueue});
+                out.push_back({music_paused?"Resume Music":"Pause Music",A::MusicPause});
+                out.push_back({"Next Song",A::MusicNext});out.push_back({"Stop Music",A::MusicStop});
+                out.push_back({"Previous Song",A::MusicPrevious});out.push_back({music_shuffle?"Shuffle Off":"Shuffle On",A::MusicShuffle});
+                out.push_back({"Volume " + std::to_string(music_volume*10) + "%",A::MusicVolume});
+            }
+            break;
+        }
+        if (guide_music_page>0)
+        {
+            out.push_back({"< Music",A::GuideMusicBack});
+            if (guide_music_page==4)
+            {
+                const char key=guide_music_key<26?char('A'+guide_music_key):' ';
+                out.push_back({"Search: " + (guide_music_query.empty()?std::string("All songs"):guide_music_query),A::GuideMusicSearch});
+                out.push_back({std::string(guide_music_search_edit?"Typing [":"Choose letter [")+key+"]",A::GuideMusicSearch});
+            }
+            for (size_t i=0;i<guide_music_rows.size();++i)
+                out.push_back({guide_music_rows[i].label,A::GuideMusicPlay,int(i)});
+            if (guide_music_rows.empty()) out.push_back({guide_music_page==3?"Queue is empty":"No matching music",A::Unavailable});
+            break;
+        }
+        if (full)
+        {
+            out.push_back({"Media Channel",A::Media});
+            out.push_back({"Pictures",A::Pictures});
+            out.push_back({era==0?"Video":"Video Library",A::Videos});
+            out.push_back({kSystemApps[2].title,A::LaunchSystem,2});
+            out.push_back({kSystemApps[3].title,A::LaunchSystem,3});
+            append_recording();
+            break;
+        }
         if (media_player && era >= 1)
         {
             out.push_back({"Media Channel", A::Media});
@@ -392,6 +528,7 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
             out.push_back({"Video Library", A::Videos});
             out.push_back({kSystemApps[2].title, A::LaunchSystem, 2});
             out.push_back({kSystemApps[3].title, A::LaunchSystem, 3});
+            append_recording();
             // The mini player: the song (or Select Music) and its buttons.
             const GuideEntry song{now_playing >= 0 ? now_playing_title : "Select Music", A::Music};
             if (media_player == 2) out.push_back(song);
@@ -402,6 +539,7 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
                 out.push_back({"Stop Music", A::MusicStop});
                 out.push_back({"Next Song", A::MusicNext});
                 out.push_back({music_shuffle ? "Shuffle Off" : "Shuffle On", A::MusicShuffle});
+                out.push_back({"Volume " + std::to_string(music_volume * 10) + "%", A::MusicVolume});
             }
             if (media_player == 1) out.push_back(song);
             break;
@@ -421,9 +559,13 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
         out.push_back({era == 0 ? "Video" : "Video Library", A::Videos}); // mediabla / homepage strings.xus
         out.push_back({kSystemApps[2].title, A::LaunchSystem, 2});
         out.push_back({kSystemApps[3].title, A::LaunchSystem, 3});
+        append_recording();
         break;
     default:
         out.push_back({"Controller Map", A::ControllerMap});
+        out.push_back({"Themes",A::SelectTheme});
+        out.push_back({"System Settings",A::SystemSettings});
+        out.push_back({avatar_editable||external_avatar_editor?"Avatar Editor":"Avatar Settings",avatar_editable||external_avatar_editor?A::AvatarEdit:A::Avatar});
         out.push_back({"Change Gamerpic", A::ChangeGamerpic});
         out.push_back({sounds ? "Sounds: On" : "Sounds: Off", A::ToggleSounds});
         out.push_back({std::string("Dashboard: ") + kDashboardFamilies[dashboard_family(era,dashboard_build)].name + " >", A::CycleEra});
@@ -435,7 +577,8 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
         constexpr const char *notifications[]={"Off", "Short", "Standard", "Long"};
         out.push_back({std::string("Library Order: ") + orders[std::clamp(library_order,0,2)], A::CycleLibraryOrder});
         out.push_back({std::string("Notifications: ") + notifications[std::clamp(notification_level,0,3)], A::CycleNotifications});
-        out.push_back({promotions?"Period Promotions: On":"Period Promotions: Off",A::TogglePromotions});
+        constexpr const char* promotion_modes[]={"Authentic","Local Personalized","Off"};
+        out.push_back({std::string("Promotion Rotation: ")+promotion_modes[std::clamp(promotion_mode,0,2)],A::CyclePromotionMode});
         out.push_back({"Ads >",A::AdsSettings});
         out.push_back({"Exit to PS5 Home", A::ExitToPs5});
         break;
@@ -446,7 +589,9 @@ std::vector<GuideEntry> Model::host_blade_entries(int blade) const
 void Model::open_guide()
 {
     guide = true;
+    guide_volume_open = false;
     guide_host = false;
+    guide_exbox_page = false;
     guide_blade = BladeHome;
     for (int &item : guide_item)
         item = 0;
@@ -464,11 +609,13 @@ int Model::count() const
         const bool custom=promotions && (ad_mode[current_ad_profile()]==1 || ad_mode[current_ad_profile()]==2);
         if (metro_v1_home()) return custom?std::max(4,1+int(promo_cards.size())):4;
         if (metro_tab==1 && promotions && !promo_cards.empty()) return custom?std::max(7,1+int(promo_cards.size())):7;
-        if (metro_tab == 2) return 3; // social: own profile, Friends, Messages
+        if (metro_tab == 2) return int(sizeof kMetroSocial / sizeof kMetroSocial[0]);
         if (metro_tab == 7) return metro_v1()?10:8;
         if (metro_tab == 0) return 1;
         if (channel == Media && metro_tab == 4) return 2;
-        if (channel == Media && metro_tab == 5) return 1;
+        // Music is a dashboard page, not a single tile that hides every
+        // useful choice one level deeper in the library.
+        if (channel == Media && metro_tab == 5) return 7;
     }
     return base_count();
 }
@@ -480,17 +627,26 @@ int Model::base_count() const
     case Welcome: return era==2?6:4;
     case Friends: return int(sizeof kFriends / sizeof kFriends[0])+(era==0 && promotions && ad_mode[current_ad_profile()]!=0?int(promo_cards.size()):0);
     case Media: return int(sizeof kMedia / sizeof kMedia[0]);
-    case Games: return std::max(1, int(games.size() + game_homebrew().size()));
+    case Games: return std::max(1, int(games.size() + game_homebrew().size()) + (has_rom_game_guide_preview()?1:0));
     case Apps: return std::max(1, int(app_homebrew().size()));
     default: return my_xbox_slots(era).count + int(pins.size()) + (promotions && era!=0?int(promo_cards.size()):0);
     }
+}
+
+bool Model::has_rom_game_guide_preview() const
+{
+    if (std::any_of(games.begin(),games.end(),[](const App &game){return game.title_id==exbox_games::player_title;})) return true;
+    return std::any_of(games_frontend.entries.begin(),games_frontend.entries.end(),[](const exbox_games::Entry &entry){
+        return entry.platform==exbox_games::Platform::Xbox360;
+    });
 }
 
 // The Music card names the song playing, on every dashboard's hub.
 Card Model::card(int index) const
 {
     Card c = card_base(index);
-    if (c.goal == Goal::ToMusic && now_playing >= 0 && !now_playing_title.empty())
+    if ((c.goal == Goal::ToMusic || c.goal == Goal::ToMusicNowPlaying) &&
+        now_playing >= 0 && !now_playing_title.empty())
         c.subtitle = (music_paused ? "Paused: " : "Now Playing: ") + now_playing_title;
     return c;
 }
@@ -546,8 +702,7 @@ Card Model::card_base(int index) const
         }
         // soclua/MeViewScene.lub (15574/17559): ChangeTheme on the social Me page.
         if (metro_tab == 2) {
-            if (index == 0) return {"Profile",Kind::Hub,IconAvatar,Goal::ToProfile,-1,-1,""};
-            return fixed(kFriends,index-1);
+            return fixed(kMetroSocial,index);
         }
         if (metro_tab == 0) return {"Search Games & Apps", Kind::Hub, IconGames, Goal::ToSearch, -1, -1, ""};
         if (metro_tab == 7) {
@@ -566,7 +721,20 @@ Card Model::card_base(int index) const
             return c;
         }
         if (channel == Media && metro_tab == 4) return fixed(kMedia, index == 0 ? 2 : 1);
-        if (channel == Media && metro_tab == 5) return fixed(kMedia, 0);
+        if (channel == Media && metro_tab == 5) {
+            static constexpr Fixed music_dashboard[] = {
+                {"Music Library", IconMusic, Goal::ToMusic},
+                {"Random Album", IconMusic, Goal::ToMusicRandomAlbum},
+                {"Most Played", IconMusic, Goal::ToMusicMostPlayed},
+                {"Saved Playlists", IconMusic, Goal::ToMusicPlaylists},
+                {"Recently Added", IconMusic, Goal::ToMusicRecentlyAdded},
+                {"Albums", IconMusic, Goal::ToMusicAlbums},
+                {"Now Playing", IconMusic, Goal::ToMusicNowPlaying},
+            };
+            Card c=fixed(music_dashboard,index);
+            if(index==1)c.subtitle="Surprise me";
+            return c;
+        }
     }
     switch (channel)
     {
@@ -579,7 +747,8 @@ Card Model::card_base(int index) const
     {
         // Installed games first, then homebrew the owner listed as a game.
         const std::vector<int> extra = game_homebrew();
-        const int total = int(games.size() + extra.size());
+        const int content = int(games.size() + extra.size());
+        const int total = content + (has_rom_game_guide_preview()?1:0);
         if (total == 0)
         {
             Card c;
@@ -588,6 +757,8 @@ Card Model::card_base(int index) const
             return c;
         }
         index = std::clamp(index, 0, total - 1);
+        if (index==content && has_rom_game_guide_preview())
+            return {exbox_rom_guide::preview_title,Kind::Hub,IconGames,Goal::ToRomGameGuidePreview,-1,-1,""};
         if (index < int(games.size()))
             return game_card(games, game_order()[std::size_t(index)], artwork_choice);
         return app_card(apps, extra[std::size_t(index) - games.size()]);
@@ -641,6 +812,7 @@ Card Model::card_base(int index) const
             const int a = g < 0 ? app_index(apps, recent.front()) : -1;
             if (g >= 0) slot.subtitle = games[std::size_t(g)].title;
             else if (a >= 0) slot.subtitle = apps[std::size_t(a)].title;
+            else for(const auto&entry:games_frontend.entries)if(entry.key==recent.front()){slot.subtitle=entry.title+" - Xbox 360";break;}
         }
         return slot;
     }
@@ -688,6 +860,7 @@ std::vector<Card> Model::library_cards() const
             const int g = game_index(games, key), a = app_index(apps, key);
             if (g >= 0) out.push_back(game_card(games, g, artwork_choice));
             else if (a >= 0) out.push_back(app_card(apps, a));
+            else if(collection==Collection::Recent)for(const auto&entry:games_frontend.entries)if(entry.key==key){Card c;c.title=entry.title;c.kind=Kind::Missing;c.icon=IconGames;c.subtitle="Xbox 360 - open in PS5X360 (dispatch pending)";c.image=entry.owner_art_key;out.push_back(std::move(c));break;}
         }
     }
     return out;
@@ -735,7 +908,8 @@ void Model::load_recent(const std::vector<std::string> &lines)
     {
         const bool path = line.rfind("/data/homebrew/", 0) == 0 || line.rfind("/mnt/", 0) == 0;
         const bool title = line.rfind("title:", 0) == 0 && title_id_ok(line.substr(6));
-        if ((path || title) && recency(line) == int(recent.size()) && recent.size() < kMaxRecent)
+        const bool xbox = exbox_games::identity_valid(line);
+        if ((path || title || xbox) && recency(line) == int(recent.size()) && recent.size() < kMaxRecent)
             recent.push_back(line);
     }
 }
@@ -1070,13 +1244,85 @@ void Model::clamp_all()
 void Model::set_apps(std::vector<App> found)
 {
     apps = std::move(found);
+    restore_context_focus();
     clamp_all();
 }
 
 void Model::set_games(std::vector<App> found)
 {
     games = std::move(found);
+    refresh_game_frontend();
+    restore_context_focus();
     clamp_all();
+}
+
+std::string Model::saved_dashboard_context() const
+{
+    exbox_activity::Context c;c.channel=channel;c.metro_tab=metro_tab;c.viewer=int(viewer);c.viewer_item=viewer_item;c.music_view=music_view;c.music_page=music_page;c.music_group=music_group;
+    if(viewer==Viewer::None&&content_focused()){const Card card=current_card();if(card.game>=0&&card.game<int(games.size()))c.focus_key=game_key(games[std::size_t(card.game)]);else if(card.app>=0&&card.app<int(apps.size()))c.focus_key=apps[std::size_t(card.app)].executable;}
+    return exbox_activity::encode(c);
+}
+
+void Model::load_dashboard_context(const std::string &line)
+{
+    exbox_activity::Context c;if(!exbox_activity::decode(line,c))return;channel=c.channel;metro_tab=c.metro_tab;viewer_item=c.viewer_item;music_view=c.music_view;music_page=c.music_page;music_group=c.music_group;context_focus_key=c.focus_key;
+    const Viewer requested=Viewer(c.viewer);viewer=requested==Viewer::Music||requested==Viewer::Library?requested:Viewer::None;viewer_full=false;guide=false;
+}
+
+void Model::restore_context_focus()
+{
+    if(context_focus_key.empty())return;for(std::size_t i=0;i<games.size();++i)if(game_key(games[i])==context_focus_key){channel=Games;for(std::size_t row=0;row<game_order().size();++row)if(game_order()[row]==int(i)){selected[Games]=int(row);context_focus_key.clear();return;}}
+    for(std::size_t i=0;i<apps.size();++i)if(apps[i].executable==context_focus_key){const auto list=channel==Games?game_homebrew():app_homebrew();for(std::size_t row=0;row<list.size();++row)if(list[row]==int(i)){selected[channel]=int(row);context_focus_key.clear();return;}}
+}
+
+void Model::set_game_frontend_inventory(GameFolderInventory found)
+{
+    games_frontend_inventory = std::move(found);
+    games_frontend_inventory_published = true;
+    refresh_game_frontend();
+}
+
+void Model::refresh_game_frontend()
+{
+    std::vector<exbox_games::Entry> entries;
+    games_frontend_rejected=0;
+    games_frontend_limited=games_frontend_inventory.limited;
+    try {
+        auto xbox=exbox_games::build_library(games_frontend_inventory.source,games_frontend_inventory.folders);
+        games_frontend_rejected=xbox.rejected;
+        entries=std::move(xbox.entries);
+    } catch (const std::invalid_argument &) {
+        games_frontend_rejected=games_frontend_inventory.folders.size();
+    }
+    std::vector<exbox_games::InstalledTitle> installed;
+    installed.reserve(games.size());
+    for (const auto &game:games)
+        installed.push_back({game.title_id,game.title,game.icon});
+    auto ps5=exbox_games::installed_entries(installed);
+    entries.insert(entries.end(),std::make_move_iterator(ps5.begin()),std::make_move_iterator(ps5.end()));
+    games_frontend.entries=std::move(entries);
+    games_frontend.refresh(); // preserves the selected stable key when it still exists
+}
+
+std::vector<std::string> Model::saved_game_frontend_settings() const
+{
+    return {"games_frontend_filter="+std::to_string(int(games_frontend.filter)),
+            "games_frontend_show_xbox="+std::to_string(games_frontend.show_xbox?1:0),
+            "games_frontend_show_ps5="+std::to_string(games_frontend.show_ps5?1:0)};
+}
+
+void Model::load_game_frontend_setting(const std::string &line)
+{
+    auto one=[](const std::string &text,const char *prefix,int &value) {
+        const std::string p(prefix);if(text.rfind(p,0)!=0||text.size()!=p.size()+1||text.back()<'0'||text.back()>'9')return false;
+        value=text.back()-'0';return true;
+    };
+    int value=0;
+    if(one(line,"games_frontend_filter=",value)&&value<=2)games_frontend.filter=exbox_games::Filter(value);
+    else if(one(line,"games_frontend_show_xbox=",value)&&value<=1)games_frontend.show_xbox=value!=0;
+    else if(one(line,"games_frontend_show_ps5=",value)&&value<=1)games_frontend.show_ps5=value!=0;
+    else return;
+    games_frontend.refresh();
 }
 
 void Model::load_pins(const std::vector<std::string> &lines)
@@ -1127,8 +1373,6 @@ Effect Model::press(xb::Button button)
     }
     if (guide)
         return press_guide(button);
-    if (info)
-        return press_info(button);
     if (details)
     {
         // OK, Back, and the controller's Back (View / Create) button all close it.
@@ -1141,6 +1385,8 @@ Effect Model::press(xb::Button button)
         }
         return {};
     }
+    if (info)
+        return press_info(button);
     if (viewer != Viewer::None)
         return press_viewer(button);
     return press_hub(button);
@@ -1229,6 +1475,7 @@ Effect Model::press_album_keyboard(xb::Button button)
 // The pages over the Music Library.
 Effect Model::press_music_page(xb::Button button)
 {
+    music_tabs_focused = false; // Non-library pages have their own focus.
     if (music_page==MusicAlbumInfo && music_album_field>=0) return press_album_keyboard(button);
     const int n = music_rows();
     const int last = std::max(0, n - 1);
@@ -1411,6 +1658,7 @@ Effect Model::open_viewer(Viewer which)
     viewer_full = false;
     if (which == Viewer::Music)
     {
+        music_tabs_focused = false;
         music_group = -1; // the view chosen last time stays; an opened album does not
         music_page = MusicLibrary;
     }
@@ -1934,13 +2182,24 @@ Effect Model::press_video_full(xb::Button button)
         return {Command::VideoSeek, to};
     }
     case xb::A:
-    case xb::X:
         // At the end, play again from the start.
         if (video_paused && length > 0 && video_elapsed >= length)
         {
             video_paused = false;
             video_elapsed = 0;
             return {Command::VideoSeek, 0};
+        }
+        video_paused = !video_paused;
+        return {Command::VideoPause, -1};
+    case xb::Up:
+    case xb::Down:
+        if (!video_theater) return {};
+        video_theater_reaction = (video_theater_reaction + (button == xb::Down ? 1 : kTheaterReactionCount - 1)) % kTheaterReactionCount;
+        return {};
+    case xb::X:
+        if (video_theater) {
+            ++video_theater_reaction_serial;
+            return {};
         }
         video_paused = !video_paused;
         return {Command::VideoPause, -1};
@@ -1952,6 +2211,12 @@ Effect Model::press_video_full(xb::Button button)
         video_subtitles = !video_subtitles;
         return {Command::SaveSettings, -1};
     }
+    case xb::RS:
+        // Ex-Box Theater Party is part of the existing local player.  It
+        // changes only the presentation; playback, Guide suspension, resume
+        // state and the GPU video image remain the same objects.
+        video_theater = !video_theater;
+        return {};
     default: return {};
     }
 }
@@ -2183,23 +2448,63 @@ Effect Model::press_network(xb::Button button)
 std::vector<GuideEntry> Model::system_entries() const
 {
     using A = GuideAction;
+    if (system_page == SystemDiagnostics) return {};
+    if (system_page == SystemHealth) {std::vector<GuideEntry> out;for(const auto&row:compat_health_rows())out.push_back({row.label,A::Unavailable});return out;}
     if (network_page()) return network_entries();
     if (storage_page()) return storage_entries();
+    if (system_page == SystemFamily)
+        return {{"PS5 Parental Controls",A::Unavailable},{"Local Game Library",A::AllGames},
+                {"Communication and Online Safety",A::Unavailable},{"Purchases",A::Unavailable},
+                {"Xbox Live Family Settings",A::Unavailable}};
+    if (system_page == SystemAccount) {
+        std::vector<GuideEntry> out{{"Local Profile",A::Profile},{"Change Gamer Picture",A::ChangeGamerpic},
+                                    {"My Avatar",A::Avatar}};
+        if(avatar_editable||external_avatar_editor)out.push_back({"Avatar Editor",A::AvatarEdit});
+        out.push_back({"Xbox Live Account",A::Unavailable});out.push_back({"PS5 Account",A::Unavailable});
+        return out;
+    }
+    if (system_page == SystemKinect)
+        return {{"Kinect Sensor",A::Unavailable},{"Controller Layout",A::ControllerMap},
+                {"Camera and Microphone",A::Unavailable},{"Kinect Tuner",A::Unavailable},
+                {"Sign-In Recognition",A::Unavailable}};
+    if (system_page == SystemComputers)
+        return {{"Music Library",A::Music},{"Pictures",A::Pictures},{"Video Library",A::Videos},
+                {kSystemApps[3].title,A::LaunchSystem,3},{"Windows Media Center PC",A::Unavailable},
+                {"Network Media Sharing",A::Unavailable}};
+    if (system_page == SystemTV)
+        return {{"Display Settings",A::ConsoleSettings,SystemDisplay},{"Video Library",A::Videos},
+                {kSystemApps[2].title,A::LaunchSystem,2},{"TV Provider",A::Unavailable},
+                {"Live TV",A::Unavailable}};
+    if (system_page == SystemCamera)
+        return {{"PS5 Camera Access",A::Unavailable},{"Gamer Picture Photo Booth",A::Unavailable},
+                {"Video Chat",A::Unavailable},{"Camera Privacy",A::Unavailable}};
+    if (system_page == SystemLanguage)
+        return {{"Dashboard Language: English",A::Unavailable},{"Locale: PS5 System",A::Unavailable},
+                {"Keyboard and Text Input",A::Unavailable}};
+    if (system_page == SystemAutoPlay)
+        return {{"Game Launch: Ask First",A::Unavailable},{"Video: Resume or Restart",A::Unavailable},
+                {"Music: Keep Playing",A::Unavailable},{"PS5 Disc Auto-Play",A::Unavailable}};
+    if (system_page == SystemConnectedDevices)
+        return {{"DualSense Controller",A::ControllerMap},{"USB Storage",A::ConsoleSettings,StorageDevices},
+                {"Kinect Sensor",A::Unavailable},{"Xbox 360 Accessories",A::Unavailable}};
+    if (system_page == SystemMusicVolume) {
+        std::vector<GuideEntry> out;for(int volume=0;volume<=10;++volume)out.push_back({"Music Volume "+std::to_string(volume*10)+"%",A::Unavailable});return out;
+    }
     const bool v2 = era == 3 && !metro_v1();
     // consoles/dashSysCslSet.xur button order, all four builds. btnPolicy has
     // no known PS5 equivalent and remains hidden.
     // Labels/current values: each build's consoles/dashCSettingsStrings.xus.
     if (system_page == SystemConsole) {
         std::vector<GuideEntry> out{{"Display",A::ConsoleSettings,SystemDisplay},
-            {"Audio",A::ConsoleSettings,SystemAudio},{"Language and Locale",A::Unavailable},
+            {"Audio",A::ConsoleSettings,SystemAudio},{"Language and Locale",A::ConsoleSettings,SystemLanguage},
             {"Clock",A::ConsoleSettings,SystemClock},{"Startup and Shutdown",A::ConsoleSettings,SystemStartup},
-            {"Auto-Play",A::Unavailable}};
-        if (v2) out.push_back({"Auto-Downloads",A::Unavailable});
+            {"Auto-Play",A::ConsoleSettings,SystemAutoPlay}};
+        if (v2) out.push_back({"Auto-Downloads",A::ConsoleSettings,SystemGameMusic});
         out.push_back({"Remote Control",A::ControllerMap});
         // 17559's dynamically supplied pages (ConsoleName/ConsoleDiscoverable).
         if (v2) {
             out.push_back({"Console Name",A::Unavailable});
-            out.push_back({"Connected Devices",A::Unavailable});
+            out.push_back({"Connected Devices",A::ConsoleSettings,SystemConnectedDevices});
         }
         out.push_back({"System Info",A::ConsoleSettings,SystemInfo});
         return out;
@@ -2216,12 +2521,14 @@ std::vector<GuideEntry> Model::system_entries() const
             out.push_back({"TV Size",A::Unavailable});
         }
         if (v2) out.push_back({"Closed Captioning",A::Unavailable});
+        out.push_back({"HDR Output",A::Unavailable});
         return out;
     }
     if (system_page == SystemAudio) {
         // dashSysCslSetAudio.xur; 17559 adds AudioNielsen.
         std::vector<GuideEntry> out{{"Digital Output",A::Unavailable},
-                                   {"Sound Effects",A::ConsoleSettings,SystemSoundEffects}};
+                                   {"Sound Effects",A::ConsoleSettings,SystemSoundEffects},
+                                   {"Ex-Box Music Volume",A::ConsoleSettings,SystemMusicVolume}};
         if (v2) out.push_back({"Ratings Collection Sound",A::Unavailable});
         return out;
     }
@@ -2248,20 +2555,48 @@ std::vector<GuideEntry> Model::system_entries() const
         return {{"12-Hour Clock",A::Unavailable},{"24-Hour Clock",A::Unavailable}};
     if (system_page == SystemScreenSaver)
         return {{"Enable",A::Unavailable},{"Disable",A::Unavailable}};
-    if (system_page == SystemResolution) return {{"1080p",A::Unavailable}};
+    if (system_page == SystemResolution) return {{"1080p Original",A::Unavailable},{"4K Sharp",A::Unavailable}}; // Ex-Box rendering option
     if (system_page == SystemScreenFormat) return {{"Widescreen",A::Unavailable}};
-    if (system_page == SystemInfo || system_page == SystemDateTime) return {};
+    if (system_page == SystemGameMusic) return {{"Scan Installed Game Folders",A::Unavailable},{"Do Not Scan Game Folders",A::Unavailable}};
+    if (system_page == SystemLocalFriends) return {{"Show Local Offline Friends",A::Unavailable},{"Hide Local Offline Friends",A::Unavailable}};
+    if (system_page == SystemLibraryStatus)
+        return {{"PS4 / PS5 Games",A::Unavailable},{"Homebrew Apps",A::Unavailable},
+                {"Xbox 360 Frontend",A::Unavailable},{"Discovery Source",A::Unavailable},
+                {"Pins",A::Unavailable},{"Recently Played",A::Unavailable},
+                {"Installed Themes",A::Unavailable},{"Storage Inventory",A::Unavailable}};
+    if (system_page == SystemExBox)
+        return {{"Dashboard Version",A::CycleEra},{"Themes",A::SelectTheme},{"Promotions",A::AdsSettings},
+                {"Game Library",A::AllGames},{"Library Status",A::ConsoleSettings,SystemLibraryStatus},
+                {"Storage & Memory",A::ConsoleSettings,StorageDevices},
+                {"Game Soundtracks",A::ConsoleSettings,SystemGameMusic},{"Local Offline Friends",A::ConsoleSettings,SystemLocalFriends},
+                {"Refresh Libraries",A::Refresh},{"Controller Layout",A::ControllerMap},
+                {"Compatibility & Health",A::ConsoleSettings,SystemHealth}};
+    if (system_page == SystemInfo)
+        return {{"Ex-Box Version",A::Unavailable},{"Dashboard Build",A::Unavailable},
+                {"Rendering Mode",A::Unavailable},{"Installed Games",A::Unavailable},
+                {"Homebrew Apps",A::Unavailable},{"Installed Themes",A::Unavailable},
+                {"Storage Devices",A::Unavailable},{"System Software",A::Unavailable}};
+    if (system_page == SystemDateTime)
+        return {{"Clock Source",A::Unavailable},{"Time Format",A::ConsoleSettings,SystemTimeFormat},
+                {"Time Zone",A::Unavailable},{"Daylight Saving",A::Unavailable}};
     // consoles/SystemScene: NXE lists Family Settings second; Kinect and Metro
     // Kinect Settings; Metro renames Memory to Storage and adds TV.
     std::vector<GuideEntry> out{{"Console Settings",A::ConsoleSettings}};
-    if (era == 1) out.push_back({"Family Settings",A::Unavailable});
-    else out.push_back({"Kinect Settings",A::Unavailable});
+    if (era == 1) out.push_back({"Family Settings",A::ConsoleSettings,SystemFamily});
+    else out.push_back({"Kinect Settings",A::ConsoleSettings,SystemKinect});
     out.push_back({era == 3 ? "Storage" : "Memory",A::ConsoleSettings,StorageDevices});
     out.push_back({"Network Settings",A::NetworkSettings});
-    out.push_back({"Computers",A::Unavailable});
-    if (era == 3) out.push_back({"TV",A::Unavailable});
-    out.push_back({era == 3 && !metro_v1() ? "Xbox Live Vision" : "Xbox LIVE Vision",A::Unavailable});
+    out.push_back({"Computers",A::ConsoleSettings,SystemComputers});
+    if (era == 3) out.push_back({"TV",A::ConsoleSettings,SystemTV});
+    out.push_back({era == 3 && !metro_v1() ? "Xbox Live Vision" : "Xbox LIVE Vision",A::ConsoleSettings,SystemCamera});
     out.push_back({"Initial Setup",A::InitialSetup});
+    out.push_back({"Ex-Box Settings",A::ConsoleSettings,SystemExBox});
+    out.push_back({"Compatibility & Health",A::ConsoleSettings,SystemHealth});
+    // Additional Ex-Box account tools append after every authored retail route,
+    // preserving all original D-pad positions and learned controller paths.
+    out.push_back({"Account Management",A::ConsoleSettings,SystemAccount});
+    if (developer_diagnostics_available)
+        out.push_back({"Developer Diagnostics",A::ConsoleSettings,SystemDiagnostics});
     return out;
 }
 
@@ -2276,6 +2611,22 @@ void Model::open_system_page(int page, int item)
 std::string Model::system_page_title() const
 {
     if (system_page==SystemWelcome) return "Welcome Channel";
+    if (system_page==SystemHealth) return "Compatibility & Health";
+    if (system_page==SystemDiagnostics) return "Developer Diagnostics";
+    if (system_page==SystemExBox) return "Ex-Box Settings";
+    if (system_page==SystemGameMusic) return "Game Soundtracks";
+    if (system_page==SystemLocalFriends) return "Local Offline Friends";
+    if (system_page==SystemLibraryStatus) return "Library Status";
+    if (system_page==SystemFamily) return "Family Settings";
+    if (system_page==SystemAccount) return "Account Management";
+    if (system_page==SystemKinect) return "Kinect Settings";
+    if (system_page==SystemComputers) return "Computers and Media";
+    if (system_page==SystemTV) return "TV and Video";
+    if (system_page==SystemCamera) return "Camera";
+    if (system_page==SystemLanguage) return "Language and Locale";
+    if (system_page==SystemAutoPlay) return "Auto-Play";
+    if (system_page==SystemConnectedDevices) return "Connected Devices";
+    if (system_page==SystemMusicVolume) return "Ex-Box Music Volume";
     if (network_page()) {
         switch (system_page) {
         case NetworkTesting: return era==0?(dashboard_build<5759?"Test Xbox Live Connection":"Test Xbox LIVE Connection"):"Testing Connection";
@@ -2304,21 +2655,115 @@ std::string Model::system_page_title() const
 
 std::string Model::system_value(const std::string &label) const
 {
+    if(system_page==SystemHealth)for(const auto&row:compat_health_rows())if(row.label==label)return row.value;
     // consoles/dashCSettingsStrings.xus (9199/13604/15574/17559).
-    if (label == "Display" || label == "Screen Resolution") return "1080p";
+    if (label == "Display" || label == "Screen Resolution") {
+        const std::string active=active_render_scale==2?"4K Sharp":"1080p Original";
+        if (render_scale==active_render_scale) return active;
+        return active + " (restart required: " + (render_scale==2?"4K Sharp":"1080p Original") + ")";
+    }
     if (label == "Screen Format") return "Widescreen";
     if (label == "Audio" || label == "Sound Effects") return sounds ? "Sound Effects Enabled" : "Sound Effects Disabled";
     if (label == "Welcome Channel") return welcome_visible?"Show":"Hide";
     if (label == "Time Format") return clock_24_hour ? "24-Hour Clock" : "12-Hour Clock";
     if (label == "Screen Saver") return dimming ? "Screen Saver Enabled" : "Screen Saver Disabled";
+    if (label == "Dashboard Version") return kDashboardFamilies[dashboard_family(era,dashboard_build)].name;
+    if (label == "Themes") return installed_theme_id.empty()?"Xbox 360":installed_theme_id;
+    if (label == "Promotions") return promotion_mode==0?"Authentic Period":promotion_mode==1?"Local Personalized":"Off";
+    if (label == "Game Soundtracks") return music_game_scan?"Installed Game Scan Enabled":"Installed Game Scan Disabled";
+    if (label == "Local Offline Friends") return local_friend_avatars?"Shown":"Hidden";
+    if (label == "Game Library") return std::to_string(games.size())+" games";
+    if (label == "Library Status") return std::to_string(games.size()+apps.size())+" installed entries";
+    if (label == "Storage & Memory") return storage.devices.empty()?"Open to scan":std::to_string(storage.devices.size())+" devices";
+    if (system_page==SystemLibraryStatus) {
+        if (label=="PS4 / PS5 Games") return std::to_string(games.size());
+        if (label=="Homebrew Apps") return std::to_string(apps.size());
+        if (label=="Xbox 360 Frontend") return std::to_string(games_frontend.entries.size());
+        if (label=="Discovery Source") return game_library_companion?"Companion feed":"Direct filesystem";
+        if (label=="Pins") return std::to_string(pins.size());
+        if (label=="Recently Played") return std::to_string(recent.size());
+        if (label=="Installed Themes") return std::to_string(installed_themes.size());
+        if (label=="Storage Inventory") return storage.devices.empty()?"Not scanned":std::to_string(storage.devices.size())+" devices";
+    }
+    if (label == "Refresh Libraries") return "Games, apps and local media";
+    if (label == "Controller Layout") return "Xbox-style DualSense mapping";
     if (label == "System Info") return "Dashboard: 2.0." + std::to_string(dashboard_build) + ".0";
+    if (label == "HDR Output") return "Managed by PS5";
+    if (label == "PS5 Parental Controls" || label == "Purchases" ||
+        label == "Communication and Online Safety" || label == "PS5 Account" ||
+        label == "PS5 Camera Access" || label == "Camera Privacy" ||
+        label == "PS5 Disc Auto-Play") return "Managed by PS5";
+    if (label == "Local Game Library") return std::to_string(games.size()) + " games";
+    if (label == "Local Profile") return player.empty() ? "Player" : player;
+    if (label == "Xbox Live Account" || label == "Xbox Live Family Settings") return "Not connected";
+    if (label == "Kinect Sensor" || label == "Kinect Tuner" || label == "Sign-In Recognition" ||
+        label == "Xbox 360 Accessories") return "Not available on PS5";
+    if (label == "Camera and Microphone" || label == "Video Chat") return "Unavailable to Ex-Box";
+    if (label == "Music Library") return std::to_string(songs) + " tracks";
+    if (label == "Pictures") return std::to_string(pictures) + " pictures";
+    if (label == "Video Library") return std::to_string(video_list().size()) + " videos";
+    if (label == "Windows Media Center PC" || label == "Network Media Sharing" ||
+        label == "TV Provider" || label == "Live TV") return "Not connected";
+    if (label == "Dashboard Language: English") return "English";
+    if (label == "Locale: PS5 System" || label == "Keyboard and Text Input") return "PS5 system";
+    if (label == "Game Launch: Ask First") return "Ask First";
+    if (label == "Video: Resume or Restart") return "Resume when supported";
+    if (label == "Music: Keep Playing") return "Enabled";
+    if (label == "DualSense Controller") return "Xbox-style mapping";
+    if (label == "USB Storage") return storage.devices.empty() ? "Open to scan" : std::to_string(storage.devices.size()) + " devices";
+    if (label.rfind("Music Volume ",0)==0) return music_volume*10==std::atoi(label.c_str()+13) ? "Current" : "";
+    if (label == "Ex-Box Music Volume") return std::to_string(music_volume*10) + "%";
+    if (system_page == SystemInfo) {
+        if (label == "Ex-Box Version") return "2.0." + std::to_string(dashboard_build) + ".0";
+        if (label == "Dashboard Build") return std::to_string(dashboard_build);
+        if (label == "Rendering Mode") return active_render_scale==2 ? "3840 x 2160" : "1920 x 1080";
+        if (label == "Installed Games") return std::to_string(games.size());
+        if (label == "Homebrew Apps") return std::to_string(apps.size());
+        if (label == "Installed Themes") return std::to_string(installed_themes.size());
+        if (label == "Storage Devices") return storage.devices.empty()?"Not scanned":std::to_string(storage.devices.size());
+        if (label == "System Software") return "PS5 managed";
+    }
+    if (system_page == SystemDateTime) {
+        if (label == "Clock Source") return "PS5 system clock";
+        if (label == "Time Zone" || label == "Daylight Saving") return "PS5 system";
+    }
     // No guessed locale, AV pack, remote, startup, or PS5 power policy.
     return "";
 }
 
 std::string Model::system_description() const
 {
+    if(system_page==SystemHealth){const auto rows=compat_health_rows();return rows.empty()?std::string{}:rows[std::size_t(std::clamp(viewer_item,0,int(rows.size())-1))].description;}
+    if (system_page==SystemResolution)
+        return std::string("Ex-Box rendering resolution. Restart required to apply changes.\n\nActive: ")+
+               (active_render_scale==2?"4K Sharp":"1080p Original")+"\nRequested: "+(render_scale==2?"4K Sharp":"1080p Original");
     if (system_page==SystemWelcome) return "Show or hide the Welcome channel."; // dashSysCslSetWelcomeChannel.xur
+    if (system_page==SystemExBox) return "Dashboard-specific controls that Ex-Box can safely own. PS5 system settings remain under the PS5 Settings app.";
+    if (system_page==SystemGameMusic) return "Scan accessible installed-game folders for playable WAV, MP3, FLAC and OGG files. Ex-Box does not decrypt, mount, extract or bypass protected game data.";
+    if (system_page==SystemLocalFriends) return "Show clearly labeled offline friends in Social and Theater. Validated editor friend saves are preferred; your installed avatar kit fills empty slots. They are local characters, not Xbox Live accounts or contacts.";
+    if (system_page==SystemFamily) return "Ex-Box exposes its local game library here, but parental controls, purchases and communication safety remain in PS5 Settings. It never imitates or overrides platform account controls.";
+    if (system_page==SystemAccount) return "Open dashboard-owned profile, gamer picture and avatar tools. Xbox Live is not connected; PS5 account and privacy controls remain in the PS5 system UI.";
+    if (system_page==SystemKinect) return "Kinect hardware and Xbox 360 sign-in recognition are not available on PS5. The controller-layout entry remains useful for the Xbox-style DualSense mapping.";
+    if (system_page==SystemComputers) return "Open local music, pictures, videos and the browser. Legacy Windows Media Center pairing and network media sharing are shown honestly as disconnected.";
+    if (system_page==SystemTV) return "Open Ex-Box display and local video features. TV-provider setup and live television services are not emulated.";
+    if (system_page==SystemCamera) return "Camera permission and privacy are controlled by PS5. Ex-Box does not claim access that the homebrew runtime has not provided.";
+    if (system_page==SystemLanguage) return "The dashboard currently uses English and inherits locale and text input from the PS5 system.";
+    if (system_page==SystemAutoPlay) return "Review Ex-Box launch and playback behavior. PS5 disc auto-play remains a PS5 system setting.";
+    if (system_page==SystemConnectedDevices) return "Open the Xbox-style DualSense map or scan accessible storage. Unsupported Xbox 360 peripherals are reported without pretending they are connected.";
+    if (system_page==SystemMusicVolume) return "Set dashboard music volume. This controls Ex-Box music and is saved with the dashboard settings.";
+    if (system_page==SystemInfo) return "Live dashboard and library information. PS5 system-software details remain owned by the console.";
+    if (system_page==SystemDateTime) return "Ex-Box reads the PS5 system clock and applies your selected 12-hour or 24-hour dashboard display format.";
+    if (system_page==SystemScreenFormat) return "Ex-Box uses the widescreen 16:9 layout required by the dashboard and PS5 output.";
+    if (system_page==SystemLibraryStatus) {
+        const auto rows=system_entries();
+        const std::string label=rows.empty()?std::string{}:rows[std::size_t(std::clamp(viewer_item,0,int(rows.size())-1))].label;
+        if(label=="PS4 / PS5 Games")return "Installed console titles currently published to My Games. Refresh Libraries asks the active discovery source to rebuild this list.";
+        if(label=="Homebrew Apps")return "Dashboard-launchable homebrew entries found in the configured homebrew locations.";
+        if(label=="Xbox 360 Frontend")return "Owner-supplied Xbox 360 frontend entries. A listed entry is inventory evidence, not a claim that game dispatch is enabled.";
+        if(label=="Discovery Source")return game_library_companion?"The bounded local companion feed answered and is preferred over ShadowMount's potentially empty appmeta view.":"The companion feed did not answer, so Ex-Box is reading the accessible app metadata filesystem directly.";
+        if(label=="Storage Inventory")return "Memory/Storage performs a fresh read-only device and content inventory. Ex-Box never formats, moves or deletes PS5 data.";
+        return "Dashboard-owned library status. Counts are current runtime records and unknown data is never guessed.";
+    }
 
     // Body text from AudioSoundEffects/ClockFormat/Screensaver.xur, all builds.
     if (system_page == SystemSoundEffects)
@@ -2339,6 +2784,8 @@ std::string Model::system_meta(const std::string &label) const
     const bool v2 = era == 3 && !metro_v1();
     const std::string live = v2 ? "Xbox Live" : "Xbox LIVE";
     if (label == "Console Settings") return "Change your Xbox 360 console settings, including display, audio, language, and remote control.";
+    if (label == "Account Management") return "Open your local dashboard profile, gamer picture and avatar. PS5 account controls remain in the PS5 system interface.";
+    if (label == "Ex-Box Settings") return "Choose dashboard features Ex-Box actually controls: versions, themes, promotions, local game soundtracks, library refresh and offline Social guests.";
     if (label == "Family Settings") return "Protect younger family members by limiting content, communications, and online interactions.\n\nYou can adjust settings for the console or for individual profiles.";
     if (label == "Kinect Settings") return "Change Kinect sensor settings, and access the Kinect Tuner to configure your play space and diagnose audio problems.";
     if (label == "Memory" || label == "Storage") return "Move or delete saved games, profiles, and other items on Xbox 360 storage devices.";
@@ -2354,8 +2801,48 @@ std::string Model::system_meta(const std::string &label) const
                 : era == 2 ? "You can't run initial setup if console safety is on."
                 : v2 ? "You can't perform initial setup if content controls are on. If you want to do this, first turn them off in Settings, Family."
                      : "You can't run initial setup if content controls are on.");
+    if(label=="Compatibility & Health")return "Review truthful local compatibility, asset, soundtrack, theme, renderer, and companion status. Unknown values remain unpublished instead of being guessed.";
+    if (label=="PS5 Parental Controls" || label=="Communication and Online Safety" || label=="Purchases")
+        return "This protection is enforced by PS5. Use PS5 Settings > Family and Parental Controls; Ex-Box cannot weaken or replace it.";
+    if (label=="Xbox Live Family Settings" || label=="Xbox Live Account")
+        return "Ex-Box is an offline dashboard and is not connected to Xbox Live. No account or family state is fabricated.";
+    if (label=="PS5 Account") return "Sign-in, privacy and account security are managed by the PS5 system interface.";
+    if (label=="Kinect Sensor" || label=="Kinect Tuner" || label=="Sign-In Recognition")
+        return "Xbox 360 Kinect hardware and its calibration/sign-in services are not available to this PS5 homebrew app.";
+    if (label=="Camera and Microphone" || label=="PS5 Camera Access" || label=="Camera Privacy")
+        return "Camera and microphone permission is controlled by PS5. Ex-Box does not currently receive a supported capture interface.";
+    if (label=="Video Chat") return "No online video-chat service is configured. Ex-Box will not imply a camera or network connection that is absent.";
+    if (label=="Gamer Picture Photo Booth") return "Photo Booth remains unavailable until a supported PS5 camera input can be used with explicit permission.";
+    if (label=="Windows Media Center PC" || label=="Network Media Sharing")
+        return "No compatible local media server is connected. Use the local Music, Pictures and Video libraries for accessible files.";
+    if (label=="TV Provider" || label=="Live TV") return "No TV provider or tuner service is connected. Local video playback remains available.";
+    if (label=="HDR Output") return "HDR output is negotiated and controlled by PS5 video settings. Ex-Box does not override the console display pipeline.";
+    if (label=="Digital Output") return "Audio routing and HDMI output format are controlled by PS5 Sound settings.";
+    if (label=="Reference Levels" || label=="HDMI Color Space" || label=="Display Discovery" || label=="3D TV" || label=="TV Size" || label=="Closed Captioning")
+        return "This display option is managed by PS5 or is unsupported by the current Ex-Box presenter.";
+    if (label=="Dashboard Language: English") return "English is the installed dashboard language in this build.";
+    if (label=="Locale: PS5 System" || label=="Keyboard and Text Input") return "Ex-Box inherits this behavior from the PS5 system.";
+    if (label=="PS5 Disc Auto-Play") return "Disc auto-play is controlled by PS5 system settings.";
+    if (label=="Xbox 360 Accessories") return "Xbox 360 accessories are not exposed as supported devices to this PS5 homebrew app.";
+    if (label=="Startup" || label=="Background Downloads") return "This power or download policy is owned by PS5; Ex-Box does not change it.";
+    if (label=="Console Name") return "The console name is managed by the PS5 system and is not rewritten by Ex-Box.";
+    if (label=="System Software") return "PS5 system software is managed and updated outside Ex-Box.";
+    if (label=="Clock Source" || label=="Time Zone" || label=="Daylight Saving") return "This value comes from the PS5 system clock settings.";
     return "";
 }
+
+exbox_services::health::Snapshot Model::compat_health_snapshot() const
+{
+    auto out=health_runtime;
+    out.ps5x360_installed=std::any_of(games.begin(),games.end(),[](const App&game){return game.title_id==exbox_games::player_title;});
+    const auto caps=rom_game_guide_preview.capabilities();out.companion_advertised=caps.cooperative_overlay||caps.pause_resume||caps.return_dashboard||caps.controller_map||caps.music||caps.settings;
+    out.xbox_titles=0;out.artwork_mapped=0;out.artwork_unmapped=0;
+    for(const auto&entry:games_frontend.entries)if(entry.platform==exbox_games::Platform::Xbox360){++out.xbox_titles;if(entry.owner_art_key.empty())++out.artwork_unmapped;else ++out.artwork_mapped;}
+    out.continue_playing=recent.size();out.xbox_inventory_scanned=games_frontend_inventory_published;out.xbox_inventory_limited=games_frontend_limited;out.xbox_rejected=games_frontend_rejected;out.diagnostics_available=developer_diagnostics_available;
+    return out;
+}
+
+std::vector<exbox_services::health::Row> Model::compat_health_rows() const{return exbox_services::health::rows(compat_health_snapshot());}
 
 void Model::load_theme(int legacy_value)
 {
@@ -2364,11 +2851,89 @@ void Model::load_theme(int legacy_value)
     (void)legacy_value;
     theme = 0;
 }
+bool Model::load_promotion_mode_setting(const char* line)
+{
+    if(!line||std::strncmp(line,"promotion_mode=",15)!=0)return false;
+    const char value=line[15];
+    const char*tail=line+16;
+    const bool terminated=!tail[0] || (tail[0]=='\n'&&!tail[1]) || (tail[0]=='\r'&&tail[1]=='\n'&&!tail[2]);
+    if(value<'0'||value>'2'||!terminated)return false;
+    promotion_mode=value-'0';promotions=promotion_mode!=2;return true;
+}
+std::string Model::saved_promotion_mode_setting()const
+{
+    return "promotion_mode="+std::to_string(std::clamp(promotion_mode,0,2));
+}
+void Model::set_installed_themes(std::vector<InstalledTheme> entries)
+{
+    installed_themes=std::move(entries);
+    std::sort(installed_themes.begin(),installed_themes.end(),[](const auto&a,const auto&b){return a.display_name==b.display_name?a.stable_id<b.stable_id:a.display_name<b.display_name;});
+}
+void Model::load_installed_theme_setting(const std::string &line)
+{
+    const auto read=[&](const char *prefix,std::string &value){
+        const std::size_t length=std::strlen(prefix);if(line.rfind(prefix,0)!=0)return false;
+        value=line.substr(length);while(!value.empty()&&(value.back()=='\r'||value.back()=='\n'))value.pop_back();return true;
+    };
+    const auto valid=[](const std::string &value){
+        if(value.size()!=22||value.rfind("theme-",0)!=0)return false;
+        for(std::size_t i=6;i<value.size();++i)if(!((value[i]>='0'&&value[i]<='9')||(value[i]>='a'&&value[i]<='f')))return false;
+        return true;
+    };
+    std::string value;
+    if(read("installed_theme=",value)){if(value.empty()||valid(value))installed_theme_id=std::move(value);return;}
+    auto append=[&](std::vector<std::string>&list,std::size_t limit){if(valid(value)&&std::find(list.begin(),list.end(),value)==list.end()&&list.size()<limit)list.push_back(value);};
+    if(read("theme_favorite=",value)){append(theme_favorites,64);return;}
+    if(read("theme_recent=",value))append(theme_recent,16);
+}
+std::string Model::saved_installed_theme_setting() const {return "installed_theme="+installed_theme_id;}
+std::vector<std::string> Model::saved_theme_library_settings() const
+{
+    std::vector<std::string> lines;lines.reserve(1+theme_favorites.size()+theme_recent.size());
+    lines.push_back(saved_installed_theme_setting());
+    for(const auto&id:theme_favorites)lines.push_back("theme_favorite="+id);
+    for(const auto&id:theme_recent)lines.push_back("theme_recent="+id);
+    return lines;
+}
+std::vector<int> Model::theme_visible_indices() const
+{
+    std::vector<int> out;
+    if(theme_filter==0){out.reserve(installed_themes.size());for(std::size_t i=0;i<installed_themes.size();++i)out.push_back(int(i));return out;}
+    const auto&ids=theme_filter==1?theme_favorites:theme_recent;out.reserve(ids.size());
+    for(const auto&id:ids)for(std::size_t i=0;i<installed_themes.size();++i)if(installed_themes[i].stable_id==id){out.push_back(int(i));break;}
+    return out;
+}
+int Model::theme_catalog_index_for_row(int row) const
+{
+    if(row<=0)return -1;const auto visible=theme_visible_indices();
+    return row<=int(visible.size())?visible[std::size_t(row-1)]:-2;
+}
+int Model::theme_row_for_catalog_index(int index) const
+{
+    const auto visible=theme_visible_indices();for(std::size_t i=0;i<visible.size();++i)if(visible[i]==index)return int(i)+1;return 0;
+}
+int Model::theme_count() const
+{
+    return 1+int(theme_visible_indices().size())+
+           (picture_background_available()&&picture_background>0?1:0);
+}
+std::string Model::theme_entry(int index) const
+{
+    if(index==0)return kThemes[0];
+    const auto visible=theme_visible_indices();
+    if(index>0&&index<=int(visible.size())){
+        const auto&entry=installed_themes[std::size_t(visible[std::size_t(index-1)])];
+        const unsigned count=entry.wallpapers?entry.wallpapers:(entry.complete?4u:1u);
+        return entry.display_name+(entry.complete?" [Compatibility ":" [Partial compatibility ")+std::to_string(count)+"/4]";
+    }
+    if(index==int(visible.size())+1&&picture_background_available()&&picture_background>0)
+        return "Picture Background";
+    return {};
+}
 std::vector<std::string> Model::theme_entries() const
 {
-    std::vector<std::string> rows{kThemes[0]};
-    // Ex-Box addition: no 360 original; the owned copy created by T09.
-    if (picture_background_available() && picture_background > 0) rows.push_back("Picture Background");
+    std::vector<std::string> rows;rows.reserve(std::size_t(theme_count()));
+    for(int i=0;i<theme_count();++i)rows.push_back(theme_entry(i));
     return rows;
 }
 std::vector<GuideEntry> Model::profile_entries() const
@@ -2385,7 +2950,9 @@ Effect Model::open_themes()
     theme_previous_full=viewer_full;theme_previous_guide=guide;
     guide=false;
     open_viewer(Viewer::Themes);
-    viewer_item=picture_background_enabled && theme_entries().size()>1 ? 1 : 0;
+    viewer_item=0;
+    if(!installed_theme_id.empty())for(std::size_t i=0;i<installed_themes.size();++i)if(installed_themes[i].stable_id==installed_theme_id){viewer_item=theme_row_for_catalog_index(int(i));break;}
+    if(picture_background_enabled&&picture_background_available()&&picture_background>0)viewer_item=theme_count()-1;
     return {};
 }
 #include "welcome_model.inc.hpp"
@@ -2393,6 +2960,16 @@ Effect Model::open_themes()
 
 Effect Model::press_viewer(xb::Button button)
 {
+    if (viewer==Viewer::RomGameGuidePreview) {
+        const exbox_rom_guide::Result result=exbox_rom_guide::press(rom_game_guide_preview,button);
+        if (result.action==exbox_rom_guide::Action::Close) {
+            rom_game_guide_preview.session_lost();
+            viewer=Viewer::None;viewer_item=0;
+        } else viewer_item=int(rom_game_guide_preview.selected());
+        // Preview actions never dispatch transport. Default capabilities make
+        // A inert while the corresponding unsupported reason remains visible.
+        return {};
+    }
     if (viewer==Viewer::Achievements) return press_achievements(button);
     if (viewer==Viewer::WelcomePages || viewer==Viewer::InitialSetup) return press_welcome(button);
     if (viewer == Viewer::Themes || viewer == Viewer::Profile) {
@@ -2402,6 +2979,21 @@ Effect Model::press_viewer(xb::Button button)
         // ThemePicker/lstThemes Wrap=true (9199, 13604, 15574, 17559).
         if (viewer==Viewer::Themes && (button==xb::Up || button==xb::Down))
             viewer_item=(viewer_item+(button==xb::Down?1:viewer_count()-1))%viewer_count();
+        else if(viewer==Viewer::Themes&&(button==xb::Left||button==xb::Right)){
+            constexpr int page=6;
+            const int n=viewer_count();
+            viewer_item=std::clamp(viewer_item+(button==xb::Right?page:-page),0,n-1);
+        }
+        else if(viewer==Viewer::Themes&&(button==xb::LB||button==xb::RB)){
+            const auto initial=[&](int row){
+                const int index=theme_catalog_index_for_row(row);if(index<0)return row==0?'#':'~';
+                const auto&name=installed_themes[std::size_t(index)].display_name;
+                if(name.empty())return'#';const char c=name.front();return c>='a'&&c<='z'?char(c-'a'+'A'):c;
+            };
+            const int n=viewer_count();
+            if(button==xb::RB){const char from=initial(viewer_item);while(viewer_item+1<n&&initial(viewer_item)==from)++viewer_item;}
+            else if(viewer_item>0){--viewer_item;const char group=initial(viewer_item);while(viewer_item>0&&initial(viewer_item-1)==group)--viewer_item;}
+        }
         else {
             if (button==xb::Up) viewer_item=std::max(0,viewer_item-1);
             if (button==xb::Down) viewer_item=std::min(viewer_count()-1,viewer_item+1);
@@ -2415,11 +3007,20 @@ Effect Model::press_viewer(xb::Button button)
         if (button==xb::A) {
             if (viewer==Viewer::Themes) {
                 theme=0;
-                picture_background_enabled=viewer_item==1;
-                return {Command::SaveSettings,-1};
+                if(viewer_item==0){installed_theme_id.clear();picture_background_enabled=false;return {Command::ApplyInstalledTheme,-1};}
+                const int index=theme_catalog_index_for_row(viewer_item);
+                if(index>=0){const auto&id=installed_themes[std::size_t(index)].stable_id;theme_recent.erase(std::remove(theme_recent.begin(),theme_recent.end(),id),theme_recent.end());theme_recent.insert(theme_recent.begin(),id);if(theme_recent.size()>16)theme_recent.resize(16);return {Command::ApplyInstalledTheme,index};}
+                installed_theme_id.clear();picture_background_enabled=true;return {Command::ApplyInstalledTheme,-2};
             }
             return perform_guide_entry(profile_entries()[std::size_t(viewer_item)]);
         }
+        if(viewer==Viewer::Themes&&button==xb::X){
+            const int index=theme_catalog_index_for_row(viewer_item);if(index<0)return {};
+            const auto&id=installed_themes[std::size_t(index)].stable_id;const auto found=std::find(theme_favorites.begin(),theme_favorites.end(),id);
+            if(found==theme_favorites.end()){if(theme_favorites.size()<64)theme_favorites.push_back(id);}else theme_favorites.erase(found);
+            if(theme_filter==1)viewer_item=std::clamp(viewer_item,0,std::max(0,theme_count()-1));return {Command::SaveSettings,-1};
+        }
+        if(viewer==Viewer::Themes&&button==xb::Y){theme_filter=(theme_filter+1)%3;viewer_item=0;return {};}
         return {};
     }
     if (viewer == Viewer::Pictures && picture_background_confirm) return press_picture_full(button);
@@ -2449,7 +3050,36 @@ Effect Model::press_viewer(xb::Button button)
             return {};
         case xb::A:
         {
-            if (entries.empty() || system_page == SystemResolution || system_page == SystemScreenFormat) return {};
+            if (entries.empty()) return {};
+            if (system_page == SystemHealth || system_page == SystemLibraryStatus ||
+                system_page == SystemInfo || system_page == SystemDateTime ||
+                system_page == SystemScreenFormat) {
+                show(entries[std::size_t(viewer_item)].label,system_description());
+                return {};
+            }
+            if (system_page == SystemGameMusic) {
+                const bool enabled=viewer_item==0;
+                if(music_game_scan==enabled)return {};
+                music_game_scan=enabled;
+                return enabled?Effect{Command::ScanGameMusic,-1}:Effect{Command::SaveSettings,-1};
+            }
+            if (system_page == SystemLocalFriends) {
+                const bool enabled=viewer_item==0;
+                if(local_friend_avatars==enabled)return {};
+                local_friend_avatars=enabled;
+                return {Command::SaveSettings,-1};
+            }
+            if (system_page == SystemMusicVolume) {
+                music_volume=std::clamp(viewer_item,0,10);
+                if(music_volume>0)music_volume_restore=music_volume;
+                return {Command::MusicVolume,music_volume};
+            }
+            if (system_page == SystemResolution) {
+                const int requested=viewer_item==1?2:1;
+                if (render_scale==requested) return {};
+                render_scale=requested;
+                return {Command::SaveRenderScale,requested};
+            }
             if (system_page == SystemWelcome) {
                 welcome_visible=viewer_item==0;
                 if (!welcome_visible && channel==Welcome) channel=MyXbox;
@@ -2470,15 +3100,25 @@ Effect Model::press_viewer(xb::Button button)
             const GuideEntry entry = entries[std::size_t(viewer_item)];
             if (entry.action == GuideAction::ConsoleSettings) {
                 const int page = entry.app < 0 ? int(SystemConsole) : entry.app;
-                const int item = page == SystemWelcome ? (welcome_visible?0:1)
+                const int item = page == SystemResolution ? (render_scale==2?1:0)
+                               : page == SystemWelcome ? (welcome_visible?0:1)
                                : page == SystemSoundEffects ? (sounds ? 0 : 1)
                                : page == SystemTimeFormat ? (clock_24_hour ? 1 : 0)
-                               : page == SystemScreenSaver ? (dimming ? 0 : 1) : 0;
+                               : page == SystemScreenSaver ? (dimming ? 0 : 1)
+                               : page == SystemGameMusic ? (music_game_scan ? 0 : 1)
+                               : page == SystemLocalFriends ? (local_friend_avatars ? 0 : 1)
+                               : page == SystemMusicVolume ? std::clamp(music_volume,0,10) : 0;
                 open_system_page(page,item);
                 if (page==StorageDevices) {storage_device=-1;storage_item=-1;return {Command::ScanStorage,-1};}
                 return {};
             }
-            if (entry.action == GuideAction::Unavailable) { show(entry.label, "Not available on PS5 yet."); return {}; }
+            if (entry.action == GuideAction::Unavailable) {
+                std::string detail=system_meta(entry.label);
+                if(detail.empty()) detail=system_description();
+                if(detail.empty()) detail="This setting is managed by PS5 or unavailable to the current Ex-Box runtime.";
+                show(entry.label,detail);
+                return {};
+            }
             // The rest do what their Guide entries do, from here.
             const bool was_open = guide;
             guide = true;
@@ -2612,13 +3252,22 @@ Effect Model::press_viewer(xb::Button button)
             return {};
         case xb::X: return {Command::Refresh, -1};
         case xb::Y:
-            if (n > 0) open_info(library_cards()[std::size_t(viewer_item)]);
+            if (n > 0)
+            {
+                const Card c = library_cards()[std::size_t(viewer_item)];
+                // Supplied Xbox 360 recents are deliberately inert until the
+                // cooperative launch/return contract is accepted. They are
+                // not missing pin attachments, so never route them through
+                // open_info()'s pin-only missing-card fallback.
+                if (c.game >= 0 || c.app >= 0) open_info(c);
+            }
             return {};
         case xb::A:
             if (n > 0)
             {
                 const Card c = library_cards()[std::size_t(viewer_item)];
-                return c.game >= 0 ? Effect{Command::LaunchTitle, c.game} : Effect{Command::Launch, c.app};
+                if (c.game >= 0) return {Command::LaunchTitle, c.game};
+                if (c.app >= 0) return {Command::Launch, c.app};
             }
             return {};
         default: return {};
@@ -2678,6 +3327,34 @@ Effect Model::press_viewer(xb::Button button)
         // Left / Right skip, X pauses, Y shows Now Playing.
         const bool playing = now_playing >= 0;
         const int actions = int(music_group_actions().size());
+        // The view selector is reachable even when its list is empty. Landing
+        // on a view activates it, so Down always enters the displayed list.
+        if (music_tabs_focused) {
+            if (music_random_focused && button == xb::A)
+                return {Command::MusicEdit, int(MusicOp::RandomAlbum)};
+            if (music_game_scan_focused && button == xb::A) {
+                music_game_scan=true;
+                return {Command::ScanGameMusic,-1};
+            }
+            if (button == xb::Left || button == xb::Right) {
+                const int focus=music_game_scan_focused?kMusicViews+1:music_random_focused?kMusicViews:music_view;
+                const int next=(focus+(button==xb::Right?1:kMusicViews+1))%(kMusicViews+2);
+                music_random_focused=next==kMusicViews;
+                music_game_scan_focused=next==kMusicViews+1;
+                if(music_random_focused||music_game_scan_focused)return {};
+                music_view=next;
+                music_group = -1;
+                viewer_item = 0;
+                return {Command::MusicBrowse, -1};
+            }
+            if (button == xb::Down || button == xb::A) {
+                music_tabs_focused = false;
+                viewer_item = 0;
+                return {};
+            }
+            if (button == xb::Up) return {};
+            if (button == xb::B) music_tabs_focused = false;
+        }
         switch (button)
         {
         case xb::B:
@@ -2693,11 +3370,15 @@ Effect Model::press_viewer(xb::Button button)
         case xb::RT:
             // The PS5 keeps Create (Back), so the triggers turn the view:
             // Songs, Albums, Artists, Genres.
+            music_random_focused=false;music_game_scan_focused=false;
             music_view = (music_view + (button == xb::RT ? 1 : kMusicViews - 1)) % kMusicViews;
             music_group = -1;
             viewer_item = 0;
             return {Command::MusicBrowse, -1};
-        case xb::Up: viewer_item = std::max(0, viewer_item - 1); return {};
+        case xb::Up:
+            if (viewer_item == 0) {music_tabs_focused = true;music_random_focused=false;music_game_scan_focused=false;}
+            else viewer_item = std::max(0, viewer_item - 1);
+            return {};
         case xb::Down: viewer_item = std::min(last, viewer_item + 1); return {};
         case xb::LB: viewer_item = std::max(0, viewer_item - kMusicRows); return {};
         case xb::RB: viewer_item = std::min(last, viewer_item + kMusicRows); return {};
@@ -2749,6 +3430,7 @@ Effect Model::press_viewer(xb::Button button)
             music_paused = !music_paused;
             return {Command::MusicPause, -1};
         case xb::Y: // Now Playing (music/1003_IndividualDevice.xur legend_Y)
+            music_tabs_focused = false;
             music_library_item = viewer_item;
             music_page = MusicNowPlaying;
             viewer_item = 0;
@@ -2788,8 +3470,14 @@ Effect Model::press_viewer(xb::Button button)
             }
             return {};
         }
-        if (button == xb::A && n > 0)
+        if (button == xb::A && n > 0) {
+            video_theater=false;
             return request_video();
+        }
+        if (button == xb::RS && n > 0) {
+            video_theater=true;
+            return request_video();
+        }
         if (button == xb::X)
         {
             // Sort, keeping the same video selected.
@@ -2877,8 +3565,16 @@ Effect Model::press_viewer(xb::Button button)
         if (n > 0)
             viewer_full = true;
         return {};
-    case xb::Left: viewer_item = std::max(0, viewer_item - 1); return {};
-    case xb::Right: viewer_item = std::min(last, viewer_item + 1); return {};
+    case xb::Left:
+        // Picture/video tiles are a four-column grid. Do not jump diagonally
+        // from the first tile of one row to the last tile of the row above.
+        if (viewer_item % kViewerColumns) --viewer_item;
+        return {};
+    case xb::Right:
+        // Likewise, the right edge stays put; Down is the spatial route into
+        // the next row. Shoulder paging remains only an optional shortcut.
+        if (viewer_item % kViewerColumns + 1 < kViewerColumns && viewer_item < last) ++viewer_item;
+        return {};
     case xb::Up:
         if (viewer_item >= kViewerColumns)
             viewer_item -= kViewerColumns;
@@ -2899,18 +3595,86 @@ Effect Model::press_viewer(xb::Button button)
 
 Effect Model::press_guide(xb::Button button)
 {
-    // Ex-Box addition: no 360 original. R3 switches to a separate host menu.
-    if (button==xb::RS || (guide_host && button==xb::B)) {
-        guide_host=!guide_host;
-        if (!guide_host && era==3 && !metro_v1() && guide_blade==BladeApps) guide_blade=BladeGames;
-        for (int &at:guide_item) at=0;
+    // The original Guide exposes a modal music-volume slider. It controls only
+    // Ex-Box's music bus; games and the PS5 system mixer are never touched.
+    if (guide_volume_open)
+    {
+        if (button == xb::Guide || button == xb::Start) { guide_volume_open=false; guide=false; return {}; }
+        if (button == xb::B || button == xb::Up || button == xb::Down) { guide_volume_open=false; return {}; }
+        if (button == xb::Left || button == xb::Right)
+        {
+            music_volume=std::clamp(music_volume+(button==xb::Right?1:-1),0,10);
+            if (music_volume>0) music_volume_restore=music_volume;
+            return {Command::MusicVolume,music_volume};
+        }
+        if (button == xb::A)
+        {
+            if (music_volume>0) { music_volume_restore=music_volume; music_volume=0; }
+            else music_volume=std::clamp(music_volume_restore,1,10);
+            return {Command::MusicVolume,music_volume};
+        }
+        return {};
+    }
+    if (guide_music_page==4 && guide_music_search_edit)
+    {
+        if (button==xb::Left || button==xb::Right) {guide_music_key=(guide_music_key+(button==xb::Right?1:26))%27;return {};}
+        if (button==xb::Up || button==xb::Down) {guide_music_key=(guide_music_key+(button==xb::Down?9:18))%27;return {};}
+        if (button==xb::A) {if(guide_music_query.size()<32)guide_music_query+=guide_music_key<26?char('A'+guide_music_key):' ';return {Command::GuideMusicRefresh,guide_music_page};}
+        if (button==xb::X) {if(!guide_music_query.empty())guide_music_query.pop_back();return {Command::GuideMusicRefresh,guide_music_page};}
+        if (button==xb::Y || button==xb::B) {guide_music_search_edit=false;return {};}
+        if (button==xb::Guide || button==xb::Start) {guide_music_search_edit=false;guide=false;return {};}
+        return {};
+    }
+    // The retired R3 Utilities overlay no longer exists. RS is intentionally
+    // inert in the Guide; all features are normal blade rows.
+    if(button==xb::RS)return {};
+    if(guide_music_page>0&&button==xb::B){guide_music_page=0;guide_music_search_edit=false;guide_item[BladeMedia]=0;return {};}
+    if(guide_exbox_page&&button==xb::B){
+        guide_exbox_page=false;
+        const auto home=blade_entries(BladeHome);
+        const auto row=std::find_if(home.begin(),home.end(),[](const GuideEntry &entry){return entry.action==GuideAction::OpenExBoxMenu;});
+        guide_item[BladeHome]=row==home.end()?0:int(row-home.begin());
         return {};
     }
     const std::vector<GuideEntry> entries = blade_entries(guide_blade);
     const int items = std::max(1, int(entries.size()));
     int &item = guide_item[guide_blade];
     item = std::clamp(item, 0, items - 1);
-    if (era==0 && !guide_host && guide_blade==BladeHome) {
+    const auto record_at=std::find_if(entries.begin(),entries.end(),[](const GuideEntry&entry){return entry.action==GuideAction::RecordScreen;});
+    const int record_index=record_at==entries.end()?-1:int(record_at-entries.begin());
+    // Recording is a normal Media row. Left/Right stays inside its horizontal
+    // transport controls; Up/Down continues through the ordinary row list.
+    if(record_index>=0&&item==record_index&&recorder_available&&
+       (button==xb::Left||button==xb::Right)){
+        std::vector<int> controls;
+        if(!recorder_recording||recorder_paused)controls.push_back(0);
+        if(recorder_recording&&!recorder_paused&&recorder_pause_supported)controls.push_back(1);
+        if(recorder_recording)controls.push_back(2);
+        if(!controls.empty()){
+            auto at=std::find(controls.begin(),controls.end(),recorder_control);
+            int index=at==controls.end()?0:int(at-controls.begin());
+            index=std::clamp(index+(button==xb::Right?1:-1),0,int(controls.size())-1);
+            recorder_control=controls[std::size_t(index)];
+        }
+        return {};
+    }
+    // The authored Media mini-player is one horizontal icon row. Its entries
+    // remain in scene order for rendering, but Left/Right traverse the visible
+    // icons instead of unexpectedly switching Guide blades. Up/Down enter and
+    // leave the adjacent content row, so every visible action is D-pad-only.
+    if(guide_music_page==0&&guide_blade==BladeMedia&&media_player&&now_playing>=0){
+        const auto control=[](GuideAction action){return action==GuideAction::MusicPause||action==GuideAction::MusicPrevious||action==GuideAction::MusicStop||action==GuideAction::MusicNext||action==GuideAction::MusicShuffle||action==GuideAction::MusicVolume;};
+        std::vector<int> controls;for(std::size_t i=0;i<entries.size();++i)if(control(entries[i].action))controls.push_back(int(i));
+        if(!controls.empty()){
+            guide_media_control_item=std::clamp(guide_media_control_item,0,int(controls.size())-1);
+            const auto found=std::find(controls.begin(),controls.end(),item);const bool on_icons=found!=controls.end();
+            if(on_icons){guide_media_control_item=int(found-controls.begin());if(button==xb::Left||button==xb::Right){guide_media_control_item=std::clamp(guide_media_control_item+(button==xb::Right?1:-1),0,int(controls.size())-1);item=controls[std::size_t(guide_media_control_item)];return {};}if(button==xb::Up){if(controls.front()>0)item=controls.front()-1;return {};}if(button==xb::Down){if(controls.back()+1<int(entries.size()))item=controls.back()+1;return {};}}
+            else if(button==xb::Down&&item==controls.front()-1){item=controls[std::size_t(guide_media_control_item)];return {};}
+            else if(button==xb::Up&&item==controls.back()+1){item=controls[std::size_t(guide_media_control_item)];return {};}
+        }
+    }
+    if(guide_exbox_page&&(button==xb::Left||button==xb::Right||button==xb::LB||button==xb::RB))return {};
+    if (era==0 && guide_blade==BladeHome) {
         if (button==xb::Left || button==xb::Right) {
             if (item<3) {item=std::clamp(item+(button==xb::Right?1:-1),0,2);guide_community_item=item;}
             return {};
@@ -2918,13 +3682,13 @@ Effect Model::press_guide(xb::Button button)
         if (button==xb::Down && item<3) {guide_community_item=item;item=3;return {};}
         if (button==xb::Up && item==3) {item=guide_community_item;return {};}
     }
-    if (era==0 && !guide_host && button==xb::B && guide_blade!=BladeHome) {guide_blade=BladeHome;return {};}
+    if (era==0 && button==xb::B && guide_blade!=BladeHome) {guide_blade=BladeHome;return {};}
     switch (button)
     {
     case xb::Up: item = std::max(0, item - 1); return {};
     case xb::Down: item = std::min(items - 1, item + 1); return {};
     case xb::LB:
-    case xb::Left: guide_blade = std::max(era==3 && !metro_v1() && !guide_host?int(BladeGames):0, guide_blade - 1); return {};
+    case xb::Left: guide_blade = std::max(era==3 && !metro_v1()?int(BladeGames):0, guide_blade - 1); return {};
     case xb::RB:
     case xb::Right: guide_blade = std::min(BladeCount - 1, guide_blade + 1); return {};
     case xb::B:
@@ -2947,6 +3711,7 @@ Effect Model::perform_guide_entry(const GuideEntry &entry)
     if(entry.action==GuideAction::AvatarEdit && external_avatar_editor) return {Command::OpenAvatarEditor,-1};
     int &item = guide_item[guide_blade];
     if (entry.action==GuideAction::OpenGuideSettings) {guide_blade=BladeSettings;return {};}
+    if(entry.action==GuideAction::OpenExBoxMenu){guide_exbox_page=true;guide_blade=BladeHome;guide_item[BladeHome]=0;return {};}
     // Settings that change in place keep the Guide open, so the change shows.
     if (entry.action == GuideAction::ChangeGamerpic)
         return {Command::NextGamerpic, -1};
@@ -2957,6 +3722,34 @@ Effect Model::perform_guide_entry(const GuideEntry &entry)
     }
     if (entry.action == GuideAction::InitialSetup) return open_setup();
     if (entry.action == GuideAction::SelectTheme) return open_themes();
+    if (entry.action == GuideAction::MusicVolume)
+    {
+        guide_volume_open=true;
+        return {};
+    }
+    if (entry.action==GuideAction::Music && guide)
+    {
+        guide_host=false;guide_blade=BladeMedia;guide_music_page=5;guide_item[BladeMedia]=0;
+        return {Command::GuideMusicRefresh,5};
+    }
+    if (entry.action==GuideAction::GuideMusicAlbums || entry.action==GuideAction::GuideMusicSongs ||
+        entry.action==GuideAction::GuideMusicQueue || entry.action==GuideAction::GuideMusicSearch)
+    {
+        guide_music_page=entry.action==GuideAction::GuideMusicAlbums?1:entry.action==GuideAction::GuideMusicSongs?2:entry.action==GuideAction::GuideMusicQueue?3:4;
+        guide_music_search_edit=entry.action==GuideAction::GuideMusicSearch;
+        guide_item[BladeMedia]=0;
+        return {Command::GuideMusicRefresh,guide_music_page};
+    }
+    if (entry.action==GuideAction::GuideMusicBack)
+    {
+        guide_music_page=0;guide_music_search_edit=false;guide_item[BladeMedia]=0;return {};
+    }
+    if (entry.action==GuideAction::GuideMusicPlay)
+        return {Command::GuideMusicPlay,entry.app};
+    if (entry.action==GuideAction::GuideMusicOpenFull)
+    {
+        guide=false;guide_host=false;guide_music_page=0;return open_viewer(Viewer::Music);
+    }
     if (entry.action == GuideAction::CycleEra)
     {
         picker_return_item=item;picker_return_host=guide_host;
@@ -2994,7 +3787,12 @@ Effect Model::perform_guide_entry(const GuideEntry &entry)
     }
     if (entry.action==GuideAction::TogglePromotions)
     {
-        promotions=!promotions;clamp_all();return {Command::SaveSettings,-1};
+        promotion_mode=promotions?2:0;promotions=promotion_mode!=2;clamp_all();return {Command::ReloadPromotions,-1};
+    }
+    if(entry.action==GuideAction::CyclePromotionMode)
+    {
+        promotion_mode=(std::clamp(promotion_mode,0,2)+1)%3;
+        promotions=promotion_mode!=2;clamp_all();return {Command::ReloadPromotions,-1};
     }
     // The music controls work in place too; the list may get shorter.
     if (entry.action == GuideAction::MusicPause || entry.action == GuideAction::MusicNext ||
@@ -3088,13 +3886,23 @@ Effect Model::perform_guide_entry(const GuideEntry &entry)
     case GuideAction::CycleNotifications:
     case GuideAction::CycleButtonStyle:
     case GuideAction::TogglePromotions:
+    case GuideAction::CyclePromotionMode:
     case GuideAction::OpenGuideSettings:
     case GuideAction::AdsSettings:
     case GuideAction::MusicPause:
     case GuideAction::MusicNext:
     case GuideAction::MusicPrevious:
     case GuideAction::MusicShuffle:
-    case GuideAction::MusicStop: return {};
+    case GuideAction::MusicStop:
+    case GuideAction::MusicVolume:
+    case GuideAction::GuideMusicAlbums:
+    case GuideAction::GuideMusicSongs:
+    case GuideAction::GuideMusicQueue:
+    case GuideAction::GuideMusicSearch:
+    case GuideAction::GuideMusicPlay:
+    case GuideAction::GuideMusicOpenFull:
+    case GuideAction::GuideMusicBack:
+    case GuideAction::OpenExBoxMenu: return {};
     case GuideAction::Music: return open_viewer(Viewer::Music);
     case GuideAction::AvatarEdit:
         viewer = Viewer::AvatarEdit;
@@ -3104,6 +3912,22 @@ Effect Model::perform_guide_entry(const GuideEntry &entry)
         return {Command::AvatarEditStart, -1};
     case GuideAction::Pictures: return open_viewer(Viewer::Pictures);
     case GuideAction::Videos: return open_viewer(Viewer::Videos);
+    case GuideAction::RecordScreen:
+        if(recorder_available){
+            if(recorder_busy){show("Screen Recording","The recorder is responding. You can keep using the dashboard while it finishes.");return {};}
+            if(recorder_error){show("Screen Recording","Glint reported a recording error. Stop the current recording or restart Glint, then try again.");return {};}
+            if(!recorder_recording&&recorder_control==0)return {Command::RecorderAction,0};
+            if(recorder_recording&&recorder_paused&&recorder_control==0)return {Command::RecorderAction,2};
+            if(recorder_recording&&!recorder_paused&&recorder_pause_supported&&recorder_control==1)return {Command::RecorderAction,1};
+            if(recorder_recording&&recorder_control==2)return {Command::RecorderAction,3};
+            return {};
+        }
+        show("Record Screen",
+             "Direct recording is ready automatically when the optional Glint companion is running.\n\n"
+             "Press the DualSense Create button, then choose Start New Recording.\n\n"
+             "Open Create again and choose Stop Recording. Your clip will appear in Media Gallery.\n\n"
+             "For 4K recording, enable it first in PS5 Settings > Captures and Broadcasts.");
+        return {};
     case GuideAction::LaunchSystem: return {Command::LaunchSystem, entry.app};
     case GuideAction::Achievements: return open_achievements();
     case GuideAction::Profile: return open_viewer(Viewer::Profile);
@@ -3218,6 +4042,37 @@ Effect Model::press_hub(xb::Button button)
             if (tabs) metro_focus = -1;
             return {};
         }
+        if(metro_tab==2 && metro_focus>=kMetroSocialOwner && metro_focus<=kMetroSocialFriend2) {
+            if(button==xb::Left) {
+                if(metro_focus==kMetroSocialOwner) metro_focus=std::clamp(sel,0,count()-1);
+                else --metro_focus;
+                return {};
+            }
+            if(button==xb::Right) {
+                if(metro_focus<kMetroSocialFriend2) ++metro_focus;
+                else {select_metro_tab(3);metro_focus=std::min(selected[channel]%metro_page_size(),count()-1);}
+                return {};
+            }
+            if(button==xb::Up){metro_focus=-1;return {};}
+            if(button==xb::Down){metro_focus=std::clamp(sel,0,count()-1);return {};}
+            if(button==xb::A) {
+                if(metro_focus==kMetroSocialOwner)return open_viewer(Viewer::Profile);
+                return {Command::AvatarWave,metro_focus-kMetroSocialFriend0+1};
+            }
+            if(button!=xb::Guide&&button!=xb::Start&&button!=xb::X)return {};
+        }
+        if (metro_avatar_home() && metro_focus==kMetroAvatar) {
+            if(button==xb::A)return open_viewer(Viewer::Avatar);
+            if(button==xb::Up){metro_focus=-1;return {};}
+            const int size=metro_page_size(),page=sel/size,n=std::min(size,count()-page*size);
+            if(button==xb::Left || button==xb::Down){const int slot=button==xb::Down&&n>3?3:n>2?2:0;sel=page*size+slot;metro_focus=slot;return {};}
+            if(button==xb::Right){
+                if((page+1)*size<count()){sel=(page+1)*size;metro_focus=0;}
+                else if(metro_tab<7){select_metro_tab(metro_tab+1);metro_focus=selected[channel]%metro_page_size();}
+                return {};
+            }
+            if(button!=xb::Guide&&button!=xb::Start&&button!=xb::LT&&button!=xb::RT)return {};
+        }
         if (metro_focus == -1)
         {
             if (button == xb::Left || button == xb::Right || button == xb::LT || button == xb::RT)
@@ -3238,9 +4093,31 @@ Effect Model::press_hub(xb::Button button)
             if (button==xb::Right) {
                 if (slot%4<3 && sel+1<count()) ++next;
                 else if (first+8<count()) next=first+8;
+                else if (metro_tab<7) {select_metro_tab(metro_tab+1);metro_focus=selected[channel]%metro_page_size();return {};}
             }
-            if (button==xb::Left) {if (slot%4>0) --next;else if (first>0) next=first-8+3;}
+            if (button==xb::Left) {
+                if (slot%4>0) --next;
+                else if (first>0) next=first-8+3;
+                else if (metro_tab>0) {select_metro_tab(metro_tab-1);metro_focus=selected[channel]%metro_page_size();return {};}
+            }
             sel=next;if (metro_focus!=-1) metro_focus=sel%8;
+            return {};
+        }
+        else if (metro_tab==2 && (button==xb::Left || button==xb::Right || button==xb::Up || button==xb::Down)) {
+            // Social is the retail three-row action strip rather than the
+            // generic Metro tile topology.  Up/down walks the strip; left and
+            // right continue across channels without forcing a trip to tabs.
+            if(button==xb::Up) {
+                if(sel<=0) metro_focus=-1;
+                else {--sel;metro_focus=sel;}
+            } else if(button==xb::Down) {
+                if(sel+1<count()) {++sel;metro_focus=sel;}
+            } else if(button==xb::Right) {
+                metro_focus=kMetroSocialOwner;
+            } else {
+                select_metro_tab(1);
+                metro_focus=std::min(selected[channel]%metro_page_size(),count()-1);
+            }
             return {};
         }
         else if (button == xb::Left || button == xb::Right || button == xb::Up || button == xb::Down)
@@ -3248,9 +4125,28 @@ Effect Model::press_hub(xb::Button button)
             const int direction = button == xb::Left ? 0 : button == xb::Right ? 1 : button == xb::Up ? 2 : 3;
             const int size=metro_page_size();
             const int page = sel / size, n = std::min(size, count() - page * size);
+            if(metro_avatar_home() && button==xb::Right && (metro_focus==2 || (metro_focus==0 && n<=2))){metro_focus=kMetroAvatar;return {};}
             const auto &neighbors=metro_v1_home()?kMetroV1HomeNeighbors:metro_v1()?kMetroV1Neighbors:kMetroNeighbors;
             int next = neighbors[direction][std::clamp(metro_focus, 0, kMetroRecent)];
+            const bool missing = next >= n && next < size;
             while (next >= 0 && next < size && next >= n) next = neighbors[direction][next];
+            if (next < 0 && missing)
+            {
+                // Sparse pages use the nearest visible tile beyond an empty cell.
+                const auto &tiles=metro_v1_home()?kMetroV1HomeTiles:metro_v1()?kMetroV1Tiles:kMetroTiles;
+                const auto &from=tiles[std::clamp(metro_focus,0,kMetroRecent)];
+                int best=0x7fffffff;
+                for (int node=0;node<=kMetroRecent;++node)
+                {
+                    const bool visible=node<n || (!metro_v1() && node>=kMetroPins) || (metro_v1_home() && node==kMetroPins);
+                    if (!visible || node==metro_focus) continue;
+                    const auto &to=tiles[node];
+                    const int dx=(to.x*2+to.w)-(from.x*2+from.w),dy=(to.y*2+to.h)-(from.y*2+from.h);
+                    const int forward=direction==0?-dx:direction==1?dx:direction==2?-dy:dy;
+                    const int sideways=direction<2?std::abs(dy):std::abs(dx);
+                    if (forward>0 && forward+sideways*2<best) {best=forward+sideways*2;next=node;}
+                }
+            }
             if (next >= 0)
             {
                 metro_focus = next;
@@ -3259,6 +4155,8 @@ Effect Model::press_hub(xb::Button button)
             else if (button == xb::Up) metro_focus = -1;
             else if (button == xb::Right && (page + 1) * size < count()) { sel = (page + 1) * size; metro_focus = 0; }
             else if (button == xb::Left && page > 0) { sel = (page - 1) * size; metro_focus = 0; }
+            else if (button == xb::Right && metro_tab < 7) { select_metro_tab(metro_tab + 1); metro_focus=selected[channel]%metro_page_size(); }
+            else if (button == xb::Left && metro_tab > 0) { select_metro_tab(metro_tab - 1); metro_focus=selected[channel]%metro_page_size(); }
             return {};
         }
         else if (button == xb::LT || button == xb::RT)
@@ -3359,11 +4257,33 @@ Effect Model::press_hub(xb::Button button)
         case Goal::ToProfile: return open_viewer(Viewer::Profile);
         case Goal::ToAvatar: return open_viewer(Viewer::Avatar);
         case Goal::ToMusic: return open_viewer(Viewer::Music);
+        case Goal::ToMusicAlbums:
+            music_view=1;
+            return open_viewer(Viewer::Music);
+        case Goal::ToMusicRandomAlbum:
+            return {Command::MusicEdit,int(MusicOp::RandomAlbum)};
+        case Goal::ToMusicMostPlayed:
+            music_view=5;
+            return open_viewer(Viewer::Music);
+        case Goal::ToMusicPlaylists:
+            music_view=4;
+            return open_viewer(Viewer::Music);
+        case Goal::ToMusicRecentlyAdded:
+            music_view=6;
+            return open_viewer(Viewer::Music);
+        case Goal::ToMusicNowPlaying:
+            open_viewer(Viewer::Music);
+            music_page=MusicNowPlaying;
+            return {Command::MusicBrowse,-1};
         case Goal::ToSearch: return open_collection(Collection::All);
         case Goal::ToMediaCenter: return {Command::LaunchSystem, 2};
         case Goal::ToSettings:
             if (era >= 1) { system_page = 0; return open_viewer(Viewer::SystemSettings); }
             open_guide(); guide_blade = BladeSettings; break;
+        case Goal::ToRomGameGuidePreview:
+            rom_game_guide_preview.session_lost();
+            rom_game_guide_preview.press(exbox_rom_guide::Button::Guide);
+            return open_viewer(Viewer::RomGameGuidePreview);
         case Goal::None: break;
         }
         return {};
@@ -3386,18 +4306,25 @@ std::vector<Hint> Model::hints() const
         return {{xb::A, viewer==Viewer::DashboardEras?"Choose Era":"Use Style"}, {xb::B,"Back"}, {xb::X,picker_previews?"Hide Previews":"Show Previews"}, {xb::LB,"Page"}};
     // GuideMain.xur LegendA/B/Y are inherited by every tab in all four builds.
     // None of the signed-in tab scenes overrides them or authors an X action.
-    if (guide && guide_host) // Ex-Box addition: no 360 original
-        return {{xb::A,"Select"},{xb::B,"Back to Guide"},{xb::LB,"Previous section"},{xb::RB,"Next section"}};
     if (guide)
         return {{xb::A, "Select"}, {xb::B, "Back"}, {xb::Y, era == 3 ? "Xbox Home" : "Xbox Dashboard"}};
     if (viewer==Viewer::Achievements) {
         if (achievement_game.empty() && viewer_count()>0) return {{xb::A,"Select"},{xb::B,"Back"}};
         return {{xb::B,"Back"}};
     }
-    if (viewer==Viewer::Themes || viewer==Viewer::Profile) return {{xb::A,"Select"},{xb::B,"Back"}};
+    if (viewer==Viewer::Themes) {
+        const int index=theme_catalog_index_for_row(viewer_item);bool favorite=false;
+        if(index>=0)favorite=std::find(theme_favorites.begin(),theme_favorites.end(),installed_themes[std::size_t(index)].stable_id)!=theme_favorites.end();
+        const char*filter=theme_filter==1?"Favorites":theme_filter==2?"Recent":"All";
+        std::vector<Hint> out{{xb::A,"Select"},{xb::B,"Back"},{xb::Y,std::string("Filter: ")+filter}};
+        if(index>=0)out.push_back({xb::X,favorite?"Unfavorite":"Favorite"});return out;
+    }
+    if (viewer==Viewer::Profile) return {{xb::A,"Select"},{xb::B,"Back"}};
     if (viewer==Viewer::SystemSettings)
     {
         if (details) return {{xb::A, "OK"}, {xb::B, "Back"}};
+        if (system_page==SystemHealth || system_page==SystemDiagnostics || system_page==SystemLibraryStatus)
+            return {{xb::B, "Back"}};
         if (storage_page()) {
             std::vector<Hint> out{{xb::B,"Back"}};
             if (!storage_entries().empty()) out.insert(out.begin(),{xb::A,"Select"});
@@ -3407,16 +4334,31 @@ std::vector<Hint> Model::hints() const
             return out;
         }
         if (system_page==SystemInfo || system_page==SystemDateTime ||
-            system_page==SystemResolution || system_page==SystemScreenFormat)
-            return {{xb::B, "Back"}};
+            system_page==SystemScreenFormat)
+            return {{xb::A,"Details"},{xb::B, "Back"}};
         return {{xb::A, "Select"}, {xb::B, "Back"}};
     }
     if (viewer==Viewer::AdsSettings)
         return {{xb::A,viewer_item>=5?"Toggle":"Change"},{xb::X,ad_show_all?"Ad candidates":"All resources"},{xb::LB,"Page"},{xb::B,"Back"}};
     if (info) return {{xb::A, "Select"}, {xb::B, "Back"}};
     if (details) return {{xb::A, "OK"}, {xb::B, "Back"}};
-    if (viewer == Viewer::Library)
+    if (viewer == Viewer::Library) {
+        const auto cards=library_cards();
+        if(!cards.empty()) {
+            const Card&card=cards[std::size_t(std::clamp(viewer_item,0,int(cards.size())-1))];
+            if(card.game<0&&card.app<0)
+                return {{xb::X,"Refresh"},{xb::LB,"Page"},{xb::B,"Back"}};
+        }
         return {{xb::A, "Play"}, {xb::Y, "Details"}, {xb::LB, "Page"}, {xb::B, "Back"}};
+    }
+    if (viewer == Viewer::RomGameGuidePreview) {
+        const auto rows=rom_game_guide_preview.rows();
+        std::vector<Hint> out;
+        const int item=std::clamp(viewer_item,0,std::max(0,int(rows.size())-1));
+        if(!rows.empty()&&rows[std::size_t(item)].enabled)out.push_back({xb::A,"Select"});
+        out.push_back({xb::B,"Close"});
+        return out;
+    }
     if (viewer == Viewer::AvatarEdit)
         return {{xb::Up, "Choose"}, {xb::LB, "Turn"}, {xb::X, "Random"}, {xb::Y, "Emote"}, {xb::A, "Save"}, {xb::B, "Cancel"}};
     if (viewer == Viewer::Avatar)
@@ -3457,6 +4399,9 @@ std::vector<Hint> Model::hints() const
     }
     if (viewer == Viewer::Music)
     {
+        if (music_page == MusicLibrary && music_tabs_focused)
+            return {{xb::Left, "Previous View"}, {xb::Right, "Next View"},
+                    {xb::Down, "List"}, {xb::A, music_random_focused?"Play":music_game_scan_focused?"Scan":"Select"}, {xb::B, "Back"}};
         std::vector<Hint> out;
         if (viewer_count() > 0)
             out.push_back({xb::A, "Select"}); // music/1003_IndividualDevice.xur legend_A, every build
@@ -3464,7 +4409,7 @@ std::vector<Hint> Model::hints() const
             out.push_back({xb::X, music_paused ? "Resume" : "Pause"});
         out.push_back({xb::Y, "Now Playing"}); // music/1003_IndividualDevice.xur legend_Y
         out.push_back({xb::B, "Back"});
-        constexpr const char *next_view[] = {"Albums", "Artists", "Genres", "Saved Playlists", "Songs"}; // music/1003_IndividualDevice.xur
+        constexpr const char *next_view[] = {"Albums", "Artists", "Genres", "Saved Playlists", "Most Played", "Recently Added", "Songs"}; // first five are music/1003_IndividualDevice.xur; smart views retain the same wrap contract
         out.push_back({xb::RT, next_view[std::clamp(music_view, 0, kMusicViews - 1)]});
         if (viewer_count() > kMusicRows)
             out.push_back({xb::LB, "Page"}); // Ex-Box addition: no 360 original
@@ -3487,7 +4432,24 @@ std::vector<Hint> Model::hints() const
         const auto it = video_info.find(video_key());
         if (it != video_info.end() && it->second.subtitles)
             out.push_back({xb::Y, media_text::captions(*this, video_subtitles)});
+        if (video_theater) {
+            out.push_back({xb::Up, "Choose Reaction"});
+            out.push_back({xb::X, kTheaterReactions[std::clamp(video_theater_reaction,0,kTheaterReactionCount-1)]});
+        }
+        out.push_back({xb::RS, video_theater ? "Full Screen" : "Theater Party"});
         out.push_back({xb::B, "Back"});
+        return out;
+    }
+    if (viewer == Viewer::Videos)
+    {
+        std::vector<Hint> out;
+        if (viewer_count()>0) {
+            out.push_back({xb::A,"Select"});
+            out.push_back({xb::RS,"Theater Party"});
+            out.push_back({xb::X,kVideoOrders[(video_order+1)%kVideoOrderCount]});
+        }
+        out.push_back({xb::Y,"Refresh"});
+        out.push_back({xb::B,"Back"});
         return out;
     }
     if (viewer == Viewer::Pictures && picture_background_confirm) return {{xb::A, "Select"}, {xb::B, "Back"}};
@@ -3636,6 +4598,10 @@ Sound sound_for(const Model &before, const Model &after, xb::Button button, cons
             if (after.picture_pan_x != before.picture_pan_x || after.picture_pan_y != before.picture_pan_y)
                 return Sound::None; // panning is quiet
         }
+        if (after.viewer == Viewer::Music && after.music_tabs_focused && before.music_tabs_focused &&
+            (after.music_random_focused != before.music_random_focused || after.music_game_scan_focused != before.music_game_scan_focused)) return Sound::Focus;
+        if (after.viewer == Viewer::Music && after.music_tabs_focused != before.music_tabs_focused)
+            return button == xb::B ? Sound::Back : button == xb::A ? Sound::Select : Sound::Focus;
         if (after.viewer == Viewer::Music && after.music_page != before.music_page)
             return button == xb::B ? Sound::Back : Sound::Select; // a music page opens or closes
         if (after.viewer == Viewer::SystemSettings) {

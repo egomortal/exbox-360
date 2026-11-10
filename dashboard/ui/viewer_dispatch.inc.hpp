@@ -1,5 +1,6 @@
 // Included inside main.cpp's private namespace; see docs/CODE_MAP.md.
 void draw_viewer() {
+    if (model.viewer==dash::Viewer::RomGameGuidePreview) {draw_rom_game_guide_preview();return;}
     if (model.viewer==dash::Viewer::WelcomePages || model.viewer==dash::Viewer::InitialSetup) {draw_welcome_setup();return;}
     if (model.viewer==dash::Viewer::Profile) {draw_profile();return;}
     if (model.viewer==dash::Viewer::Achievements) {draw_achievements();return;}

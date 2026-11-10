@@ -1,0 +1,48 @@
+#version 450
+layout(local_size_x=64) in;
+layout(binding=0,std430) buffer Output { uint image[]; };
+layout(binding=1,std430) readonly buffer Input { uint src[]; };
+layout(binding=2,std430) buffer Scratch { uint work[]; };
+layout(push_constant) uniform Push { uint phase,width,height,pad; } pc;
+float f(uint a){return uintBitsToFloat(src[a]);}
+float o(uint a){return uintBitsToFloat(work[a]);}
+vec3 point(uint base,vec3 p){return vec3(dot(vec3(f(base),f(base+1),f(base+2)),p)+f(base+3),dot(vec3(f(base+4),f(base+5),f(base+6)),p)+f(base+7),dot(vec3(f(base+8),f(base+9),f(base+10)),p)+f(base+11));}
+vec3 normal(uint base,vec3 p){return vec3(dot(vec3(f(base),f(base+1),f(base+2)),p),dot(vec3(f(base+4),f(base+5),f(base+6)),p),dot(vec3(f(base+8),f(base+9),f(base+10)),p));}
+vec3 projected(uint v){uint a=v*8;return vec3(o(a),o(a+1),o(a+2));}
+void skin(uint i){
+ if(i>=src[0])return;uint v=src[2]+i*12,d=src[4]+src[v+11]*16;
+ vec3 n=vec3(f(v+3),f(v+4),f(v+5)),b=vec3(f(v),f(v+1),f(v+2))+n*f(d+5),p=vec3(0),nn=vec3(0);
+ for(uint k=0;k<4;k++){uint weight=(src[v+9]>>(k*8))&255,joint=(src[v+8]>>(k*8))&255;if(weight==0)continue;uint m=src[v+10]+joint*12;float w=float(weight)/255.;p+=w*point(m,b);nn+=w*normal(m,n);}
+ p*=f(src[4]+src[v+11]*16+6);float cy=f(8),sy=f(9),rx=cy*p.x+sy*p.z,rz=-sy*p.x+cy*p.z;vec3 rn=vec3(cy*nn.x+sy*nn.z,nn.y,-sy*nn.x+cy*nn.z);float len=length(rn);vec3 unitn=len>0?rn/len:vec3(0,0,1);
+ float z=f(10)-rz,iz=1./z;uint a=i*8;work[a]=floatBitsToUint(float(pc.width)+rx*f(11)*iz);work[a+1]=floatBitsToUint(float(pc.height)-(p.y-f(12))*f(11)*iz);work[a+2]=floatBitsToUint(iz);
+ float key=dot(unitn,vec3(-.45,.55,.70)),fill=dot(unitn,vec3(.7,.1,.7));if(src[d+4]!=0){key=abs(key);fill=abs(fill);}float rim=1.-abs(unitn.z);work[a+3]=floatBitsToUint(.42+.62*max(0.,key)+.18*max(0.,fill)+.22*rim*rim);work[a+4]=src[v+6];work[a+5]=src[v+7];work[a+6]=src[v+1];work[a+7]=z>.05?1:0;
+}
+uint tilesx(){return (pc.width*2+15)/16;}
+uint tiles(){return tilesx()*((pc.height*2+15)/16);}
+uint tb(uint t){return src[6]+t*32;}
+void storef(uint q,float f){work[q]=floatBitsToUint(f);}
+void setup(uint t){
+ if(t>=src[1])return;uint q=src[3]+t*4,T=tb(t);uvec4 ids=uvec4(src[q],src[q+1],src[q+2],src[q+3]);vec3 a=projected(ids.x),b=projected(ids.y),c=projected(ids.z);float area=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);work[T+7]=0;
+ if(work[ids.x*8+7]==0||work[ids.y*8+7]==0||work[ids.z*8+7]==0||abs(area)<1e-6||(src[src[4]+ids.w*16+4]==0&&area>0)||any(isnan(a))||any(isnan(b))||any(isnan(c))||any(isinf(a))||any(isinf(b))||any(isinf(c)))return;
+ vec2 low=min(a.xy,min(b.xy,c.xy)),high=max(a.xy,max(b.xy,c.xy));if(high.x<0||high.y<0||low.x>=pc.width*2||low.y>=pc.height*2)return;
+ uvec2 lo=uvec2(max(vec2(0),floor(low)))/16,hi=uvec2(min(vec2(pc.width*2-1,pc.height*2-1),ceil(high)))/16;
+ storef(T,a.x);storef(T+1,a.y);storef(T+2,a.z);storef(T+3,area);storef(T+4,b.x);storef(T+5,b.y);storef(T+6,b.z);work[T+7]=1;storef(T+8,c.x);storef(T+9,c.y);storef(T+10,c.z);work[T+11]=ids.w;
+ for(uint j=0;j<3;j++){float va=o(ids.x*8+3+j),vb=o(ids.y*8+3+j),vc=o(ids.z*8+3+j);storef(T+12+j*3,va);storef(T+13+j*3,vb-va);storef(T+14+j*3,vc-va);}
+ work[T+21]=lo.x;work[T+22]=lo.y;work[T+23]=hi.x;work[T+24]=hi.y;
+ for(uint y=lo.y;y<=hi.y;y++)for(uint x=lo.x;x<=hi.x;x++)atomicAdd(work[src[7]+(y*tilesx()+x)*3],1);
+}
+void prefix(uint i){if(i!=0)return;uint used=0,over=0,largest=0,total=0;for(uint tile=0;tile<tiles();tile++){uint m=src[7]+tile*3,n=work[m];largest=max(largest,n);total=total>0xffffffffu-n?0xffffffffu:total+n;if(n>src[14]-used){work[m+1]=0xffffffffu;over++;}else{work[m+1]=used;used+=n;}work[m+2]=0;}work[src[13]-4]=over;work[src[13]-3]=largest;work[src[13]-2]=total;work[src[13]-1]=used;}
+void scatter(uint t){if(t>=src[1])return;uint T=tb(t);if(work[T+7]==0)return;for(uint y=work[T+22];y<=work[T+24];y++)for(uint x=work[T+21];x<=work[T+23];x++){uint m=src[7]+(y*tilesx()+x)*3,offset=work[m+1];if(offset==0xffffffffu)continue;uint slot=atomicAdd(work[m+2],1);work[src[13]+offset+slot]=t;}}
+vec2 uv_at(uint T,float wb,float wc){return vec2(o(T+15)+wb*o(T+16)+wc*o(T+17),o(T+18)+wb*o(T+19)+wc*o(T+20));}
+uint texel_at(uint d,vec2 uv){ivec2 tc=ivec2(uv*vec2(src[d+1],src[d+2])) & ivec2(src[d+1]-1,src[d+2]-1);return src[src[d]+uint(tc.y)*src[d+1]+uint(tc.x)];}
+uint samplepixel(vec2 p,uint tile){
+ uint meta=src[7]+tile*3,offset=work[meta+1],count=offset==0xffffffffu?src[1]:work[meta],best=0xffffffffu;float depth=0,bestb=0,bestc=0;
+ for(uint q=0;q<count;q++){uint t=offset==0xffffffffu?q:work[src[13]+offset+q],T=tb(t);if(work[T+7]==0)continue;
+  float ax=o(T),ay=o(T+1),bx=o(T+4),by=o(T+5),cx=o(T+8),cy=o(T+9),area=o(T+3);float wb=((p.x-ax)*(cy-ay)-(p.y-ay)*(cx-ax))/area,wc=((bx-ax)*(p.y-ay)-(by-ay)*(p.x-ax))/area,wa=1.-wb-wc;if(min(wa,min(wb,wc))< -1e-4)continue;
+  float iz=o(T+2)+wb*(o(T+6)-o(T+2))+wc*(o(T+10)-o(T+2));if(iz<depth||(iz==depth&&t>=best))continue;uint d=src[4]+work[T+11]*16;if(src[d+3]==4&&(texel_at(d,uv_at(T,wb,wc))>>24)<128)continue;
+  depth=iz;best=t;bestb=wb;bestc=wc;
+ }
+ if(best==0xffffffffu||depth<=0)return 0;uint T=tb(best),d=src[4]+work[T+11]*16,texel=texel_at(d,uv_at(T,bestb,bestc));float light=min(o(T+12)+bestb*o(T+13)+bestc*o(T+14),1.35);uvec3 color=uvec3(clamp(vec3((texel>>16)&255,(texel>>8)&255,texel&255)*light,0.,255.));return 0xff000000u|(color.r<<16)|(color.g<<8)|color.b;
+}
+void render(uint i){if(i>=pc.width*pc.height)return;uvec3 sum=uvec3(0);uint covered=0,x=i%pc.width,y=i/pc.width,tile=(y*2/16)*tilesx()+x*2/16;for(uint sy=0;sy<2;sy++)for(uint sx=0;sx<2;sx++){uint c=samplepixel(vec2(x*2+sx,y*2+sy)+.5,tile);if(c>>24!=0){sum+=uvec3((c>>16)&255,(c>>8)&255,c&255);covered++;}}if(covered==0){image[i]=0;return;}sum/=covered;image[i]=((covered*255/4)<<24)|(sum.r<<16)|(sum.g<<8)|sum.b;}
+void main(){uint i=gl_GlobalInvocationID.x;if(pc.phase==0)skin(i);else if(pc.phase==1)setup(i);else if(pc.phase==2)prefix(i);else if(pc.phase==3)scatter(i);else render(i);}

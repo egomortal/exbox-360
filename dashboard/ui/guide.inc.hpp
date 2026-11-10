@@ -47,7 +47,7 @@ void make_labels() {
     if (metro_games_label) SDL_FreeSurface(metro_games_label);
     metro_games_label=rotated_label(font_sets[1][4],"Games & Apps",{240,243,243,255});
     if (!layer) {
-        layer=SDL_CreateRGBSurfaceWithFormat(0,W,H,32,SDL_PIXELFORMAT_ARGB8888);
+        layer=render_density::create(W,H);
         if (layer) SDL_SetSurfaceBlendMode(layer,SDL_BLENDMODE_BLEND);
     }
 }
@@ -104,6 +104,26 @@ void row_extra(const dash::GuideEntry &entry,int right,int y,int h,bool selected
     }
     if (counted) text("0",x-text_width("0",era_text),y+8,era_text,ink);
 }
+// A compact transport embedded in the normal Guide row. It deliberately uses
+// the same authored Play/Pause/Stop artwork and interaction pattern as Music.
+void recording_transport(int x,int y,int h,bool selected,int gap=52,int size=34) {
+    if(!model.recorder_available){
+        if(blades_icons[dash::IconVideo])blit_contained(blades_icons[dash::IconVideo],{x,y+(h-size)/2,size,size});
+        return;
+    }
+    SDL_Surface *icons[]={music_controls[0],music_controls[4],music_controls[2]};
+    const bool enabled[]={!model.recorder_recording||model.recorder_paused,
+        model.recorder_recording&&!model.recorder_paused&&model.recorder_pause_supported,
+        model.recorder_recording};
+    for(int i=0;i<3;++i){
+        const int at=x+i*gap;
+        if(selected&&model.recorder_control==i&&enabled[i])rounded(at-7,y+(h-size-14)/2,size+14,size+14,8,0x9bcf52,0x4f851d);
+        if(!icons[i])continue;
+        SDL_SetSurfaceAlphaMod(icons[i],Uint8(enabled[i]?(model.recorder_busy?150:255):75));
+        blit_contained(icons[i],{at,y+(h-size)/2,size,size});
+        SDL_SetSurfaceAlphaMod(icons[i],255);
+    }
+}
 void slab(int d) {
     const float w=SLAB_W*slab_s[d], h=PH*slab_s[d];
     const bool right=slab_x[d]>=PX+PW/2;
@@ -121,15 +141,15 @@ void slab(int d) {
         rect(right?x+1:x+iw-5,y+10,4,ih-20,0xb4bbc5);                   // the edge under its neighbour
     }
     if (SDL_Surface *label=slab_labels[d]) {
-        int lx=right?x+iw-int(20*k)-label->w/2:x+int(20*k)-label->w/2;
-        SDL_Rect r{lx,y+(ih-label->h)/2,label->w,std::min(label->h,ih-20)};
-        SDL_Rect src{0,0,label->w,r.h};
+        int lx=right?x+iw-int(20*k)-render_density::logical_w(label)/2:x+int(20*k)-render_density::logical_w(label)/2;
+        SDL_Rect r{lx,y+(ih-render_density::logical_h(label))/2,render_density::logical_w(label),std::min(render_density::logical_h(label),ih-20)};
+        SDL_Rect src{0,0,render_density::logical_w(label),r.h};
         SDL_SetSurfaceAlphaMod(label,text_alpha);
         SDL_BlitSurface(label,&src,screen,&r);
     }
 }
 void flat_body() {
-    const int focus=std::clamp(model.guide_blade,model.era==3?1:0,4);
+    const int focus=std::clamp(model.guide_blade,model.era==3?1:0,int(dash::BladeSettings));
     constexpr int x=548,y=303,body_x=642,right=1370,height=473,pitch=63;
     const int minimum=model.era==3?1:0;
     for (int d=minimum;d<dash::BladeCount;d++) {
@@ -139,8 +159,8 @@ void flat_body() {
         rect(left,y,2,height,d==focus?0xe4e8e7:0x717d83);
         SDL_Surface *label=model.era==3 && d==dash::BladeGames?metro_games_label:flat_labels[d];
         if (label) {
-            SDL_Rect at{left+(width-label->w)/2,y+24,label->w,std::min(label->h,height-48)};
-            SDL_Rect source{0,0,label->w,at.h};
+            SDL_Rect at{left+(width-render_density::logical_w(label))/2,y+24,render_density::logical_w(label),std::min(render_density::logical_h(label),height-48)};
+            SDL_Rect source{0,0,render_density::logical_w(label),at.h};
             SDL_SetSurfaceColorMod(label,d==focus?68:255,d==focus?74:255,d==focus?75:255);
             SDL_SetSurfaceAlphaMod(label,text_alpha);
             SDL_BlitSurface(label,&source,screen,&at);
@@ -157,23 +177,26 @@ void flat_body() {
     const int n=int(entries.size()),item=std::clamp(model.guide_item[focus],0,std::max(0,n-1));
     const int first=std::clamp(item-6,0,std::max(0,n-7));
     for (int row=0;row<7 && first+row<n;row++) {
+        const int entry_index=first+row;
         int top=y+row*pitch;
-        bool selected=first+row==item;
+        bool selected=entry_index==item;
         if (selected) {
             if (!metro_guide) gradient(body_x,top,right-body_x,pitch,0x6eb010,0x3f7f05);
             else rect(body_x,top,right-body_x,pitch,0x107c0f);
         } else shade(body_x,top+pitch-1,right-body_x,2,0x9facb2,110); // the skin's row rule, at the capture's strength
         int label_x=body_x+22;
-        if (entries[size_t(first+row)].action==dash::GuideAction::Music && model.now_playing>=0)
+        if (entries[size_t(entry_index)].action==dash::GuideAction::Music && model.now_playing>=0)
             if (const music::Song *song=music_player.current_song())
                 if (SDL_Surface *cover=song_cover(song->path)) {
                     rect(body_x+14,top+6,pitch-12,pitch-12,0x30383a);
                     blit_contained(cover,{body_x+15,top+7,pitch-14,pitch-14});
                     label_x=body_x+pitch+16;
                 }
-        text(fit(entries[size_t(first+row)].label,era_text,right-label_x-100),label_x,top+8,era_text,
+        const bool recorder=entries[size_t(entry_index)].action==dash::GuideAction::RecordScreen;
+        text(fit(entries[size_t(entry_index)].label,era_text,right-label_x-(recorder?210:100)),label_x,top+8,era_text,
              selected?SDL_Color{235,235,235,255}:metro_guide?SDL_Color{38,42,41,255}:SDL_Color{20,24,24,255});
-        if (model.guide_blade==dash::BladeHome) row_extra(entries[size_t(first+row)],right,top,pitch,selected);
+        if(recorder)recording_transport(right-174,top,pitch,selected,48);
+        if (model.guide_blade==dash::BladeHome) row_extra(entries[size_t(entry_index)],right,top,pitch,selected);
     }
     if (first>0) chevron(right-27,y+10,false);
     if (first+7<n) chevron(right-27,y+height-22,true);
@@ -197,11 +220,19 @@ inline int inset(int r,int row,int h) {
     const int dy=row<r?r-row:(row>=h-r?row-(h-r-1):0);
     return dy>0?r-int(std::sqrt(float(r*r)-(dy-0.5f)*(dy-0.5f))):0;
 }
+// A physical scanline, after logical geometry is converted exactly once.
+inline void physical_span(int x,int y,int w,unsigned color,Uint8 alpha) {
+    if(w<=0)return;
+    if(alpha==255) {physical_rect(x,y,w,1,color);return;}
+    if(!shade_pixel)return;
+    physical_shade(x,y,w,1,color,alpha);
+}
 // Pixels between the rounded rect and the one inset by t.
 inline void ring(int x,int y,int w,int h,int r,int t,unsigned color,Uint8 alpha=255) {
+    const int d=render_density::density(screen);x*=d;y*=d;w*=d;h*=d;r*=d;t*=d;
     for (int row=0;row<h;row++) {
         const int io=inset(r,row,h);
-        auto span=[&](int x0,int x1) {if (x1>x0) {if (alpha==255) rect(x0,y+row,x1-x0,1,color); else shade(x0,y+row,x1-x0,1,color,alpha);}};
+        auto span=[&](int x0,int x1) {physical_span(x0,y+row,x1-x0,color,alpha);};
         if (row<t || row>=h-t) {span(x+io,x+w-io);continue;}
         const int ii=t+inset(std::max(0,r-t),row-t,h-2*t);
         span(x+io,x+std::max(io,ii));
@@ -209,21 +240,23 @@ inline void ring(int x,int y,int w,int h,int r,int t,unsigned color,Uint8 alpha=
     }
 }
 inline void fill(int x,int y,int w,int h,int r,unsigned color,Uint8 alpha=255) {
+    const int d=render_density::density(screen);x*=d;y*=d;w*=d;h*=d;r*=d;
     for (int row=0;row<h;row++) {
         const int io=inset(r,row,h);
-        if (alpha==255) rect(x+io,y+row,w-2*io,1,color); else shade(x+io,y+row,w-2*io,1,color,alpha);
+        physical_span(x+io,y+row,w-2*io,color,alpha);
     }
 }
 inline unsigned grey(int v) {v=std::clamp(v,0,255);return unsigned(v)<<16|unsigned(v)<<8|unsigned(v);}
 // A cached face: f(x,y) gives the grey level; the shape is a rounded rect.
 struct Face {SDL_Surface *s=nullptr;int w=0,h=0;};
 template<class F> SDL_Surface *make_face(int w,int h,int r,F f) {
-    SDL_Surface *out=SDL_CreateRGBSurfaceWithFormat(0,w,h,32,SDL_PIXELFORMAT_ARGB8888);
+    SDL_Surface *out=render_density::create(w,h);
     if (!out) return nullptr;
-    for (int y=0;y<h;y++) {
+    const int d=render_density::density(out);
+    for (int y=0;y<out->h;y++) {
         auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(out->pixels)+y*out->pitch);
-        const int io=inset(r,y,h);
-        for (int x=0;x<w;x++) row[x]=x<io||x>=w-io?0u:(0xff000000u|f(x,y));
+        const int io=inset(r*d,y,out->h);
+        for (int x=0;x<out->w;x++) row[x]=x<io||x>=out->w-io?0u:(0xff000000u|f(float(x)/d,float(y)/d));
     }
     SDL_SetSurfaceBlendMode(out,SDL_BLENDMODE_BLEND);
     return out;
@@ -264,14 +297,15 @@ SDL_Surface *blades_ring=nullptr, *blades_spine=nullptr, *blades_gamercard=nullp
 std::string blades_spine_name;
 void blades_ring_icon(int x,int y) {
     if (!blades_ring) {
-        blades_ring=SDL_CreateRGBSurfaceWithFormat(0,48,48,32,SDL_PIXELFORMAT_ARGB8888);
+        blades_ring=render_density::create(48,48);
         if (!blades_ring) return;
         SDL_FillRect(blades_ring,nullptr,0);
         // Player one's ring of light as the spine shows it: four grey quarter
         // arcs with soft gaps, the upper-left one lit green.
-        for (int py=0;py<48;py++) for (int px=0;px<48;px++) {
-            const float dx=px-23.5f,dy=py-23.5f,d=std::sqrt(dx*dx+dy*dy);
-            float a=std::clamp(std::min(d-16.5f,21.5f-d)+0.5f,0.0f,1.0f);
+        const int density=render_density::density(blades_ring);
+        for (int py=0;py<blades_ring->h;py++) for (int px=0;px<blades_ring->w;px++) {
+            const float dx=(px+.5f)/density-24.f,dy=(py+.5f)/density-24.f,d=std::sqrt(dx*dx+dy*dy);
+            float a=std::clamp(std::min(d-16.5f,21.5f-d)*density+0.5f,0.0f,1.0f);
             const float gap=std::min(std::fabs(dx),std::fabs(dy));
             a*=std::clamp((gap-1.0f)/1.2f,0.0f,1.0f);
             const bool lit=dx<0 && dy<0;
@@ -326,12 +360,12 @@ void blades_panel() {
         blades_spine=rotated_label(spine_font,fit(model.player,spine_font,330),{34,34,32,255});
         blades_spine_name=model.player;
     }
-    if (blades_spine) {SDL_Rect to{765,373,blades_spine->w,blades_spine->h};SDL_BlitSurface(blades_spine,nullptr,screen,&to);}
+    if (blades_spine) {SDL_Rect to{765,373,render_density::logical_w(blades_spine),render_density::logical_h(blades_spine)};SDL_BlitSurface(blades_spine,nullptr,screen,&to);}
     // Gamercard: bright sheen face, peak right of centre, dark rim.
-    if (!blades_gamercard) blades_gamercard=make_face(566,121,9,[](int x,int y) {
+    if (!blades_gamercard) blades_gamercard=make_face(566,121,9,[](float x,float y) {
         const float t=(x-304)/(x<304?290.0f:262.0f);
         float v=160+55*std::max(0.0f,1-std::pow(std::fabs(t),1.4f));
-        if (y<2) v=208-y*10; else if (y<8) v+=std::max(0,6-y)*3;
+        if (y<2) v=208-y*10; else if (y<8) v+=std::max(0.f,6-y)*3;
         if (y>=118) v=196;
         return grey(int(v));
     });
@@ -394,7 +428,7 @@ void blades_panel() {
             text(fit(model.now_playing>=0?model.now_playing_title:"Select Music",era_text,700-tx),tx,644,era_text,ink);
         }
         // XBOX 360 button: white face, inner fall at the top and foot, darker left.
-        if (!blades_xbox) blades_xbox=make_face(559,116,8,[](int x,int y) {
+        if (!blades_xbox) blades_xbox=make_face(559,116,8,[](float x,float y) {
             float v=248;
             if (y<16) v=std::min(v,172+76*std::pow(y/16.0f,0.6f));
             if (y>100) v=std::min(v,248-54*std::pow((y-100)/15.0f,1.6f));
@@ -428,35 +462,15 @@ void blades_panel() {
             glow(160,top,548,62,8);
             for (int r=0;r<62;r+=2) rect(160+inset(8,r,62),top+r,548-2*inset(8,r,62),2,era_chrome::mix(0xf0f7e6,0xbdd3a2,r/61.0f));
         } else if (row+1<7 && first+row+1<n) {rect(168,top+65,532,2,0x858585);rect(168,top+67,532,1,0xb0b0b0);}
-        text(fit(entries[size_t(first+row)].label,era_text,500),178,top+8,era_text,ink);
+        const bool recorder=entries[size_t(first+row)].action==dash::GuideAction::RecordScreen;
+        text(fit(entries[size_t(first+row)].label,era_text,recorder?320:500),178,top+8,era_text,ink);
+        if(recorder)recording_transport(522,top,62,first+row==item,48);
     }
     if (first>0) chevron(684,304,false);
     if (first+7<n) chevron(684,808,true);
     if (!from_scene) blades_hints(884);
 }
-// Ex-Box addition: no 360 original. R3 opens one host menu with five sections.
-void host_menu() {
-    gradient(360,160,1200,760,0x262a25,0x121412);
-    text("Ex-Box Utilities",410,190,large,{255,255,255,255});
-    static const char *sections[]={"Apps","Games","Home","Media","Settings"};
-    text(sections[model.guide_blade],410,255,regular,{190,214,170,255});
-    const auto entries=model.host_blade_entries(model.guide_blade);
-    const int count=int(entries.size());
-    const int item=std::clamp(model.guide_item[model.guide_blade],0,std::max(0,count-1));
-    const int top=std::max(0,item-7);
-    for (int row=0;row<8 && top+row<count;++row) {
-        const int y=310+row*62;
-        if (top+row==item) gradient(400,y,1120,58,0x578d28,0x355b15);
-        text(entries[size_t(top+row)].label,425,y+8,regular,{255,255,255,255});
-    }
-    int x=410;
-    for (const auto &hint:model.hints()) {
-        glyph(hint.button,x,845,34);x+=40;
-        x+=text(hint.label,x,848,small,{255,255,255,255})+28;
-    }
-}
 void body(Uint32 now) {
-    if (model.guide_host) {host_menu();return;}
     if (model.era==0) {blades_panel();return;}
     if (model.era>=1 && guide_scene::draw_era(model.era)) return;
     if (model.era>=2) {flat_body();return;}
@@ -494,10 +508,10 @@ void body(Uint32 now) {
     if (SDL_Surface *label=tab_labels[focus]) {
         // Centred on the panel's mid-height, never above the arc's foot.
         const int top=SPIN_Y+SPIN_D+14, run=PY+PH-14-top;
-        const int h=std::min(label->h,run);
+        const int h=std::min(render_density::logical_h(label),run);
         const int y=std::clamp(PY+PH/2-h/2,top,top+run-h);
-        SDL_Rect r{PX+(TAB-label->w)/2,y,label->w,h};
-        SDL_Rect src{0,0,label->w,r.h};
+        SDL_Rect r{PX+(TAB-render_density::logical_w(label))/2,y,render_density::logical_w(label),h};
+        SDL_Rect src{0,0,render_density::logical_w(label),r.h};
         SDL_SetSurfaceAlphaMod(label,text_alpha);
         SDL_BlitSurface(label,&src,screen,&r);
     }
@@ -603,24 +617,35 @@ void draw(Uint32 now, float dt) {
     text_alpha=Uint8(255*content);
     if (scale==1 && alpha>=1) {body(now); text_alpha=saved; return;}
     if (!layer) {
-        layer=SDL_CreateRGBSurfaceWithFormat(0,W,H,32,SDL_PIXELFORMAT_ARGB8888);
+        layer=render_density::create(W,H);
         if (layer) SDL_SetSurfaceBlendMode(layer,SDL_BLENDMODE_BLEND);
     }
     if (!layer) {text_alpha=saved; return;}
-    SDL_FillRect(layer,nullptr,SDL_MapRGBA(layer->format,0,0,0,0));
+    // Only this source box is composited below. Keep the logical full-canvas
+    // origin so every painter sees identical coordinates, but avoid clearing
+    // and drawing the unused majority of the physical4K surface.
+    const SDL_Rect box=model.era==0?SDL_Rect{0,0,860,H}:SDL_Rect{300,200,1320,640};
+    SDL_Rect saved_layer_clip{};
+    SDL_GetClipRect(layer,&saved_layer_clip);
+    SDL_SetClipRect(layer,&box);
+    x21layers::Scope gpu_layer;const bool recording_layer=gpu_layer.begin(screen,layer,box);
+    if(!recording_layer&&x21hook::recording(screen))x21hook::active->packet.unsupported.push_back("guide_layer_unavailable");
+    if(!recording_layer||x21hook::audit_cpu()){x21hook::Pause audit(recording_layer);SDL_FillRect(layer,&box,SDL_MapRGBA(layer->format,0,0,0,0));}
     SDL_Surface *target=screen;
     screen=layer;
     body(now);
     screen=target;
+    SDL_SetClipRect(layer,&saved_layer_clip);
     text_alpha=saved;
     // Scale the panel and everything on it about the panel's centre.
-    const SDL_Rect box=model.era==0?SDL_Rect{0,0,860,H}:SDL_Rect{300,200,1320,640};
     const float cx=PX+PW/2.0f, cy=PY+PH/2.0f;
     SDL_Rect to{int(cx+(box.x-cx)*scale),int(cy+(box.y-cy)*scale),int(box.w*scale),int(box.h*scale)};
     if (model.era==0) {
         const float progress=model.guide?std::min(1.0f,float(now-opened_at)/230):std::max(0.0f,1-float(now-closed_at)/250);
         to={int(-860*(1-progress)*(1-progress)),0,860,H};
     }
+    if(recording_layer){gpu_layer.end(to,alpha);if(!x21hook::audit_cpu())return;}
+    x21hook::Pause audit_layer(x21hook::recording(screen));
     SDL_SetSurfaceAlphaMod(layer,Uint8(255*std::clamp(alpha,0.0f,1.0f)));
     SDL_Rect from=box;
     SDL_BlitScaled(layer,&from,screen,&to);

@@ -111,8 +111,7 @@ void draw_blades_hub(bool draw_chrome=true,bool allow_video=true) {
     const auto &p=era_chrome::palettes[active];
     const SDL_Color ink{15,15,15,230};
     const int first=model.dashboard_build<5759 && active>0?1:0;
-    if (draw_chrome) era_chrome::select_revision(model.dashboard_build);
-    SDL_Surface *chrome=first?era_chrome::blades_early[active]:era_chrome::blades[active];
+    SDL_Surface *chrome=draw_chrome?era_chrome::get_blades(model.dashboard_build,active):nullptr;
     if (draw_chrome && chrome) SDL_BlitSurface(chrome,nullptr,screen,nullptr);
     else if (draw_chrome) gradient(0,0,W,H,p.mid,p.light);
     const auto layout=era_chrome::layout(active,first!=0);
@@ -126,7 +125,7 @@ void draw_blades_hub(bool draw_chrome=true,bool allow_video=true) {
         if (getenv("NXE_RAIL_HIDE")) letters=nullptr; // Matched native backdrop for ink measurements.
 #endif
         if (letters) {
-            SDL_Rect at{label.center-(letters->w+1)/2,label.top,0,0};
+            SDL_Rect at{label.center-(render_density::logical_w(letters)+1)/2,label.top,0,0};
             SDL_BlitSurface(letters,nullptr,screen,&at);
         }
     }

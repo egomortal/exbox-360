@@ -98,6 +98,15 @@ static void scans_a_console()
     }
     CHECK(ps5lib::installed_games(root + "/missing").empty());
 
+    // A last-known title remains visible when native appmeta is incomplete.
+    write(root + "/data/nxe/installed-games-v1.tsv",
+          "EXBOX-INSTALLED-GAMES/1\nCUSA02557\t46616c6c6f75742034\t\n");
+    const auto with_cache = ps5lib::installed_games(root);
+    const auto fallout = std::find_if(with_cache.begin(), with_cache.end(), [](const dash::App &g) {
+        return g.title_id == "CUSA02557";
+    });
+    CHECK(with_cache.size() == 5 && fallout != with_cache.end() && fallout->title == "Fallout 4");
+
     write(root + "/data/homebrew/ExBox360/game_art/CUSA12345.jpg", "jpg");
     const auto covered = ps5lib::installed_games(root);
     const auto cover = std::find_if(covered.begin(), covered.end(), [](const dash::App &g) {

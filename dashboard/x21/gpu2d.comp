@@ -1,0 +1,146 @@
+#version 450
+layout(local_size_x=8,local_size_y=8) in;
+layout(set=0,binding=0,std430) buffer Target{uint dst[];};
+layout(set=0,binding=1,std430) readonly buffer Source{uint src[];};
+layout(set=0,binding=2,std430) buffer Scratch{uint scan[];};
+layout(set=0,binding=3,std430) buffer Layer{uint layer[];};
+layout(set=0,binding=4,std430) readonly buffer External{uint external_pixels[];};
+layout(set=0,binding=5,std430) buffer Slot{uint slot_pixels[];};
+layout(set=0,binding=6,std430) readonly buffer Filtered{uint filtered_pixels[];};
+layout(set=0,binding=7,std430) buffer GuideBlack{uint guide_black[];};
+uint source_word(uint i);
+layout(push_constant) uniform Push{ivec4 rect;ivec4 clip;uvec4 colors;uvec4 texture;uvec4 extent;vec4 t0;vec4 t1;vec4 t2;}p;
+uvec4 unpackc(uint c){return uvec4(c&255u,(c>>8)&255u,(c>>16)&255u,c>>24);}
+uint packc(uvec4 c){return c.x|(c.y<<8)|(c.z<<16)|(c.w<<24);}
+vec2 vertex(uint i){return vec2(uintBitsToFloat(src[p.texture.x+i*2]),uintBitsToFloat(src[p.texture.x+i*2+1]));}
+void intersections(){uint row=uint(p.clip.y)*2u+gl_GlobalInvocationID.y*(gl_NumWorkGroups.x*8u)+gl_GlobalInvocationID.x;if(row>=uint(p.clip.w)*2u)return;uint base=row*1025u;scan[base]=0;if(int(row/2u)<p.clip.y||int(row/2u)>=p.clip.w)return;float y=float(row/2u)+(row%2u==0u?.25:.75);uint count=0;
+ for(uint i=0;i<p.texture.y;i++){vec2 a=vertex(i),b=vertex((i+1u)%p.texture.y);if(a.y>b.y){vec2 t=a;a=b;b=t;}if(b.y-a.y<1e-8||y<a.y||y>=b.y)continue;float x=a.x+(y-a.y)*(b.x-a.x)/(b.y-a.y);uint j=count;while(j>0u&&uintBitsToFloat(scan[base+j])>x){scan[base+j+1u]=scan[base+j];j--;}scan[base+j+1u]=floatBitsToUint(x);count++;}scan[base]=count;
+}
+uint sample_at(vec2 point,uvec4 tex){ivec2 a=clamp(ivec2(floor(point)),ivec2(0),ivec2(tex.yz)-1),b=min(a+1,ivec2(tex.yz)-1);vec2 f=clamp(point-vec2(a),vec2(0),vec2(1));uint v[4]=uint[4](source_word(tex.x+uint(a.y)*tex.w+uint(a.x)),source_word(tex.x+uint(a.y)*tex.w+uint(b.x)),source_word(tex.x+uint(b.y)*tex.w+uint(a.x)),source_word(tex.x+uint(b.y)*tex.w+uint(b.x)));float weight[4]=float[4]((1-f.x)*(1-f.y),f.x*(1-f.y),(1-f.x)*f.y,f.x*f.y);float alpha=0;vec3 rgb=vec3(0);for(int i=0;i<4;i++){uvec4 c=unpackc(v[i]);float w=weight[i]*float(c.w);alpha+=w;rgb+=w*vec3(c.xyz);}if(alpha<.001)return 0;return packc(uvec4(clamp(floor(rgb/alpha+.5),vec3(0),vec3(255)),clamp(floor(alpha+.5),0,255)));}
+uint source_word(uint i){uint value=p.colors.w==18u?filtered_pixels[i]:p.colors.w==11u?external_pixels[i]:p.colors.w==9u?layer[i]:src[i];if(p.colors.w==5u){if(p.t2.y==1||p.t2.y==3)value=(value&0xff00ff00u)|((value&255u)<<16)|((value>>16)&255u);if(p.t2.y==2||p.t2.y==3)value|=0xff000000u;}return value;}
+uint sample_image(vec2 point){return sample_at(point,p.texture);}
+float nine_axis(float d,float size,float a,float b,float source){float da=min(a,size/2),db=min(b,size/2);if(d<da)return d*a/max(.001,da);if(d>size-db)return source-(size-d)*b/max(.001,db);return a+(d-da)/max(.001,size-da-db)*max(0.,source-a-b);}
+uint nine_texel(ivec2 q,uint base){vec2 size=vec2(uintBitsToFloat(source_word(base+3)),uintBitsToFloat(source_word(base+4)));vec4 m=vec4(uintBitsToFloat(source_word(base+5)),uintBitsToFloat(source_word(base+6)),uintBitsToFloat(source_word(base+7)),uintBitsToFloat(source_word(base+8)));vec2 d=(vec2(q)+.5)/2;vec2 uv=vec2(nine_axis(d.x,size.x,m.x,m.z,float(source_word(base))),nine_axis(d.y,size.y,m.y,m.w,float(source_word(base+1))));return sample_at(uv-.5,uvec4(base+12,source_word(base),source_word(base+1),source_word(base+2)));}
+uint sample_nine(vec2 point,uint base){ivec2 size=max(ivec2(1),ivec2(floor(vec2(uintBitsToFloat(source_word(base+3)),uintBitsToFloat(source_word(base+4)))*2+.5)));ivec2 a=clamp(ivec2(floor(point)),ivec2(0),size-1),b=min(a+1,size-1);vec2 f=clamp(point-vec2(a),vec2(0),vec2(1));uint v[4]=uint[4](nine_texel(a,base),nine_texel(ivec2(b.x,a.y),base),nine_texel(ivec2(a.x,b.y),base),nine_texel(b,base));float weight[4]=float[4]((1-f.x)*(1-f.y),f.x*(1-f.y),(1-f.x)*f.y,f.x*f.y);float alpha=0;vec3 rgb=vec3(0);for(int i=0;i<4;i++){uvec4 c=unpackc(v[i]);float w=weight[i]*float(c.w);alpha+=w;rgb+=w*vec3(c.xyz);}if(alpha<.001)return 0;return packc(uvec4(clamp(floor(rgb/alpha+.5),vec3(0),vec3(255)),clamp(floor(alpha+.5),0,255)));}
+uint sdl_div255(uint x){return (x+1u+(x>>8))>>8;}
+uint sdl_layer_blend(uint old,uint color,uint mode){
+ uvec4 d=unpackc(old),s=unpackc(color);uint mod=uint(clamp(floor(p.t2.x*255.+.5),0,255)),a=s.w;
+ bool direct=mode==9u&&mod==255u;
+ if(direct){if(a==0u)return old;if(a==255u)return color;}
+ else if(mode!=8u)a=sdl_div255(a*mod);
+ uvec3 x=s.xyz*a,y=d.xyz*(255u-a),rgb;
+ if(direct)rgb=(x>>8)+(y>>8);
+ else rgb=((x+uvec3(1)+(x>>8))>>8)+((y+uvec3(1)+(y>>8))>>8);
+ uint alpha=a+(direct?((d.w*(255u-a))>>8):sdl_div255(d.w*(255u-a)));
+ return packc(uvec4(rgb,p.t2.w>0?alpha:255u));
+}
+uint blend(uint old,uint color,float coverage){if(p.extent.z>=8u)return sdl_layer_blend(old,color,p.extent.z);uvec4 d=unpackc(old),s=unpackc(color);uint a=uint(clamp(floor(float(s.w)*p.t2.x+.5),0,255)),cov=uint(clamp(floor(coverage*255+.5),0,255));if(cov==0u)return old;if(p.extent.z==7u)return packc(uvec4(s.xyz,p.t2.w>0?a:255u));uvec3 v;
+ switch(p.extent.z){case 2u:v=(s.xyz*d.xyz+127u)/255u;break;case 3u:v=min(s.xyz,d.xyz);break;case 4u:v=max(s.xyz,d.xyz);break;case 5u:v=min(uvec3(255),d.xyz+(s.xyz*a+127u)/255u);break;case 6u:v=uvec3(max(ivec3(0),ivec3((s.xyz*a+127u)/255u)-ivec3(d.xyz)));break;default:v=(s.xyz*a+d.xyz*(255u-a)+127u)/255u;}
+ uint alpha=p.t2.w>0?min(255u,(a*cov+127u)/255u+(d.w*(255u-(a*cov+127u)/255u)+127u)/255u):255u;return packc(uvec4((v*cov+d.xyz*(255u-cov)+127u)/255u,alpha));}
+float reflection_alpha(ivec2 q){q=clamp(q,ivec2(0),ivec2(p.texture.yz)-1);return float(external_pixels[uint(q.y)*p.texture.w+uint(q.x)]>>24)/255.;}
+void nxe_reflection(ivec2 q,uint at){
+ uint base=p.texture.x;int density=int(src[base+1]);int sy=849*density-int(float(q.y-852*density)*1.12);float coverage=0;
+ for(uint i=0u;i<src[base];i++){uint a=base+8u+i*4u;ivec4 r=ivec4(src[a],src[a+1],src[a+2],src[a+3]);if(q.x>=r.x&&q.x<r.x+r.z&&sy>=r.y&&sy<r.y+r.w){coverage=1;break;}}
+ if(coverage==0&&src[base+2]!=0u){ivec4 r=ivec4(src[base+4],src[base+5],src[base+6],src[base+7]);if(q.x>=r.x&&q.x<r.x+r.z&&sy>=r.y&&sy<r.y+r.w){
+  precise float xx=(float(q.x)/float(density)-float(r.x)/float(density)+.5/float(density))*float(p.texture.y)/(float(r.z)/float(density))-.5;
+  precise float yy=(float(sy)/float(density)-float(r.y)/float(density)+.5/float(density))*float(p.texture.z)/(float(r.w)/float(density))-.5;
+  ivec2 a=ivec2(floor(vec2(xx,yy)));float fx=xx-float(a.x),fy=yy-float(a.y);
+  precise float upper=fma(reflection_alpha(a),1-fx,reflection_alpha(a+ivec2(1,0))*fx);
+  precise float lower=fma(reflection_alpha(a+ivec2(0,1)),1-fx,reflection_alpha(a+ivec2(1,1))*fx);
+  coverage=fma(upper,1-fy,lower*fy)*uintBitsToFloat(src[base+3]);
+ }}
+ if(coverage<=0)return;precise float opacity=.29*(1-float(q.y-852*density)/(147.*float(density)));precise float k=opacity*coverage;precise float inv=1-k;
+ uvec3 s=unpackc(layer[uint(sy)*p.extent.x+uint(q.x)]).xyz,d=unpackc(layer[at]).xyz;
+ precise vec3 from=vec3(s)*k;vec3 rgb=fma(vec3(d),vec3(inv),from);dst[at]=packc(uvec4(uvec3(rgb),255u));
+}
+
+uint divide255(uint x){return (x+1u+(x>>8))>>8;}
+void circle_primitive(ivec2 q,uint at){
+ int xx=q.x-int(p.t0.x),yy=q.y-int(p.t0.y),radius=int(p.t0.z);uint alpha=0;
+ if(p.colors.w==13u){
+  if(abs(xx)>radius||abs(yy)>radius)return;
+  precise float distance=sqrt(float(xx*xx+yy*yy));
+  precise float outer=clamp(float(radius)+.5-distance,0.,1.);
+  precise float inner=clamp(distance-float(radius-int(p.t0.w))+.5,0.,1.);
+  precise float coverage=outer*inner;
+  if(coverage>=.999)alpha=255u;else if(coverage>0)alpha=uint(255.*coverage);
+ }else{
+  if(abs(yy)>radius)return;
+  precise float span=sqrt(max(0.,float(radius*radius-yy*yy)));int solid=int(span);
+  if(abs(xx)<=solid)alpha=255u;else if(abs(xx)==solid+1)alpha=uint(255.*(span-float(solid)));
+ }
+ if(alpha==0u)return;uvec3 s=unpackc(p.colors.x).xyz,d=unpackc(dst[at]).xyz;
+ if(alpha==255u){dst[at]=packc(uvec4(s,255u));return;}
+ uvec3 a=s*alpha,b=d*(255u-alpha);
+ uvec3 rgb=(a+uvec3(1)+(a>>8))>>8;rgb+=(b+uvec3(1)+(b>>8))>>8;
+ dst[at]=packc(uvec4(rgb,255u));
+}
+void vertical_strip(ivec2 q,uint at){
+ uvec4 s=unpackc(src[p.texture.x+uint(q.y-p.rect.y)*p.texture.w]),d=unpackc(dst[at]);
+ uint alpha=s.w;uvec3 a=s.xyz*alpha,b=d.xyz*(255u-alpha);
+ uvec3 rgb=((a+uvec3(1)+(a>>8))>>8)+((b+uvec3(1)+(b>>8))>>8);
+ dst[at]=packc(uvec4(rgb,255u));
+}
+void lanczos_horizontal(){
+ uint ix=gl_GlobalInvocationID.x,y=gl_GlobalInvocationID.y,base=p.texture.x,sw=src[base],sh=src[base+1u];if(ix>=p.texture.z||y>=sh)return;
+ uint x=p.texture.y+ix,tab=base+8u,pix=base+src[base+6u],xt=tab+x*3u,first=src[xt],count=src[xt+1u],offset=tab+src[xt+2u];
+ precise vec4 sum=vec4(0);
+ for(uint k=0u;k<count;k++){uint v=src[pix+y*sw+first+k];if(src[base+4u]!=0u){uint a=v>>24;v=(a<<24)|(((((v>>16)&255u)*a+127u)/255u)<<16)|(((((v>>8)&255u)*a+127u)/255u)<<8)|(((v&255u)*a+127u)/255u);}precise vec4 product=vec4(unpackc(v))*uintBitsToFloat(src[offset+k]);sum=sum+product;}
+ uint at=(y*p.texture.z+ix)*4u;for(uint k=0u;k<4u;k++)scan[at+k]=floatBitsToUint(sum[k]);
+}
+uint direct_lanczos(ivec2 q){
+ uint base=p.texture.x,sw=src[base],dw=src[base+2u],alpha=src[base+4u],tab=base+8u,pix=base+src[base+6u];
+ uint x=uint(q.x-p.rect.x),y=uint(q.y-p.rect.y),xt=tab+x*3u,yt=tab+(dw+y)*3u;
+ uint xf=src[xt],xn=src[xt+1u],xo=tab+src[xt+2u],yf=src[yt],yn=src[yt+1u],yo=tab+src[yt+2u];
+ precise vec4 sum=vec4(0);
+ for(uint ky=0u;ky<yn;ky++){
+  precise vec4 row=vec4(0);
+  if(p.texture.w!=0u){uint at=((yf+ky)*p.texture.z+x-p.texture.y)*4u;row=vec4(uintBitsToFloat(scan[at]),uintBitsToFloat(scan[at+1u]),uintBitsToFloat(scan[at+2u]),uintBitsToFloat(scan[at+3u]));}
+  else for(uint kx=0u;kx<xn;kx++){
+   uint v=src[pix+(yf+ky)*sw+xf+kx];
+   if(alpha!=0u){uint a=v>>24;v=(a<<24)|(((((v>>16)&255u)*a+127u)/255u)<<16)|(((((v>>8)&255u)*a+127u)/255u)<<8)|(((v&255u)*a+127u)/255u);}
+   precise vec4 product=vec4(unpackc(v))*uintBitsToFloat(src[xo+kx]);row=row+product;
+  }
+  precise vec4 product=row*uintBitsToFloat(src[yo+ky]);sum=sum+product;
+ }
+ uvec4 c=uvec4(clamp(roundEven(sum),vec4(0),vec4(255)));
+ if(alpha!=0u){if(c.a==0u)c=uvec4(0);else c.rgb=min(uvec3(255),(c.rgb*255u+c.a/2u)/c.a);}
+ c=(c*unpackc(p.colors.x)+127u)/255u;return packc(c);
+}
+uint group_div255(uint v){return (v+1u+(v>>8))>>8;}
+void sdl_group(ivec2 q,uint at){
+ ivec2 step=(ivec2(p.texture.yz)<<16)/p.rect.zw;ivec2 from=(step/2+(q-p.rect.xy)*step)>>16;
+ uvec4 s=unpackc(layer[p.texture.x+uint(from.y)*p.texture.w+uint(from.x)]),d=unpackc(dst[at]);uint a=s.w,modulation=p.colors.z;uvec3 rgb;
+ if(p.t1.x==1&&modulation==255u){if(a==0u)return;if(a==255u)rgb=s.xyz;else rgb=((s.xyz*a)>>8)+((d.xyz*(255u-a))>>8);}
+ else {a=group_div255(a*modulation);uvec3 x=s.xyz*a,y=d.xyz*(255u-a);rgb=((x+uvec3(1)+(x>>8))>>8)+((y+uvec3(1)+(y>>8))>>8);}
+ dst[at]=packc(uvec4(rgb,255u));
+}
+void guide_recover(ivec2 q,uint at){ivec2 from=q-p.rect.xy;uint source=uint(from.y)*p.texture.w+uint(from.x);uvec3 b=unpackc(guide_black[source]).xyz,w=unpackc(layer[uint(from.y)*p.extent.x+uint(from.x)]).xyz;ivec3 values=ivec3(255)-(ivec3(w)-ivec3(b));uint a=uint(clamp(max(values.x,max(values.y,values.z)),0,255));if(a==0u)return;uvec3 color=min(uvec3(255),(b*255u+a/2u)/a),d=unpackc(dst[at]).xyz;uvec3 rgb=a==255u?color:((color*a)>>8)+((d*(255u-a))>>8);dst[at]=packc(uvec4(rgb,255u));}
+
+uvec3 video_axis(uint at,uint source,uint target){
+ int q=int(((2u*at+1u)*source*128u)/target)-128;
+ if(q<=0)return uvec3(0);if(q>=int((source-1u)*256u))return uvec3(source-1u,source-1u,0u);
+ return uvec3(uint(q)/256u,uint(q)/256u+1u,uint(q)%256u);
+}
+uvec4 video_mix(uvec4 a,uvec4 b,uint weight){return (a*(256u-weight)+b*weight+128u)>>8;}
+uint video_q8(ivec2 q){
+ uvec3 x=video_axis(uint(q.x-p.rect.x),p.texture.y,uint(p.rect.z)),y=video_axis(uint(q.y-p.rect.y),p.texture.z,uint(p.rect.w));
+ uint base=p.texture.x,pitch=p.texture.w;
+ uvec4 top=video_mix(unpackc(src[base+y.x*pitch+x.x]),unpackc(src[base+y.x*pitch+x.y]),x.z);
+ uvec4 bottom=video_mix(unpackc(src[base+y.y*pitch+x.x]),unpackc(src[base+y.y*pitch+x.y]),x.z);
+ return packc(video_mix(top,bottom,y.z));
+}
+void main(){if(p.colors.w==(22u|512u)){lanczos_horizontal();return;}if((p.colors.w&256u)!=0u){intersections();return;}ivec2 q=p.clip.xy+ivec2(gl_GlobalInvocationID.xy);if(q.x>=p.clip.z||q.y>=p.clip.w)return;uint at=uint(q.y)*p.extent.x+uint(q.x);if(p.colors.w==15u){vertical_strip(q,at);return;}if(p.colors.w==8u){layer[at]=p.colors.x;return;}if(p.colors.w==12u){nxe_reflection(q,at);return;}if(p.colors.w==19u){sdl_group(q,at);return;}if(p.colors.w==20u){guide_black[uint(q.y)*p.texture.w+uint(q.x)]=layer[at];return;}if(p.colors.w==21u){guide_recover(q,at);return;}if(p.colors.w==13u||p.colors.w==14u){circle_primitive(q,at);return;}if(p.colors.w==16u){ivec2 start=ivec2(p.t0.xy),size=ivec2(p.t0.zw);ivec2 step=(size<<16)/ivec2(p.extent.xy);ivec2 from=start+((step/2+q*step)>>16);slot_pixels[at]=layer[uint(from.y)*p.texture.w+uint(from.x)];return;}
+ if(p.colors.w==17u){ivec2 step=(ivec2(p.texture.yz)<<16)/p.rect.zw;ivec2 from=(step/2+(q-p.rect.xy)*step)>>16;dst[at]=slot_pixels[p.texture.x+uint(from.y)*p.texture.w+uint(from.x)];return;}vec2 pos=vec2(q)+.5;uint color=p.colors.x;float coverage=1;
+ if(p.colors.w==23u){color=video_q8(q);}
+ else if(p.colors.w==22u){color=direct_lanczos(q);}
+ else if(p.colors.w==1u||p.colors.w==10u){int row=q.y-p.rect.y;float t;if(p.colors.w==10u){int radius=min(int(p.t1.z),min(p.rect.z,p.rect.w)/2);int dy=row<radius?radius-row:(row>=p.rect.w-radius?row-(p.rect.w-radius-1):0);int inset=dy>0?radius-int(sqrt(float(radius*radius)-(float(dy)-.5)*(float(dy)-.5))):0;if(q.x<p.rect.x+inset||q.x>=p.rect.x+p.rect.z-inset)return;t=float(row)/float(max(1,p.rect.w-1));}else{int step=int(p.t1.w);t=float((row/step)*step)/float(max(1,p.rect.w));}uvec3 rgb=uvec3(vec3(unpackc(p.colors.x).xyz)*(1-t)+vec3(unpackc(p.colors.y).xyz)*t);color=packc(uvec4(rgb,255u));}
+ else if(p.colors.w==3u || p.colors.w==6u){coverage=0;for(uint sub=0;sub<2;sub++){uint base=(uint(q.y)*2u+sub)*1025u,count=scan[base];for(uint j=0;j+1u<count;j+=2u){float a=uintBitsToFloat(scan[base+j+1u]),b=uintBitsToFloat(scan[base+j+2u]);coverage+=.5*max(0,min(b,float(q.x+1))-max(a,float(q.x)));}}if(coverage<=0)return;
+  if(p.colors.w==6u){uint b=p.texture.x+p.texture.y*2u;vec2 uv=vec2(dot(p.t0.xyz,vec3(pos,1)),p.t0.w*pos.x+p.t1.x*pos.y+p.t1.y);color=sample_at((uv+.5)*vec2(src[b],src[b+1])-.5,uvec4(b+12,src[b],src[b+1],src[b+2]));}
+  else if(p.texture.w>=p.texture.y*2u+4097u){float u=dot(p.t0.xyz,vec3(pos,1)),v=p.t0.w*pos.x+p.t1.x*pos.y+p.t1.y;float phase=p.extent.w==3u?2*length(vec2(u,v)):u+.5;uint index=uint(clamp(floor(phase*4096+.5),0,4096));color=src[p.texture.x+p.texture.y*2u+index];}
+ }else if(p.colors.w==4u){coverage=0;uint n=p.texture.y-(p.t1.w>0?0u:1u);for(uint i=0;i<n;i++){vec2 a=vertex(i),b=vertex((i+1u)%p.texture.y);if(pos.y<min(a.y,b.y)-p.t1.z-1||pos.y>max(a.y,b.y)+p.t1.z+1)continue;vec2 delta=b-a;float size=dot(delta,delta),t=size>0?clamp(dot(pos-a,delta)/size,0,1):0;coverage=max(coverage,clamp(p.t1.z+.5-length(pos-a-t*delta),0,1));}if(coverage<=0)return;
+ }else if(p.colors.w==7u){uint b=p.texture.x;vec2 uv=vec2(dot(p.t0.xyz,vec3(pos,1)),p.t0.w*pos.x+p.t1.x*pos.y+p.t1.y);vec2 size=max(vec2(1),floor(vec2(uintBitsToFloat(src[b+3]),uintBitsToFloat(src[b+4]))*2+.5));if(any(lessThan(uv,vec2(0)))||any(greaterThanEqual(uv,size)))return;uvec4 c=unpackc(sample_nine(uv-.5,b));c=(c*unpackc(p.colors.x)+127u)/255u;color=packc(c);
+ }else if((p.colors.w==5u||p.colors.w==9u||p.colors.w==11u||p.colors.w==18u)){vec2 uv=vec2(dot(p.t0.xyz,vec3(pos,1)),p.t0.w*pos.x+p.t1.x*pos.y+p.t1.y);if(!((p.colors.w==5u||p.colors.w==18u)&&p.t2.z==1)&&(any(lessThan(uv,vec2(0)))||any(greaterThanEqual(uv,vec2(p.texture.yz)))))return;uint sampled;if((p.colors.w==5u||p.colors.w==18u)&&p.t2.z==1){ivec2 step=ivec2(p.t0.x,p.t1.x),origin=ivec2(p.t0.z,p.t1.y),offset=ivec2(p.t1.zw);ivec2 q=offset+((step/2+(ivec2(pos)-origin)*step)>>16);q=clamp(q,ivec2(0),ivec2(p.texture.yz)-1);sampled=source_word(p.texture.x+uint(q.y)*p.texture.w+uint(q.x));}else sampled=sample_image(uv-.5);uvec4 c=unpackc(sampled);c=(c*unpackc(p.colors.x)+127u)/255u;color=packc(c);
+ }else if(p.colors.w==2u){uint x=uint(q.x-p.rect.x)*p.texture.y/uint(p.rect.z),y=uint(q.y-p.rect.y)*p.texture.z/uint(p.rect.w);color=src[p.texture.x+y*p.texture.w+x];}
+ if(p.t2.w==2)slot_pixels[at]=blend(slot_pixels[at],color,coverage);else if(p.t2.w>0)layer[at]=blend(layer[at],color,coverage);else dst[at]=blend(dst[at],color,coverage);
+}

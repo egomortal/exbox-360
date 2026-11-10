@@ -16,6 +16,17 @@ void draw_avatar_stage() {
     }
     text("My Avatar",95,70,large,{40,60,30,255});
     text(model.player,97,135,regular,{70,96,58,255});
+    if(SDL_Surface* live=prepared_avatar::frame(0,SDL_GetTicks())) {
+        look3d::ease(SDL_GetTicks(),false);
+        if(auto* actor=prepared_avatar::find(live)){
+            actor->camera.yaw=look3d::yaw;
+            actor->painted=false;
+        }
+        prepared_avatar::materialize(live);
+        SDL_Rect at=edited_avatar::contain(live,{(W-580)/2,40,580,920});
+        blit_quality(live,nullptr,screen,&at,false);return;
+    }
+    // An accepted editor appearance also precedes the unrelated legacy kit.
     if (edited_avatar::fullbody) {const int h=860,w=edited_avatar::fullbody->w*h/std::max(1,edited_avatar::fullbody->h);SDL_Rect at{(W-w)/2,960-h,w,h};blit_quality(edited_avatar::fullbody,nullptr,screen,&at,false);return;}
     if (look3d::active()) {
         const Uint32 now=SDL_GetTicks();
@@ -23,8 +34,8 @@ void draw_avatar_stage() {
         if (SDL_Surface *f=look3d::render(look3d::stage,580,920,look3d::stage_camera(),now,33)) {
             SDL_Rect r{(W-580)/2,40,580,920};
             SDL_BlitSurface(f,nullptr,screen,&r);
+            return;
         }
-        return;
     }
     if (!avatar::installed()) {
         const std::string a="No avatar installed yet.";
@@ -50,8 +61,8 @@ void play_mark(int x, int y, int size, unsigned hex) {
 // The Music Library's shared pieces: the same rows, covers and player state
 // in each era's own dress (draw_music picks the era).
 namespace music_page {
-constexpr const char *kViews[]={"Songs","Albums","Artists","Genres","Saved Playlists"}; // music/1003_IndividualDevice.xur, every build
-constexpr const char *kKinds[]={"Song","Album","Artist","Genre","Playlist"};     // music/Strings.xus (1888) edit fields
+constexpr const char *kViews[]={"Songs","Albums","Artists","Genres","Saved Playlists","Most Played","Recently Added"}; // first five authored; final two Ex-Box smart views
+constexpr const char *kKinds[]={"Song","Album","Artist","Genre","Playlist","Song","Song"};
 // Metro's dress: the same words in lower case, as its pivots and headers.
 std::string lower(std::string s) {for (char &c:s) c=char(std::tolower(static_cast<unsigned char>(c))); return s;}
 int view() {return std::clamp(model.music_view,0,dash::kMusicViews-1);}
@@ -183,6 +194,11 @@ void draw_skinned() {
     for (int i=0;i<dash::kMusicViews;i++) {
         const int y=vy+i*pitch;
         const bool here=i==v;
+        const bool focused=here && !page && model.music_tabs_focused && !model.music_random_focused && !model.music_game_scan_focused;
+        if (focused) {
+            if (light) sk::green_highlight(vx,y-1,vw,pitch+1);
+            else sk::green_box(vx,y+2,vw,pitch-2);
+        }
         sk::rules(vx,y,vw,pitch);
         SDL_Color c=light?(here?sk::kRowSel:sk::kRowInk):ink;
         if (here && !light) shade(vx+3,y+5,vw-6,(pitch-8)/2,0xebebeb,22); // Highlight14's wash
@@ -195,6 +211,25 @@ void draw_skinned() {
         const int tx=vx+(light?121:126);
         if (light) text(label,tx,y+12,row_font,c); else sk::shadowed(label,tx,y+12,row_font,c);
         if (here) play_mark(vx+vw-40,y+23,24,hex(c)); // arrowB
+    }
+    if (!page) {
+        const int y=vy+dash::kMusicViews*pitch;
+        const bool focused=model.music_tabs_focused && model.music_random_focused;
+        if(focused){if(light)sk::green_highlight(vx,y-1,vw,pitch+1);else sk::green_box(vx,y+2,vw,pitch-2);}
+        sk::rules(vx,y,vw,pitch);
+        const SDL_Color c=light?(focused?sk::kRowSel:sk::kRowInk):ink;
+        const std::string label=metro?"random album":"Random album";
+        if(light)text(label,vx+30,y+12,row_font,c);else sk::shadowed(label,vx+30,y+12,row_font,c);
+        if(focused)play_mark(vx+vw-40,y+23,24,hex(c));
+        const int gy=y+pitch;
+        const bool game_focused=model.music_tabs_focused && model.music_game_scan_focused;
+        if(game_focused){if(light)sk::green_highlight(vx,gy-1,vw,pitch+1);else sk::green_box(vx,gy+2,vw,pitch-2);}
+        sk::rules(vx,gy,vw,pitch);
+        const SDL_Color gc=light?(game_focused?sk::kRowSel:sk::kRowInk):ink;
+        const std::string game_label=fit(metro?"find music from games":"Find music from installed games",row_font,vw-125);
+        if(light)text(game_label,vx+30,gy+12,row_font,gc);else sk::shadowed(game_label,vx+30,gy+12,row_font,gc);
+        if(model.music_game_scan) text("ON",vx+vw-76,gy+18,small,gc);
+        if(game_focused)play_mark(vx+vw-40,gy+23,24,hex(gc));
     }
     // The songs: List_3rdList on the right.
     constexpr int sx=px+540, lx=sx+30, ly=py+30, lw=690, rows=dash::kMusicRows;
@@ -213,7 +248,7 @@ void draw_skinned() {
             const int i=first_row+r, y=ly+r*pitch;
             const tunes::Row &row=tunes::rows[size_t(std::min(i,int(tunes::rows.size())-1))];
             if (!visible_row(row)) continue;
-            const bool on=i==item;
+            const bool on=i==item && !(model.music_page==dash::Model::MusicLibrary && model.music_tabs_focused);
             if (on) {
                 if (light) sk::green_highlight(lx,y-1,lw,pitch+1);
                 else sk::green_box(lx,y+2,lw,pitch-2);
@@ -236,7 +271,7 @@ void draw_skinned() {
         if (first_row>0) guide::chevron(lx+lw-24,ly-20,false);
         if (first_row+rows<n) guide::chevron(lx+lw-24,ly+rows*pitch+6,true);
     } else {
-        const std::string empty=dash::media_text::music_empty(v);
+        const std::string empty=(tunes::scan_job.active()?std::string("Loading music..."):dash::media_text::music_empty(v));
         text(metro?lower(empty):empty,lx,ly+12,row_font,ink);
         // Ex-Box addition: no 360 original (where the PS5 finds music)
         text(fit("Copy MP3, FLAC, Ogg or WAV files to /data/nxe/music on the PS5 (FTP),",small,lw),lx,ly+72,small,sub);
@@ -306,15 +341,14 @@ void draw_blades() {
     const auto &p=era_chrome::palettes[active];
     const SDL_Color ink{15,15,15,230}, soft{15,15,15,150};
     const int early=model.dashboard_build<5759?1:0;
-    era_chrome::select_revision(model.dashboard_build);
-    if (SDL_Surface *chrome=early?era_chrome::blades_early[active]:era_chrome::blades[active]) SDL_BlitSurface(chrome,nullptr,screen,nullptr);
+    if (SDL_Surface *chrome=era_chrome::get_blades(model.dashboard_build,active)) SDL_BlitSurface(chrome,nullptr,screen,nullptr);
     else gradient(0,0,W,H,p.mid,p.light);
     const auto layout=era_chrome::layout(active,early!=0);
     if (!era_chrome::has_source_labels(model.dashboard_build,active))
         for (int i=early;i<5;i++) {
             const auto label=era_chrome::rail_label(active,i,early!=0);
             if (SDL_Surface *letters=blades_labels[blades_rails::family(model.dashboard_build)][i==active][i]) {
-                SDL_Rect at{label.center-(letters->w+1)/2,label.top,0,0};
+                SDL_Rect at{label.center-(render_density::logical_w(letters)+1)/2,label.top,0,0};
                 SDL_BlitSurface(letters,nullptr,screen,&at);
             }
         }
@@ -330,10 +364,15 @@ void draw_blades() {
         if (model.music_page!=dash::Model::MusicLibrary) {
             const std::string &label=tunes::page_kind;
             blades_type::draw(label,at-blades_type::width(label,caption),72,caption,light);
-        } else if (tunes::group_name.empty()) {
+        } else if (tunes::group_name.empty() || model.music_tabs_focused) {
             at-=40;glyph(xb::RT,at,78,40);
-            const std::string label=kViews[v];
+            const std::string label=model.music_tabs_focused && model.music_random_focused ? "Random album" :
+                                    model.music_tabs_focused && model.music_game_scan_focused ? "Find music from installed games" : kViews[v];
             at-=12+blades_type::width(label,caption);
+            if (model.music_tabs_focused) {
+                rect(at-8,68,blades_type::width(label,caption)+16,48,p.dark);
+                rect(at-8,113,blades_type::width(label,caption)+16,3,0xffffff);
+            }
             blades_type::draw(label,at,72,caption,light);
             at-=52;glyph(xb::LT,at,78,40);
         } else {
@@ -363,7 +402,7 @@ void draw_blades() {
             const int i=first_row+r, y=list_top+r*pitch;
             const tunes::Row &row=tunes::rows[size_t(std::min(i,int(tunes::rows.size())-1))];
             if (!visible_row(row)) continue;
-            const bool on=i==item;
+            const bool on=i==item && !(model.music_page==dash::Model::MusicLibrary && model.music_tabs_focused);
             if (SDL_Surface *image=era_chrome::row_material[on?1:0]) {
                 material(image,list_x-18,y-18);
                 if (on) {
@@ -381,7 +420,7 @@ void draw_blades() {
                 rect(list_x+6,y+7,52,52,0x2c342c);
                 blit_contained(cover,{list_x+7,y+8,50,50});
             } else if (row.action>=0) {} // an option: its words alone
-            else if (SDL_Surface *icon=music_kind_art[row.group?v:0]) blit_contained(icon,{list_x+8,y+10,46,46});
+            else if (SDL_Surface *icon=music_kind_art[row.group&&v<5?v:0]) blit_contained(icon,{list_x+8,y+10,46,46});
             const bool here=holds(row,playing);
             const int room=list_w-97-(here?40:0);
             blades_type::draw(blades_type::fit(name(row),body,room),list_x+84,y+4,body,ink);
@@ -390,7 +429,7 @@ void draw_blades() {
         if (first_row>0) arrow(list_x+list_w-26,list_top-20,false,0x0f0f0f);
         if (first_row+shown<n) arrow(list_x+list_w-26,list_top+shown*pitch+4,true,0x0f0f0f);
     } else {
-        blades_type::draw(dash::media_text::music_empty(v),list_x+10,list_top+4,body,ink);
+        blades_type::draw((tunes::scan_job.active()?std::string("Loading music..."):dash::media_text::music_empty(v)),list_x+10,list_top+4,body,ink);
         // Ex-Box addition: no 360 original (where the PS5 finds music)
         blades_type::wrapped("Copy MP3, FLAC, Ogg or WAV files to /data/nxe/music on the PS5, or to a Music folder on a USB drive.",
                              list_x+10,list_top+64,list_w-20,6,caption,ink);
@@ -429,7 +468,7 @@ void draw_blades() {
         rect(cx,cy,226,214,0x2c342c);
         rect(cx+1,cy+1,224,212,0x50544f);
         if (SDL_Surface *cover=tunes::row_cover(*row)) blit_contained(cover,{cx+10,cy+10,206,194});
-        else if (SDL_Surface *icon=music_kind_art[row->group?v:0]) blit_contained(icon,{cx+40,cy+34,146,146});
+        else if (SDL_Surface *icon=music_kind_art[row->group&&v<5?v:0]) blit_contained(icon,{cx+40,cy+34,146,146});
     }
     // Now Playing: a card like the gamercard, its name bar, the cover in the
     // recessed frame, the song's rows and where it is.

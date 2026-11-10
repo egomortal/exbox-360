@@ -31,6 +31,9 @@
 #include <utility>
 #include <vector>
 #include <cstdlib>
+#if defined(__SSE2__)
+#include <immintrin.h>
+#endif
 #if defined(__PROSPERO__) || defined(__unix__) || defined(__APPLE__)
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -1362,9 +1365,21 @@ class Renderer
         for (auto &t : pool_)
             t.join();
         pool_.clear();
-        stop_ = false;
+        unsigned starting_generation;
+        {
+            std::lock_guard<std::mutex> g(pool_lock_);
+            stop_ = false;
+            starting_generation = generation_;
+        }
         for (int i = 0; i < std::clamp(helpers, 0, 7); ++i)
-            pool_.emplace_back([this, i] { helper(i + 1); });
+            pool_.emplace_back([this, i, starting_generation] { helper(i + 1, starting_generation); });
+    }
+
+    // Exclusive preparation owner; same storage/extents as initial hub render.
+    void warm_scratch(int width,int height,int ss=2) {
+        if(width<=0||height<=0||width>800||height>1320||ss!=2)return;
+        const std::size_t count=std::size_t(width)*std::size_t(height)*std::size_t(ss)*std::size_t(ss);
+        colour_.assign(count,0);depth_.assign(count,0.0f);
     }
 
     const Body *body() const
@@ -1446,6 +1461,38 @@ class Renderer
         add_item(kGlasses[look_.glasses], kCloth[look_.glasses_colour], look_.glasses_colour, 0);
         // Outer layers first, so the skin under them fails the depth test before it is shaded.
         std::stable_sort(draws_.begin(), draws_.end(), [](const Draw &a, const Draw &b) { return a.order < b.order; });
+    }
+
+    // Canonical editor appearance prepared from its committed manifest. Parts,
+    // hiding shapes, proportions and materials have already been resolved;
+    // do not apply the dashboard's independent wardrobe or head enlargement.
+    bool set_prepared_appearance()
+    {
+        if (kit_.bodies.size()!=1 || kit_.parts.empty()) return false;
+        look_=Look{};look_.body=0;look_.shape=0;
+        body_=&kit_.bodies[0];bname_=body_->name;
+        body_scale_=head_scale_=1.f;custom_rig_=true;baked_lighting_=false;
+        face_detail_=nullptr;front_trace_=nullptr;hide_=0;hair_rule_=0;
+        draws_.clear();
+        for(const auto& part:kit_.parts) {
+            if(part.body!=0 && part.body!=255)return false;
+            const std::size_t first=draws_.size();
+            add_part(part.name,TintNone,{255,255,255},0,0);
+            for(std::size_t i=first;i<draws_.size();++i){
+                if(draws_[i].prim->flags&8)return false;
+                draws_[i].alpha=(draws_[i].prim->flags&4)?4:0;
+            }
+        }
+        return !draws_.empty();
+    }
+    // Source primitive order is preserved. Texture switches represent authored
+    // face layers; queued GPU packets own copied bytes, never these pointers.
+    bool set_prepared_textures(const std::vector<int>& textures)
+    {
+        if(textures.size()!=draws_.size())return false;
+        for(int index:textures)if(index<0||index>=int(kit_.textures.size()))return false;
+        for(std::size_t i=0;i<textures.size();++i)draws_[i].mip=tinted(textures[i],TintNone,{255,255,255},false);
+        return true;
     }
 
     // Joint transforms for a clip at time t (seconds; loops), with the look's proportions.
@@ -1541,6 +1588,32 @@ class Renderer
             }
             run_bands();
         }
+        // The ordinary ss2 path resolves only a conservative prepared-triangle
+        // rectangle. Every raster sample lies inside these same floor/ceil
+        // bounds; clear the whole output first so uncovered pixels stay exact.
+        if (ss == 2) {
+            std::fill(out.argb.begin(),out.argb.end(),0);
+            int left=out.w,top=out.h,right=-1,bottom=-1;
+            if (pose.size()==kit_.joints.size() && body_) {
+                for (std::size_t draw=0;draw<draws_.size();++draw) {
+                    const Prim &pr=*draws_[draw].prim;const Prepared &prep=prepared_[draw];
+                    for (std::uint32_t tri:prep.tris) {
+                        const Out &a=prep.out[pr.idx[tri*3]],&b=prep.out[pr.idx[tri*3+1]],&c=prep.out[pr.idx[tri*3+2]];
+                        const float lx=std::min({a.x,b.x,c.x}),rx=std::max({a.x,b.x,c.x});
+                        const float ty=std::min({a.y,b.y,c.y}),by=std::max({a.y,b.y,c.y});
+                        if(!std::isfinite(lx)||!std::isfinite(rx)||!std::isfinite(ty)||!std::isfinite(by)) {
+                            left=0;top=0;right=out.w-1;bottom=out.h-1;continue;
+                        }
+                        if(rx<0||by<0||lx>=W_||ty>=H_)continue;
+                        left=std::min(left,int(std::floor(std::max(0.f,lx)))/2);
+                        top=std::min(top,int(std::floor(std::max(0.f,ty)))/2);
+                        right=std::max(right,int(std::ceil(std::min(float(W_-1),rx)))/2);
+                        bottom=std::max(bottom,int(std::ceil(std::min(float(H_-1),by)))/2);
+                    }
+                }
+            }
+            run_resolve(out,left,right,top,bottom);
+        } else {
         // Resolve: average each ss x ss block; alpha is the covered share.
         for (int y = 0; y < out.h; ++y)
             for (int x = 0; x < out.w; ++x)
@@ -1564,6 +1637,7 @@ class Renderer
                     px = (std::uint32_t(255 * n / unsigned(ss * ss)) << 24) | ((r / n) << 16) | ((g / n) << 8) | (b / n);
                 out.argb[std::size_t(y) * std::size_t(out.w) + std::size_t(x)] = px;
             }
+        }
         if (baked_lighting_)
         {
             // A few single-pixel dark flecks remain where the source image was
@@ -1614,6 +1688,7 @@ class Renderer
     }
 
   private:
+    friend struct ExboxGpuPacket;
     struct Draw
     {
         const Part *part = nullptr;
@@ -2404,19 +2479,75 @@ class Renderer
         return n;
     }
 
+    void resolve_rows(Image &out,int left,int right,int from,int to)
+    {
+        for(int y=from;y<to;++y)for(int x=left;x<=right;++x) {
+                const std::size_t i=std::size_t(y*2)*std::size_t(W_)+std::size_t(x*2),j=i+std::size_t(W_);
+                const bool a=depth_[i]>0,b=depth_[i+1]>0,c=depth_[j]>0,d=depth_[j+1]>0;
+                const unsigned n=unsigned(a)+unsigned(b)+unsigned(c)+unsigned(d);if(!n)continue;
+                const std::uint32_t ca=a?colour_[i]:0,cb=b?colour_[i+1]:0,cc=c?colour_[j]:0,cd=d?colour_[j+1]:0;
+                const unsigned rb=(ca&0x00ff00ffu)+(cb&0x00ff00ffu)+(cc&0x00ff00ffu)+(cd&0x00ff00ffu);
+                const unsigned g=(ca&0x0000ff00u)+(cb&0x0000ff00u)+(cc&0x0000ff00u)+(cd&0x0000ff00u);
+                std::uint32_t rgb;
+                if(n==4)rgb=((rb>>2)&0x00ff00ffu)|((g>>2)&0x0000ff00u);
+                else if(n==2)rgb=((rb>>1)&0x00ff00ffu)|((g>>1)&0x0000ff00u);
+                else if(n==1)rgb=rb|g;
+                else rgb=(((rb>>16)/3)<<16)|(((g>>8)/3)<<8)|((rb&0xffffu)/3);
+                out.argb[std::size_t(y)*std::size_t(out.w)+std::size_t(x)]=(std::uint32_t(255*n/4)<<24)|rgb;
+            }
+    }
+    void resolve_jobs()
+    {
+        for (;;) {
+            const int y=next_row_.fetch_add(64,std::memory_order_relaxed);
+            if(y>resolve_bottom_)break;
+            resolve_rows(*resolve_image_,resolve_left_,resolve_right_,y,std::min(resolve_bottom_+1,y+64));
+        }
+    }
+    void run_resolve(Image &out,int left,int right,int top,int bottom)
+    {
+        if(left>right || top>bottom)return;
+        {
+            std::lock_guard<std::mutex> g(pool_lock_);
+            resolve_image_=&out;
+            resolve_left_=left;resolve_right_=right;resolve_bottom_=bottom;
+            next_row_.store(top,std::memory_order_relaxed);
+            band_done_=0;
+            ++generation_;
+        }
+        pool_go_.notify_all();
+        resolve_jobs();
+        std::unique_lock<std::mutex> g(pool_lock_);
+        pool_done_.wait(g,[&]{return band_done_==int(pool_.size());});
+        resolve_image_=nullptr;
+    }
+
+    // Share row jobs among the existing participants; no row is written twice.
+    std::size_t row_jobs()
+    {
+        std::size_t count=0;
+        for (;;) {
+            const int y=next_row_.fetch_add(band_rows_,std::memory_order_relaxed);
+            if(y>=H_)break;
+            count+=band(y,std::min(H_,y+band_rows_));
+        }
+        return count;
+    }
+
     void run_bands()
     {
         const int bands = int(pool_.size()) + 1;
-        const int rows = (H_ + bands - 1) / bands;
+        const int rows = 256; // disjoint jobs, same triangle order within every row
         {
             std::lock_guard<std::mutex> g(pool_lock_);
             band_rows_ = rows;
+            next_row_.store(0,std::memory_order_relaxed);
             band_done_ = 0;
             band_count_.assign(std::size_t(bands), 0);
             ++generation_;
         }
         pool_go_.notify_all();
-        const std::size_t mine = band(0, std::min(H_, rows));
+        const std::size_t mine = row_jobs();
         std::unique_lock<std::mutex> g(pool_lock_);
         band_count_[0] = mine;
         pool_done_.wait(g, [&] { return band_done_ == int(pool_.size()); });
@@ -2425,9 +2556,10 @@ class Renderer
             drawn_ += c;
     }
 
-    void helper(int index)
+    void helper(int index, unsigned seen)
     {
-        unsigned seen = 0;
+        // Captured under the lock before spawning: no old-job replay, and a
+        // new job published before this helper starts is still observed.
         std::unique_lock<std::mutex> g(pool_lock_);
         for (;;)
         {
@@ -2435,11 +2567,12 @@ class Renderer
             if (stop_)
                 return;
             seen = generation_;
-            const int rows = band_rows_;
             g.unlock();
-            const std::size_t n = band(std::min(H_, index * rows), std::min(H_, (index + 1) * rows));
+            const bool resolving=resolve_image_!=nullptr;
+            std::size_t n=0;
+            if(resolving)resolve_jobs();else n=row_jobs();
             g.lock();
-            band_count_[std::size_t(index)] = n;
+            if(!resolving)band_count_[std::size_t(index)] = n;
             ++band_done_;
             pool_done_.notify_one();
         }
@@ -2682,7 +2815,57 @@ class Renderer
             const int xs = std::max(x0, int(std::ceil(lo - 0.5f))), xe = std::min(x1, int(std::floor(hi - 0.5f)));
             float *depth = &depth_[std::size_t(y) * std::size_t(W_)];
             std::uint32_t *colour = &colour_[std::size_t(y) * std::size_t(W_)];
-            for (int x = xs; x <= xe; ++x)
+            int x=xs;
+#if defined(__SSE2__)
+            // Four independent samples, preserving each scalar expression's
+            // multiply/add order. Glass, patterned flat colours and baked
+            // bilinear materials retain the scalar path below.
+            if (!baked_lighting_ && (textured || d.pattern==0) && (!textured || d.alpha==0 || d.alpha==4)) {
+                const __m128 zero=_mm_setzero_ps(),one=_mm_set1_ps(1.f),epsilon=_mm_set1_ps(-1e-4f);
+                auto value=[](float v){return _mm_set1_ps(v);};
+                auto madd=[](__m128 a,__m128 b,__m128 c){
+#if defined(__FMA__)
+                    return _mm_fmadd_ps(a,b,c);
+#else
+                    return _mm_add_ps(_mm_mul_ps(a,b),c);
+#endif
+                };
+                auto attr=[&](__m128 wb,__m128 wc,float base,float db,float dc){return madd(wc,value(dc),madd(wb,value(db),value(base)));};
+                for(;x+3<=xe;x+=4) {
+                    const __m128 px=_mm_set_ps(float(x+3)+.5f,float(x+2)+.5f,float(x+1)+.5f,float(x)+.5f);
+                    const __m128 wa=madd(value(e0x),px,value(b0));
+                    const __m128 wb=madd(value(e1x),px,value(b1));
+                    const __m128 wc=_mm_sub_ps(_mm_sub_ps(one,wa),wb);
+                    const __m128 iz=attr(wb,wc,a.iz,dz1,dz2),prior=_mm_loadu_ps(depth+x);
+                    __m128 pass=_mm_and_ps(_mm_and_ps(_mm_cmpge_ps(wa,epsilon),_mm_cmpge_ps(wb,epsilon)),_mm_and_ps(_mm_cmpge_ps(wc,epsilon),_mm_cmpgt_ps(iz,prior)));
+                    if(d.cutting) {
+                        const __m128 my=attr(wb,wc,a.model_y,dy1,dy2),arm=attr(wb,wc,a.arm,da1,da2),leg=attr(wb,wc,a.leg,dg1,dg2);
+                        pass=_mm_and_ps(pass,_mm_and_ps(_mm_cmple_ps(arm,value(d.arm_max)),_mm_and_ps(_mm_cmpge_ps(leg,value(d.leg_min)),_mm_cmple_ps(leg,value(d.leg_max)))));
+                        pass=_mm_and_ps(pass,_mm_cmpge_ps(my,value(d.y_low)));
+                        if(!d.neckline||region==Neck||region==Head)pass=_mm_and_ps(pass,_mm_cmple_ps(my,value(d.y_high)));
+                    }
+                    if(!_mm_movemask_ps(pass))continue;
+                    __m128 red,green,blue;
+                    if(textured) {
+                        const __m128 u=attr(wb,wc,a.u,du1,du2),v=attr(wb,wc,a.v,dv1,dv2);
+                        const __m128i tx=_mm_and_si128(_mm_cvttps_epi32(_mm_mul_ps(u,value(float(d.tw)))),_mm_set1_epi32(d.tw-1));
+                        const __m128i ty=_mm_and_si128(_mm_cvttps_epi32(_mm_mul_ps(v,value(float(d.th)))),_mm_set1_epi32(d.th-1));
+                        int ix[4],iy[4];_mm_storeu_si128(reinterpret_cast<__m128i*>(ix),tx);_mm_storeu_si128(reinterpret_cast<__m128i*>(iy),ty);
+                        const __m128i tex=_mm_set_epi32(int(d.texture[std::size_t(iy[3])*d.tw+ix[3]]),int(d.texture[std::size_t(iy[2])*d.tw+ix[2]]),int(d.texture[std::size_t(iy[1])*d.tw+ix[1]]),int(d.texture[std::size_t(iy[0])*d.tw+ix[0]]));
+                        const __m128i mask=_mm_set1_epi32(255);
+                        if(d.alpha==4)pass=_mm_andnot_ps(_mm_castsi128_ps(_mm_cmplt_epi32(_mm_srli_epi32(tex,24),_mm_set1_epi32(128))),pass);
+                        red=_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(tex,16),mask));green=_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(tex,8),mask));blue=_mm_cvtepi32_ps(_mm_and_si128(tex,mask));
+                    }else {red=value(d.colour.r);green=value(d.colour.g);blue=value(d.colour.b);}
+                    const __m128 light=_mm_min_ps(attr(wb,wc,a.light,dl1,dl2),value(1.35f));
+                    auto channel=[&](__m128 c){return _mm_cvttps_epi32(_mm_max_ps(zero,_mm_min_ps(value(255.f),_mm_mul_ps(c,light))));};
+                    const __m128i rgb=_mm_or_si128(_mm_or_si128(_mm_slli_epi32(channel(red),16),_mm_slli_epi32(channel(green),8)),channel(blue));
+                    const __m128i active=_mm_castps_si128(pass),old=_mm_loadu_si128(reinterpret_cast<const __m128i*>(colour+x));
+                    _mm_storeu_ps(depth+x,_mm_or_ps(_mm_and_ps(pass,iz),_mm_andnot_ps(pass,prior)));
+                    _mm_storeu_si128(reinterpret_cast<__m128i*>(colour+x),_mm_or_si128(_mm_and_si128(active,rgb),_mm_andnot_si128(active,old)));
+                }
+            }
+#endif
+            for (; x <= xe; ++x)
             {
                 const float px = float(x) + 0.5f;
                 const float wa = e0x * px + b0; // weight of a
@@ -2748,6 +2931,9 @@ class Renderer
     std::condition_variable pool_go_, pool_done_;
     unsigned generation_ = 0;
     int band_rows_ = 0, band_done_ = 0;
+    std::atomic<int> next_row_{0};
+    Image *resolve_image_=nullptr;
+    int resolve_left_=0,resolve_right_=0,resolve_bottom_=-1;
     bool stop_ = false;
     std::vector<std::size_t> band_count_;
     std::vector<std::uint32_t> colour_;

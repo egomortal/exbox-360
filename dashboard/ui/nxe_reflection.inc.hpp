@@ -44,18 +44,14 @@ float source_alpha(int x,int y) {
     if (figure_has_color_key && pixel==figure_color_key) {
         return 0;
     }
+    if (!figure->format->Amask) return 1;
+    if (figure->format->Aloss==0) return float((pixel&figure->format->Amask)>>figure->format->Ashift)/255;
     Uint8 red,green,blue,alpha;
     SDL_GetRGBA(pixel,figure->format,&red,&green,&blue,&alpha);
     return float(alpha)/255;
 }
 
-float coverage_at(int x,int y) {
-    for (size_t i=0;i<pane_count;i++) {
-        const auto &pane=panes[i];
-        if (x>=pane.x && x<pane.x+pane.w && y>=pane.y && y<pane.y+pane.h) {
-            return 1;
-        }
-    }
+float figure_coverage_at(float x,float y,float half_pixel) {
     if (!figure || figure_bounds.w<1 || figure_bounds.h<1 ||
         x<figure_bounds.x || x>=figure_bounds.x+figure_bounds.w ||
         y<figure_bounds.y || y>=figure_bounds.y+figure_bounds.h) {
@@ -63,8 +59,8 @@ float coverage_at(int x,int y) {
     }
     // A bilinear alpha mask follows the visible silhouette. Reflecting its
     // whole bounding box would mirror unrelated background beside the avatar.
-    const float source_x=(float(x-figure_bounds.x)+0.5f)*figure->w/figure_bounds.w-0.5f;
-    const float source_y=(float(y-figure_bounds.y)+0.5f)*figure->h/figure_bounds.h-0.5f;
+    const float source_x=(x-figure_bounds.x+half_pixel)*figure->w/figure_bounds.w-0.5f;
+    const float source_y=(y-figure_bounds.y+half_pixel)*figure->h/figure_bounds.h-0.5f;
     const int left=int(std::floor(source_x));
     const int top=int(std::floor(source_y));
     const float fraction_x=source_x-left;
@@ -72,6 +68,16 @@ float coverage_at(int x,int y) {
     const float upper=source_alpha(left,top)*(1-fraction_x)+source_alpha(left+1,top)*fraction_x;
     const float lower=source_alpha(left,top+1)*(1-fraction_x)+source_alpha(left+1,top+1)*fraction_x;
     return (upper*(1-fraction_y)+lower*fraction_y)*figure_opacity;
+}
+
+float coverage_at(float x,float y) {
+    for (size_t i=0;i<pane_count;i++) {
+        const auto &pane=panes[i];
+        if (x>=pane.x && x<pane.x+pane.w && y>=pane.y && y<pane.y+pane.h) {
+            return 1;
+        }
+    }
+    return figure_coverage_at(x,y,0.5f/render_density::density(screen));
 }
 
 #ifndef __PROSPERO__

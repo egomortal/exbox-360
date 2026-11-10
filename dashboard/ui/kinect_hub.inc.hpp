@@ -1,12 +1,14 @@
 // Included inside main.cpp's private namespace; see docs/CODE_MAP.md.
 constexpr int kChannelTop=272, kCounterTop=842, kTagTop=88;
 void draw_kinect_hub() {
+    gpu_home::begin();
     TTF_Font *body=era_text?era_text:regular;
     SDL_Rect backdrop{0,0,W,H};
     if (era_background) blit_quality(era_background,nullptr,screen,&backdrop);
     else gradient(0,0,W,H,0x358f24,0xc9e713);
+    draw_installed_theme_background();
     draw_picture_background();
-    if (era_aura_floor) blit_quality(era_aura_floor,nullptr,screen,&backdrop);
+    if (era_aura_floor) blit_quality(era_aura_floor,nullptr,screen,&backdrop,true,true);
     // Channel list (2010 dashboard capture): one size, the current channel
     // lowest at x 370 over the tiles, earlier ones fading upward 51 px apart;
     // later channels are not listed.
@@ -74,12 +76,16 @@ void draw_kinect_hub() {
     // The 2010 home: the avatar belongs to the gamer card, overlapping its
     // right half (capture: card at 1023, figure 1280..1620, 310..850), and
     // scrolls away with it.
-    SDL_Surface *figure=model.channel==dash::MyXbox && gamercard_tile.w?(edited_avatar::owner_still(avatar_slots::Image::FullBody)?edited_avatar::owner_still(avatar_slots::Image::FullBody):look3d::active()?look3d::hub_frame(SDL_GetTicks()):avatar_art):nullptr;
+    SDL_Surface *figure=model.channel==dash::MyXbox && gamercard_tile.w?edited_avatar::live_or_still(SDL_GetTicks(),true,avatar_art):nullptr;
     if (figure) {
         const float k=gamercard_tile.w/567.0f;
         SDL_Rect at{gamercard_tile.x+int(257*k),gamercard_tile.y-int(61*k),int(340*k),int(540*k)};
-        if(figure==edited_avatar::fullbody)at=edited_avatar::contain(figure,at);
-        blit_quality(figure,nullptr,screen,&at,false);
+        if(figure==edited_avatar::fullbody||prepared_avatar::find(figure))at=edited_avatar::contain(figure,at);
+        const bool gpu=gpu_home::avatar(figure,at,1.f);
+        if(!gpu||x21hook::audit_cpu()) {x21hook::Pause reference(gpu);
+            prepared_avatar::materialize(figure);if(figure==look3d::hub.surface)look3d::materialize_hub();
+            blit_quality(figure,nullptr,screen,&at,false);
+        }
     }
     text(std::to_string(selected+1)+" of "+std::to_string(model.count()),370,kCounterTop,regular,{73,87,86,255});
     TTF_Font *tag_font=kinect_tag?kinect_tag:body, *count_font=kinect_count?kinect_count:regular;

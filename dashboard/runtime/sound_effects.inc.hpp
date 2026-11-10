@@ -1,4 +1,5 @@
 // Included inside main.cpp's private namespace; see docs/CODE_MAP.md.
+#include <atomic>
 namespace sfx {
 struct Clip { std::vector<Sint16> pcm; };
 struct Voice { const Clip *clip=nullptr; size_t at=0; };
@@ -11,6 +12,7 @@ Voice voices[4];
 // One SDL sfx device serializes mix; close joins callbacks before reopen.
 int mix_scratch[8192]{}; // Persistent32KiB, not an audio-thread stack allocation.
 SDL_AudioDeviceID device=0;
+std::atomic<int> music_mix_volume{205};
 #ifdef EXBOX_NATIVE_TITLE
 void endpoint_note(const char* message){exbox_native_note("%s\n",message);}
 exbox::audio::Endpoint endpoint(exbox::audio::sdl_calls(),endpoint_note);
@@ -29,7 +31,7 @@ void mix(void *, Uint8 *stream, int len) {
         for (int i=0;i<n && v.at<v.clip->pcm.size();i++) acc[size_t(i)]+=v.clip->pcm[v.at++]*7/10;
         if (v.at>=v.clip->pcm.size()) v.clip=nullptr;
     }
-    music_player.mix(acc,size_t(n/2)); // stereo frames
+    music_player.mix(acc,size_t(n/2),music_mix_volume.load(std::memory_order_relaxed)); // stereo frames
 #ifdef NXE_DIRECT_VIDEO
     direct_video.mix(acc,size_t(n/2));
 #endif

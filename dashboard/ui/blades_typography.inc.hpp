@@ -8,7 +8,8 @@ SDL_Surface *rail_surface(const std::string &value,TTF_Font *font) {
     // does not leak into the narrow rails. Source alpha is composed explicitly.
     auto *glyph=TTF_RenderUTF8_Blended(font,value.c_str(),{255,255,255,255});
     if (!glyph) return nullptr;
-    auto *result=SDL_CreateRGBSurfaceWithFormat(0,glyph->w+1,glyph->h+1,32,SDL_PIXELFORMAT_ARGB8888);
+    const int d=render_density::density(glyph);
+    auto *result=render_density::tag(SDL_CreateRGBSurfaceWithFormat(0,glyph->w+d,glyph->h+d,32,SDL_PIXELFORMAT_ARGB8888),d);
     if (result) {
         SDL_FillRect(result,nullptr,0);
         // One flat-surface pixel is a calibrated shadow offset. Source colors
@@ -27,7 +28,7 @@ SDL_Surface *rail_surface(const std::string &value,TTF_Font *font) {
         for (int y=0;y<result->h;y++) {
             auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(result->pixels)+y*result->pitch);
             for (int x=0;x<result->w;x++) {
-                const auto pixel=blades_rails::composite_coverage(coverage(x,y),coverage(x-1,y-1));
+                const auto pixel=blades_rails::composite_coverage(coverage(x,y),coverage(x-d,y-d));
                 row[x]=SDL_MapRGBA(result->format,pixel.gray,pixel.gray,pixel.gray,pixel.alpha);
             }
         }
@@ -73,10 +74,10 @@ std::string fit(const std::string &value,TTF_Font *font,int limit) {
 SDL_Surface *surface(const std::string &value,TTF_Font *font,SDL_Color ink,bool shadow=true) {
     if (!font || value.empty()) return nullptr;
     const Uint32 color=(Uint32(ink.r)<<24)|(Uint32(ink.g)<<16)|(Uint32(ink.b)<<8)|ink.a;
-    for (auto &line:lines) if (line.font==font && line.value==value && line.color==color && line.shadow==shadow) {
+    for (auto &line:lines) if (line.font==font && line.value==value && line.color==color && line.shadow==shadow && render_density::density(line.image)==render_density::factor) {
         line.used=++serial;return line.image;
     }
-    auto *image=SDL_CreateRGBSurfaceWithFormat(0,width(value,font)+2,TTF_FontHeight(font)+1,32,SDL_PIXELFORMAT_ARGB8888);
+    auto *image=render_density::create(width(value,font)+2,TTF_FontHeight(font)+1);
     if (!image) return nullptr;
     SDL_FillRect(image,nullptr,0);
     const auto chars=characters(value);
@@ -125,7 +126,7 @@ SDL_Surface *ink_copy(SDL_Surface *source) {
     }
     SDL_Surface *copy=nullptr;
     if (left<right && top<bottom) {
-        copy=SDL_CreateRGBSurfaceWithFormat(0,right-left,bottom-top,32,SDL_PIXELFORMAT_ARGB8888);
+        copy=render_density::tag(SDL_CreateRGBSurfaceWithFormat(0,right-left,bottom-top,32,SDL_PIXELFORMAT_ARGB8888),render_density::density(source));
         if (copy) {
             SDL_LockSurface(copy);
             for (int y=0;y<copy->h;++y)
@@ -171,14 +172,15 @@ void audit_rails(const char *path,bool all_regimes=false) {
                 auto *image=blades_labels[family][blade==active][blade];
                 if (!image) continue;
                 const auto slot=era_chrome::rail_label(active,blade,early);
-                const int x=slot.center-(image->w+1)/2;
+                const int iw=render_density::logical_w(image),ih=render_density::logical_h(image);
+                const int x=slot.center-(iw+1)/2;
                 if (all_regimes) {
                     std::fprintf(file,"%d\t%d\t%d\t",build,blades_rails::source_points(build),
                         blades_rails::native_pixels(build,blade==active));
                 }
                 std::fprintf(file,"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-                    int(early),active,blade,slot.left,slot.right,slot.notch,x,slot.top,image->w,image->h,
-                    x-slot.left,slot.right-x-image->w,slot.top-slot.notch);
+                    int(early),active,blade,slot.left,slot.right,slot.notch,x,slot.top,iw,ih,
+                    x-slot.left,slot.right-x-iw,slot.top-slot.notch);
             }
         }
     }

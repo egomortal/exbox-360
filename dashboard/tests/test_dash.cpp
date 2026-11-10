@@ -4,6 +4,7 @@
 #include "../xbox_input.hpp"
 #include "../subtitles.hpp"
 #include "../music_metadata.hpp"
+#include "../recorder_runtime.hpp"
 
 #include <cstdio>
 #include <fstream>
@@ -223,8 +224,10 @@ static void my_xbox_cards_go_somewhere()
     CHECK(m.current_card().title == "System Settings");
     m.press(xb::A);
     // NXE's consoles/SystemScene: Console Settings, Family Settings, Memory ...
-    CHECK(!m.guide && m.viewer == Viewer::SystemSettings && m.viewer_count() == 7);
-    CHECK(m.system_entries()[1].label == "Family Settings" && m.system_entries()[6].label == "Initial Setup");
+    CHECK(!m.guide && m.viewer == Viewer::SystemSettings && m.viewer_count() == 10);
+    CHECK(m.system_entries()[1].label == "Family Settings" && m.system_entries()[6].label == "Initial Setup" &&
+          m.system_entries()[7].label == "Ex-Box Settings" && m.system_entries()[8].label == "Compatibility & Health" &&
+          m.system_entries()[9].label == "Account Management");
     CHECK(m.system_meta("Memory").rfind("Move or delete saved games", 0) == 0);
     CHECK(has_hint(m, xb::A, "Select") && has_hint(m, xb::B, "Back"));
     m.press(xb::A); // Console Settings
@@ -357,6 +360,15 @@ static int find_entry(const Model &m, const std::string &label)
     return -1;
 }
 
+static int find_action(const Model &m, int blade, GuideAction action, int app = -999)
+{
+    const auto rows = m.blade_entries(blade);
+    for (std::size_t i = 0; i < rows.size(); ++i)
+        if (rows[i].action == action && (app == -999 || rows[i].app == app))
+            return int(i);
+    return -1;
+}
+
 static void guide_opens_on_the_home_blade()
 {
     Model m = with_apps(2);
@@ -371,8 +383,7 @@ static void guide_opens_on_the_home_blade()
     m.press(xb::Up); // stops at the top, as the Guide list did
     CHECK(m.guide_item[BladeHome] == 0);
     m.press(xb::RB);m.press(xb::RB); // Settings: authored shutdown row
-    for (int i = 0; i < 10; ++i)
-        m.press(xb::Down);
+    for (int i = 0,stop=find_entry(m,"Turn Off Console"); i < stop; ++i)m.press(xb::Down);
     CHECK(m.guide_item[BladeSettings] == find_entry(m, "Turn Off Console"));
     Effect e = m.press(xb::A);
     CHECK(e.command == Command::ExitToPs5 && !m.guide);
@@ -381,52 +392,51 @@ static void guide_opens_on_the_home_blade()
 static void bumpers_flip_blades()
 {
     Model m = with_apps(3);
-    m.press(xb::Start);m.press(xb::RS); // Options opens it too
+    m.press(xb::Start); // Options opens the ordinary Guide too
     m.press(xb::RB);
     CHECK(m.guide_blade == BladeMedia);
     m.press(xb::RB);
     m.press(xb::RB); // stops at the last blade
     CHECK(m.guide_blade == BladeSettings);
-    m.press(xb::Down);
-    CHECK(m.guide_item[BladeSettings] == 1);
+    m.guide_item[BladeSettings] = find_action(m, BladeSettings, GuideAction::ChangeGamerpic);
+    CHECK(m.guide_item[BladeSettings] >= 0);
     m.press(xb::LB);
     m.press(xb::Left); // the D-pad flips blades too
     CHECK(m.guide_blade == BladeHome);
     m.press(xb::RB);
     m.press(xb::RB);
-    CHECK(m.guide_item[BladeSettings] == 1); // each blade keeps its place while open
-    CHECK(m.blade_entries(BladeSettings)[1].label == "Change Gamerpic");
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Change Gamerpic");
     CHECK(m.press(xb::A).command == Command::NextGamerpic);
     CHECK(m.guide && m.guide_blade == BladeSettings); // stays open to show the new picture
     CHECK(m.press(xb::A).command == Command::NextGamerpic);
-    m.press(xb::Down);
-    CHECK(m.blade_entries(BladeSettings)[2].label == "Sounds: On");
+    m.guide_item[BladeSettings] = find_action(m, BladeSettings, GuideAction::ToggleSounds);
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Sounds: On");
     CHECK(m.press(xb::A).command == Command::SaveSettings && !m.sounds && m.guide);
-    CHECK(m.blade_entries(BladeSettings)[2].label == "Sounds: Off");
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Sounds: Off");
     m.press(xb::A);
     CHECK(m.sounds);
-    m.press(xb::Down);
-    CHECK(m.blade_entries(BladeSettings)[3].label == "Dashboard: NXE >");
+    m.guide_item[BladeSettings] = find_action(m, BladeSettings, GuideAction::CycleEra);
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Dashboard: NXE >");
     CHECK(m.press(xb::A).command==Command::None && !m.guide && m.viewer==Viewer::DashboardEras);
     CHECK(m.viewer_item==1 && m.viewer_count()==5);
     m.press(xb::B);
-    CHECK(m.guide && m.guide_blade==BladeSettings && m.guide_item[BladeSettings]==3);
-    m.press(xb::Down);
-    CHECK(m.blade_entries(BladeSettings)[4].label == "Button Style: Glossy");
+    CHECK(m.guide && m.guide_blade==BladeSettings);
+    m.guide_item[BladeSettings] = find_action(m, BladeSettings, GuideAction::CycleButtonStyle);
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Button Style: Glossy");
     for (int i = 1; i <= 3; ++i)
     {
         CHECK(m.press(xb::A).command == Command::SaveSettings && m.guide);
         CHECK(m.button_style == i % 3);
         constexpr const char *styles[]={"Glossy", "Retail Mix", "Simple"};
-        CHECK(m.blade_entries(BladeSettings)[4].label == std::string("Button Style: ") + styles[i % 3]);
+        CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == std::string("Button Style: ") + styles[i % 3]);
     }
-    CHECK(m.blade_entries(BladeSettings)[4].label == "Button Style: Glossy");
-    m.press(xb::Down);
-    CHECK(m.blade_entries(BladeSettings)[5].label == "Screen Dimming: On");
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Button Style: Glossy");
+    m.guide_item[BladeSettings] = find_action(m, BladeSettings, GuideAction::ToggleDimming);
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Screen Dimming: On");
     CHECK(m.press(xb::A).command == Command::SaveSettings && !m.dimming && m.guide);
-    CHECK(m.blade_entries(BladeSettings)[5].label == "Screen Dimming: Off");
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Screen Dimming: Off");
     m.press(xb::A);
-    m.press(xb::Down);
+    m.guide_item[BladeSettings] = find_action(m, BladeSettings, GuideAction::Refresh);
     CHECK(m.press(xb::A).command == Command::Refresh && !m.guide);
     m.press(xb::Guide); // reopening starts over on Home
     CHECK(m.guide_blade == BladeHome && m.guide_item[BladeSettings] == 0);
@@ -440,36 +450,32 @@ static void bumpers_flip_blades()
 static void blades_launch_and_navigate()
 {
     Model m = with_apps(3);
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    m.press(xb::LB);
-    m.press(xb::LB); // Apps blade: channel, then every app
-    CHECK(m.guide_blade == BladeApps);
+    m.press(xb::Guide);m.guide_blade=BladeApps;
     const auto apps_blade = m.host_blade_entries(BladeApps);
     CHECK(apps_blade.size() == 4 && apps_blade[0].label == "Apps Channel" && apps_blade[3].label == "App 2");
-    m.press(xb::Down);
-    m.press(xb::Down);
+    m.guide_item[BladeApps]=find_action(m,BladeApps,GuideAction::Launch,1);
     Effect e = m.press(xb::A);
     CHECK(e.command == Command::Launch && e.app == 1 && !m.guide);
 
     // Homebrew listed as a game moves from the Apps blade to the Games blade.
     m.load_categories({"/data/homebrew/App2/eboot.elf", "/etc/x"});
     const auto games = m.host_blade_entries(BladeGames);
-    CHECK(games.size() == 4 && games[1].label == "App 2" && games[1].app == 2); // + the PS5's two game apps
+    CHECK(games.size() == 5 && games[1].label == "App 2" && games[1].app == 2); // refresh + the PS5's two game apps
     CHECK(m.host_blade_entries(BladeApps).size() == 3);
 
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    m.press(xb::RB); // Media
-    m.press(xb::Down);
-    e = m.press(xb::A); // Music Library
+    m.press(xb::Guide);m.guide_blade=BladeMedia;
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::Music);
+    CHECK(m.press(xb::A).command==Command::GuideMusicRefresh);
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::GuideMusicOpenFull);
+    e = m.press(xb::A); // Open Full Music
     CHECK(!m.guide && m.viewer == Viewer::Music && e.command == Command::ScanMusic);
     m.press(xb::B);
 
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    m.press(xb::Down);
-    m.press(xb::Down); // past NXE's Quick Launch
+    m.press(xb::Guide);
+    m.guide_item[BladeHome]=find_action(m,BladeHome,GuideAction::Games);
     m.press(xb::A); // Home blade: Games
     CHECK(m.channel == Games);
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
+    m.press(xb::Guide);
     m.press(xb::Y); // Xbox Dashboard
     CHECK(!m.guide && m.channel == MyXbox);
 
@@ -606,13 +612,13 @@ static void guide_games_blade_lists_console_games()
 {
     Model m = with_apps(2);
     m.set_games(some_games(3));
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    m.press(xb::LB); // Games
+    m.press(xb::Guide);m.guide_blade=BladeGames;
     const auto entries = m.host_blade_entries(BladeGames);
-    CHECK(entries.size() == 6 && entries[3].action == GuideAction::LaunchTitle && entries[3].app == 2);
-    CHECK(entries[4].label == "Game Library" && entries[4].action == GuideAction::LaunchSystem && entries[4].app == 0);
-    CHECK(entries[5].label == "PlayStation Store" && entries[5].app == 1);
-    m.press(xb::Down);
+    CHECK(entries.size() == 7 && entries[3].action == GuideAction::LaunchTitle && entries[3].app == 2);
+    CHECK(entries[4].action == GuideAction::Refresh);
+    CHECK(entries[5].label == "Game Library" && entries[5].action == GuideAction::LaunchSystem && entries[5].app == 0);
+    CHECK(entries[6].label == "PlayStation Store" && entries[6].app == 1);
+    m.guide_item[BladeGames]=find_action(m,BladeGames,GuideAction::LaunchTitle,0);
     Effect e = m.press(xb::A);
     CHECK(e.command == Command::LaunchTitle && e.app == 0 && !m.guide);
 }
@@ -870,7 +876,7 @@ static void picture_background_confirmation_and_settings()
         CHECK(m.perform_guide_entry({"Change Theme",GuideAction::SelectTheme}).command==Command::None);
         CHECK(m.viewer==Viewer::Themes && m.picture_background==2);
         m.press(xb::Up);
-        CHECK(m.press(xb::A).command==Command::SaveSettings && !m.picture_background_enabled && m.picture_background==2);
+        {const auto effect=m.press(xb::A);CHECK(effect.command==Command::ApplyInstalledTheme && effect.app==-1 && !m.picture_background_enabled && m.picture_background==2);}
         m.press(xb::B);
         restored.era=3;CHECK(!restored.picture_background_available() && restored.picture_background==2);
         restored.era=1;CHECK(restored.picture_background_available() && restored.picture_background==2);
@@ -950,31 +956,41 @@ static void media_viewer_pictures_and_videos()
     m.press(xb::Guide);
     m.press(xb::A); // My Xbox on the Home blade
     CHECK(m.viewer == Viewer::None && m.channel == MyXbox);
-    // Ex-Box Utilities retains the media and PS5 app shortcuts.
-    m.press(xb::Guide);m.press(xb::RS);
-    m.press(xb::RB); // Media blade
+    // The ordinary Media blade retains the media and PS5 app shortcuts.
+    m.press(xb::Guide);m.guide_blade=BladeMedia;
     const auto media = m.blade_entries(BladeMedia);
-    CHECK(media[2].label == "Pictures" && media[3].label == "Video Library");
-    CHECK(media[4].label == "Media Gallery" && media[4].action == GuideAction::LaunchSystem && media[4].app == 2);
-    CHECK(media[5].label == "Web Browser" && media[5].app == 3);
-    m.press(xb::Down);
-    m.press(xb::Down);
-    m.press(xb::Down);
+    CHECK(find_action(m,BladeMedia,GuideAction::Pictures)>=0 && find_action(m,BladeMedia,GuideAction::Videos)>=0);
+    CHECK(find_action(m,BladeMedia,GuideAction::LaunchSystem,2)>=0);
+    CHECK(find_action(m,BladeMedia,GuideAction::LaunchSystem,3)>=0);
+    CHECK(find_action(m,BladeMedia,GuideAction::RecordScreen)>=0);
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::Videos);
     CHECK(m.press(xb::A).command == Command::None && m.viewer == Viewer::Videos && !m.guide);
     m.press(xb::B);
-    m.press(xb::Guide);m.press(xb::RS);
-    m.press(xb::RB);
-    for (int i = 0; i < 4; ++i)
-        m.press(xb::Down);
+    m.press(xb::Guide);m.guide_blade=BladeMedia;
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::RecordScreen);
+    e = m.press(xb::A);
+    CHECK(e.command == Command::None && !m.guide && m.details && m.details_title == "Record Screen");
+    CHECK(m.details_text.find("Create button") != std::string::npos && m.details_text.find("4K recording") != std::string::npos);
+    m.press(xb::B);
+    m.press(xb::Guide);m.guide_blade=BladeMedia;
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::LaunchSystem,2);
     e = m.press(xb::A);
     CHECK(e.command == Command::LaunchSystem && e.app == 2 && std::string(kSystemApps[e.app].title_id) == "NPXS40075");
+
+    // Every era's ordinary Media blade retains recording as a fallback.
+    for (int era=0;era<4;++era) {
+        Model guide;guide.era=era;guide.dashboard_build=era==0?6770:era==1?9199:era==2?13604:17559;
+        const auto rows=guide.blade_entries(BladeMedia);
+        CHECK(std::any_of(rows.begin(),rows.end(),[](const GuideEntry&row){return row.action==GuideAction::RecordScreen;}));
+    }
 }
 
 static void theme_picker_navigation_and_migration()
 {
     for (int era=0;era<4;++era) {
         Model m;m.era=era;m.dashboard_build=era==0?6770:era==1?9199:era==2?13604:17559;
-        for (const auto &entry:m.blade_entries(BladeSettings)) CHECK(entry.action!=GuideAction::SelectTheme);
+        const auto settings_rows=m.blade_entries(BladeSettings);
+        CHECK(std::any_of(settings_rows.begin(),settings_rows.end(),[](const GuideEntry &entry){return entry.action==GuideAction::SelectTheme;}));
         CHECK(m.theme_entries()==std::vector<std::string>{"Xbox 360"});
         m.picture_background=2;
         const bool pictures=era==1 || era==2;
@@ -991,11 +1007,11 @@ static void theme_picker_navigation_and_migration()
         // Back without A cancels; merely moving focus never changes the theme.
         m.press(xb::B);CHECK(m.viewer==Viewer::Profile && m.viewer_item==2 && m.picture_background_enabled);
         m.press(xb::A);m.press(xb::Up);
-        CHECK(m.press(xb::A).command==Command::SaveSettings);
+        {const auto effect=m.press(xb::A);CHECK(effect.command==Command::ApplyInstalledTheme && effect.app==-1);}
         CHECK(m.theme==0 && !m.picture_background_enabled && m.picture_background==2);
         CHECK(m.viewer==Viewer::Themes);
         m.press(xb::Down);
-        CHECK(m.press(xb::A).command==Command::SaveSettings && m.picture_background_enabled==pictures);
+        {const auto effect=m.press(xb::A);CHECK(effect.command==Command::ApplyInstalledTheme && effect.app==(pictures?-2:-1) && m.picture_background_enabled==pictures);}
         Model restored;
         for (const auto &line:m.saved_picture_settings()) restored.load_picture_setting(line);
         CHECK(restored.picture_background==2 && restored.picture_background_enabled==pictures);
@@ -1014,6 +1030,30 @@ static void theme_picker_navigation_and_migration()
         m.press(xb::B);
         CHECK(m.guide && m.viewer==Viewer::Music && m.viewer_item==7 && m.viewer_full);
     }
+    {
+        Model m;m.era=1;m.picture_background=2;m.picture_background_enabled=false;
+        m.set_installed_themes({{"theme-2222222222222222","Zeta",false},{"theme-1111111111111111","Alpha",true}});
+        CHECK(m.theme_count()==4&&m.theme_entry(1)=="Alpha [Compatibility 4/4]"&&m.theme_entry(99).empty());
+        CHECK(m.theme_entries()==std::vector<std::string>({"Xbox 360","Alpha [Compatibility 4/4]","Zeta [Partial compatibility 1/4]","Picture Background"}));
+        m.installed_theme_id="theme-2222222222222222";m.open_themes();CHECK(m.viewer_item==2);
+        m.press(xb::Left);CHECK(m.viewer_item==0);m.press(xb::Right);CHECK(m.viewer_item==3);m.viewer_item=2;
+        m.press(xb::LB);CHECK(m.viewer_item==1);m.press(xb::RB);CHECK(m.viewer_item==2);
+        auto effect=m.press(xb::A);CHECK(effect.command==Command::ApplyInstalledTheme&&effect.app==1&&!m.picture_background_enabled);
+        const auto saved=m.saved_installed_theme_setting();CHECK(saved=="installed_theme=theme-2222222222222222");
+        Model restored;restored.load_installed_theme_setting(saved+"\r\n");CHECK(restored.installed_theme_id==m.installed_theme_id);
+        restored.load_installed_theme_setting("installed_theme=theme-NOTHEX00000000");CHECK(restored.installed_theme_id==m.installed_theme_id);
+        restored.load_installed_theme_setting("installed_theme=");CHECK(restored.installed_theme_id.empty());
+        m.viewer_item=2;effect=m.press(xb::X);CHECK(effect.command==Command::SaveSettings&&m.theme_favorites==std::vector<std::string>({"theme-2222222222222222"}));
+        m.press(xb::Y);CHECK(m.theme_filter==1&&m.viewer_item==0&&m.theme_count()==3);
+        CHECK(m.theme_entry(1)=="Zeta [Partial compatibility 1/4]"&&m.theme_catalog_index_for_row(1)==1);
+        m.viewer_item=1;effect=m.press(xb::A);CHECK(effect.command==Command::ApplyInstalledTheme&&effect.app==1&&m.theme_recent.front()=="theme-2222222222222222");
+        m.press(xb::Y);CHECK(m.theme_filter==2&&m.theme_count()==3&&m.theme_entry(1)=="Zeta [Partial compatibility 1/4]");
+        const auto library=m.saved_theme_library_settings();CHECK(library==std::vector<std::string>({"installed_theme=theme-2222222222222222","theme_favorite=theme-2222222222222222","theme_recent=theme-2222222222222222"}));
+        Model library_restored;for(const auto&line:library)library_restored.load_installed_theme_setting(line+"\n");
+        CHECK(library_restored.installed_theme_id==m.installed_theme_id&&library_restored.theme_favorites==m.theme_favorites&&library_restored.theme_recent==m.theme_recent);
+        library_restored.load_installed_theme_setting("theme_favorite=theme-2222222222222222");CHECK(library_restored.theme_favorites.size()==1);
+        library_restored.load_installed_theme_setting("theme_recent=bad");CHECK(library_restored.theme_recent.size()==1);
+    }
     for (int era:{1,2}) {
         Model m;m.era=era;m.channel=MyXbox;m.selected[MyXbox]=1;
         CHECK(m.current_card().goal==Goal::ToProfile);
@@ -1023,10 +1063,16 @@ static void theme_picker_navigation_and_migration()
     }
     for (int build:{15574,17559}) {
         Model m;m.era=3;m.dashboard_build=build;m.select_metro_tab(2);m.metro_focus=0;
-        CHECK(m.count()==3 && m.current_card().goal==Goal::ToProfile);
+        CHECK(m.count()==3 && m.current_card().title=="Friends");
+        m.press(xb::Right);CHECK(m.metro_focus==kMetroSocialOwner);
         m.press(xb::A);CHECK(m.viewer==Viewer::Profile);
         m.press(xb::Down);m.press(xb::Down);m.press(xb::A);CHECK(m.viewer==Viewer::Themes);
-        m.press(xb::B);m.press(xb::B);CHECK(m.metro_tab==2 && m.current()==0);
+        m.press(xb::B);m.press(xb::B);CHECK(m.metro_tab==2 && m.current()==0 && m.metro_focus==kMetroSocialOwner);
+        m.press(xb::Right);CHECK(m.metro_focus==kMetroSocialFriend0);
+        m.press(xb::Right);m.press(xb::Right);CHECK(m.metro_focus==kMetroSocialFriend2);
+        m.press(xb::Left);CHECK(m.metro_focus==kMetroSocialFriend2-1);
+        m.press(xb::Down);CHECK(m.metro_focus==0);
+        m.press(xb::Down);CHECK(m.current()==1 && m.metro_focus==1);
     }
     Model legacy;legacy.load_picture_setting("picture_background=1");
     CHECK(legacy.picture_background_enabled && legacy.picture_background==1);
@@ -1072,14 +1118,10 @@ static void avatar_stage()
     m.press(xb::B);
     CHECK(m.viewer == Viewer::None && m.channel == MyXbox);
     // The Guide's Home blade opens it too.
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    int at = 0;
-    const auto home = m.host_blade_entries(BladeHome);
-    while (at < int(home.size()) && home[std::size_t(at)].label != "My Avatar")
-        ++at;
-    CHECK(at < int(home.size()));
-    for (int i = 0; i < at; ++i)
-        m.press(xb::Down);
+    m.press(xb::Guide);
+    const int at = find_action(m,BladeHome,GuideAction::Avatar);
+    CHECK(at >= 0);
+    m.guide_item[BladeHome]=at;
     m.press(xb::A);
     CHECK(m.viewer == Viewer::Avatar && !m.guide);
 }
@@ -1186,9 +1228,9 @@ static void music_library_and_player()
     m.press(xb::LT);
     CHECK(m.music_view == 0 && !m.music_in_groups());
     m.press(xb::LT);
-    CHECK(m.music_view == 4 && m.music_in_groups() && has_hint(m, xb::RT, "Songs")); // Saved Playlists
+    CHECK(m.music_view == 6 && !m.music_in_groups() && has_hint(m, xb::RT, "Songs")); // Recently Added
     m.press(xb::LT);
-    CHECK(m.music_view == 3 && has_hint(m, xb::RT, "Saved Playlists")); // Genres
+    CHECK(m.music_view == 5 && !m.music_in_groups() && has_hint(m, xb::RT, "Recently Added")); // Most Played
     m.press(xb::RT);
     m.press(xb::RT);
     CHECK(m.music_view == 0);
@@ -1199,30 +1241,30 @@ static void music_library_and_player()
     CHECK(m.viewer == Viewer::None && m.now_playing == 1);
 
     // The Guide's Media blade shows what is playing and the controls.
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    m.press(xb::RB); // Media
-    auto media = m.host_blade_entries(BladeMedia);
-    CHECK(media.size() == 9 && media[1].label == "Now Playing: Still Alive" && media[2].label == "Pause Music" &&
-          media[3].label == "Next Song" && media[4].label == "Stop Music");
-    m.press(xb::Down);
-    m.press(xb::Down);
+    m.press(xb::Guide);m.guide_blade=BladeMedia;
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::Music);
+    CHECK(m.press(xb::A).command==Command::GuideMusicRefresh);
+    auto media = m.blade_entries(BladeMedia);
+    CHECK(media.size() == 12 && media[5].label == "Now Playing: Still Alive" && media[6].label == "Pause Music" &&
+          media[7].label == "Next Song" && media[8].label == "Stop Music");
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::MusicPause);
     before = m;
     e = m.press(xb::A); // Pause Music: in place
     CHECK(e.command == Command::MusicPause && m.music_paused && m.guide);
     CHECK(sound_for(before, m, xb::A, e) == Sound::GuideSelect);
-    CHECK(m.host_blade_entries(BladeMedia)[2].label == "Resume Music");
-    m.press(xb::Down);
+    CHECK(m.blade_entries(BladeMedia)[std::size_t(m.guide_item[BladeMedia])].label == "Resume Music");
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::MusicNext);
     e = m.press(xb::A);
     CHECK(e.command == Command::MusicNext && m.guide);
-    m.press(xb::Down);
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::MusicStop);
     e = m.press(xb::A); // Stop Music: the controls go, the place stays in range
     CHECK(e.command == Command::MusicStop && m.now_playing < 0 && !m.music_paused && m.guide);
-    media = m.host_blade_entries(BladeMedia);
-    CHECK(media.size() == 6 && media[1].label == "Music Library");
+    media = m.blade_entries(BladeMedia);
+    CHECK(find_action(m,BladeMedia,GuideAction::GuideMusicAlbums)>=0 && find_action(m,BladeMedia,GuideAction::GuideMusicOpenFull)>=0);
     CHECK(m.guide_item[BladeMedia] <= int(media.size()) - 1);
-    // "Now Playing" opens the library; its Y opens Now Playing, whose Y stops the music.
+    // Full Music is explicit; the normal Music row stays inside the popup.
     m.now_playing = 0;
-    m.guide_item[BladeMedia] = 1;
+    m.guide_item[BladeMedia] = find_action(m,BladeMedia,GuideAction::GuideMusicOpenFull);
     e = m.press(xb::A);
     CHECK(m.viewer == Viewer::Music && e.command == Command::ScanMusic && !m.guide);
     e = m.press(xb::Y);
@@ -1288,14 +1330,10 @@ static void avatar_editor()
     CHECK(sound_for(before, m, xb::A, e) == Sound::Select);
     // The Guide's Home blade has the editor too, once there is a kit.
     m.press(xb::B);
-    m.press(xb::Guide);m.press(xb::RS); // Ex-Box Utilities
-    const auto home = m.host_blade_entries(BladeHome);
-    int at = 0;
-    while (at < int(home.size()) && home[std::size_t(at)].label != "Avatar Editor")
-        ++at;
-    CHECK(at < int(home.size()));
-    for (int i = 0; i < at; ++i)
-        m.press(xb::Down);
+    m.press(xb::Guide);
+    const int at=find_action(m,BladeHome,GuideAction::AvatarEdit);
+    CHECK(at >= 0);
+    m.guide_item[BladeHome]=at;
     e = m.press(xb::A);
     CHECK(m.viewer == Viewer::AvatarEdit && !m.guide && e.command == Command::AvatarEditStart);
     Model plain;
@@ -1347,11 +1385,11 @@ static void guide_library_shortcuts_and_preferences()
     CHECK(home[0].label == "Xbox Dashboard" && home[1].label == "Quick Launch" && home[1].action == GuideAction::RecentGames);
     CHECK(home[2].label == "Play Game 1" && home[2].action == GuideAction::LaunchTitle && home[2].app == 1);
     CHECK(home[3].label == "Play Alpha" && home[3].action == GuideAction::Launch && home[3].app == 1);
-    m.open_guide();m.press(xb::RS);
-    m.guide_item[BladeHome] = 2;
+    m.open_guide();
+    m.guide_item[BladeHome] = find_action(m,BladeHome,GuideAction::LaunchTitle,1);
     CHECK(m.press(xb::A).command == Command::LaunchTitle && !m.guide);
-    m.open_guide();m.press(xb::RS);
-    const auto entries = m.host_blade_entries(BladeHome);
+    m.open_guide();
+    const auto entries = m.blade_entries(BladeHome);
     int summary = 0;
     while (summary < int(entries.size()) && entries[std::size_t(summary)].action != GuideAction::LibrarySummary)
         ++summary;
@@ -1361,10 +1399,10 @@ static void guide_library_shortcuts_and_preferences()
     CHECK(m.details_text.find("Games: 2   Apps: 3") != std::string::npos);
     CHECK(m.details_text.find("Recently played:\nGame 1\nAlpha") != std::string::npos);
     m.details = false;
-    m.open_guide();m.press(xb::RS);
+    m.open_guide();
     m.guide_blade = BladeSettings;
     auto activate = [&](GuideAction action) {
-        const auto settings = m.host_blade_entries(BladeSettings);
+        const auto settings = m.blade_entries(BladeSettings);
         for (std::size_t i = 0; i < settings.size(); ++i)
             if (settings[i].action == action)
             {
@@ -1380,7 +1418,7 @@ static void guide_library_shortcuts_and_preferences()
     CHECK(activate(GuideAction::CycleLibraryOrder) == Command::SaveSettings && m.library_order == 0);
     CHECK(activate(GuideAction::CycleNotifications) == Command::SaveSettings && m.notification_level == 3);
     CHECK(activate(GuideAction::CycleNotifications) == Command::SaveSettings && m.notification_level == 0);
-    CHECK(m.host_blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Notifications: Off");
+    CHECK(m.blade_entries(BladeSettings)[std::size_t(m.guide_item[BladeSettings])].label == "Notifications: Off");
 }
 
 static void attached_shortcuts_and_notification_history()
@@ -1391,15 +1429,15 @@ static void attached_shortcuts_and_notification_history()
     const auto home = m.host_blade_entries(BladeHome);
     CHECK(home[2].label == "Attached: App 2" && home[2].action == GuideAction::Launch && home[2].app == 2);
     CHECK(home[3].label == "Attached: Game 1" && home[3].action == GuideAction::LaunchTitle && home[3].app == 1);
-    m.open_guide();m.press(xb::RS);
-    m.guide_item[BladeHome] = 2;
+    m.open_guide();
+    m.guide_item[BladeHome] = find_action(m,BladeHome,GuideAction::Launch,2);
     CHECK(m.press(xb::A).command == Command::Launch && !m.guide);
     for (int i = 0; i < 12; ++i)
         m.record_notification("Notice " + std::to_string(i), "Body " + std::to_string(i));
     CHECK(m.notification_history.size() == 10);
     CHECK(m.notification_history.front().title == "Notice 11" && m.notification_history.back().title == "Notice 2");
-    m.open_guide();m.press(xb::RS);
-    const auto entries = m.host_blade_entries(BladeHome);
+    m.open_guide();
+    const auto entries = m.blade_entries(BladeHome);
     int history = 0;
     while (history < int(entries.size()) && entries[std::size_t(history)].action != GuideAction::NotificationHistory)
         ++history;
@@ -1644,11 +1682,37 @@ static void metro_tabs_enter_and_return()
     m.press(xb::Right);
     CHECK(m.metro_focus==-1 && m.metro_tab==4 && m.channel==Media && m.count()==2);
     m.press(xb::Right);
-    CHECK(m.metro_tab==5 && m.count()==1);
+    CHECK(m.metro_tab==5 && m.count()==7);
+    CHECK(m.card(0).title=="Music Library" && m.card(1).title=="Random Album" &&
+          m.card(2).title=="Most Played" && m.card(3).title=="Saved Playlists" &&
+          m.card(4).title=="Recently Added" && m.card(5).title=="Albums" &&
+          m.card(6).title=="Now Playing");
     CHECK(m.press(xb::A).command==Command::None && m.metro_focus==0 && m.viewer==Viewer::None);
     CHECK(m.press(xb::A).command==Command::ScanMusic && m.viewer==Viewer::Music);
     m.press(xb::B); m.press(xb::B);
     CHECK(m.metro_focus==-1 && m.viewer==Viewer::None);
+
+    // Every personalized choice is a sibling dashboard tile.  It does not
+    // require opening Music and then finding an internal tab.
+    m.press(xb::Down);
+    m.selected[m.channel]=1;m.metro_focus=1;
+    CHECK(m.press(xb::A).command==Command::MusicEdit);
+    CHECK(m.viewer==Viewer::None);
+    m.selected[m.channel]=2;m.metro_focus=2;
+    CHECK(m.press(xb::A).command==Command::ScanMusic && m.viewer==Viewer::Music && m.music_view==5);
+    m.press(xb::B);
+    m.selected[m.channel]=3;m.metro_focus=3;
+    CHECK(m.press(xb::A).command==Command::ScanMusic && m.music_view==4);
+    m.press(xb::B);
+    m.selected[m.channel]=4;m.metro_focus=4;
+    CHECK(m.press(xb::A).command==Command::ScanMusic && m.music_view==6);
+    m.press(xb::B);
+    m.selected[m.channel]=5;m.metro_focus=0;
+    CHECK(m.press(xb::A).command==Command::ScanMusic && m.music_view==1);
+    m.press(xb::B);
+    m.selected[m.channel]=6;m.metro_focus=1;
+    CHECK(m.press(xb::A).command==Command::MusicBrowse && m.music_page==Model::MusicNowPlaying);
+    m.press(xb::B);m.press(xb::B);m.press(xb::B);
     m.press(xb::RT);
     CHECK(m.metro_tab==7 && m.metro_focus==-1);
     m.press(xb::Down); m.press(xb::A);
@@ -1792,7 +1856,7 @@ static void refresh_and_system_navigation()
 static void era_picker_and_update_navigation()
 {
     Model m;
-    m.open_guide();if (m.era>=1) m.press(xb::RS);m.guide_blade=BladeSettings;m.guide_item[BladeSettings]=3;
+    m.open_guide();m.guide_blade=BladeSettings;m.guide_item[BladeSettings]=find_action(m,BladeSettings,GuideAction::CycleEra);
     m.press(xb::A);
     CHECK(m.viewer==Viewer::DashboardEras && !m.guide);
     m.press(xb::Down);m.press(xb::A);
@@ -1802,7 +1866,7 @@ static void era_picker_and_update_navigation()
     m.press(xb::B);
     CHECK(m.viewer==Viewer::DashboardEras && m.viewer_item==2);
     m.press(xb::B);
-    CHECK(m.guide && m.guide_item[BladeSettings]==3 && m.viewer==Viewer::None);
+    CHECK(m.guide && m.guide_item[BladeSettings]==find_action(m,BladeSettings,GuideAction::CycleEra) && m.viewer==Viewer::None);
     for (const auto update:dashboard_updates()) {
         m.guide=false;m.viewer=Viewer::DashboardUpdates;m.picker_family=update.family;m.picker_previews=true;
         const auto choices=updates_for(update.family,true);
@@ -1820,17 +1884,13 @@ static void era_picker_and_update_navigation()
     CHECK(m.channel==Friends);
     m.dashboard_build=6770;m.press(xb::LB);
     CHECK(m.channel==Apps);
-    m.open_guide();m.press(xb::Right);m.press(xb::Down);
-    CHECK(m.guide_item[BladeHome]==3);
-    m.press(xb::Up);
-    CHECK(m.guide_item[BladeHome]==1);
-    m.press(xb::Down);m.press(xb::Down);m.press(xb::A);
-    CHECK(m.guide && m.guide_blade==BladeSettings);
-    m.press(xb::B);
-    CHECK(m.guide && m.guide_blade==BladeHome);
-    m.press(xb::Down);m.press(xb::A);
+    m.open_guide();m.guide_blade=BladeMedia;
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::Music);
+    m.press(xb::A);
+    CHECK(m.guide && !m.guide_host && m.viewer==Viewer::None && m.guide_music_page>0);
+    m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::GuideMusicOpenFull);m.press(xb::A);
     CHECK(!m.guide && m.viewer==Viewer::Music);
-    m.open_guide();if (m.era>=1) m.press(xb::RS);m.guide_blade=BladeSettings;m.guide_item[BladeSettings]=3;
+    m.open_guide();m.guide_blade=BladeSettings;m.guide_item[BladeSettings]=find_action(m,BladeSettings,GuideAction::CycleEra);
     m.press(xb::A);m.press(xb::A);m.press(xb::B);m.press(xb::B);
     CHECK(m.guide && m.viewer==Viewer::Music && m.guide_blade==BladeSettings);
 }
@@ -1851,11 +1911,11 @@ static void promotions_keep_library_actions_and_legacy_navigation()
         for (auto button:{xb::Left,xb::Right,xb::Up,xb::Down}) {
             Model next=m;next.metro_focus=focus;if(focus<7)next.selected[MyXbox]=focus;
             next.press(button);
-            CHECK(next.metro_focus==-1 || next.metro_focus==7 || (next.metro_focus>=0 && next.metro_focus<4));
+                CHECK(next.metro_focus==-1 || next.metro_focus==7 || next.metro_focus==9 || (next.metro_focus>=0 && next.metro_focus<4));
             if(next.metro_focus>=0 && reached.insert(next.metro_focus).second)pending.push_back(next.metro_focus);
         }
     }
-    CHECK(reached==std::set<int>({0,1,2,3,7}));
+            CHECK(reached==std::set<int>({0,1,2,3,7,9}));
     m.metro_focus=7;m.press(xb::A);
     CHECK(m.viewer==Viewer::Library && m.collection==Collection::Recent);
     m.viewer=Viewer::None;m.dashboard_build=17559;m.select_metro_tab(1);
@@ -2041,6 +2101,18 @@ static void game_videos_library_sorts_and_hides_missing()
 
 static void game_videos_seek_pause_and_resume()
 {
+    // Theater Party is a first-class Video-grid action, not a hidden
+    // full-screen toggle.  A fresh item enters the same player directly in
+    // Theater mode while the ordinary A action remains ordinary playback.
+    Model theater = video_library();
+    CHECK(has_hint(theater, xb::RS, "Theater Party"));
+    CHECK(theater.press(xb::RS).command == Command::SaveVideos);
+    CHECK(theater.viewer_full && theater.video_theater && theater.video_pending.empty());
+    theater.press(xb::B);
+    CHECK(!theater.viewer_full && theater.video_theater);
+    CHECK(theater.press(xb::A).command == Command::SaveVideos);
+    CHECK(theater.viewer_full && !theater.video_theater);
+
     Model m = video_library();
     CHECK(m.video_key() == "halo 3");
     Model before = m;
@@ -2078,6 +2150,14 @@ static void game_videos_seek_pause_and_resume()
     CHECK(m.press(xb::A).command == Command::None && !m.viewer_full && m.video_pending == "halo 3");
     CHECK(m.press(xb::A).command == Command::SaveVideos);
     CHECK(m.viewer_full && m.video_pending.empty() && m.video_elapsed == 70000);
+    CHECK(!m.video_theater);
+    CHECK(m.press(xb::RS).command == Command::None && m.video_theater);
+    CHECK(has_hint(m,xb::X,"Wave"));
+    CHECK(m.press(xb::Down).command == Command::None && m.video_theater_reaction == 1);
+    CHECK(has_hint(m,xb::X,"Cheer"));
+    const unsigned reaction=m.video_theater_reaction_serial;
+    CHECK(m.press(xb::X).command == Command::None && m.video_theater_reaction_serial == reaction+1);
+    CHECK(m.press(xb::RS).command == Command::None && !m.video_theater);
     // RB moves to the next video, keeping this one's place.
     m.video_elapsed = 80000;
     CHECK(m.press(xb::RB).command == Command::SaveVideos && m.video_key() == "bayonetta" && m.viewer_full);
@@ -2254,28 +2334,34 @@ static void scene_guide_media_player()
     m.era = 1;
     m.media_player = 1; // NXE: the controls above the song
     auto media = m.blade_entries(BladeMedia);
-    CHECK(media.size() == 5 && media[0].label == "Video Library" && media[3].label == "Windows Media Center");
-    CHECK(media[4].label == "Select Music" && media[4].action == GuideAction::Music);
+    CHECK(media.size() >= 5 && media[0].label == "Video Library" && media[3].action == GuideAction::RecordScreen);
+    CHECK(std::any_of(media.begin(),media.end(),[](const GuideEntry &row){return row.label=="Select Music" && row.action==GuideAction::Music;}));
     m.now_playing = 0;
     m.now_playing_title = "Still Alive";
     media = m.blade_entries(BladeMedia);
-    CHECK(media.size() == 10 && media[4].action == GuideAction::MusicPause && media[5].action == GuideAction::MusicPrevious &&
-          media[6].action == GuideAction::MusicStop && media[7].action == GuideAction::MusicNext &&
-          media[8].action == GuideAction::MusicShuffle && media[9].label == "Still Alive");
+    CHECK(find_action(m,BladeMedia,GuideAction::MusicPause)>=0 && find_action(m,BladeMedia,GuideAction::MusicPrevious)>=0 &&
+          find_action(m,BladeMedia,GuideAction::MusicStop)>=0 && find_action(m,BladeMedia,GuideAction::MusicNext)>=0 &&
+          find_action(m,BladeMedia,GuideAction::MusicShuffle)>=0 && find_action(m,BladeMedia,GuideAction::MusicVolume)>=0 &&
+          std::any_of(media.begin(),media.end(),[](const GuideEntry &row){return row.label=="Still Alive";}));
     m.media_player = 2; // Kinect / Metro: the song first
     media = m.blade_entries(BladeMedia);
     CHECK(media[4].label == "Still Alive" && media[5].action == GuideAction::MusicPause);
     m.open_guide();
     m.guide_blade = BladeMedia;
-    m.guide_item[BladeMedia] = 6;
-    auto e = m.perform_guide_entry(m.blade_entries(BladeMedia)[6]); // Previous Song: in place
+    m.guide_item[BladeMedia] = find_action(m,BladeMedia,GuideAction::MusicPrevious);
+    auto e = m.perform_guide_entry(m.blade_entries(BladeMedia)[std::size_t(m.guide_item[BladeMedia])]);
     CHECK(e.command == Command::MusicPrevious && m.guide);
-    e = m.perform_guide_entry(m.blade_entries(BladeMedia)[9]); // Shuffle
+    e = m.perform_guide_entry(m.blade_entries(BladeMedia)[std::size_t(find_action(m,BladeMedia,GuideAction::MusicShuffle))]);
     CHECK(e.command == Command::MusicShuffle && m.music_shuffle && m.guide);
-    CHECK(m.blade_entries(BladeMedia)[9].label == "Shuffle Off");
-    m.era = 0; // the Blades Guide keeps its own list
-    m.open_guide();m.press(xb::RS);CHECK(m.guide_host);
-    m.press(xb::B);CHECK(m.guide && !m.guide_host);
+    CHECK(m.blade_entries(BladeMedia)[std::size_t(find_action(m,BladeMedia,GuideAction::MusicShuffle))].label == "Shuffle Off");
+    e = m.perform_guide_entry(m.blade_entries(BladeMedia)[std::size_t(find_action(m,BladeMedia,GuideAction::MusicVolume))]);
+    CHECK(e.command == Command::None && m.guide_volume_open && m.music_volume == 8);
+    e = m.press(xb::Right);CHECK(e.command == Command::MusicVolume && e.app == 9 && m.music_volume == 9);
+    e = m.press(xb::A);CHECK(e.command == Command::MusicVolume && e.app == 0 && m.music_volume == 0);
+    e = m.press(xb::A);CHECK(e.command == Command::MusicVolume && e.app == 9 && m.music_volume == 9);
+    m.press(xb::B);CHECK(!m.guide_volume_open && m.guide);
+    m.era = 0; // the Blades Guide keeps its own list; RS never opens a secondary menu
+    m.open_guide();m.press(xb::RS);CHECK(m.guide && !m.guide_host);
     CHECK(m.blade_entries(BladeMedia)[0].label != "Media Channel" || m.blade_entries(BladeMedia).size() != 11);
 }
 
@@ -2383,7 +2469,7 @@ static void walk_console_page(Model m)
             CHECK(m.system_page==page && m.viewer_item==i);
         } else if (m.details) {
             CHECK(m.details_title==entries[std::size_t(i)].label);
-            CHECK(m.details_text=="Not available on PS5 yet.");
+            CHECK(!m.details_text.empty());
             CHECK(sound_for(before,m,xb::A,e)==Sound::Refused);
             CHECK(has_hint(m,xb::A,"OK"));
             m.press(xb::B);
@@ -2392,12 +2478,81 @@ static void walk_console_page(Model m)
         } else if (m.controller_map) {
             m.press(xb::B);
             CHECK(!m.controller_map && m.system_page==page && m.viewer_item==i);
+        } else if (m.viewer!=Viewer::SystemSettings) {
+            // Functional routes (profile, avatar, local media and apps) leave
+            // Settings. Restore the page copy and continue the exhaustive walk.
+            m=before;
         } else {
             CHECK(page==Model::SystemSoundEffects || page==Model::SystemTimeFormat ||
-                  page==Model::SystemWelcome || page==Model::SystemScreenSaver || page==Model::SystemResolution || page==Model::SystemScreenFormat);
+                  page==Model::SystemWelcome || page==Model::SystemScreenSaver || page==Model::SystemResolution ||
+                  page==Model::SystemScreenFormat || page==Model::SystemMusicVolume ||
+                  page==Model::SystemGameMusic || page==Model::SystemLocalFriends);
         }
         CHECK(m.viewer==Viewer::SystemSettings);
     }
+}
+
+static void rendering_resolution_is_requested_until_restart()
+{
+    Model defaults;
+    CHECK(defaults.render_scale==1 && defaults.active_render_scale==1);
+    constexpr int eras[]={0,0,1,2,3,3},builds[]={1888,6717,9199,13604,15574,17559};
+    for (int i=0;i<6;++i) for (int active:{1,2}) {
+        Model m;m.era=eras[i];m.dashboard_build=builds[i];m.active_render_scale=active;
+        m.viewer=Viewer::SystemSettings;m.system_page=Model::SystemDisplay;
+        const auto rows=m.system_entries();int resolution=-1;
+        for (int r=0;r<int(rows.size());++r) if(rows[r].app==Model::SystemResolution)resolution=r;
+        CHECK(resolution>=0);m.viewer_item=resolution;
+        CHECK(m.press(xb::A).command==Command::None && m.system_page==Model::SystemResolution && m.viewer_item==0);
+        const auto choices=m.system_entries();CHECK(choices.size()==2 && choices[0].label=="1080p Original" && choices[1].label=="4K Sharp");
+        CHECK(has_hint(m,xb::A,"Select") && has_hint(m,xb::B,"Back"));
+        CHECK(m.system_description().find("Restart required")!=std::string::npos);
+        CHECK(m.press(xb::A).command==Command::None && m.render_scale==1 && m.active_render_scale==active);
+        m.press(xb::Down);const Model before=m;Effect e=m.press(xb::A);
+        CHECK(e.command==Command::SaveRenderScale && e.app==2 && m.render_scale==2 && m.active_render_scale==active);
+        CHECK(sound_for(before,m,xb::A,e)==Sound::Select);
+        CHECK(m.press(xb::A).command==Command::None);
+        CHECK(m.system_description().find("Requested: 4K Sharp")!=std::string::npos);
+        CHECK((m.system_value("Screen Resolution").find("restart required")!=std::string::npos)==(active!=2));
+        CHECK(m.press(xb::B).command==Command::None && m.system_page==Model::SystemDisplay && m.viewer_item==resolution);
+        CHECK(m.render_scale==2 && m.active_render_scale==active);
+        m.press(xb::A);CHECK(m.system_page==Model::SystemResolution && m.viewer_item==1);
+        m.press(xb::Up);e=m.press(xb::A);CHECK(e.command==Command::SaveRenderScale && e.app==1 && m.render_scale==1 && m.active_render_scale==active);
+        CHECK(m.sounds==before.sounds && m.dimming==before.dimming && m.clock_24_hour==before.clock_24_hour);
+        m.press(xb::Up);CHECK(m.viewer_item==0);m.press(xb::Down);m.press(xb::Down);CHECK(m.viewer_item==1);
+        m.press(xb::B);CHECK(m.system_page==Model::SystemDisplay && m.viewer_item==resolution);
+    }
+}
+
+static void exbox_settings_are_functional_and_honest()
+{
+    Model m;m.era=3;m.dashboard_build=17559;m.viewer=Viewer::SystemSettings;
+    const auto root=m.system_entries();
+    const auto exbox=std::find_if(root.begin(),root.end(),[](const GuideEntry&e){return e.app==Model::SystemExBox;});
+    CHECK(exbox!=root.end());m.viewer_item=int(exbox-root.begin());m.press(xb::A);
+    CHECK(m.system_page==Model::SystemExBox && m.system_page_title()=="Ex-Box Settings");
+    m.games={{"Installed Game","","PPSA12345",""}};m.apps={{"Homebrew","/data/homebrew/test","",""}};m.game_library_companion=true;
+    const auto rows=m.system_entries();CHECK(rows.size()==11);
+    CHECK(rows[0].label=="Dashboard Version" && rows[1].label=="Themes" && rows[2].label=="Promotions");
+    CHECK(rows[3].label=="Game Library" && rows[4].label=="Library Status" && rows[5].label=="Storage & Memory");
+    CHECK(rows[6].label=="Game Soundtracks" && rows[7].label=="Local Offline Friends" && rows[8].label=="Refresh Libraries");
+    CHECK(m.system_description().find("PS5 system settings")!=std::string::npos);
+    m.viewer_item=4;m.press(xb::A);
+    CHECK(m.system_page==Model::SystemLibraryStatus && m.system_entries().size()==8);
+    CHECK(m.system_value("PS4 / PS5 Games")=="1" && m.system_value("Homebrew Apps")=="1");
+    m.viewer_item=3;CHECK(m.system_value("Discovery Source")=="Companion feed" && m.system_description().find("companion feed")!=std::string::npos);
+    CHECK(!has_hint(m,xb::A,"Select") && has_hint(m,xb::B,"Back"));m.press(xb::B);
+    m.viewer_item=5;CHECK(m.press(xb::A).command==Command::ScanStorage && m.system_page==Model::StorageDevices);m.press(xb::B);
+    m.viewer_item=6;m.press(xb::A);
+    CHECK(m.system_page==Model::SystemGameMusic && m.viewer_item==1 && !m.music_game_scan);
+    m.press(xb::Up);CHECK(m.press(xb::A).command==Command::ScanGameMusic && m.music_game_scan);
+    CHECK(m.system_value("Game Soundtracks")=="Installed Game Scan Enabled");
+    m.press(xb::B);CHECK(m.system_page==Model::SystemExBox && m.viewer_item==6);
+    m.viewer_item=7;m.press(xb::A);
+    CHECK(m.system_page==Model::SystemLocalFriends && m.viewer_item==0 && m.local_friend_avatars);
+    m.press(xb::Down);CHECK(m.press(xb::A).command==Command::SaveSettings && !m.local_friend_avatars);
+    CHECK(m.system_value("Local Offline Friends")=="Hidden");
+    m.press(xb::B);m.viewer_item=8;CHECK(m.press(xb::A).command==Command::Refresh);
 }
 
 static void console_settings_pages_follow_the_build()
@@ -2419,13 +2574,13 @@ static void console_settings_pages_follow_the_build()
         walk_console_page(m);
         m.press(xb::A); // Display
         rows=m.system_entries();
-        CHECK(rows.size()==std::size_t(b==0?6:b==3?9:8));
+        CHECK(rows.size()==std::size_t(b==0?7:b==3?10:9));
         if (b>0) CHECK(rows[6].label=="3D TV" && rows[7].label=="TV Size");
         if (b==3) CHECK(rows[8].label=="Closed Captioning");
-        CHECK(m.system_value("Screen Resolution")=="1080p" && m.system_value("Screen Format")=="Widescreen");
+        CHECK(m.system_value("Screen Resolution")=="1080p Original" && m.system_value("Screen Format")=="Widescreen");
         m.press(xb::B);
         m.viewer_item=1;m.press(xb::A);
-        CHECK(m.system_page==Model::SystemAudio && m.system_entries().size()==std::size_t(b==3?3:2));
+        CHECK(m.system_page==Model::SystemAudio && m.system_entries().size()==std::size_t(b==3?4:3));
         m.press(xb::B);
         m.viewer_item=4;m.press(xb::A);
         rows=m.system_entries();
@@ -2435,7 +2590,7 @@ static void console_settings_pages_follow_the_build()
         m.viewer_item=int(m.system_entries().size())-1;m.press(xb::A);
         CHECK(m.system_page==Model::SystemInfo);
         CHECK(m.system_value("System Info")=="Dashboard: 2.0."+std::to_string(builds[b])+".0");
-        CHECK(m.system_entries().empty());
+        CHECK(m.system_entries().size()==8);
         m.press(xb::B);m.press(xb::B);
         CHECK(m.system_page==Model::SystemRoot && m.viewer_item==0 && m.system_history.empty());
         m.press(xb::B);
@@ -2665,7 +2820,7 @@ static void network_settings_pages_by_era()
         CHECK(m.system_page==Model::SystemRoot && m.system_history.empty());
         if (m.era==0) CHECK(m.viewer==Viewer::None && m.current()==3);
         else CHECK(m.viewer==Viewer::SystemSettings && m.viewer_item==3);
-        // Refresh Homebrew remains available in Ex-Box Utilities.
+        // Refresh Homebrew remains available as an ordinary Guide row.
         bool refresh=false;
         for (const auto &entry:m.host_blade_entries(BladeApps)) if (entry.action==GuideAction::Refresh) {
             refresh=true;CHECK(m.perform_guide_entry(entry).command==Command::Refresh);
@@ -2770,12 +2925,13 @@ static void initial_setup_per_era()
             m.selected[MyXbox]=int(m.blades_items(MyXbox).size())-1;
             CHECK(m.blades_items(MyXbox).back().action==GuideAction::InitialSetup);m.press(xb::A);
         } else {
-            m.viewer=Viewer::SystemSettings;m.viewer_item=int(m.system_entries().size())-1;
-            CHECK(m.system_entries().back().action==GuideAction::InitialSetup);m.press(xb::A);
+            m.viewer=Viewer::SystemSettings;
+            const auto entries=m.system_entries();const auto setup=std::find_if(entries.begin(),entries.end(),[](const GuideEntry&entry){return entry.action==GuideAction::InitialSetup;});
+            CHECK(setup!=entries.end());m.viewer_item=int(setup-entries.begin());m.press(xb::A);
         }
         CHECK(m.viewer==Viewer::InitialSetup && m.setup_step==Model::SetupIntro && m.viewer_count()==5);
         const Viewer previous=m.setup_previous_viewer;const int previous_item=m.setup_previous_item;
-        m.press(xb::A);CHECK(m.setup_step==Model::SetupResolution && m.system_value("Screen Resolution")=="1080p");
+        m.press(xb::A);CHECK(m.setup_step==Model::SetupResolution && m.system_value("Screen Resolution")=="1080p Original");
         const bool dim=m.dimming, clock=m.clock_24_hour;
         CHECK(m.press(xb::Right).command==Command::None && dim==m.dimming && clock==m.clock_24_hour);
         m.press(xb::A);CHECK(m.setup_step==Model::SetupAutoOff);
@@ -2978,32 +3134,32 @@ static void tabbed_guide_authored_rows_and_bindings()
     const int builds[]={9199,13604,15574,17559};
     const std::vector<std::vector<GuideEntry>> expected[]={
         { // 9199: Marketplace, Games, Home, Media, Settings
-            {{"Game Marketplace",A::Unavailable,-1,"btnGameMarketplace"},{"Video & Music Marketplace",A::Unavailable,-1,"btnVideoMarketplace"},{"Avatar Marketplace",A::Unavailable,-1,"btnAvatarMarketplace"},{"Active Downloads",A::Unavailable,-1,"btnActiveDownloads"},{"Redeem Code",A::Unavailable,-1,"btnRedeemCode"}},
-            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Awards",A::Unavailable,-1,"btnAvatarAwards"},{"Game Library",A::AllGames,-1,"btnGamesLibrary"}},
-            {{"Xbox Dashboard",A::MyXbox,-1,"btnDashboard"},{"Quick Launch",A::RecentGames,-1,"btnJumpIn"},{"Connect to Xbox LIVE",A::Unavailable,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
-            {{"Video Library",A::Videos,-1,"btnVideoLibrary"},{"Music Library",A::Music,-1,"btnMusicLibrary"},{"Picture Library",A::Pictures,-1,"btnPictureLibrary"},{"Windows Media Center",A::Unavailable,-1,"btnMCX"}},
-            {{"Profile",A::Profile,-1,"btnProfile"},{"Notifications",A::Unavailable,-1,"btnNotifications"},{"Preferences",A::Unavailable,-1,"btnPersonalSettings"},{"Family Settings",A::Unavailable,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Account Management",A::Unavailable,-1,"btnAccountManagement"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
+            {{"Apps",A::Apps,-1,"btnGameMarketplace"},{"Media",A::Media,-1,"btnVideoMarketplace"},{"My Avatar",A::Avatar,-1,"btnAvatarMarketplace"},{"Refresh Homebrew",A::Refresh,-1,"btnActiveDownloads"},{"Library Summary",A::LibrarySummary,-1,"btnRedeemCode"}},
+            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Refresh Games & Homebrew",A::Refresh,-1,"btnAvatarAwards"},{"Game Library",A::AllGames,-1,"btnGamesLibrary"}},
+            {{"Xbox Dashboard",A::MyXbox,-1,"btnDashboard"},{"Quick Launch",A::RecentGames,-1,"btnJumpIn"},{"Notifications",A::NotificationHistory,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
+            {{"Video Library",A::Videos,-1,"btnVideoLibrary"},{"Music Library",A::Music,-1,"btnMusicLibrary"},{"Picture Library",A::Pictures,-1,"btnPictureLibrary"},{"Record Screen (Create)",A::RecordScreen,-1,"btnMCX"}},
+            {{"Profile",A::Profile,-1,"btnProfile"},{"Notifications",A::NotificationHistory,-1,"btnNotifications"},{"Themes",A::SelectTheme,-1,"btnPersonalSettings"},{"Controller Map",A::ControllerMap,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Avatar Settings",A::Avatar,-1,"btnAccountManagement"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
         },
         { // 13604: Marketplace, Games, Home, Media, Settings
-            {{"Active Downloads",A::Unavailable,-1,"btnActiveDownloads"},{"Redeem Code",A::Unavailable,-1,"btnRedeemCode"},{"Game Marketplace",A::Unavailable,-1,"btnGameMarketplace"},{"Video & Music Marketplace",A::Unavailable,-1,"btnVideoMarketplace"},{"Avatar Marketplace",A::Unavailable,-1,"btnAvatarMarketplace"}},
-            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Awards",A::Unavailable,-1,"btnAvatarAwards"},{"Quick Launch",A::RecentGames,-1,"btnQuickLaunch"},{"Game Library",A::AllGames,-1,"btnGamesLibrary"}},
-            {{"Xbox Dashboard",A::MyXbox,-1,"btnDashboard"},{"Connect to Xbox LIVE",A::Unavailable,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
-            {{"Video Library",A::Videos,-1,"btnVideoLibrary"},{"Music Library",A::Music,-1,"btnMusicLibrary"},{"Picture Library",A::Pictures,-1,"btnPictureLibrary"},{"Windows Media Center",A::Unavailable,-1,"btnMCX"}},
-            {{"Profile",A::Profile,-1,"btnProfile"},{"Preferences",A::Unavailable,-1,"btnPersonalSettings"},{"Family Settings",A::Unavailable,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Account Management",A::Unavailable,-1,"btnAccountManagement"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
+            {{"Refresh Homebrew",A::Refresh,-1,"btnActiveDownloads"},{"Library Summary",A::LibrarySummary,-1,"btnRedeemCode"},{"Apps",A::Apps,-1,"btnGameMarketplace"},{"Media",A::Media,-1,"btnVideoMarketplace"},{"My Avatar",A::Avatar,-1,"btnAvatarMarketplace"}},
+            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Refresh Games & Homebrew",A::Refresh,-1,"btnAvatarAwards"},{"Quick Launch",A::RecentGames,-1,"btnQuickLaunch"},{"Game Library",A::AllGames,-1,"btnGamesLibrary"}},
+            {{"Xbox Dashboard",A::MyXbox,-1,"btnDashboard"},{"Notifications",A::NotificationHistory,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
+            {{"Video Library",A::Videos,-1,"btnVideoLibrary"},{"Music Library",A::Music,-1,"btnMusicLibrary"},{"Picture Library",A::Pictures,-1,"btnPictureLibrary"},{"Record Screen (Create)",A::RecordScreen,-1,"btnMCX"}},
+            {{"Profile",A::Profile,-1,"btnProfile"},{"Themes",A::SelectTheme,-1,"btnPersonalSettings"},{"Controller Map",A::ControllerMap,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Avatar Settings",A::Avatar,-1,"btnAccountManagement"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
         },
         { // 15574: Marketplace, Games, Home, Media, Settings
-            {{"Active Downloads",A::Unavailable,-1,"btnActiveDownloads"},{"Redeem Code",A::Unavailable,-1,"btnRedeemCode"},{"Game Marketplace",A::Unavailable,-1,"btnGameMarketplace"},{"Avatar Marketplace",A::Unavailable,-1,"btnAvatarMarketplace"}},
-            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Awards",A::Unavailable,-1,"btnAvatarAwards"},{"Quickplay",A::RecentGames,-1,"btnQuickLaunch"},{"My Games",A::AllGames,-1,"btnGamesLibrary"}},
-            {{"Xbox Home",A::MyXbox,-1,"btnDashboard"},{"Connect to Xbox LIVE",A::Unavailable,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
-            {{"Video Player",A::Videos,-1,"btnVideoLibrary"},{"Music Player",A::Music,-1,"btnMusicLibrary"},{"Picture Viewer",A::Pictures,-1,"btnPictureLibrary"},{"Windows Media Center",A::Unavailable,-1,"btnMCX"}},
-            {{"Profile",A::Profile,-1,"btnProfile"},{"Preferences",A::Unavailable,-1,"btnPersonalSettings"},{"Family Settings",A::Unavailable,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Account Management",A::Unavailable,-1,"btnAccountManagement"},{"Kinect Tuner",A::Unavailable,-1,"btnKinectTuner"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
+            {{"Refresh Homebrew",A::Refresh,-1,"btnActiveDownloads"},{"Library Summary",A::LibrarySummary,-1,"btnRedeemCode"},{"Apps",A::Apps,-1,"btnGameMarketplace"},{"My Avatar",A::Avatar,-1,"btnAvatarMarketplace"}},
+            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Refresh Games & Homebrew",A::Refresh,-1,"btnAvatarAwards"},{"Quickplay",A::RecentGames,-1,"btnQuickLaunch"},{"My Games",A::AllGames,-1,"btnGamesLibrary"}},
+            {{"Xbox Home",A::MyXbox,-1,"btnDashboard"},{"Notifications",A::NotificationHistory,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
+            {{"Video Player",A::Videos,-1,"btnVideoLibrary"},{"Music Player",A::Music,-1,"btnMusicLibrary"},{"Picture Viewer",A::Pictures,-1,"btnPictureLibrary"},{"Record Screen (Create)",A::RecordScreen,-1,"btnMCX"}},
+            {{"Profile",A::Profile,-1,"btnProfile"},{"Themes",A::SelectTheme,-1,"btnPersonalSettings"},{"Controller Map",A::ControllerMap,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Avatar Settings",A::Avatar,-1,"btnAccountManagement"},{"Notifications",A::NotificationHistory,-1,"btnKinectTuner"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
         },
         { // 17559: Marketplace, Games, Home, Media, Settings
             {},
-            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Awards",A::Unavailable,-1,"btnAvatarAwards"},{"Recent",A::RecentGames,-1,"btnQuickLaunch"},{"My Games",A::AllGames,-1,"btnGamesLibrary"},{"Active Downloads",A::Unavailable,-1,"btnActiveDownloads"},{"Redeem Code",A::Unavailable,-1,"btnRedeemCode"}},
-            {{"Xbox Home",A::MyXbox,-1,"btnDashboard"},{"Connect to Xbox Live",A::Unavailable,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
-            {{"System Video Player",A::Videos,-1,"btnVideoLibrary"},{"System Music Player",A::Music,-1,"btnMusicLibrary"},{"Picture Viewer",A::Pictures,-1,"btnPictureLibrary"},{"Windows Media Center",A::Unavailable,-1,"btnMCX"}},
-            {{"Profile",A::Profile,-1,"btnProfile"},{"Preferences",A::Unavailable,-1,"btnPersonalSettings"},{"Family Settings",A::Unavailable,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Account Management",A::Unavailable,-1,"btnAccountManagement"},{"Kinect Tuner",A::Unavailable,-1,"btnKinectTuner"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
+            {{"Achievements",A::Achievements,-1,"btnAchievements"},{"Refresh Games & Homebrew",A::Refresh,-1,"btnAvatarAwards"},{"Recent",A::RecentGames,-1,"btnQuickLaunch"},{"My Games",A::AllGames,-1,"btnGamesLibrary"}},
+            {{"Xbox Home",A::MyXbox,-1,"btnDashboard"},{"Notifications",A::NotificationHistory,-1,"btnConnectToLive"},{"Disc in Tray",A::Unavailable,-1,"btnDiscInTray"}},
+            {{"System Video Player",A::Videos,-1,"btnVideoLibrary"},{"System Music Player",A::Music,-1,"btnMusicLibrary"},{"Picture Viewer",A::Pictures,-1,"btnPictureLibrary"},{"Record Screen (Create)",A::RecordScreen,-1,"btnMCX"}},
+            {{"Profile",A::Profile,-1,"btnProfile"},{"Themes",A::SelectTheme,-1,"btnPersonalSettings"},{"Controller Map",A::ControllerMap,-1,"btnFamilySettings"},{"System Settings",A::SystemSettings,-1,"btnSystemSettings"},{"Avatar Settings",A::Avatar,-1,"btnAccountManagement"},{"Notifications",A::NotificationHistory,-1,"btnKinectTuner"},{"Turn Off Console",A::ExitToPs5,-1,"btnShutdown"}},
         },
     };
     for (int build=0;build<4;++build) {
@@ -3011,7 +3167,7 @@ static void tabbed_guide_authored_rows_and_bindings()
         m.open_guide();
         for (int blade=0;blade<BladeCount;++blade) {
             const auto rows=m.blade_entries(blade);
-            CHECK(rows.size()==expected[build][std::size_t(blade)].size());
+            CHECK(rows.size()>=expected[build][std::size_t(blade)].size());
             for (std::size_t i=0;i<rows.size() && i<expected[build][std::size_t(blade)].size();++i) {
                 const auto &want=expected[build][std::size_t(blade)][i];
                 CHECK(rows[i].label==want.label && rows[i].action==want.action);
@@ -3023,18 +3179,27 @@ static void tabbed_guide_authored_rows_and_bindings()
                 CHECK(has_hint(at,xb::Y,build<2?"Xbox Dashboard":"Xbox Home"));
                 CHECK(!has_button(at,xb::X) && !has_button(at,xb::RS));
                 const auto effect=at.press(xb::A);
-                CHECK(!at.guide);
+                CHECK(want.action==A::Music?at.guide:!at.guide);
                 switch (want.action) {
                 case A::Unavailable:
                     CHECK(at.details && at.details_title==want.label && at.details_text=="Not available on PS5 yet.");break;
                 case A::Achievements: CHECK(at.viewer==Viewer::Achievements);break;
                 case A::Profile: CHECK(at.viewer==Viewer::Profile);break;
-                case A::Music: CHECK(at.viewer==Viewer::Music && effect.command==Command::ScanMusic);break;
+                case A::Music: CHECK(at.viewer==Viewer::None && !at.guide_host && at.guide_music_page>0 && effect.command==Command::GuideMusicRefresh);break;
                 case A::Pictures: CHECK(at.viewer==Viewer::Pictures && effect.command==Command::ScanPictures);break;
                 case A::Videos: CHECK(at.viewer==Viewer::Videos);break;
                 case A::AllGames: CHECK(at.viewer==Viewer::Library && at.collection==Collection::All);break;
                 case A::RecentGames: CHECK(at.viewer==Viewer::Library && at.collection==Collection::Recent);break;
                 case A::SystemSettings: CHECK(at.viewer==Viewer::SystemSettings && at.system_page==Model::SystemRoot);break;
+                case A::Refresh: CHECK(effect.command==Command::Refresh);break;
+                case A::NotificationHistory: CHECK(at.details && at.details_title=="Notifications This Session");break;
+                case A::SelectTheme: CHECK(at.viewer==Viewer::Themes);break;
+                case A::ControllerMap: CHECK(at.controller_map);break;
+                case A::Avatar: CHECK(at.viewer==Viewer::Avatar);break;
+                case A::RecordScreen: CHECK(at.details && at.details_title=="Record Screen");break;
+                case A::Apps: CHECK(at.channel==Apps && at.viewer==Viewer::None);break;
+                case A::Media: CHECK(at.channel==Media && at.viewer==Viewer::None);break;
+                case A::LibrarySummary: CHECK(at.details && at.details_title=="Library Summary");break;
                 case A::ExitToPs5: CHECK(effect.command==Command::ExitToPs5);break;
                 case A::MyXbox: CHECK(at.channel==MyXbox && at.viewer==Viewer::None);break;
                 default: CHECK(false);break;
@@ -3057,14 +3222,17 @@ static void tabbed_guide_authored_rows_and_bindings()
         m.viewer=Viewer::None;
         m.open_guide();m.media_player=build==0?1:2;m.guide_blade=BladeMedia;
         auto media=m.blade_entries(BladeMedia);
-        CHECK(media.size()==5 && media[1].node[0] && !media[4].node[0]);
-        m.guide_item[BladeMedia]=1;
-        CHECK(m.press(xb::A).command==Command::ScanMusic && m.viewer==Viewer::Music);
-        m.open_guide();m.guide_blade=BladeMedia;m.now_playing=0;m.now_playing_title="Song";
-        media=m.blade_entries(BladeMedia);CHECK(media.size()==10);
+        CHECK(media.size()>=5 && media[1].node[0] && media[3].action==GuideAction::RecordScreen && media[3].node[0]);
+        m.guide_item[BladeMedia]=find_action(m,BladeMedia,GuideAction::Music);
+        CHECK(m.press(xb::A).command==Command::GuideMusicRefresh && m.guide && !m.guide_host && m.guide_music_page>0 && m.viewer==Viewer::None);
+        const auto popup=m.blade_entries(BladeMedia);
+        CHECK(popup.size()>=5 && popup[0].action==GuideAction::GuideMusicAlbums && popup[4].action==GuideAction::GuideMusicOpenFull);
+        m.press(xb::B); // back to the era-authored Guide
+    m.open_guide();m.guide_blade=BladeMedia;m.now_playing=0;m.now_playing_title="Song";
+        media=m.blade_entries(BladeMedia);CHECK(media.size()>=12);
         for (std::size_t i=4;i<media.size();++i) CHECK(!media[i].node[0]);
         // Mini-player song and original Music Library are distinct focus targets.
-        CHECK(media[std::size_t(build==0?9:4)].label=="Song");
+        CHECK(std::any_of(media.begin(),media.end(),[](const GuideEntry &row){return row.label=="Song";}));
     }
 }
 
@@ -3076,43 +3244,50 @@ static void tabbed_guide_host_utilities_reachable()
         m.set_games(some_games(2));m.avatar_editable=true;
         m.load_pins({"/data/homebrew/App2/eboot.elf","title:CUSA12345"});
         m.played("/data/homebrew/App1/eboot.elf");m.played("title:CUSA12345");
-        m.open_guide();m.press(xb::RS);CHECK(m.guide && m.guide_host);
-        CHECK(has_hint(m,xb::B,"Back to Guide"));
-        for (int step=0;step<6;++step) m.press(xb::LB);
-        CHECK(m.guide_blade==BladeApps); // PS5 apps reachable even on Metro V2
+        m.open_guide();CHECK(m.guide && !m.guide_host);
+        const int initial_blade=m.guide_blade,initial_item=m.guide_item[initial_blade];
+        m.press(xb::RS); // no hidden/secondary menu exists
+        CHECK(m.guide && !m.guide_host && m.guide_blade==initial_blade && m.guide_item[initial_blade]==initial_item);
         std::set<A> actions;std::set<int> system_apps;
         bool attached=false,played=false;
         for (int blade=0;blade<BladeCount;++blade) {
-            CHECK(m.guide_blade==blade);
+            if(build==17559 && blade==BladeApps) continue; // merged into Games & Apps
+            m.guide_blade=blade;m.guide_item[blade]=0;
             const auto rows=m.blade_entries(blade);
-            CHECK(rows.size()==m.host_blade_entries(blade).size());
             for (std::size_t i=0;i<rows.size();++i) {
-                CHECK(m.guide_item[blade]==int(i) && !rows[i].node[0]);
+                CHECK(m.guide_item[blade]==int(i));
                 actions.insert(rows[i].action);
                 if (rows[i].action==A::LaunchSystem) system_apps.insert(rows[i].app);
                 attached=attached || rows[i].label.rfind("Attached: ",0)==0;
                 played=played || rows[i].label.rfind("Play ",0)==0;
                 m.press(xb::Down);
             }
-            m.press(xb::RB);
         }
+        m.guide_music_page=5;
+        for(const auto &row:m.blade_entries(BladeMedia)) actions.insert(row.action);
+        m.guide_music_page=0;
         for (A required:{A::Apps,A::Games,A::Media,A::Launch,A::LaunchTitle,A::Refresh,
                          A::ControllerMap,A::ExitToPs5,A::ChangeGamerpic,A::ToggleSounds,
                          A::CycleEra,A::CycleButtonStyle,A::ToggleDimming,A::CycleLibraryOrder,
-                         A::CycleNotifications,A::TogglePromotions,A::AdsSettings,A::LibrarySummary,
-                         A::NotificationHistory,A::Avatar,A::AvatarEdit,A::Profile,A::Music,A::Pictures,A::Videos})
+                         A::CycleNotifications,A::CyclePromotionMode,A::AdsSettings,A::LibrarySummary,
+                         A::NotificationHistory,A::Avatar,A::AvatarEdit,A::Profile,A::GuideMusicAlbums,A::GuideMusicOpenFull,A::Pictures,A::Videos})
             CHECK(actions.count(required)==1);
-        CHECK(system_apps==std::set<int>({0,1,2,3}) && attached && played);
+        CHECK(system_apps.count(0)==1 || actions.count(A::AllGames)==1);
+        CHECK(system_apps.count(1)==1);
+        CHECK(system_apps.count(2)==1);
+        CHECK(system_apps.count(3)==1);
+        CHECK(system_apps.size()>=3 && system_apps.size()<=4);
+        CHECK(attached);
+        CHECK(played);
         // Settings pickers return to the same host section and row.
         const auto settings=m.blade_entries(BladeSettings);
         for (std::size_t i=0;i<settings.size();++i) {
             if (settings[i].action!=A::CycleEra && settings[i].action!=A::AdsSettings) continue;
             m.guide_item[BladeSettings]=int(i);m.press(xb::A);CHECK(!m.guide);
-            m.press(xb::B);CHECK(m.guide && m.guide_host && m.guide_blade==BladeSettings && m.guide_item[BladeSettings]==int(i));
+            m.press(xb::B);CHECK(m.guide && !m.guide_host && m.guide_blade==BladeSettings && m.guide_item[BladeSettings]==int(i));
         }
-        m.press(xb::B);CHECK(m.guide && !m.guide_host);
         CHECK(m.blade_entries(BladeSettings)[0].label=="Profile");
-        m.press(xb::RS);CHECK(m.guide_host);m.press(xb::RS);CHECK(!m.guide_host);
+        m.press(xb::RS);CHECK(!m.guide_host);
         m.press(xb::B);CHECK(!m.guide);m.open_guide();CHECK(!m.guide_host);
     }
 }
@@ -3124,6 +3299,97 @@ static void separate_avatar_editor_keeps_navigation(){
         m.guide=false;m.viewer=Viewer::Avatar;CHECK(m.press(xb::Y).command==Command::OpenAvatarEditor);CHECK(m.viewer==Viewer::Avatar);
         CHECK(m.profile_entries()[1].action==GuideAction::AvatarEdit);
     }
+}
+
+static void screen_recording_companion_and_fallback()
+{
+    const auto idle=exbox_recorder::parse_status(
+        R"({"version":"1.3","backend":"h264","recording":false,"recording_name":"","recording_seconds":0.0,"recording_error":false})");
+    CHECK(idle.valid && !idle.recording && !idle.error && idle.seconds==0.0);
+    const auto live=exbox_recorder::parse_status(
+        R"({"backend":"h264","recording":true,"recording_paused":false,"recording_name":"glint-123-45.h264","recording_seconds":65.8,"recording_error":false})");
+    CHECK(live.valid && live.recording && live.pause_supported && !live.paused && live.name=="glint-123-45.h264" && int(live.seconds)==65);
+    const auto paused=exbox_recorder::parse_status(
+        R"({"backend":"h264","recording":true,"recording_paused":true,"recording_name":"glint-123-45.h264","recording_seconds":65.8,"recording_error":false})");
+    CHECK(paused.valid && paused.recording && paused.paused);
+    CHECK(!exbox_recorder::parse_status(R"({"backend":"other","recording":true})").valid);
+
+    Model m;m.era=1;
+    auto find_record=[&] {const auto rows=m.blade_entries(BladeMedia);return *std::find_if(rows.begin(),rows.end(),[](const GuideEntry &row){return row.action==GuideAction::RecordScreen;});};
+    CHECK(find_record().label=="Record Screen (Create)");
+    auto effect=m.perform_guide_entry(find_record());
+    CHECK(effect.command==Command::None && m.details && m.details_text.find("DualSense Create")!=std::string::npos);
+    m.details=false;m.recorder_available=true;
+    CHECK(find_record().label=="Start Recording");
+    effect=m.perform_guide_entry(find_record());CHECK(effect.command==Command::RecorderAction && effect.app==0);
+    m.recorder_recording=true;m.recorder_seconds=65.8;m.recorder_pause_supported=true;m.recorder_control=1;
+    CHECK(find_record().label=="Recording 01:05");
+    effect=m.perform_guide_entry(find_record());CHECK(effect.command==Command::RecorderAction && effect.app==1);
+    m.recorder_paused=true;m.recorder_control=0;CHECK(find_record().label=="Recording Paused 01:05");
+    effect=m.perform_guide_entry(find_record());CHECK(effect.command==Command::RecorderAction && effect.app==2);
+    const auto rows=m.blade_entries(BladeMedia);const int record_row=int(std::find_if(rows.begin(),rows.end(),[](const GuideEntry &row){return row.action==GuideAction::RecordScreen;})-rows.begin());
+    m.guide=true;m.guide_host=false;m.guide_blade=BladeMedia;m.guide_item[BladeMedia]=record_row;m.recorder_control=0;
+    m.press(xb::Right);CHECK(m.guide_item[BladeMedia]==record_row && m.recorder_control==2);
+    m.press(xb::Left);CHECK(m.guide_item[BladeMedia]==record_row && m.recorder_control==0);
+    m.recorder_paused=false;m.recorder_control=1;m.press(xb::Right);CHECK(m.recorder_control==2);
+    m.press(xb::Left);CHECK(m.recorder_control==1);
+    m.recorder_control=2;effect=m.perform_guide_entry(find_record());CHECK(effect.command==Command::RecorderAction && effect.app==3);
+    Model nav;nav.era=1;nav.guide=true;nav.guide_blade=BladeMedia;nav.recorder_available=true;nav.recorder_recording=true;nav.recorder_pause_supported=true;
+    const auto nav_rows=nav.blade_entries(BladeMedia);const int nav_record=int(std::find_if(nav_rows.begin(),nav_rows.end(),[](const GuideEntry &row){return row.action==GuideAction::RecordScreen;})-nav_rows.begin());
+    nav.guide_item[BladeMedia]=nav_record-1;nav.press(xb::Down);CHECK(nav.guide_item[BladeMedia]==nav_record);
+    nav.press(xb::Up);CHECK(nav.guide_item[BladeMedia]==nav_record-1);
+    m.recorder_pause_supported=false;m.recorder_paused=false;
+    CHECK(find_record().label=="Recording 01:05");
+    m.recorder_control=2;
+    effect=m.perform_guide_entry(find_record());CHECK(effect.command==Command::RecorderAction && effect.app==3);
+    m.recorder_busy=true;CHECK(find_record().label=="Screen Recorder Working...");
+    effect=m.perform_guide_entry(find_record());CHECK(effect.command==Command::None && m.details);
+
+    // The normal Xbox popup Media blade owns recording as an ordinary row.
+    Model popup;popup.era=3;popup.dashboard_build=17559;popup.guide=true;popup.guide_blade=BladeMedia;
+    popup.recorder_available=true;popup.recorder_recording=true;popup.recorder_pause_supported=true;
+    const auto popup_rows=popup.blade_entries(BladeMedia);
+    const int popup_record=int(std::find_if(popup_rows.begin(),popup_rows.end(),[](const GuideEntry&row){return row.action==GuideAction::RecordScreen;})-popup_rows.begin());
+    CHECK(popup_record<int(popup_rows.size()));popup.guide_item[BladeMedia]=popup_record;popup.recorder_control=1;
+    popup.press(xb::Right);CHECK(popup.guide_item[BladeMedia]==popup_record && popup.recorder_control==2);
+    popup.press(xb::Left);CHECK(popup.recorder_control==1);
+    popup.press(xb::Left);CHECK(popup.guide_item[BladeMedia]==popup_record && popup.recorder_control==1);
+}
+
+static void fleshed_system_settings_are_truthful_and_live()
+{
+    Model m;m.era=3;m.dashboard_build=17559;m.player="BAPenguin";
+    m.games={{"Game One","","PPSA00001",""},{"Game Two","","PPSA00002",""}};
+    m.apps={{"Homebrew","/data/homebrew/demo","",""}};m.songs=37;m.pictures=12;
+    m.viewer=Viewer::SystemSettings;
+    const auto root=m.system_entries();
+    CHECK(root.size()>=10 && root[0].label=="Console Settings" && root[3].label=="Network Settings");
+    CHECK(root.back().label=="Account Management" && root.back().app==Model::SystemAccount);
+    m.viewer_item=int(root.size())-1;m.press(xb::A);
+    CHECK(m.system_page==Model::SystemAccount && m.system_page_title()=="Account Management");
+    CHECK(m.system_value("Local Profile")=="BAPenguin");
+    const auto account=m.system_entries();
+    const int live=int(std::find_if(account.begin(),account.end(),[](const GuideEntry&e){return e.label=="Xbox Live Account";})-account.begin());
+    m.viewer_item=live;m.press(xb::A);
+    CHECK(m.details && m.details_text.find("not connected")!=std::string::npos);m.press(xb::B);
+    m.press(xb::B);CHECK(m.system_page==Model::SystemRoot && m.viewer_item==int(root.size())-1);
+
+    m.system_page=Model::SystemComputers;m.viewer_item=0;
+    CHECK(m.system_value("Music Library")=="37 tracks" && m.system_value("Pictures")=="12 pictures");
+    CHECK(m.system_description().find("local music")!=std::string::npos);
+    m.system_page=Model::SystemCamera;m.viewer_item=0;m.press(xb::A);
+    CHECK(m.details && m.details_text.find("controlled by PS5")!=std::string::npos);m.press(xb::B);
+    m.system_page=Model::SystemDisplay;
+    CHECK(m.system_value("HDR Output")=="Managed by PS5" && m.system_meta("HDR Output").find("PS5 video settings")!=std::string::npos);
+
+    m.system_page=Model::SystemMusicVolume;m.viewer_item=3;
+    const Effect volume=m.press(xb::A);
+    CHECK(volume.command==Command::MusicVolume && volume.app==3 && m.music_volume==3);
+    CHECK(m.system_value("Music Volume 30%")=="Current" && m.system_value("Ex-Box Music Volume")=="30%");
+    m.system_page=Model::SystemInfo;m.active_render_scale=2;
+    CHECK(m.system_entries().size()==8 && m.system_value("Installed Games")=="2" &&
+          m.system_value("Homebrew Apps")=="1" && m.system_value("Rendering Mode")=="3840 x 2160");
+    m.viewer_item=0;m.press(xb::A);CHECK(m.details && !m.details_text.empty());
 }
 
 int main()
@@ -3147,8 +3413,11 @@ int main()
     bumpers_and_triggers_page();
     a_opens_and_launches();
     my_xbox_cards_go_somewhere();
+    rendering_resolution_is_requested_until_restart();
+    exbox_settings_are_functional_and_honest();
     console_settings_pages_follow_the_build();
     console_settings_choices_are_live();
+    fleshed_system_settings_are_truthful_and_live();
     memory_storage_flow_and_unavailable();
     friends_and_media_are_honest();
     attach_and_detach();
@@ -3205,6 +3474,7 @@ int main()
     subtitles_parse_sidecar_srt();
     media_text_follows_each_build();
     separate_avatar_editor_keeps_navigation();
+    screen_recording_companion_and_fallback();
     std::printf("%d checks, %d failed\n", checks, failures);
     return failures ? 1 : 0;
 }

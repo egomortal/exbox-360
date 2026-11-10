@@ -18,6 +18,13 @@ struct Row {
 std::vector<Row> rows;
 std::string group_name;
 std::string page_kind; // what the heading names when a page is open ("Song", "Playlist" ...)
+constexpr const char *kActivityPath="/data/nxe/music-activity-v1.txt";
+constexpr const char *kSessionPath="/data/nxe/music-session-v1.txt";
+bool activity_loaded=false;
+void load_activity(){if(activity_loaded)return;activity_loaded=true;const auto data=ps5lib::read_file(kActivityPath,(1u<<20)+1);if(!data.empty()&&!music_activity.decode(data))log("music: invalid activity history ignored");}
+void save_activity(){const auto data=music_activity.encode();if(data.empty())return;mkdir("/data/nxe",0777);const std::string temp=std::string(kActivityPath)+".tmp";if(FILE*f=fopen(temp.c_str(),"wb")){const bool wrote=fwrite(data.data(),1,data.size(),f)==data.size();const bool closed=fclose(f)==0;if(wrote&&closed)rename(temp.c_str(),kActivityPath);else remove(temp.c_str());}}
+void save_session(){const auto&list=music_player.list();if(list.empty())return;std::ostringstream out;const music::Song*current=music_player.current_song();out<<"EXBOX_MUSIC_SESSION_1 "<<list.size()<<' '<<std::quoted(current?current->path:std::string{})<<'\n';for(const auto&song:list)out<<std::quoted(song.path)<<'\n';const auto data=out.str();if(data.size()>(8u<<20))return;mkdir("/data/nxe",0777);const std::string temp=std::string(kSessionPath)+".tmp";if(FILE*f=fopen(temp.c_str(),"wb")){const bool wrote=fwrite(data.data(),1,data.size(),f)==data.size();const bool closed=fclose(f)==0;if(wrote&&closed)rename(temp.c_str(),kSessionPath);else remove(temp.c_str());}}
+void restore_session(){static bool attempted=false;if(attempted)return;attempted=true;const auto data=ps5lib::read_file(kSessionPath,(8u<<20)+1);if(data.empty()||data.size()>(8u<<20))return;std::istringstream in(data);std::string magic,current;std::size_t count=0;if(!(in>>magic>>count>>std::quoted(current))||magic!="EXBOX_MUSIC_SESSION_1"||count>music::kMaxSongs)return;std::map<std::string,music::Song>known;for(const auto&song:music_songs)known.emplace(song.path,song);std::vector<music::Song>queue;int at=0;for(std::size_t i=0;i<count;++i){std::string path;if(!(in>>std::quoted(path))||path.size()>4096)return;const auto found=known.find(path);if(found==known.end())continue;if(path==current)at=int(queue.size());queue.push_back(found->second);}in>>std::ws;if(!in.eof()||queue.empty())return;locked([&]{music_player.play(queue,std::clamp(at,0,int(queue.size())-1));music_player.set_paused(true);});model.music_paused=true;model.now_playing=music_player.current();}
 std::vector<Row> playlist_rows();   // the saved playlists (music_library.inc.hpp)
 void browse_page();                 // a page's rows (music_library.inc.hpp)
 SDL_Surface *picture_row_thumb(const std::string &path);
@@ -56,11 +63,11 @@ void browse() {
     if (model.music_page!=dash::Model::MusicLibrary) {browse_page();return;}
     const int view=std::clamp(model.music_view,0,dash::kMusicViews-1);
     auto single=[](int i) {Row r;r.songs={i};return r;};
-    if (view==0) {
+    if (view==0 || view>=5) {
         std::vector<int> order(music_songs.size());
         for (size_t i=0;i<order.size();++i) order[i]=int(i);
-        std::stable_sort(order.begin(),order.end(),[](int a,int b) {
-            return music::folded(music_songs[size_t(a)].title)<music::folded(music_songs[size_t(b)].title);});
+        if(view>=5){std::vector<std::string>paths;paths.reserve(music_songs.size());for(const auto&song:music_songs)paths.push_back(song.path);order=view==5?music_activity.most_played(paths):music_activity.recently_added(paths);}
+        else std::stable_sort(order.begin(),order.end(),[](int a,int b) {return music::folded(music_songs[size_t(a)].title)<music::folded(music_songs[size_t(b)].title);});
         for (int i:order) rows.push_back(single(i));
     } else {
         std::vector<Row> list=view==4?playlist_rows():groups(view);
@@ -120,16 +127,72 @@ const music::Song *row_song(int row) {
     if (row<0 || row>=int(rows.size()) || rows[size_t(row)].group || rows[size_t(row)].songs.empty()) return nullptr;
     return &music_songs[size_t(rows[size_t(row)].songs[0])];
 }
+// The Guide's compact browser shares the indexed library and player. It does
+// not open the full Music page, and it stores only song indices in the model.
+void guide_refresh() {
+    model.guide_music_rows.clear();
+    auto add=[](std::string label,std::string detail,std::vector<int> songs) {
+        model.guide_music_rows.push_back({std::move(label),std::move(detail),std::move(songs)});
+    };
+    if (model.guide_music_page==1) {
+        for (auto &row:groups(1)) add(row.name,row.detail,std::move(row.songs));
+    } else if (model.guide_music_page==2 || model.guide_music_page==4) {
+        std::vector<int> order(music_songs.size());for(size_t i=0;i<order.size();++i)order[i]=int(i);
+        std::stable_sort(order.begin(),order.end(),[](int a,int b){return music::folded(music_songs[size_t(a)].title)<music::folded(music_songs[size_t(b)].title);});
+        const std::string query=music::folded(model.guide_music_query);
+        for(int i:order) {
+            const auto &song=music_songs[size_t(i)];
+            const std::string hay=music::folded(song.title+" "+song.artist+" "+song.album);
+            if(model.guide_music_page==4 && !query.empty() && hay.find(query)==std::string::npos)continue;
+            add(song.title,song.artist.empty()?song.album:song.artist,{i});
+        }
+    } else if (model.guide_music_page==3) {
+        std::map<std::string,int> by_path;for(size_t i=0;i<music_songs.size();++i)by_path[music_songs[i].path]=int(i);
+        for(const auto &song:music_player.list())if(auto found=by_path.find(song.path);found!=by_path.end())add(song.title,song.artist.empty()?song.album:song.artist,{found->second});
+    }
+}
+bool guide_play(int row) {
+    if(row<0 || row>=int(model.guide_music_rows.size()))return false;
+    std::vector<music::Song> queue;
+    for(int i:model.guide_music_rows[size_t(row)].songs)if(i>=0 && i<int(music_songs.size()))queue.push_back(music_songs[size_t(i)]);
+    if(queue.empty())return false;
+    locked([&]{music_player.play(queue,0);});
+    model.now_playing=music_player.current();model.music_paused=false;return true;
+}
+exbox::StartupJob<music_index::Result> scan_job;
+Uint32 scan_started=0;
 void scan() {
-    const Uint32 started=SDL_GetTicks();
-    music_songs=music::scan(music::default_roots(),music_known);
-    load_chosen_covers();
-    load_album_info();
-    cover_searches.clear();
-    browse();
-    char line[96];
-    std::snprintf(line,sizeof line,"music: %zu songs (%u ms)",music_songs.size(),unsigned(SDL_GetTicks()-started));
-    log(line);
+    if(scan_job.active())return; // Coalesce requests; never block an input handler.
+    const auto roots=music::default_roots();
+    const auto game_roots=model.music_game_scan?music::game_roots():std::vector<std::string>{};
+    std::string cache="/data/nxe/music-index-v1.txt";
+#ifndef __PROSPERO__
+    if(const char* override_path=getenv("NXE_MUSIC_INDEX_PATH"))if(*override_path)cache=override_path;
+#endif
+    scan_started=SDL_GetTicks();
+    if(!scan_job.start([roots,game_roots,cache]{return music_index::scan(roots,cache,game_roots);}))
+        log("startup: music worker unavailable; keeping current library");
+}
+void poll_scan() {
+    // Editing pages borrow song indices; launching/suspended views must not publish.
+    if(suspended||launching.live||model.music_page!=dash::Model::MusicLibrary)return;
+    music_index::Result result;if(!scan_job.take(result))return;
+    if(!result.ok){log("startup: music scan failed; keeping current library");return;}
+    const Uint32 publish_started=SDL_GetTicks();
+    music_songs=std::move(result.songs);
+    int game_tracks=0;
+    std::set<std::string> game_albums;
+    for(const auto& song:music_songs)
+        if(song.genre=="Game Soundtrack"){++game_tracks;if(!song.album.empty())game_albums.insert(song.album);}
+    model.health_runtime.soundtrack_playable=game_tracks;
+    model.health_runtime.soundtrack_albums=int(game_albums.size());
+    // This playable-song index does not publish unsupported/container counts.
+    model.health_runtime.soundtrack_recognized_unsupported=-1;
+    model.health_runtime.soundtrack_containers=-1;
+    load_activity();{std::vector<std::string>paths;paths.reserve(music_songs.size());for(const auto&song:music_songs)paths.push_back(song.path);music_activity.observe(paths);save_activity();}
+    load_chosen_covers();load_album_info();cover_searches.clear();browse();
+    restore_session();
+    if(diagnostic_logging()){char line[240];std::snprintf(line,sizeof line,"startup: music ready songs=%zu cache_hits=%zu misses=%zu scan_ms=%llu completed_steady_ms=%llu publish_ms=%u total_ms=%u cache_saved=%d",music_songs.size(),result.hits,result.misses,static_cast<unsigned long long>(result.scan_ms),static_cast<unsigned long long>(scan_job.completion_ms()),unsigned(SDL_GetTicks()-publish_started),unsigned(SDL_GetTicks()-scan_started),int(result.cache_written));log(line);}
 }
 // Play the listed songs from that row on. False when none of them would play.
 bool play(int row) {
@@ -147,10 +210,15 @@ bool play(int row) {
     locked([&] {music_player.play(queue,at);});
     music_player.pump();
     if (!music_player.active()) {model.now_playing=-1; return false;}
-    if (trailer_audio) SDL_ClearQueuedAudio(trailer_audio); // the music takes over
+    invalidate_trailer_audio_for_music(); // the music takes over
     return true;
 }
-void stop() {locked([] {music_player.stop();}); model.now_playing=-1; model.music_paused=false;}
+void stop(bool forget_session=true) {
+    locked([] {music_player.stop();});
+    model.now_playing=-1;
+    model.music_paused=false;
+    if(forget_session) remove(kSessionPath);
+}
 // Every frame: decode ahead, and tell the model what is playing.
 void sync() {
     // A full-screen game video holds the music while it plays with its own sound.
@@ -158,6 +226,7 @@ void sync() {
     music_player.set_paused(model.music_paused || hold);
     music_player.pump();
     const music::Song *song=music_player.current_song();
+    static std::string activity_song;const std::string activity_path=song?song->path:"";if(!activity_path.empty()&&activity_path!=activity_song){music_activity.played(activity_path);save_activity();activity_song=activity_path;}else if(activity_path.empty())activity_song.clear();
     model.now_playing=music_player.current();
     // The current playlist, for Now Playing and Edit Current Playlist: their
     // rows follow it as it changes (a song ends, an edit lands).
@@ -183,6 +252,6 @@ void sync() {
                 now_playing_toast(model.now_playing_title,keep_for_toast(song_cover(path)));
         }
     } else if (path.empty()) announced.clear();
-    if (trailer_audio && music_audible() && SDL_GetQueuedAudioSize(trailer_audio)>0) SDL_ClearQueuedAudio(trailer_audio);
+    sync_trailer_audio_with_music();
 }
 }

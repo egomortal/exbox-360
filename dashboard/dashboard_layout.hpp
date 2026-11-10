@@ -11,6 +11,8 @@ inline constexpr TileBounds metro_hd_rect(int x,int y,int w,int h,int ox,int oy)
     return {ox+metro_hd_pixel(x),oy+metro_hd_pixel(y),
             metro_hd_pixel(x+w)-metro_hd_pixel(x),metro_hd_pixel(y+h)-metro_hd_pixel(y)};
 }
+// Ex-Box addition: separate Home avatar focus node; no original card ID is replaced.
+inline constexpr TileBounds metro_avatar_bounds(bool v1) {return v1?TileBounds{1579,326,296,222}:TileBounds{1584,270,261,195};}
 inline constexpr TileBounds kMetroTiles[] = {
     metro_hd_rect(178,0,466,264,345,270), metro_hd_rect(0,0,174,130,345,270), metro_hd_rect(648,0,174,130,345,270),
     metro_hd_rect(648,134,174,130,345,270), metro_hd_rect(178,268,231,130,345,270), metro_hd_rect(412,268,231,130,345,270), metro_hd_rect(648,268,174,130,345,270),

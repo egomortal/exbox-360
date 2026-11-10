@@ -9,6 +9,11 @@ struct Core : guide_scene::Core {
     bool bound=false,leaving=false,achievement=false;
     std::string title,body;
     SDL_Surface *icon=nullptr;
+    void bind_owned_bitmap(const char*name,SDL_Surface*owned) {
+        if(gpu_ready){SDL_Surface*copy=owned?SDL_ConvertSurfaceFormat(owned,SDL_PIXELFORMAT_ARGB8888,0):nullptr;
+            if(owned&&!copy)gpu_ready=false;else gpu_resources.bind_bitmap(name,copy);}
+        painter.bind_bitmap(name,owned);gpu_dirty=true;cpu_valid=false;
+    }
     float frame(const char *name) const {
         for (const auto &a:scene.animations) if (a.owner==visual)
             for (int i=a.range_first;i<a.range_first+a.range_count;i++)
@@ -20,7 +25,7 @@ struct Core : guide_scene::Core {
         title.clear();body.clear();icon=nullptr;
     }
     bool prepare(int selected) {
-        if (build==selected) return ready;
+        if (build==selected && raster_density==render_density::factor) return ready;
         reset();build=selected;
         const char *era=selected<=6770?"blades":selected==9199?"nxe":selected==13604?"kinect":selected==15574?"metro1":"metro";
         const std::string name="notify-"+std::to_string(selected),folder=std::string(era)+"/"+name;
@@ -46,7 +51,7 @@ struct Core : guide_scene::Core {
         }
         if (SDL_Surface *raw=IMG_Load((art_directory+"Achievement.png").c_str())) {
             SDL_Surface *copy=SDL_ConvertSurfaceFormat(raw,SDL_PIXELFORMAT_ARGB8888,0);SDL_FreeSurface(raw);
-            if (copy) {painter.bind_bitmap("host:achievement",copy);achievement=true;}
+            if (copy) {bind_owned_bitmap("host:achievement",copy);achievement=true;}
         }
         source_strings=scene.strings.size();
         return true;
@@ -55,13 +60,13 @@ struct Core : guide_scene::Core {
         // Discard previous host strings so a long music session stays bounded.
         scene.host_bindings.clear();scene.strings.resize(source_strings);
         // Host token offsets are reused; invalidate cached bitmap resolutions too.
-        painter.bind_bitmap("host:notify-icon",nullptr);
+        bind_owned_bitmap("host:notify-icon",nullptr);
         text_of(control,toast.title+(toast.text.empty()?"":"\n"+toast.text));
         const bool trophy=toast.icon && (toast.icon==toast_trophy || toast.icon==trophy_icon);
         if (trophy && achievement) scene.bind_string(image,xui::Texture,"host:achievement");
         else if (toast.icon) {
             if (SDL_Surface *copy=SDL_ConvertSurfaceFormat(toast.icon,SDL_PIXELFORMAT_ARGB8888,0)) {
-                painter.bind_bitmap("host:notify-icon",copy);scene.bind_string(image,xui::Texture,"host:notify-icon");
+                bind_owned_bitmap("host:notify-icon",copy);scene.bind_string(image,xui::Texture,"host:notify-icon");
             } else scene.bind_string(image,xui::Texture,"xenonLogo.png");
         } else scene.bind_string(image,xui::Texture,"xenonLogo.png");
         scene.bind_image_mode(image,16);
@@ -77,7 +82,7 @@ int selected_build() {
     if (model.era==0) return model.dashboard_build>=5759?6770:1888;
     return model.era==1?9199:model.era==2?13604:model.metro_v1()?15574:17559;
 }
-void refresh() {if (core.build && core.build!=selected_build()) core.reset();}
+void refresh() {if (core.build && (core.build!=selected_build() || core.raster_density!=render_density::factor)) core.reset();}
 void clear() {core.reset();}
 bool draw(Uint32 now,Uint32 hold) {
     if (!core.prepare(selected_build())) return false;

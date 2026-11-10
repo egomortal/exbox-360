@@ -5,9 +5,11 @@ void draw_hub(Uint32 now) {
     if (model.era==3) {draw_metro_hub();return;}
     nxe_reflection::begin_frame();
     apply_theme();
+    gpu_home::begin();
     const Tint tint=theme_tint(model.theme);
     if (SDL_Surface *bg=themed_background?themed_background:background) SDL_BlitSurface(bg,nullptr,screen,nullptr);
     else {gradient(0,0,W,620,0x78a937,0xe6edce);gradient(0,620,W,H-620,0x57646d,0xd6d9d6);}
+    draw_installed_theme_background();
     const bool custom=draw_picture_background();
     if (!custom && !retail_background) {
         rect(0,614,W,2,0xe9eedb);
@@ -53,9 +55,13 @@ void draw_hub(Uint32 now) {
     card_dy=0;
     // The rendered avatar is framed tightly, so it stands smaller than the
     // silhouette art did: feet on the floor line beside the panes.
-    const bool built=look3d::active() || edited_avatar::fullbody, own_avatar=built || avatar::installed();
+    const bool built=prepared_avatar::active() || look3d::active() || edited_avatar::fullbody, own_avatar=built || avatar::installed();
     const bool show_figure=model.channel==dash::MyXbox || slide_from==dash::MyXbox;
-    SDL_Surface *figure=!show_figure?nullptr:edited_avatar::owner_still(avatar_slots::Image::FullBody)?edited_avatar::owner_still(avatar_slots::Image::FullBody):built?look3d::hub_frame(now):own_avatar?avatar::hub_frame(now):avatar_art;
+    SDL_Surface *figure=nullptr;
+    if(show_figure) {
+        figure=edited_avatar::live_or_still(now,true);
+        if(!figure)figure=avatar::installed()?avatar::hub_frame(now):avatar_art;
+    }
     // The avatar stands on its gamer card slot (2008 capture: centred near
     // x 600, feet at y 930); it shows while that slot is in front.
     const SDL_Rect figure_at=built?SDL_Rect{440,275,400,660}:own_avatar?SDL_Rect{455,310,372,620}:SDL_Rect{370,30,540,900};
@@ -89,11 +95,13 @@ void draw_hub(Uint32 now) {
             shown*=card_shown;
         }
         if (shown>0.01f) {
-            SDL_Rect destination=figure==edited_avatar::fullbody?edited_avatar::contain(figure,figure_at):figure_at;
+            SDL_Rect destination=(figure==edited_avatar::fullbody||prepared_avatar::find(figure))?edited_avatar::contain(figure,figure_at):figure_at;
             nxe_reflection::remember_figure(figure,destination,shown);
-            SDL_SetSurfaceAlphaMod(figure,Uint8(255*shown));
-            blit_quality(figure,nullptr,screen,&destination,false);
-            SDL_SetSurfaceAlphaMod(figure,255);
+            const bool gpu=gpu_home::avatar(figure,destination,shown);
+            if(!gpu||x21hook::audit_cpu()) {x21hook::Pause reference(gpu);
+                prepared_avatar::materialize(figure);if (figure==look3d::hub.surface) look3d::materialize_hub();
+                SDL_SetSurfaceAlphaMod(figure,Uint8(255*shown));blit_quality(figure,nullptr,screen,&destination,false);SDL_SetSurfaceAlphaMod(figure,255);
+            }
         }
     }
     reflect_cards();

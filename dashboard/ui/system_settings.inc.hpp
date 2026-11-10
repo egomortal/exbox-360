@@ -35,7 +35,8 @@ int paragraphs(const std::string &value,int x,int y,int width,TTF_Font *font,SDL
 // The console's local date and the Guide clock, as ClockTime shows them.
 std::string date_time_now() {
     const std::time_t now=std::time(nullptr);
-    const std::tm *local=std::localtime(&now);
+    std::tm snapshot{};
+    const std::tm *local=local_time_snapshot(now,snapshot)?&snapshot:nullptr;
     char date[32]{};
     if (!local || !std::strftime(date,sizeof date,"%m/%d/%Y",local)) return "";
     return std::string(date)+"  "+clock_text();
@@ -89,10 +90,6 @@ bool memory_grid(int x,int y,int width,TTF_Font *font) {
 // PolicyInfo_System's information block and ClockTime's date/time fields.
 // No serial number, console ID, fabricated firmware, or editable system clock.
 bool read_only_body(int x,int y,int width,TTF_Font *font,SDL_Color ink) {
-    if (model.system_page==dash::Model::SystemInfo) {
-        paragraphs(model.system_value("System Info"),x,y,width,font,ink,48);
-        return true;
-    }
     if (model.system_page!=dash::Model::SystemDateTime) return false;
     // dashCSettingsStrings.xus, every build: "Current Date and Time:".
     text("Current Date and Time:",x,y,font,ink);
@@ -162,6 +159,8 @@ void draw_system_settings_nxe() {
     } else system_page::paragraphs(model.system_meta(label),mx,my,mw,regular,{255,255,255,230},42);
 }
 void draw_system_settings() {
+    if (model.system_page==dash::Model::SystemHealth) {draw_compat_health();return;}
+    if (model.system_page==dash::Model::SystemDiagnostics) {draw_developer_diagnostics();return;}
     if (model.era==1) {draw_system_settings_nxe();return;}
     // Kinect and Metro draw SystemScene in the 13604
     // skin: a white Label_Head over the dashboard background, the list on the light
@@ -189,7 +188,7 @@ void draw_system_settings() {
     const int n=int(entries.size()), item=std::clamp(model.viewer_item,0,std::max(0,n-1));
     const int lx=px+70, ly=py+150, lw=light?675:820, pitch=light?70:70;
     if (system_page::network_body(lx,ly,pw-140)) return;
-    if (model.system_page==dash::Model::SystemInfo || model.system_page==dash::Model::SystemDateTime) {
+    if (model.system_page==dash::Model::SystemDateTime) {
         if (light) shade(lx,ly,pw-140,600,0x0f1214,170);
         system_page::read_only_body(lx+30,ly+30,pw-200,body,{235,235,235,255});
         return;

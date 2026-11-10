@@ -8,6 +8,10 @@
 #include "xbox_input.hpp"
 #include "dashboard_updates.hpp"
 #include "network_state.hpp"
+#include "modules/games_frontend/games_blade.hpp"
+#include "modules/games_frontend/rom_game_guide.hpp"
+#include "modules/games_frontend/dashboard_context.hpp"
+#include "modules/dashboard_services/compat_health.hpp"
 
 #include <array>
 #include <map>
@@ -47,6 +51,15 @@ struct App
     std::string icon; // icon0.png on the console, or empty
     std::string playstation_icon{};
     std::string xbox_cover{};
+};
+
+// Dashboard-owned, read-only inventory supplied by main.cpp. G1 deliberately
+// accepts immediate folder names and metadata only; it never scans game data.
+struct GameFolderInventory
+{
+    exbox_games::Source source{};
+    std::vector<exbox_games::Folder> folders;
+    bool limited = false;
 };
 
 enum Channel
@@ -114,10 +127,19 @@ enum class Goal
     ToMusic,    // the Music Library
     ToSearch,
     ToSettings,
+    ToRomGameGuidePreview, // Experimental dashboard-only PS5X360 Guide preview
     ToWelcome,
     HideWelcome,
     ExitToPs5,
     ToMediaCenter, // Windows Media Center's slot: the PS5 Media Gallery
+    // Ex-Box Metro Music dashboard tiles.  Appended to preserve the existing
+    // Goal values used by bridge snapshots and older saved activity.
+    ToMusicAlbums,
+    ToMusicRandomAlbum,
+    ToMusicMostPlayed,
+    ToMusicPlaylists,
+    ToMusicRecentlyAdded,
+    ToMusicNowPlaying,
 };
 
 // What the Media viewer is showing over the hub.
@@ -139,11 +161,12 @@ enum class Viewer
     WelcomePages,
     InitialSetup,
     SystemSettings, // NXE / Kinect / Metro: consoles/SystemScene and its Console Settings page
+    RomGameGuidePreview, // Experimental; never a cross-title overlay by itself
 };
 enum class Collection { All, Pins, Recent };
 constexpr int kViewerColumns = 4, kViewerRows = 3;
 constexpr int kMusicRows = 10; // songs the Music Library shows at once
-constexpr int kMusicViews = 5; // Songs, Albums, Artists, Genres, Saved Playlists
+constexpr int kMusicViews = 7; // authored five, plus Most Played and Recently Added
 // Game Videos' player: Left / Right and the triggers seek, as the 360's did.
 constexpr int kVideoStep = 10000, kVideoJump = 30000; // ms
 // Closer than this to either end and there is nothing worth resuming.
@@ -151,6 +174,8 @@ constexpr int kResumeMin = 5000;
 // videos/Strings.xus and VideoContent.scb GetNextSortString (9199).
 constexpr const char *kVideoOrders[] = {"Sort by Download Date", "Sort by Title", "Sort by Type"};
 constexpr const char *kVideoStartActions[] = {"Resume", "Restart"}; // videos/DetailsActions.xur
+constexpr const char *kTheaterReactions[] = {"Wave", "Cheer", "Popcorn"};
+constexpr int kTheaterReactionCount = int(sizeof(kTheaterReactions) / sizeof(kTheaterReactions[0]));
 constexpr int kVideoOrderCount = 3;
 // What main.cpp found of a clip on disk; absent means playable, length unknown.
 struct VideoInfo
@@ -255,12 +280,17 @@ struct AdEntry
     std::string id, title, image, preview, subtitle, classification;
     std::string role="unknown", preferred_fit="contain";
     std::string caption_source="unknown";
+    std::string game_id;
+    std::uint32_t era_mask=0xffffffffu,page_mask=0xffffffffu;
+    std::int64_t begin_utc=0,end_utc=0;
+    int promotion_priority=0;
+    bool authentic=false;
     bool auto_eligible=true;
     int width = 0, height = 0;
 };
 
-// The Guide, as NXE drew it: five blades side by side, the focused one open.
-// Left to right, as retail 9199 ordered them with the profile's blade third.
+// The retail five blades plus one clearly labelled Ex-Box recording blade.
+// Recording sits beside Media so capture controls remain inside the Guide.
 enum GuideBlade
 {
     BladeApps,     // where retail had Marketplace
@@ -298,6 +328,7 @@ enum class GuideAction
     NotificationHistory,
     Pictures,     // open the screenshot viewer
     Videos,       // open the game video library
+    RecordScreen, // toggle optional Glint recording; explain PS5 Create when unavailable
     LaunchSystem, // a PS5 system app (app = index into kSystemApps)
     Avatar,       // open the avatar stage
     Music,        // open the Music Library
@@ -306,8 +337,18 @@ enum class GuideAction
     MusicStop,    // stop the background music
     MusicPrevious, // back a song (the scene Guides' mini player)
     MusicShuffle,  // shuffle on / off (the scene Guides' mini player)
+    MusicVolume,   // open the original Guide volume slider (Ex-Box music only)
+    GuideMusicAlbums,
+    GuideMusicSongs,
+    GuideMusicQueue,
+    GuideMusicSearch,
+    GuideMusicPlay,
+    GuideMusicOpenFull,
+    GuideMusicBack,
+    OpenExBoxMenu, // open the dashboard-owned rows inside the ordinary Home blade
     AvatarEdit,   // open the avatar editor
     TogglePromotions,
+    CyclePromotionMode,
     OpenGuideSettings,
     SystemSettings, // Guide System Settings opens the existing root page
     AdsSettings,
@@ -346,6 +387,7 @@ enum class Command
     LaunchSystem, // app = index into kSystemApps
     AvatarWave,   // the avatar waves (on My Xbox and its stage)
     ScanMusic,    // the Music Library opened: look for songs
+    ScanGameMusic, // opt in, save, then include accessible audio under local game folders
     MusicBrowse,  // the Music Library's view or opened group changed: rebuild its rows
     MusicPlay,    // app = index into the library: play from there on
     MusicPause,   // model.music_paused says which
@@ -354,6 +396,9 @@ enum class Command
     MusicStop,
     MusicShuffle, // model.music_shuffle says which
     MusicRepeat,  // model.music_repeat says which
+    MusicVolume,  // app = 0..10; Ex-Box music only, never game/system audio
+    GuideMusicRefresh,
+    GuideMusicPlay, // app = popup row; its song indices are already resolved
     MusicEdit,    // app = a MusicOp; model.music_target says on what
     OpenAvatarEditor, // separate original editor title; retain the current screen
     AvatarEditStart, // the editor opened: keep the look to go back to
@@ -363,12 +408,16 @@ enum class Command
     AvatarSave,      // keep the edited look
     AvatarCancel,    // put the old look back
     SaveAdProfiles,
+    ReloadPromotions,
     VideoSeek,  // app = ms into the playing video
     VideoPause, // model.video_paused says which
     ScanStorage, // read-only inventory, refreshed when Memory / Storage opens
     ReadNetwork,
     TestNetwork,
     SaveVideos, // where each video was left, and which were watched
+    SaveRenderScale, // app=1 or2; persist requested rendering scale for next startup
+    ApplyInstalledTheme, // app>=0 owner catalog; -1 default; -2 Picture Background
+    RecorderAction, // app: 0 start, 1 pause, 2 resume, 3 stop
 };
 
 // What a Music Library page asks main.cpp's player and library to do
@@ -393,6 +442,7 @@ enum class MusicOp
     SavePlaylist,   // the current playlist saved (Playlist 1, 2 ...)
     ClearPlaylist,  // the current playlist emptied (the music stops)
     DeletePlaylist, // the opened saved playlist deleted
+    RandomAlbum,    // choose a real album, excluding recent successful picks
 };
 
 struct Effect
@@ -474,11 +524,13 @@ struct Notification
 // Only the installed default is verified. AuraScene colour states are not themes yet.
 constexpr const char *kThemes[] = {"Xbox 360"};
 constexpr int kThemeCount = int(sizeof kThemes / sizeof kThemes[0]);
+struct InstalledTheme { std::string stable_id, display_name; bool complete=false; unsigned wallpapers=0; };
 constexpr const char *kEras[] = {"Blades 1888-6770", "NXE 2008-9199", "Kinect 12413-13604", "Metro 15574-17559"};
 constexpr int kEraCount = int(sizeof kEras / sizeof kEras[0]);
 
 constexpr int kPageStep = 5; // panes per bumper press, as in WebOS NXE's hub
-constexpr int kMetroPageSize=7, kMetroPins=7, kMetroRecent=8;
+constexpr int kMetroPageSize=7, kMetroPins=7, kMetroRecent=8, kMetroAvatar=9;
+constexpr int kMetroSocialOwner=10, kMetroSocialFriend0=11, kMetroSocialFriend2=13;
 constexpr std::size_t kMaxPins = 8;
 constexpr std::size_t kMaxRecent = 12;
 constexpr std::size_t kMaxVideoRecent = 64;
@@ -504,22 +556,35 @@ class Model
     // after the front card.
     int pin_first() const { return era == 1 || era == 2 ? 2 : 1; }
     void close_blades_page();
-    int metro_focus = 0; // -1 tabs, 0..6 cards, 7 pins, 8 recent
+    int metro_focus = 0; // -1 tabs, 0..6 cards, 7 pins, 8 recent, 9 home avatar, 10..13 Social people
     int metro_selected[8] = {};
     Collection collection = Collection::All;
     int library_filter = 0; // 0 all, 1..26 A..Z, 27 numbers
     bool details = false;
     std::string details_title, details_text;
     bool guide = false;
-    bool guide_host = false; // Ex-Box addition: no 360 original; R3 utilities
+    bool guide_host = false; // retired overlay compatibility bit; production Guide keeps this false
     bool picker_return_host = false, ad_return_host = false;
     int guide_blade = BladeHome;
     int guide_item[BladeCount] = {};
+    int guide_media_control_item = 0; // horizontal mini-player icon row, 0..4
     int guide_community_item = 0;
     std::string player = "Player"; // the Home blade's title
     bool controller_map = false;
     std::vector<App> apps;  // homebrew
     std::vector<App> games; // installed PS5 / PS4 games
+    exbox_games::Blade games_frontend; // independent 360/PS5 browse identities; no dispatch in G1
+    // Experimental dashboard-safe preview only. Existing dashboard Guide input
+    // is unchanged; a cooperative foreground host must opt into every capability.
+    exbox_rom_guide::Model rom_game_guide_preview;
+    GameFolderInventory games_frontend_inventory;
+    std::size_t games_frontend_rejected = 0;
+    bool games_frontend_inventory_published = false;
+    bool games_frontend_limited = false;
+    std::string context_focus_key;
+    std::string saved_dashboard_context() const;
+    void load_dashboard_context(const std::string &line);
+    void restore_context_focus();
     std::vector<std::string> pins; // executables, or "title:<ID>" for games
     std::set<std::string> game_apps; // homebrew executables shown in Games
     // Trailers on the console, by key, and the ones the owner chose per title:
@@ -531,6 +596,9 @@ class Model
     std::map<std::string, int> artwork_choice; // title ID -> 1 PlayStation, 2 Xbox; absent = Automatic
     bool sounds = true;
     bool promotions = false;
+    int promotion_mode=0; // 0 Authentic period playlist, 1 Local Personalized, 2 Off
+    bool load_promotion_mode_setting(const char* line);
+    std::string saved_promotion_mode_setting()const;
     std::vector<Card> promo_cards;
     std::vector<AdEntry> ad_catalog;
     bool ad_show_all = false;
@@ -567,7 +635,20 @@ class Model
         return era==0 ? (dashboard_build<5759?0:1) : dashboard_family(era,dashboard_build)+1;
     }
     int theme = 0;       // default dashboard artwork for the active era
+    std::vector<InstalledTheme> installed_themes;
+    std::string installed_theme_id;
+    std::vector<std::string> theme_favorites,theme_recent;
+    int theme_filter=0; // 0 all, 1 favorites, 2 recently used
     void load_theme(int legacy_value);
+    void set_installed_themes(std::vector<InstalledTheme> entries);
+    void load_installed_theme_setting(const std::string &line);
+    std::string saved_installed_theme_setting() const;
+    std::vector<std::string> saved_theme_library_settings() const;
+    std::vector<int> theme_visible_indices() const;
+    int theme_catalog_index_for_row(int row) const;
+    int theme_row_for_catalog_index(int index) const;
+    int theme_count() const;
+    std::string theme_entry(int index) const;
     std::vector<std::string> theme_entries() const;
     std::vector<GuideEntry> profile_entries() const;
     Effect open_themes();
@@ -596,10 +677,13 @@ class Model
     int picker_previous_item = 0;
     bool picker_previous_full = false;
     bool metro_v1() const {return era==3 && dashboard_family(era,dashboard_build)==3;}
+    bool metro_avatar_home() const {return era==3 && metro_tab==1;}
     bool metro_v1_home() const {return metro_v1() && metro_tab==1;}
     int metro_page_size() const {return era==3 && metro_tab==7?8: metro_v1_home() && promotions && ad_mode[current_ad_profile()]!=0?4:metro_v1()?5:kMetroPageSize;}
     int button_style = 0; // 0 polished glossy, 1 retail, 2 simple
     bool dimming = true; // dim the screen after ten idle minutes
+    int render_scale = 1; // Ex-Box request; applied at next startup after persistence
+    int active_render_scale = 1; // actual runtime target, set only by startup
     bool welcome_visible = true; // settings.txt; Welcome Channel and Hide Channel share this.
     bool welcome_available() const { return (era==1 || era==2) && welcome_visible; }
     int channel_rank(int c) const { return c==Welcome?4:c==MyXbox && welcome_available()?5:c; }
@@ -621,6 +705,8 @@ class Model
     bool clock_24_hour = false; // settings.txt; the Guide and Console Settings share this format
     int library_order = 0; // 0 recent, 1 title A-Z, 2 title Z-A
     int notification_level = 2; // 0 off, 1 short, 2 standard, 3 long
+    bool local_friend_avatars = true; // validated editor friends, then deterministic local-kit fallback; never Xbox Live identities
+    bool game_library_companion = false; // read-only runtime discovery source shown in Settings
     std::vector<Notification> notification_history; // newest first, this session only
     // Recently played apps and games (keys as for pins), most recent first.
     std::vector<std::string> recent;
@@ -641,6 +727,9 @@ class Model
     int video_elapsed = 0; // ms
     bool video_paused = false;
     bool video_subtitles = true;
+    bool video_theater = false; // Ex-Box offline Theater Party room; RS toggles full-screen
+    int video_theater_reaction = 0;
+    unsigned video_theater_reaction_serial = 0;
     std::vector<std::string> video_list() const; // the grid: playable clips, in order
     std::string video_key() const;               // the selected clip, or ""
     int video_length() const;                    // its ms, 0 when unknown
@@ -686,8 +775,12 @@ class Model
     // Songs (A-Z), Albums, Artists or Genres; in the last three, A opens one
     // and B goes back. main.cpp builds the rows; the model only keeps the place.
     int music_view = 0;    // 0 Songs, 1 Albums, 2 Artists, 3 Genres, 4 Saved Playlists
+    bool music_random_focused = false; // sixth Library action; transient, never saved
+    bool music_game_scan_focused = false; // seventh Library action; transient, never saved
+    bool music_tabs_focused = false; // D-pad focus on the library view selector.
+    bool music_game_scan = false; // include accessible audio in configured local game folders
     int music_group = -1;  // the album / artist opened, or -1 for the list of them
-    bool music_in_groups() const { return music_view > 0 && music_group < 0; }
+    bool music_in_groups() const { return music_view > 0 && music_view <= 4 && music_group < 0; }
     // The pages over the library (the 360's music scenes): 0 the library,
     // 1 a song's options (1016_IndividualSongMain), 2 Now Playing
     // (1028_NowPlaying), 3 Edit Current Playlist (1030_EditPlaylist),
@@ -726,12 +819,22 @@ class Model
     // RS click turns repeat Off -> All -> One (the PS5 keeps Create).
     bool music_shuffle = false;
     int music_repeat = 0; // 0 off, 1 the list, 2 the song
+    int music_volume = 8; // 0..10; 8 preserves the player's previous 205/256 mix
+    int music_volume_restore = 8;
+    bool guide_volume_open = false;
+    bool guide_exbox_page = false; // normal Home-blade subpage; B returns to the retail rows
+    struct GuideMusicRow { std::string label, detail; std::vector<int> songs; };
+    int guide_music_page = 0; // 0 Media blade, 1 albums, 2 songs, 3 queue, 4 search, 5 Music root
+    std::vector<GuideMusicRow> guide_music_rows;
+    std::string guide_music_query;
+    int guide_music_key = 0;
+    bool guide_music_search_edit = false;
     std::string now_playing_title;
     int viewer_count() const
     {
         return viewer == Viewer::WelcomePages ? (welcome_confirm?2:int(welcome_pages().size()))
                : viewer == Viewer::InitialSetup ? 5
-               : viewer == Viewer::Themes ? int(theme_entries().size())
+               : viewer == Viewer::Themes ? theme_count()
                : viewer == Viewer::Achievements ? achievement_count()
                : viewer == Viewer::Profile ? int(profile_entries().size())
                : viewer == Viewer::DashboardEras ? 5
@@ -744,6 +847,7 @@ class Model
                : viewer == Viewer::Avatar || viewer == Viewer::AvatarEdit ? avatar_angles
                : viewer == Viewer::Music  ? music_rows()
                : viewer == Viewer::SystemSettings ? int(system_entries().size())
+               : viewer == Viewer::RomGameGuidePreview ? int(rom_game_guide_preview.rows().size())
                                           : 0;
     }
     // The details page.
@@ -752,6 +856,7 @@ class Model
     InfoTarget info_target;
 
     int count() const;
+    bool has_rom_game_guide_preview() const;
     int current() const
     {
         return selected[channel];
@@ -799,7 +904,10 @@ class Model
     // The Guide's blades: titles and the open blade's list.
     std::string blade_title(int blade) const;
     std::vector<GuideEntry> blade_entries(int blade) const;
-    std::vector<GuideEntry> host_blade_entries(int blade) const;
+    std::vector<GuideEntry> exbox_guide_entries() const;
+    GuideEntry preferred_guide_play() const;
+    // Additional Ex-Box rows and nested pages rendered by the normal Guide.
+    std::vector<GuideEntry> host_blade_entries(int blade,bool full=false) const;
     // Blades (era 0): each blade's own items as the 1888 dashboard lists them
     // (dashmain / gamesbla / mediabla / live scenes), each mapped to a PS5 action.
     std::vector<GuideEntry> blades_items(int channel) const;
@@ -807,13 +915,27 @@ class Model
     enum SystemPage { SystemRoot, SystemConsole, SystemDisplay, SystemAudio, SystemClock,
                       SystemStartup, SystemInfo, SystemSoundEffects, SystemTimeFormat,
                       SystemScreenSaver, SystemDateTime, SystemResolution, SystemScreenFormat,
+                      SystemExBox, SystemGameMusic, SystemLocalFriends, SystemLibraryStatus,
                       StorageDevices, StorageSummary, StorageCategories, StorageItems,
                       StorageDetails, StorageOptions, NetworkMain, NetworkTesting,
-                      NetworkDetails, NetworkIP, NetworkDNS, NetworkConsole, SystemWelcome };
+                      NetworkDetails, NetworkIP, NetworkDNS, NetworkConsole, SystemWelcome,
+                      SystemHealth, SystemDiagnostics, SystemFamily, SystemAccount,
+                      SystemKinect, SystemComputers, SystemTV, SystemCamera,
+                      SystemLanguage, SystemAutoPlay, SystemConnectedDevices,
+                      SystemMusicVolume };
     NetworkInfo network;
     NetworkTest network_test;
     unsigned network_generation=0;
     bool network_from_blades=false;
+    bool developer_diagnostics_available=false; // hidden unless the explicit local flag is present
+    bool recorder_available=false, recorder_recording=false, recorder_paused=false, recorder_pause_supported=false;
+    bool recorder_busy=false, recorder_error=false;
+    int recorder_control=0; // horizontal transport: 0 Play/Resume, 1 Pause, 2 Stop
+    double recorder_seconds=0.0;
+    std::string recorder_name;
+    exbox_services::health::Snapshot health_runtime;
+    exbox_services::health::Snapshot compat_health_snapshot() const;
+    std::vector<exbox_services::health::Row> compat_health_rows() const;
     bool network_page() const { return system_page>=NetworkMain && system_page<=NetworkConsole; }
     std::vector<GuideEntry> network_entries() const;
     std::string network_value(const std::string &label) const;
@@ -849,6 +971,10 @@ class Model
     // After discovery: keep every channel's place in range.
     void set_apps(std::vector<App> found);
     void set_games(std::vector<App> found);
+    void set_game_frontend_inventory(GameFolderInventory found);
+    void refresh_game_frontend();
+    std::vector<std::string> saved_game_frontend_settings() const;
+    void load_game_frontend_setting(const std::string &line);
     void load_pins(const std::vector<std::string> &lines);
     // Tell the model a launch failed so it can say so.
     void launch_failed(const std::string &title);

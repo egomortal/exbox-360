@@ -15,13 +15,14 @@ constexpr SDL_Color kSub{235,235,235,178};                     // NXE Label_Sub 
 constexpr SDL_Color kRowInk{0x65,0x6d,0x72,255};               // btn_Music_arrow, btn_LibBrowse 0xff656d72
 constexpr SDL_Color kRowSel{0x33,0x3a,0x40,255};               // btn_Music_arrow KillFocus 0xff333a40
 // The scene draws over the dashboard's own background, not over the hub.
+bool opaque_background() {static x21opaque::Proof proof;return !era_background||proof.opaque(era_background);}
 void scene_background() {
     SDL_Rect all{0,0,W,H};
     if (era_background) blit_quality(era_background,nullptr,screen,&all);
     else if (model.era==3) gradient(0,0,W,H,0x4a4a4a,0x9a9a9a);
     else gradient(0,0,W,H,0x358f24,0xc9e713);
     draw_picture_background();
-    if (era_aura_floor) blit_quality(era_aura_floor,nullptr,screen,&all);
+    if (era_aura_floor) blit_quality(era_aura_floor,nullptr,screen,&all,true,era_aura_floor->w==8&&era_aura_floor->h==720);
 }
 // BackgroundPanel. 9199: the 9-grid common://BackgroundPanel.png (offsets
 // 15/20); 13604/15574/17559: a figure, 0xe8ebeb over 0xc9cfd1 (rot -90).
@@ -200,6 +201,8 @@ void draw_video_start() {
     media_skin::background_panel(120,150,1680,810);
     text(fit(trailer_name(model.video_pending),large,1480),165,200,large,
          model.era>=2?media_skin::kRowSel:media_skin::kInk);
+    if(model.video_theater)
+        text("Offline Theater Party",165,262,small,model.era>=2?media_skin::kRowSel:media_skin::kSub);
     for (int i=0;i<2;i++) {
         const int y=330+i*90;
         if (i==model.video_start_item) {
@@ -210,6 +213,103 @@ void draw_video_start() {
         text(dash::kVideoStartActions[i],190,y+19,regular,
              model.era>=2 && i!=model.video_start_item?media_skin::kRowInk:media_skin::kInk);
     }
+}
+
+void draw_theater_room(Uint32 now,float video_alpha) {
+    static unsigned seen_reaction=0;
+    static Uint32 reaction_at=0;
+    static int reaction_kind=0;
+    if(model.video_theater_reaction_serial!=seen_reaction) {
+        seen_reaction=model.video_theater_reaction_serial;
+        reaction_kind=std::clamp(model.video_theater_reaction,0,dash::kTheaterReactionCount-1);
+        reaction_at=now;
+        // Bind only clips the current kit reports.  Popcorn is original
+        // Ex-Box particle chrome until a supplied authored clip is proven.
+        if(reaction_kind==0)look3d::moment(exbox::dashboard_director::AvatarMoment::Selection,now);
+        else if(reaction_kind==1)look3d::moment(exbox::dashboard_director::AvatarMoment::Achievement,now);
+    }
+    // Reuse the active era's owner-supplied dashboard material so Theater
+    // belongs to the selected dashboard instead of looking like unrelated
+    // placeholder art.  The neutral gradient remains the clean fallback.
+    gradient(0,0,W,H,0x111619,0x30383b);
+    if(era_background){SDL_Rect all{0,0,W,H};blit_quality(era_background,nullptr,screen,&all);shade(0,0,W,H,0x050708,145);}
+    constexpr SDL_Rect frame{244,54,1432,704};
+    rounded(frame.x-18,frame.y-18,frame.w+36,frame.h+36,12,0x11171d,0x020304);
+    outline(frame.x-10,frame.y-10,frame.w+20,frame.h+20,4,0x68727a);
+    rect(frame.x,frame.y,frame.w,frame.h,0x000000);
+    if(video_alpha>0)draw_video(frame.x,frame.y,frame.w,frame.h,video_alpha);
+
+    // A low auditorium floor reuses the era floor material when present.
+    gradient(0,758,W,H-758,0x1a2026,0x050708);
+    if(era_floor){SDL_SetSurfaceAlphaMod(era_floor,135);SDL_Rect floor{0,758,W,H-758};blit_quality(era_floor,nullptr,screen,&floor);SDL_SetSurfaceAlphaMod(era_floor,255);}
+    for(int i=0;i<8;i++) {
+        const int x=92+i*244;
+        rounded(x,855,190,190,42,0x202830,0x0d1115);
+        rounded(x+16,875,158,170,34,0x33404a,0x151b20);
+    }
+    if(model.local_friend_avatars) {
+        constexpr int centers[]{350,610,1310};
+        for(int i=0;i<3;++i) {
+            SDL_Surface* guest=edited_avatar::friend_still(i);
+            if(!guest)guest=look3d::local_guest(i);
+            if(!guest)continue;
+            const int pulse=0;
+            SDL_Rect at=edited_avatar::contain(guest,{centers[i]-105,720-pulse,210,330});
+            const bool gpu=gpu_home::avatar(guest,at,1.f);
+            if(!gpu||x21hook::audit_cpu()){x21hook::Pause reference(gpu);prepared_avatar::materialize(guest);blit_quality(guest,nullptr,screen,&at,false);}
+        }
+    }
+    SDL_Surface* figure=edited_avatar::live_or_still(now,true,avatar_art);
+    if(figure) {
+        // The lower body extends behind the chair front below.  This keeps the
+        // same live pose/animation but reads as a seated theater silhouette
+        // instead of a miniature avatar standing on the chair cushion.
+        const SDL_Rect stage{830,690,260,420};
+        SDL_Rect at=edited_avatar::contain(figure,stage);
+        const bool gpu=gpu_home::avatar(figure,at,1.f);
+        if(!gpu||x21hook::audit_cpu()) {x21hook::Pause reference(gpu);
+            prepared_avatar::materialize(figure);if(figure==look3d::hub.surface)look3d::materialize_hub();
+            blit_quality(figure,nullptr,screen,&at,false);
+        }
+    }
+    // Foreground chair backs occlude hips/legs for the seated composition.
+    // The original party's exact sitting skeleton remains an asset-binding
+    // task; this visual treatment never invents joint animation data.
+    for(int i=0;i<8;i++) {
+        const int x=92+i*244;
+        // The owner occupies the wider centre chair.  Its foreground back
+        // masks the standing clip's hands as well as the hips; no skeleton
+        // or authored pose is altered.
+        const int back_x=i==3?846:x+13;
+        const int back_w=i==3?228:164;
+        rounded(back_x,900,back_w,145,30,0x28323a,0x10151a);
+        rect(back_x+12,914,back_w-24,12,0x3b4852);
+    }
+    // Hide feet below the front row; this is a visual seat occlusion, not a
+    // fabricated sitting skeleton pose.
+    gradient(0,1042,W,H-1042,0x090c0f,0x020303);
+    if(reaction_at && now-reaction_at<1600) {
+        const Uint32 age=now-reaction_at;
+        if(reaction_kind==2) for(int i=0;i<22;i++) {
+            const int phase=int(age)/12+i*31;
+            const int x=960+((i*83+phase*3)%520)-260;
+            const int rise=std::min(250,phase%340);
+            const int y=920-rise+((i*37+phase)%90);
+            const int s=5+(i%4)*2;
+            rounded(x,y,s,s,s/2,i%3?0xf4e7aa:0xffffff,0xb88b36);
+        }
+        if(reaction_kind==2 && theater_popcorn_art) {
+            SDL_Rect prop{1010,820,84,84};
+            blit_contained(theater_popcorn_art,prop);
+        }
+        const std::string reaction=dash::kTheaterReactions[reaction_kind];
+        shade(820,676,280,46,0x000000,145);
+        text(reaction,960-text_width(reaction,small)/2,686,small,{255,255,255,255});
+    }
+    text("OFFLINE THEATER",96,78,small,{210,218,222,210});
+    text("Local guests",96,111,small,{148,158,164,210});
+    const std::string selected=std::string("Reaction: ")+dash::kTheaterReactions[std::clamp(model.video_theater_reaction,0,dash::kTheaterReactionCount-1)];
+    text(selected,96,142,small,{148,158,164,210});
 }
 // ---- Pictures full screen: cross-fades, zoom and pan, the slideshow, info ----
 // A screenshot's file size: most are well under a megabyte.
@@ -383,10 +483,16 @@ void draw_picture_full(Uint32 now) {
             SDL_SetSurfaceBlendMode(original,SDL_BLENDMODE_NONE);
             SDL_BlitScaled(original,&from,screen,&to);
         } else {
-            const std::string key=pic->path+":"+std::to_string(model.picture_rotation)+":"+std::to_string(from.x)+","+std::to_string(from.y)+","+std::to_string(from.w)+","+std::to_string(from.h);
-            if (key!=picture_view_key) {drop_surface(picture_view); picture_view=resample_art(original,from,to.w,to.h); picture_view_key=key;}
+            const int density=render_density::density(screen);
+            const std::string key=std::to_string(density)+":"+std::to_string(to.w)+","+std::to_string(to.h)+":"+pic->path+":"+std::to_string(model.picture_rotation)+":"+std::to_string(from.x)+","+std::to_string(from.y)+","+std::to_string(from.w)+","+std::to_string(from.h);
+            const SDL_Rect physical=render_density::pixel_rect(to,density);
+            const bool gpu_quality=x21hook::recording(screen);
+            if (!x21hook::quality(original,from,screen,physical)) {
+                x21hook::Pause reference_only(gpu_quality);
+            if (key!=picture_view_key) {if(gpu_quality)++x21hook::audit_picture_zoom_resamples;else ++x21hook::cpu_picture_zoom_resamples;drop_surface(picture_view); picture_view=render_density::tag(resample_art(original,from,to.w*density,to.h*density),density); picture_view_key=key;}
             if (picture_view) SDL_BlitSurface(picture_view,nullptr,screen,&to);
             else SDL_BlitScaled(original,&from,screen,&to);
+            }
         }
         if (model.picture_zoom>0) {
             // Where the view is in the whole picture, at the top left (the info panel has the right).
@@ -434,8 +540,9 @@ void draw_viewer_full() {
         const int index=trailer_index(key);
         const Uint32 now=SDL_GetTicks();
         const MediaFade fade=media_fade(now);
-        if (fade.video>0) draw_video(0,0,W,H,fade.video);
-        if (index>=0 && active_trailer==index && !trailer_stream_ready()) {
+        if(model.video_theater)draw_theater_room(now,fade.video);
+        else if (fade.video>0) draw_video(0,0,W,H,fade.video);
+        if (index>=0 && active_trailer==index && !trailer_preparing && !trailer_stream_ready()) {
             // start_trailer found no usable frames: say so rather than spin forever.
             // Ex-Box addition: no 360 original
             const std::string a="This video could not be played.";
@@ -451,7 +558,7 @@ void draw_viewer_full() {
         const auto info=model.video_info.find(key);
         if (index>=0 && model.video_subtitles && info!=model.video_info.end() && info->second.subtitles)
             if (const srt::Cue *cue=srt::at(subtitles_for(trailers[size_t(index)].folder),model.video_elapsed))
-                draw_subtitles(*cue,controls?H-300:H-70);
+                draw_subtitles(*cue,model.video_theater?735:(controls?H-300:H-70));
         if (controls) draw_video_controls(item,n,model.video_elapsed,model.video_length(),model.video_paused);
         return;
     }

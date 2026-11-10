@@ -2,6 +2,9 @@
 // Reconstructed chrome measured from reference frames; icons load separately.
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "render_density.hpp"
+#include "chrome_rle.hpp"
+#include <new>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -99,15 +102,24 @@ inline unsigned metal(float d, float y) {
     return c;
 }
 inline SDL_Surface *make_blades(int active,int first=0) {
-    auto *s=SDL_CreateRGBSurfaceWithFormat(0,1920,1080,32,SDL_PIXELFORMAT_ARGB8888);
+    auto *s=render_density::create(1920,1080,SDL_PIXELFORMAT_ARGB8888);
     if (!s) return nullptr;
     const auto &p=palettes[active];
-    for (int y=0;y<1080;y++) {
+    const float density=float(render_density::density(s));
+    for (int py=0;py<s->h;py++) {
+        const float y=(py+0.5f)/density-0.5f;
         const float bend=curve(float(y));
         const float left=112+(active-first)*64+first*32+bend, right=1480+active*64-first*48-bend;
-        for (int x=0;x<1920;x++) {
+        const float row_shade=0.12f+0.13f*std::sin(float(y)/1080*3.14159f);
+        const auto green_y=std::pow((y-450)/380.0f,2);
+        const float glass=std::exp(-std::pow((y-180)/95.0f,2))*0.18f;
+        const unsigned cap=y<132?mix(p.dark,p.mid,float(y)/132*0.65f):mix(p.dark,p.mid,float(y-895)/185);
+        for (int px=0;px<s->w;px++) {
+            const float x=(px+0.5f)/density-0.5f;
+            unsigned c=0;
+            if (!(x>=left && x<=right)) {
             const float outside=std::min(float(x),float(1919-x));
-            unsigned c=mix(0x666d6a,0xd6d9d3,std::clamp(outside/130,0.0f,1.0f));
+            c=mix(0x666d6a,0xd6d9d3,std::clamp(outside/130,0.0f,1.0f));
             for (int i=first;i<active;i++) {
                 const float d=x-(112+(i-first)*64+first*32+bend);
                 if (d>=-1 && d<66) c=mix(c,metal(d,float(y)),std::min(d+1,1.0f));
@@ -117,31 +129,35 @@ inline SDL_Surface *make_blades(int active,int first=0) {
                 const float d=x-(edge-bend*0.12f);
                 if (d>=-1 && d<68) c=mix(c,metal(64-d,float(y)),std::min(d+1,1.0f));
             }
+            }
             if (x>=left-1 && x<=right+1) {
-                float across=(x-left)/std::max(1.0f,right-left);
-                unsigned face=mix(p.mid,p.light,0.35f+0.25f*std::sin(across*3.14159f));
-                face=mix(face,p.dark,0.12f+0.13f*std::sin(float(y)/1080*3.14159f));
-                if (active==2) {
-                    const float glow=std::exp(-std::pow((across-0.83f)/0.30f,2)-std::pow((y-450)/380.0f,2));
-                    face=mix(0x398c30,0x60df42,glow);
-                }
-                if (y<132) face=mix(p.dark,p.mid,float(y)/132*0.65f);
-                if (y>895) face=mix(p.dark,p.mid,float(y-895)/185);
-                if (y>=132 && y<895) {
-                    const float glass=std::exp(-std::pow((y-180)/95.0f,2))*0.18f;
-                    face=mix(face,p.high,glass);
-                    if (y<137) face=mix(face,p.dark,0.15f);
-                }
-                float edge=std::min(x-left,right-x);
-                if (edge<10) face=mix(p.dark,face,std::clamp(edge/10,0.0f,1.0f));
+                const float edge=std::min(x-left,right-x);
+                unsigned face;
                 if (x<left+64) {
                     float d=x-left;
                     face=mix(p.dark,p.light,0.3f+0.3f*std::sin(d/64*3.14159f));
                     if (d>57) face=mix(face,p.dark,(d-57)/8);
+                } else {
+                    if(y<132 || y>895) face=cap;
+                    else {
+                        const float across=(x-left)/std::max(1.0f,right-left);
+                        if(active==2) {
+                            const float glow=std::exp(-std::pow((across-0.83f)/0.30f,2)-green_y);
+                            face=mix(0x398c30,0x60df42,glow);
+                        } else {
+                            face=mix(p.mid,p.light,0.35f+0.25f*std::sin(across*3.14159f));
+                            face=mix(face,p.dark,row_shade);
+                        }
+                        if(y>=132 && y<895) {
+                            face=mix(face,p.high,glass);
+                            if(y<137) face=mix(face,p.dark,0.15f);
+                        }
+                    }
+                    if(edge<10) face=mix(p.dark,face,std::clamp(edge/10,0.0f,1.0f));
                 }
                 c=mix(c,face,std::clamp(edge+1,0.0f,1.0f));
             }
-            pixel(s,x,y,c);
+            pixel(s,px,py,c);
         }
     }
     return s;
@@ -150,50 +166,126 @@ inline SDL_Surface *load_legacy_chrome(int active,bool early) {
     const std::string path=chrome_directory+"/"+(early?"4":"5")+"-"+std::to_string(active)+".png";
     SDL_Surface *image=IMG_Load(path.c_str());
     if (image && (image->w!=1920 || image->h!=1080)) {
-        SDL_FreeSurface(image);
+        render_density::free_surface(image);
         image=nullptr;
     }
     return image?image:make_blades(active,early);
 }
 
+// Startup-only procedural backing: no revision-specific source art is baked.
+inline chrome_rle::Backing chrome_backing[2][5];
+inline SDL_BlendMode chrome_backing_blend[2][5]{};
+inline constexpr size_t chrome_backing_limit=128u<<20;
+inline size_t chrome_backing_bytes=0;
+inline int chrome_backing_density=0,chrome_backing_failures=0,chrome_raster_fallbacks=0;
+inline void free_backing() {
+    for(auto &family:chrome_backing)for(auto &v:family)v.clear();
+    chrome_backing_bytes=0;chrome_backing_density=0;
+}
+inline void prepare_backing() {
+    free_backing();chrome_backing_failures=0;chrome_raster_fallbacks=0;
+    chrome_backing_density=render_density::factor;
+    for(int f=0;f<2;++f)for(int a=f?1:0;a<5;++a) {
+        auto *image=make_blades(a,f);
+        if(!image){++chrome_backing_failures;continue;}
+        SDL_GetSurfaceBlendMode(image,&chrome_backing_blend[f][a]);
+        try {
+            if(!chrome_backing[f][a].assign(static_cast<std::uint32_t*>(image->pixels),size_t(image->pitch)*image->h/4,
+                 chrome_backing_limit-chrome_backing_bytes))++chrome_backing_failures;
+            else chrome_backing_bytes+=chrome_backing[f][a].bytes();
+        }catch(const std::bad_alloc&){++chrome_backing_failures;}
+        render_density::free_surface(image);
+    }
+}
+inline SDL_Surface *restore_procedural(int active,bool early,SDL_Surface *reuse) {
+    auto &packed=chrome_backing[early?1:0][active];
+    if(chrome_backing_density==render_density::factor&&!packed.empty()) {
+        const int d=render_density::factor;
+        if(reuse&&(reuse->w!=1920*d||reuse->h!=1080*d||reuse->format->format!=SDL_PIXELFORMAT_ARGB8888)) {
+            render_density::free_surface(reuse);reuse=nullptr;
+        }
+        auto *out=reuse?reuse:render_density::create(1920,1080,SDL_PIXELFORMAT_ARGB8888);
+        if(out)SDL_SetSurfaceRLE(out,0);
+        if(out&&packed.restore(static_cast<std::uint32_t*>(out->pixels),size_t(out->pitch)*out->h/4)) {
+            render_density::tag(out,d);SDL_SetSurfaceBlendMode(out,chrome_backing_blend[early?1:0][active]);SDL_SetSurfaceAlphaMod(out,255);SDL_SetSurfaceColorMod(out,255,255,255);SDL_SetColorKey(out,SDL_FALSE,0);SDL_SetClipRect(out,nullptr);return out;
+        }
+        render_density::free_surface(out);
+    }else render_density::free_surface(reuse);
+    // Allocation/capacity failure must preserve the original visual fallback.
+    // This counted exceptional path can hitch; it is not a smoothness claim.
+    ++chrome_raster_fallbacks;return make_blades(active,early);
+}
+
+// Two borrowed surfaces: active and most recently used. Blit immediately;
+// never retain a pointer across another get_blades call.
+inline unsigned long long chrome_clock=0, chrome_used[2][5]{};
+inline void release_blades() {
+    for (int f=0;f<2;++f) {
+        auto &slots=f?blades_early:blades;
+        for (int a=0;a<5;++a) {
+            render_density::free_surface(slots[a]);slots[a]=nullptr;
+            source_converted[f][a]=false;chrome_used[f][a]=0;
+        }
+        cached_revision[f]=0;
+    }
+    chrome_clock=0;
+}
 inline void select_revision(int build) {
-    const bool early=build<5759;
-    const int family=early?1:0;
-    if (cached_revision[family]==build) return;
-    SDL_Surface *(&slots)[5]=early?blades_early:blades;
-    // The original conversion replaces this family's old surfaces. Backgrounds
-    // are raw-blitted, so no scaled-art cache holds references to these slots.
-    // Keep the existing ceiling of four early plus five later retained frames.
-    for (auto *&image:slots) {
-        SDL_FreeSurface(image);
-        image=nullptr;
+    const int f=build<5759?1:0;
+    if (cached_revision[f]==build) return;
+    auto &slots=f?blades_early:blades;
+    for (int a=0;a<5;++a) {
+        render_density::free_surface(slots[a]);slots[a]=nullptr;
+        source_converted[f][a]=false;chrome_used[f][a]=0;
+    }
+    cached_revision[f]=build;
+}
+inline SDL_Surface *get_blades(int build,int active) {
+    const bool early=build<5759;const int family=early?1:0;
+    if (active<(early?1:0) || active>=5) return nullptr;
+    select_revision(build);
+    auto &slots=early?blades_early:blades;
+    if (slots[active]) {chrome_used[family][active]=++chrome_clock;return slots[active];}
+    // Evict before allocation: never retain three full-frame chrome surfaces.
+    int count=0,old_family=-1,old_active=-1;unsigned long long oldest=~0ULL;
+    for (int f=0;f<2;++f) for (int a=0;a<5;++a) {
+        auto *image=f?blades_early[a]:blades[a];if (!image) continue;
+        ++count;
+        if (chrome_used[f][a]<oldest) {oldest=chrome_used[f][a];old_family=f;old_active=a;}
+    }
+    SDL_Surface *reuse=nullptr;
+    if (count>=2) {
+        auto &old=old_family?blades_early[old_active]:blades[old_active];
+        reuse=old;old=nullptr;
+        source_converted[old_family][old_active]=false;chrome_used[old_family][old_active]=0;
     }
     std::string source_root=chrome_directory+"/source-chrome";
 #ifndef __PROSPERO__
     if (const char *override=getenv("NXE_SOURCE_CHROME_ROOT")) source_root=override;
 #endif
-    for (int active=early?1:0;active<5;active++) {
-        const std::string path=source_root+"/"+std::to_string(build)+"-"+std::to_string(active)+".png";
-        auto *image=IMG_Load(path.c_str());
-        if (image && (image->w!=1920 || image->h!=1080)) {
-            SDL_FreeSurface(image);
-            image=nullptr;
-        }
-        source_converted[family][active]=image!=nullptr;
-        if (image) SDL_SetSurfaceBlendMode(image,SDL_BLENDMODE_NONE);
-        slots[active]=image?image:load_legacy_chrome(active,early);
+    const std::string path=source_root+"/"+std::to_string(build)+"-"+std::to_string(active)+".png";
+    auto *image=IMG_Load(path.c_str());
+    if (image && (image->w!=1920 || image->h!=1080)) {render_density::free_surface(image);image=nullptr;}
+    source_converted[family][active]=image!=nullptr;
+    if (image) SDL_SetSurfaceBlendMode(image,SDL_BLENDMODE_NONE);
+    if(!image) {
+        const std::string legacy=chrome_directory+"/"+(early?"4":"5")+"-"+std::to_string(active)+".png";
+        image=IMG_Load(legacy.c_str());
+        if(image&&(image->w!=1920||image->h!=1080)){render_density::free_surface(image);image=nullptr;}
     }
-    cached_revision[family]=build;
+    if(image){render_density::free_surface(reuse);slots[active]=image;}
+    else slots[active]=restore_procedural(active,early,reuse);
+    chrome_used[family][active]=++chrome_clock;
+    return slots[active];
 }
-
 inline bool has_source_labels(int build,int active) {
-    return source_converted[build<5759?1:0][active];
+    const int f=build<5759?1:0;
+    return active>=0 && active<5 && cached_revision[f]==build && source_converted[f][active];
 }
-
+// Resident converted slots, not a filesystem inventory.
 inline int converted_slot_count(int build) {
-    int count=0;
-    for (bool converted:source_converted[build<5759?1:0]) count+=converted;
-    return count;
+    const int f=build<5759?1:0;if (cached_revision[f]!=build) return 0;
+    int count=0;for (bool converted:source_converted[f]) count+=converted;return count;
 }
 
 inline size_t retained_chrome_bytes() {
@@ -210,7 +302,7 @@ inline int retained_chrome_count() {
     return count;
 }
 
-inline void prepare(const char *directory) {
+inline void prepare(const char *directory,bool deferred=false) {
     chrome_directory=directory;
     auto material=[&](const char *name) {
         char path[1024];snprintf(path,sizeof path,"%s/materials/%s.png",directory,name);
@@ -230,9 +322,9 @@ inline void prepare(const char *directory) {
         snprintf(name,sizeof name,"tray-%d-%d-shine",early?4:5,active);
         tray_shine[early][active]=material(name);
     }
-    for (int i=0;i<5;i++) blades[i]=load_legacy_chrome(i,false);
-    for (int i=1;i<5;i++) blades_early[i]=load_legacy_chrome(i,true);
-    guide=SDL_CreateRGBSurfaceWithFormat(0,860,1080,32,SDL_PIXELFORMAT_ARGB8888);
+    release_blades();
+    if(!deferred)prepare_backing(); // Worker transfer may complete later, before first frame.
+    guide=render_density::create(860,1080,SDL_PIXELFORMAT_ARGB8888);
     if (!guide) return;
     SDL_FillRect(guide,nullptr,0);
     // The Blades Guide, measured off the designer capture at 1080p. Rows are
@@ -280,7 +372,9 @@ inline void prepare(const char *directory) {
         return p[n-1][1];
     };
     auto hash=[](unsigned v) {v^=v>>16;v*=0x7feb352dU;v^=v>>15;v*=0x846ca68bU;v^=v>>16;return v;};
-    for (int y=0;y<1080;y++) {
+    const float density=float(render_density::density(guide));
+    for (int py=0;py<guide->h;py++) {
+        const float y=(py+0.5f)/density-0.5f;
         const float edge=smooth(edge_points,11,float(y));
         float L=y<128?smooth(band_left,2,float(y)):lerp(band_left,11,float(y));
         float R=y<128?smooth(band_right,2,float(y)):lerp(band_right,11,float(y));
@@ -292,7 +386,8 @@ inline void prepare(const char *directory) {
             const unsigned g=unsigned(std::clamp(smooth(face_rows,8,float(y))+streak*0.7f,0.0f,255.0f));
             base=(g<<16)|(g<<8)|g;
         } else base=table(foot_rows,58,(y-848)/4.0f);
-        for (int x=0;x<860;x++) {
+        for (int px=0;px<guide->w;px++) {
+            const float x=(px+0.5f)/density-0.5f;
             unsigned face=base;float alpha=1;
             const float d=float(x)-edge;
             if (d>-26 && d<0) face=mix(face,0x3a3c38,std::pow((d+26)/26,3.0f)*0.55f);   // rolled edge
@@ -324,23 +419,24 @@ inline void prepare(const char *directory) {
                 const unsigned g=unsigned(std::clamp(v,0.0f,255.0f));
                 face=(g<<16)|(g<<8)|g;
             } else if (x>=R+1) continue;
-            pixel(guide,x,y,face,alpha);
+            pixel(guide,px,py,face,alpha);
         }
     }
     SDL_SetSurfaceBlendMode(guide,SDL_BLENDMODE_BLEND);
 }
 inline void free_all() {
+    free_backing();
     for (int family=0;family<2;family++) {
         cached_revision[family]=0;
         for (bool &converted:source_converted[family]) converted=false;
     }
-    for (auto *&s:row_material) {SDL_FreeSurface(s);s=nullptr;}
-    SDL_FreeSurface(profile_material);profile_material=nullptr;
-    SDL_FreeSurface(row_shine);row_shine=nullptr;
-    for (auto &family:tray_material) for (auto &blade:family) for (auto *&s:blade) {SDL_FreeSurface(s);s=nullptr;}
-    for (auto &family:tray_shine) for (auto *&s:family) {SDL_FreeSurface(s);s=nullptr;}
-    for (auto *&s:blades) {SDL_FreeSurface(s);s=nullptr;}
-    for (auto *&s:blades_early) {SDL_FreeSurface(s);s=nullptr;}
-    SDL_FreeSurface(guide);guide=nullptr;
+    for (auto *&s:row_material) {render_density::free_surface(s);s=nullptr;}
+    render_density::free_surface(profile_material);profile_material=nullptr;
+    render_density::free_surface(row_shine);row_shine=nullptr;
+    for (auto &family:tray_material) for (auto &blade:family) for (auto *&s:blade) {render_density::free_surface(s);s=nullptr;}
+    for (auto &family:tray_shine) for (auto *&s:family) {render_density::free_surface(s);s=nullptr;}
+    for (auto *&s:blades) {render_density::free_surface(s);s=nullptr;}
+    for (auto *&s:blades_early) {render_density::free_surface(s);s=nullptr;}
+    render_density::free_surface(guide);guide=nullptr;
 }
 }

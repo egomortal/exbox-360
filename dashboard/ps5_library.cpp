@@ -109,6 +109,65 @@ std::string trim(std::string s)
         ++i;
     return s.substr(i);
 }
+
+constexpr const char *kGameCacheHeader = "EXBOX-INSTALLED-GAMES/1";
+constexpr const char *kGameCachePath = "/data/nxe/installed-games-v1.tsv";
+
+std::vector<dash::App> cached_games(const std::string &prefix)
+{
+    const auto bytes = read_bytes(prefix + kGameCachePath, 256 * 1024);
+    const std::string text(bytes.begin(), bytes.end());
+    std::vector<dash::App> out;
+    std::size_t begin = text.find('\n');
+    if (begin == std::string::npos || text.substr(0, begin) != kGameCacheHeader)
+        return out;
+    ++begin;
+    while (begin < text.size() && out.size() < 512)
+    {
+        const std::size_t end = text.find('\n', begin);
+        const std::string row = text.substr(begin, end == std::string::npos ? text.size() - begin : end - begin);
+        const std::size_t first = row.find('\t'), second = first == std::string::npos ? first : row.find('\t', first + 1);
+        dash::App game;
+        if (first != std::string::npos && second != std::string::npos)
+        {
+            game.title_id = row.substr(0, first);
+            if (title_id(game.title_id) && !hidden_title(game.title_id) &&
+                exbox::system_data::unhex(row.substr(first + 1, second - first - 1), game.title) &&
+                exbox::system_data::unhex(row.substr(second + 1), game.icon) && !game.title.empty())
+                out.push_back(std::move(game));
+        }
+        if (end == std::string::npos)
+            break;
+        begin = end + 1;
+    }
+    return out;
+}
+
+bool save_game_cache(const std::string &prefix, const std::vector<dash::App> &games)
+{
+    if (!prefix.empty() || games.empty())
+        return false;
+    const std::string path = prefix + kGameCachePath, temporary = path + ".tmp";
+    FILE *file = std::fopen(temporary.c_str(), "wb");
+    if (!file)
+        return false;
+    bool okay = std::fprintf(file, "%s\n", kGameCacheHeader) > 0;
+    for (const auto &game : games)
+    {
+        const std::string title = exbox::system_data::hex(game.title);
+        const std::string icon = exbox::system_data::hex(game.icon);
+        if (std::fprintf(file, "%s\t%s\t%s\n", game.title_id.c_str(), title.c_str(), icon.c_str()) < 0)
+            okay = false;
+    }
+    if (std::fclose(file))
+        okay = false;
+    if (!okay || ::rename(temporary.c_str(), path.c_str()))
+    {
+        ::unlink(temporary.c_str());
+        return false;
+    }
+    return true;
+}
 } // namespace
 
 bool title_id(const std::string &id)
@@ -232,6 +291,16 @@ std::vector<dash::App> installed_games(const std::string &prefix)
             out.push_back(game);
         }
     }
+    // Native titles can see an openable but empty/incomplete appmeta mount.
+    // Preserve the last authoritative companion result so Games never vanishes
+    // merely because that read-only feed is temporarily unavailable.
+    if (bulk_loaded && !out.empty())
+        (void)save_game_cache(prefix, out);
+    else
+        for (auto &cached : cached_games(prefix))
+            if (std::none_of(out.begin(), out.end(), [&](const dash::App &game) { return game.title_id == cached.title_id; }))
+                out.push_back(std::move(cached));
+
     for (auto &game : out)
     {
         const std::string art = prefix + "/data/homebrew/ExBox360/game_art/" + game.title_id;

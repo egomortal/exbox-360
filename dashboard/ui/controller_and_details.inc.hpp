@@ -32,7 +32,6 @@ void draw_controller_map(Uint32 now) {
         text(action,x+col_w-aw-18,y+22,small,r.button==xb::Back?SDL_Color{230,160,120,255}:(on?white:dim));
     }
     // Ex-Box addition: no 360 original; the retail Guide legend stays source-authored.
-    if (model.era>=1) text("Guide: R3 opens Ex-Box Utilities.",px+62,py+145,small,{190,214,170,255});
     text("Last input: "+last_input,px+60,py+ph-74,small,{200,226,176,255});
     text("L3 + R3 returns to PS5 Home.",px+1050,py+ph-74,small,{150,160,146,255});
 }

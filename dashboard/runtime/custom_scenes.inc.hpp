@@ -1,6 +1,6 @@
 // Owner dash.xex scenes compiled by tools/xur5/compile_custom_scenes.py.
 namespace custom_scene {
-int loaded_build=-1;
+int loaded_build=-1, loaded_density=0;
 std::string directory;
 xui::Scene legend;
 SDL_Surface *highlight=nullptr,*legend_art[4]{};
@@ -16,30 +16,48 @@ SDL_Surface *bitmap(const std::string &path) {
 struct Painted {
     xui::Scene scene;
     xui::Renderer painter;
+    xui::GpuResources gpu_resources;bool gpu_slot=false;
     SDL_Surface *backdrop=nullptr;
     SDL_Surface *bound_icon=nullptr; // borrowed identity; painter owns its copy
     Uint32 tick=0;
     int card=-1,channel=-1;
     bool ready=false,selected=false;
     void clear() {
-        painter.clear();SDL_FreeSurface(backdrop);backdrop=nullptr;
+        render_density::forget_surface(painter.canvas);painter.clear();SDL_FreeSurface(backdrop);backdrop=nullptr;
+        gpu_resources.clear();gpu_slot=false;
         scene=xui::Scene{};ready=false;bound_icon=nullptr;card=channel=-1;tick=0;
     }
     void load(const std::string &path,int w,int h) {
         clear();
         if (!scene.load(path.c_str())) return;
-        if (!painter.prepare(scene,w,h,"",1)) {clear();return;}
-        backdrop=SDL_CreateRGBSurfaceWithFormat(0,w,h,32,SDL_PIXELFORMAT_ARGB8888);
+        if (!painter.prepare(scene,w*render_density::factor,h*render_density::factor,"",1)) {clear();return;}
+        render_density::tag(painter.canvas,render_density::factor);
+        backdrop=render_density::create(w,h);
         if (!backdrop) {clear();return;}
         SDL_SetSurfaceBlendMode(backdrop,SDL_BLENDMODE_NONE);ready=true;
+        gpu_slot=w==420&&h==320;
+        if(gpu_slot)gpu_resources.prepare(scene,"");
     }
     bool draw(SDL_Rect box) {
         if (!ready || box.w<=0 || box.h<=0 || box.x<0 || box.y<0 || box.x+box.w>W || box.y+box.h>H) return false;
+        if(x21hook::recording(screen)){
+            if(gpu_slot){
+                const size_t first=x21hook::active->packet.commands.size();
+                const auto physical=render_density::pixel_rect(box,render_density::factor);
+                if(!append_custom_slot(x21hook::active->packet,scene,gpu_resources,render_density::factor,physical,screen->clip_rect,false))
+                    x21hook::active->packet.unsupported.push_back("custom_slot_extraction");
+                else x21hook::snapshot_commands(first);
+            }else x21hook::active->packet.unsupported.push_back("custom_scene_non_slot");
+            if(!x21hook::audit_cpu())return true;
+        }
+        x21hook::Pause cpu_reference(x21hook::recording(screen));
         // Paint over a sampled copy of the existing pane, preserving XUI blend
         // modes without claiming its software painter produces transparent art.
         SDL_Rect local{0,0,backdrop->w,backdrop->h};
-        if (SDL_BlitScaled(screen,&box,backdrop,&local)!=0) return false;
-        painter.draw(scene,xui::Matrix::identity(),false,backdrop);
+        SDL_Rect source=render_density::pixel_rect(box,render_density::density(screen));
+        if (SDL_UpperBlitScaled(screen,&source,backdrop,&local)!=0) return false;
+        const float d=float(render_density::factor);
+        painter.draw(scene,xui::Matrix::scale(d,d),false,backdrop);
         return SDL_BlitScaled(painter.canvas,nullptr,screen,&box)==0;
     }
 };
@@ -59,8 +77,8 @@ void clear() {
     std::fill(std::begin(has_press),std::end(has_press),false);
 }
 void refresh() {
-    const int build=selected_build();if (loaded_build==build) return;
-    clear();loaded_build=build;
+    const int build=selected_build();if (loaded_build==build && loaded_density==render_density::factor) return;
+    clear();loaded_build=build;loaded_density=render_density::factor;
     std::string base=std::string(root)+"era-skins/";
 #ifndef __PROSPERO__
     if (const char *override=getenv("NXE_ERA_SKIN_ROOT")) base=std::string(override)+"/";
@@ -141,6 +159,9 @@ bool draw_slot(int icon,int card,bool selected,SDL_Rect box,SDL_Surface *art,Uin
     if (s.bound_icon!=art) {
         SDL_Surface *copy=SDL_ConvertSurfaceFormat(art,SDL_PIXELFORMAT_ARGB8888,0);
         if (!copy) return false;
+        SDL_Surface *gpu_copy=SDL_ConvertSurfaceFormat(art,SDL_PIXELFORMAT_ARGB8888,0);
+        if(!gpu_copy){SDL_FreeSurface(copy);return false;}
+        s.gpu_resources.bind_bitmap("@host-icon",gpu_copy);
         s.painter.bind_bitmap("@host-icon",copy);s.bound_icon=art;
         for (const char *id:{"imgIcon","reflection"}) {
             const int n=s.scene.find(id);
@@ -168,3 +189,4 @@ bool draw_equalizer(int x,int y) {
     return equalizer.draw({x,y,76,32});
 }
 }
+

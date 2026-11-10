@@ -13,14 +13,14 @@ SDL_Rect solid_icon_source(int icon, SDL_Surface *art) {
     static constexpr float end[]={0.653f,0.673f,0.663f,0.653f,0.668f,0.646f,
                                   0.690f,0.690f,0.690f};
     const float fraction=icon>=0 && icon<dash::IconCount?end[icon]:1.0f;
-    return {0,0,art->w,std::max(1,int(art->h*fraction))};
+    return {0,0,render_density::logical_w(art),std::max(1,int(render_density::logical_h(art)*fraction))};
 }
 void metro_art(const dash::Card &card, const SDL_Rect &tile) {
     SDL_Rect area{tile.x,tile.y,tile.w,tile.h-53};
     SDL_Rect previous{};
     SDL_GetClipRect(screen,&previous);
     SDL_SetClipRect(screen,&area);
-    if (card.goal==dash::Goal::ToMusic && card.image.empty() && card_picture(card)) {
+    if ((card.image.rfind("music:",0)==0 || (card.goal==dash::Goal::ToMusic && card.image.empty())) && card_picture(card)) {
         // Metro's music tile fills with the album art, cropped to the tile.
         SDL_Surface *art=card_picture(card);
         SDL_Rect full{tile.x,tile.y,tile.w,tile.h};
@@ -42,3 +42,4 @@ void metro_art(const dash::Card &card, const SDL_Rect &tile) {
     }
     SDL_SetClipRect(screen,&previous);
 }
+

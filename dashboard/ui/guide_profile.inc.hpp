@@ -1,8 +1,9 @@
 // Included inside main.cpp's private namespace; see docs/CODE_MAP.md.
 std::string clock_text() {
     std::time_t now=std::time(nullptr);
-    std::tm *local=std::localtime(&now);
-    if (!local) return "";
+    std::tm snapshot{};
+    if (!local_time_snapshot(now,snapshot)) return "";
+    const std::tm *local=&snapshot;
     char buffer[32];
     int hour=local->tm_hour%12; if (hour==0) hour=12;
     if (model.clock_24_hour) std::snprintf(buffer,sizeof buffer,"%02d:%02d",local->tm_hour,local->tm_min);

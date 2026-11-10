@@ -17,13 +17,18 @@ inline bool volume_root(const std::string& path){return path=="/user"||path=="/m
 inline bool remote(const std::string& path){return companion&&(volume_root(path)||exbox::system_data::ReadOnlyFiles::root_for(path)!=nullptr);}
 inline void configure(bool enabled,std::uint16_t port=7090,const std::string& cache="/data/nxe/system-cache"){companion=enabled;companion_port=port;cache_root=cache;}
 inline void initialize(){
+ std::string version;
 #ifdef EXBOX_NATIVE_TITLE
- DIR* directory=opendir("/user/appmeta");companion=!directory;if(directory)closedir(directory);
+ // ShadowMount can make /user/appmeta open successfully while exposing an
+ // empty/incomplete view to the title.  Prefer the bounded loopback feed when
+ // it actually answers; only use direct discovery when no feed is available.
+ companion=exbox::system_data::Client(companion_port).text("version","",64,version);
+ if(!companion){DIR* directory=opendir("/user/appmeta");companion=!directory;if(directory)closedir(directory);}
 #else
  companion=false;
 #endif
  std::fprintf(stderr,"Ex-Box system data: %s\n",companion?"companion blocking TCP":"direct filesystem");
- if(companion){std::string version;if(exbox::system_data::Client(companion_port).text("version","",64,version))std::fprintf(stderr,"companion version: %s",version.c_str());else std::fprintf(stderr,"companion feed unavailable errno=%d\n",errno);}
+ if(companion){if(!version.empty())std::fprintf(stderr,"companion version: %s",version.c_str());else std::fprintf(stderr,"companion selected as direct filesystem fallback is unavailable errno=%d\n",errno);}
 }
 inline bool parse_entry(const std::string& row,Entry& output){
  std::istringstream in(row);std::string type,size,time,device,name,extra;

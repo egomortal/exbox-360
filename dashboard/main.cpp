@@ -1,3 +1,4 @@
+#include "async_log.hpp"
 // Ex-Box 360: native NXE-inspired dashboard for PS5 homebrew.
 // SPDX-License-Identifier: GPL-3.0-or-later
 #define SDL_MAIN_HANDLED
@@ -10,13 +11,16 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include "direct_blit.hpp"
 #include "concepts/nxe_bridge.hpp"
 #include "dash_model.hpp"
 #include "network_runtime.hpp"
+#include "recorder_runtime.hpp"
 #include "dashboard_layout.hpp"
 #include "media_transport_layout.hpp"
 #include "image_resample.hpp"
 #include "era_chrome.hpp"
+#include "chrome_startup.hpp"
 #include "blades_rail_roles.hpp"
 #include "xui_navigation.hpp"
 #include "xui_viewport.hpp"
@@ -35,7 +39,20 @@ extern "C" void exbox_native_note(const char*,...);
 #include "hdr_image.hpp"
 #include "music.hpp" // compiles the audio decoders: this file only
 #include "music_metadata.hpp"
+#include "startup_job.hpp"
+#include "music_index.hpp"
+#include "modules/themes/theme_manifest.hpp"
+#include "modules/themes/theme_runtime.hpp"
+#include "modules/games_frontend/music_library_activity.hpp"
+#include "modules/dashboard_director/dashboard_director.hpp"
+#include "modules/dashboard_director/friends_stage.hpp"
+#include "modules/dashboard_services/dashboard_diagnostics.hpp"
+#include "modules/dashboard_services/promotion_scheduler.hpp"
+#include "modules/dashboard_services/rom_guide_companion.hpp"
 #include "avatar_kit.hpp"
+#include "modules/editor_dashboard/prepared_actor.hpp"
+#include "avatar_alpha.hpp"
+#include "x21/packet_builder.hpp"
 #include "subtitles.hpp"
 #include <memory>
 #ifdef NXE_JXR
@@ -43,6 +60,7 @@ extern "C" void exbox_native_note(const char*,...);
 #endif
 
 #include <algorithm>
+#include <cerrno>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
@@ -70,8 +88,81 @@ extern "C" int sceUserServiceGetInitialUser(int *user);
 extern "C" int sceUserServiceGetUserName(int user, char *name, size_t size);
 #endif
 
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+#include "session_adapter.hpp"
+#include "native_session.h"
+extern "C" [[noreturn]] void catchReturnFromMain(int status);
+extern "C" void exbox_presenter_log(const char* text){exbox_native_note("%s",text);}
+#endif
+
+#include "random_album.hpp"
+#include "render_density.hpp"
+#include "x21/fullapp_gpu_hook.hpp"
+#include "x21/opaque_surface.hpp"
+#include "x21/layer_scope.hpp"
+#include "x21/guide_commands.hpp"
+#include "x21/slot_builder.hpp"
+#include "x21/circle_command.hpp"
+#include "x21/reflection_command.hpp"
+#ifndef __PROSPERO__
+#include "x21/host_audit.hpp"
+#else
+#include "x21/native_2d_client.h"
+
+#endif
+#include "render_preference.hpp"
+#include "solid_blend.hpp"
+#include "reflection_blend.hpp"
+#include "realtime_scale.hpp"
+#include "video_output_storage.hpp"
+#include "frame_pacing.hpp"
+#include "frame_metrics.hpp"
+#include "packed_media_prep.hpp"
+#include "packed_thumbnail_prep.hpp"
+#include "text_cache.hpp"
+#undef SDL_BlitSurface
+#undef SDL_BlitScaled
+#define SDL_BlitSurface x21hook::blit
+#define SDL_BlitScaled x21hook::blit_scaled
+#define SDL_FillRect x21hook::fill
+#define SDL_SetClipRect render_density::set_clip
+#define SDL_GetClipRect render_density::get_clip
+#define SDL_FreeSurface render_density::free_surface
+#define TTF_OpenFont render_density::open_font
+#define TTF_CloseFont render_density::close_font
+#define TTF_FontHeight render_density::font_height
+#define TTF_SizeUTF8 render_density::size_utf8
+#define TTF_RenderUTF8_Blended render_density::text
+
 namespace {
+exbox_services::diagnostics::Metrics dashboard_diagnostics;
+exbox::dashboard_director::PromotionClock promotion_rotation_clock;
+chrome_startup::Job chrome_startup_job;
+bool chrome_startup_once=false,chrome_startup_deferred=false;
+void begin_chrome_startup(){
+    if(chrome_startup_once)return;
+    chrome_startup_once=true;
+    // Startup-only: published and queued packet storage share one cap.
+    if(era_chrome::chrome_backing_bytes || era_chrome::retained_chrome_count())return;
+    for(const auto& family:era_chrome::chrome_backing)for(const auto& packet:family)if(!packet.empty())return;
+    chrome_startup_deferred=chrome_startup_job.start(render_density::factor);
+}
+void finish_chrome_startup(){
+    if(!chrome_startup_deferred)return;
+    chrome_startup_deferred=false;
+    chrome_startup::Result result;
+    if(!chrome_startup_job.take(result)||!result.ok||result.density!=render_density::factor||result.bytes>era_chrome::chrome_backing_limit){result=chrome_startup::Result{};era_chrome::prepare_backing();return;}
+    SDL_Surface* probe=SDL_CreateRGBSurfaceWithFormat(0,1,1,32,SDL_PIXELFORMAT_ARGB8888);
+    if(!probe){result=chrome_startup::Result{};era_chrome::prepare_backing();return;}
+    SDL_BlendMode blend;SDL_GetSurfaceBlendMode(probe,&blend);SDL_FreeSurface(probe);
+    era_chrome::free_backing();
+    for(int f=0;f<2;++f)for(int a=f?1:0;a<5;++a){std::swap(era_chrome::chrome_backing[f][a],result.packets[f][a]);era_chrome::chrome_backing_blend[f][a]=blend;}
+    era_chrome::chrome_backing_bytes=result.bytes;era_chrome::chrome_backing_density=result.density;
+    era_chrome::chrome_backing_failures=0;era_chrome::chrome_raster_fallbacks=0;
+}
+
 constexpr int W = 1920, H = 1080;
+int persisted_render_scale=1;
 constexpr const char *root = "/data/homebrew/ExBox360/";
 constexpr const char *pins_path = "/data/nxe/attachments.txt";
 SDL_Window *window;
@@ -117,10 +208,13 @@ SDL_Surface *toast_segments=nullptr;
 SDL_Surface *xbox_logo=nullptr, *music_controls[6]{};
 SDL_Surface *picture_controls[11]{}, *picture_backdrop=nullptr;
 SDL_Surface *video_controls[7]{}; // XmfPadPlayback: Play, Pause, Last, RR, Stop, FF, Next
+// Optional owner-imported marketplace prop.  The installer derives/copies it
+// locally; clean exports contain no Microsoft asset.
+SDL_Surface *theater_popcorn_art=nullptr;
 // The 1888 music scene's own pieces (private/xbox/unpacked/music): the order
 // buttons (in order, shuffled) and the row glyphs for a song, album, artist
 // and genre. Any of them may be missing; the pages draw stand-ins.
-SDL_Surface *music_order_art[2]{}, *music_kind_art[5]{};
+SDL_Surface *music_order_art[2]{}, *music_kind_art[7]{};
 SDL_Surface *xbox_live_logo=nullptr;
 SDL_Surface *blades_star=nullptr,*blades_star_full=nullptr,*blades_gscore=nullptr,*blades_disc=nullptr;
 // The System blade's own row icons (dashmain / shared), by name.
@@ -151,6 +245,10 @@ constexpr const char *artwork_choices_path="/data/nxe/artwork.txt";
 bool retail_background=false;
 dash::Model model;
 exbox_network::Worker network_worker;
+exbox_recorder::Worker recorder_worker;
+exbox::StartupJob<exbox::themes::ManifestResult> theme_catalog_job;
+std::vector<exbox::themes::CatalogEntry> installed_theme_catalog;
+bool theme_catalog_reported=false;
 bool running = true;
 float position = 0;
 int shown_channel = -1;
@@ -174,10 +272,14 @@ Uint64 direct_seen_generation=0;
 int active_trailer=-1, active_frame=-1;
 Uint32 trailer_started=0;
 SDL_Surface *trailer_image=nullptr;
-SDL_Surface *trailer_scaled=nullptr;
+SDL_Surface *trailer_scaled=nullptr,*video_source_argb=nullptr;
+bool scaled_video_opaque=false;
+realtime_scale::Workspace video_scale_workspace;
+video_output_storage::Backing video_output_backing;
+SDL_Surface* video_render_surface(int width,int height,int density){return video_output_backing.create(width,height,density);}
 Uint64 trailer_generation=0,scaled_video_generation=0;
 FILE *trailer_frames=nullptr;
-std::vector<long> trailer_offsets;
+const std::vector<int64_t>* trailer_offsets=nullptr;
 SDL_AudioDeviceID trailer_audio=0;
 SDL_AudioSpec trailer_audio_spec{};
 Uint8 *trailer_audio_data=nullptr;
@@ -194,8 +296,8 @@ const char *video_state_path="/data/nxe/videos.txt"; // where each video was lef
 // The Music Library and the background player (music.hpp). The player is
 // mixed into the interface sounds' audio device (sfx::mix).
 music::Player music_player;
+exbox_music::LibraryActivity music_activity;
 std::vector<music::Song> music_songs;
-std::map<std::string,music::Song> music_known; // tags already read, by path
 // Music is heard now: trailers stay silent under it, as the 360's did.
 bool music_audible() {return music_player.active() && !music_player.paused();}
 constexpr const char *recent_path="/data/nxe/recent.txt";
@@ -220,26 +322,124 @@ Uint32 return_at=0;         // fading back in after a launch attempt
 Uint32 trophies_checked=0;
 SDL_Surface *ring_frames[24]{};
 SDL_Surface *glow=nullptr, *kinect_glow=nullptr, *aura=nullptr;
+std::array<SDL_Surface*,3> atmosphere_glow{};
 // The 360's own notification icons (huduiskin shrdres ico_64x_*). Optional.
 SDL_Surface *toast_trophy=nullptr, *toast_downloads=nullptr, *toast_controller=nullptr, *toast_themes=nullptr;
 size_t pads_seen=0; // controllers present at startup do not announce themselves
 // The hub recoloured for the chosen theme (the green theme uses the originals).
 int themed_for=-1;
 SDL_Surface *themed_background=nullptr, *themed_cards[5]{}, *themed_icons[dash::IconCount]{};
+SDL_Surface *installed_theme_background=nullptr;
+SDL_Surface *installed_theme_previous=nullptr;
+std::shared_ptr<std::vector<Uint32>> installed_theme_pixels,installed_theme_previous_pixels;
+exbox::StartupJob<exbox::themes::PreparedTheme> theme_apply_job;
+std::string requested_theme_id;
+int requested_theme_slot=0,installed_theme_slot=-1;
+std::string failed_theme_id;
+int failed_theme_slot=-1;
+bool retire_installed_theme=false;
+SDL_Surface *installed_theme_preview=nullptr;
+std::shared_ptr<std::vector<Uint32>> installed_theme_preview_pixels;
+exbox::StartupJob<exbox::themes::PreparedTheme> theme_preview_job;
+std::string theme_preview_focus_id,theme_preview_requested_id,theme_preview_published_id;
+Uint32 theme_preview_focus_at=0;
 // A game or app starting: the fade to black runs first.
 struct Launching { dash::Effect effect; std::string title; Uint32 at=0; bool live=false; };
 Launching launching;
 constexpr Uint32 kLaunchFade=650, kLaunchHold=250;
 
+struct DashboardLogSink {FILE *file=nullptr;bool failure_reported=false;};
+DashboardLogSink dashboard_log_sink;
+exbox_log::AsyncLog dashboard_log;
+bool dashboard_log_sync=false;
+std::mutex dashboard_log_format_mutex;
+bool dashboard_log_write(void *context,const char *bytes,std::size_t size,bool first,bool last) {
+    auto &sink=*static_cast<DashboardLogSink*>(context);
+    if(first)sink.file=fopen("/data/nxe/bigapp.log","a");
+    bool ok=sink.file!=nullptr;
+    if(sink.file && fwrite(bytes,1,size,sink.file)!=size)ok=false;
+    if(last && sink.file){if(fclose(sink.file)!=0)ok=false;sink.file=nullptr;}
+    if(!ok && !sink.failure_reported){sink.failure_reported=true;fprintf(stderr,"ExBox log writer failed; inspect shutdown log status.\n");}
+    return ok;
+}
+void close_dashboard_log() {
+    const auto state=dashboard_log.close();
+    static bool reported=false;
+    if(!state.ok() && !reported){reported=true;fprintf(stderr,"ExBox log status: accepted=%llu written=%llu failed=%llu rejected=%llu start_failures=%llu\n",
+        static_cast<unsigned long long>(state.accepted),static_cast<unsigned long long>(state.written),
+        static_cast<unsigned long long>(state.failed),static_cast<unsigned long long>(state.rejected),
+        static_cast<unsigned long long>(state.start_failures));}
+}
+struct DashboardLogSession {
+    DashboardLogSession(){if(!dashboard_log.start({&dashboard_log_sink,dashboard_log_write})){dashboard_log_sync=true;fprintf(stderr,"ExBox log worker unavailable; using synchronous fallback.\n");}}
+    ~DashboardLogSession(){close_dashboard_log();}
+};
 void log(const char *message) {
-    FILE *f = fopen("/data/nxe/bigapp.log", "a");
-    if (!f) return;
-    // Each line carries the console's local time, so runs can be told apart.
-    char stamp[32]="";
     const std::time_t now=std::time(nullptr);
-    if (const std::tm *t=std::localtime(&now)) std::strftime(stamp,sizeof stamp,"%Y-%m-%d %H:%M:%S ",t);
-    fprintf(f,"%s%s\n",stamp,message);
-    fclose(f);
+    std::lock_guard<std::mutex> format_guard(dashboard_log_format_mutex);
+    char stamp[32]="";
+    if(const std::tm *t=std::localtime(&now))std::strftime(stamp,sizeof stamp,"%Y-%m-%d %H:%M:%S ",t);
+    if(dashboard_log_sync){
+        dashboard_log_write(&dashboard_log_sink,stamp,std::strlen(stamp),true,false);
+        dashboard_log_write(&dashboard_log_sink,message,std::strlen(message),false,false);
+        dashboard_log_write(&dashboard_log_sink,"\n",1,false,true);
+    }else dashboard_log.append(stamp,message);
+}
+bool local_time_snapshot(std::time_t now,std::tm &result) {
+    std::lock_guard<std::mutex> lock(dashboard_log_format_mutex);
+    if(const std::tm *local=std::localtime(&now)){result=*local;return true;}
+    return false;
+}
+
+void log_after_close(const char *message) {
+    close_dashboard_log();
+    const std::time_t now=std::time(nullptr);
+    std::lock_guard<std::mutex> lock(dashboard_log_format_mutex);
+    char stamp[32]="";
+    if(const std::tm *local=std::localtime(&now))std::strftime(stamp,sizeof stamp,"%Y-%m-%d %H:%M:%S ",local);
+    dashboard_log_write(&dashboard_log_sink,stamp,std::strlen(stamp),true,false);
+    dashboard_log_write(&dashboard_log_sink,message,std::strlen(message),false,false);
+    dashboard_log_write(&dashboard_log_sink,"\n",1,false,true);
+}
+#ifndef NXE_DIAGNOSTICS
+#define NXE_DIAGNOSTICS 0
+#endif
+constexpr bool diagnostic_logging(){return NXE_DIAGNOSTICS!=0;}
+
+bool developer_diagnostics_requested(){
+#ifndef __PROSPERO__
+    if(const char* value=std::getenv("NXE_DEVELOPER_DIAGNOSTICS"))return std::strcmp(value,"1")==0;
+#endif
+    char value[4]{};
+    FILE* file=std::fopen("/data/nxe/exbox/developer-diagnostics.flag","rb");
+    if(!file)return false;
+    const std::size_t size=std::fread(value,1,sizeof value,file);
+    std::fclose(file);
+    return (size==1&&value[0]=='1') || (size==2&&value[0]=='1'&&value[1]=='\n') ||
+           (size==3&&value[0]=='1'&&value[1]=='\r'&&value[2]=='\n');
+}
+
+bool gpu_dashboard_health_requested(){
+#ifndef __PROSPERO__
+    if(const char* value=std::getenv("NXE_GPU_DASHBOARD"))return std::strcmp(value,"1")==0;
+    return false;
+#else
+    char value[4]{};
+    FILE* file=std::fopen("/data/nxe/exbox/gpu-dashboard.flag","rb");
+    if(!file)return false;
+    const std::size_t size=std::fread(value,1,sizeof value,file);
+    std::fclose(file);
+    return (size==1&&value[0]=='1') || (size==2&&value[0]=='1'&&value[1]=='\n') ||
+           (size==3&&value[0]=='1'&&value[1]=='\r'&&value[2]=='\n');
+#endif
+}
+
+std::chrono::steady_clock::time_point startup_epoch;
+void startup_mark(const char *phase) {
+    char line[160];
+    std::snprintf(line,sizeof line,"startup: %s elapsed_ms=%lld",phase,
+        static_cast<long long>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-startup_epoch).count()));
+    log(line);
 }
 // The process's flexible-memory budget in bytes, or 0 when unknown (desktop).
 // Homebrew launched by websrv inherits it from FAKE00000's param.json:
@@ -264,23 +464,40 @@ size_t memory_budget() {
 size_t icon_cache_limit=96;
 Uint32 color(unsigned hex) { return SDL_MapRGB(screen->format, (hex >> 16) & 255, (hex >> 8) & 255, hex & 255); }
 void rect(int x, int y, int w, int h, unsigned hex) {
+    if(x21hook::rectangle(screen,x,y,w,h,hex))return; x21hook::Pause gpu_cpu_reference(x21hook::recording(screen));
     if (w <= 0 || h <= 0) return;
     SDL_Rect r{x,y,w,h}; SDL_FillRect(screen, &r, color(hex));
 }
 // A translucent fill: a 1x1 pixel stretched with blending.
 void shade(int x, int y, int w, int h, unsigned hex, Uint8 alpha) {
+    if(x21hook::shade(screen,x,y,w,h,hex,alpha))return; x21hook::Pause gpu_cpu_reference(x21hook::recording(screen));
     if (!shade_pixel || w <= 0 || h <= 0) return;
+    SDL_Rect physical;if(render_density::checked_rect({x,y,w,h},render_density::density(screen),physical)&&solid_blend::fill(screen,physical,hex,alpha))return;
     SDL_FillRect(shade_pixel,nullptr,SDL_MapRGBA(shade_pixel->format,(hex>>16)&255,(hex>>8)&255,hex&255,255));
     SDL_SetSurfaceAlphaMod(shade_pixel,alpha);
     SDL_Rect r{x,y,w,h}; SDL_BlitScaled(shade_pixel,nullptr,screen,&r);
 }
-void gradient(int x, int y, int w, int h, unsigned top, unsigned bottom) {
-    for (int row=0; row<h; row+=3) {
-        float t = float(row)/float(std::max(1,h));
-        unsigned r = unsigned(((top>>16)&255)*(1-t)+((bottom>>16)&255)*t);
-        unsigned g = unsigned(((top>>8)&255)*(1-t)+((bottom>>8)&255)*t);
-        unsigned b = unsigned((top&255)*(1-t)+(bottom&255)*t);
-        rect(x,y+row,w,std::min(3,h-row),(r<<16)|(g<<8)|b);
+void physical_rect(int x,int y,int w,int h,unsigned hex) {
+    if(w<1||h<1)return;
+    SDL_Rect r{x,y,w,h};
+    if(x21hook::recording(screen)){x21hook::sync_clip();auto c=x21hook::active->base(r);c.kind=EXBOX_GPU_RECT;c.top=0xff000000u|hex;x21hook::active->push(c);if(!x21hook::audit_cpu())return;}
+    render_density::physical_fill(screen,&r,color(hex));
+}
+void physical_shade(int x,int y,int w,int h,unsigned hex,Uint8 alpha) {
+    if(!shade_pixel||w<1||h<1)return;
+    if(x21hook::recording(screen)){x21hook::sync_clip();auto c=x21hook::active->base({x,y,w,h});c.kind=EXBOX_GPU_RECT;c.top=(uint32_t(alpha)<<24)|(hex&0xffffff);c.blend=8;c.fill_type=0x53444cu;x21hook::active->push(c);if(!x21hook::audit_cpu())return;}
+    x21hook::Pause cpu_reference(x21hook::recording(screen));
+    if(solid_blend::fill(screen,{x,y,w,h},hex,alpha))return;
+    SDL_FillRect(shade_pixel,nullptr,SDL_MapRGBA(shade_pixel->format,(hex>>16)&255,(hex>>8)&255,hex&255,255));
+    SDL_SetSurfaceAlphaMod(shade_pixel,alpha);SDL_Rect r{x,y,w,h};SDL_UpperBlitScaled(shade_pixel,nullptr,screen,&r);
+}
+void gradient(int x,int y,int w,int h,unsigned top,unsigned bottom) {
+    if(x21hook::gradient(screen,x,y,w,h,top,bottom))return; x21hook::Pause gpu_cpu_reference(x21hook::recording(screen));
+    const int d=render_density::density(screen);x*=d;y*=d;w*=d;h*=d;
+    const int step=d==1?3:1;
+    for(int row=0;row<h;row+=step){float t=float(row)/float(std::max(1,h));unsigned c=0;
+      for(int shift:{16,8,0})c|=unsigned(((top>>shift)&255)*(1-t)+((bottom>>shift)&255)*t)<<shift;
+      physical_rect(x,y+row,w,std::min(step,h-row),c);
     }
 }
 void outline(int x, int y, int w, int h, int t, unsigned hex) {
@@ -291,14 +508,14 @@ SDL_Surface *load_png(const std::string &path) {
     if (!file) return nullptr;
     SDL_Surface *image=IMG_LoadPNG_RW(file);
     SDL_RWclose(file);
-    return image;
+    surface_generations::seal(image);return image;
 }
 // A five-pointed star (64 px), filled gold with a dark rim, or pale and empty.
 SDL_Surface *make_rep_star(bool earned) {
     // The Blades gamercard's Rep star (designer capture): a plump star with
     // rounded points and a soft dark rim; earned ones are gold, the rest are
     // the card's own colour seen through a faint embossed star.
-    constexpr int N=64;auto *s=SDL_CreateRGBSurfaceWithFormat(0,N,N,32,SDL_PIXELFORMAT_ARGB8888);
+    constexpr int N=64;auto *s=render_density::create(N,N,SDL_PIXELFORMAT_ARGB8888);
     if (!s) return nullptr;
     float px[10],py[10];
     for (int i=0;i<10;i++) {const float a=-1.5707963f+i*0.6283185f,r=i%2?14.0f:27.0f;px[i]=32+r*std::cos(a);py[i]=34.5f+r*std::sin(a);}
@@ -313,13 +530,14 @@ SDL_Surface *make_rep_star(bool earned) {
         return in?-best:best;
     };
     SDL_LockSurface(s);
-    for (int y=0;y<N;y++) for (int x=0;x<N;x++) {
-        const float d=signed_distance(x+.5f,y+.5f)-3.0f;          // rounded by 3 px
+    const float density=float(render_density::density(s));
+    for (int y=0;y<s->h;y++) for (int x=0;x<s->w;x++) {
+        const float d=signed_distance((x+.5f)/density,(y+.5f)/density)-3.0f;          // rounded by 3 px
         const float cover=std::clamp(0.5f-d,0.0f,1.0f);
         Uint32 c=0;
         if (cover>0) {
             const float rim=std::clamp((d+7.0f)/5.0f,0.0f,1.0f);  // a soft dark rim ~6 px wide
-            const float t=float(y)/N;
+            const float t=float(y)/(N*density);
             float r,g,b,a;
             if (earned) {
                 const float inner=std::clamp((-d-6.0f)/4.0f,0.0f,1.0f);  // a lit inner bevel
@@ -339,11 +557,12 @@ SDL_Surface *make_rep_star(bool earned) {
 }
 // The pale disc behind an unlabelled legend letter (Y / B at the Blades root).
 SDL_Surface *make_soft_disc() {
-    constexpr int N=64;auto *s=SDL_CreateRGBSurfaceWithFormat(0,N,N,32,SDL_PIXELFORMAT_ARGB8888);
+    constexpr int N=64;auto *s=render_density::create(N,N,SDL_PIXELFORMAT_ARGB8888);
     if (!s) return nullptr;
     SDL_LockSurface(s);
-    for (int y=0;y<N;y++) for (int x=0;x<N;x++) {
-        const float d=std::hypot(x+.5f-32,y+.5f-32),edge=std::clamp(31.f-d,0.f,1.f);
+    const float density=float(render_density::density(s));
+    for (int y=0;y<s->h;y++) for (int x=0;x<s->w;x++) {
+        const float d=std::hypot((x+.5f)/density-32,(y+.5f)/density-32),edge=std::clamp(31.f-d,0.f,1.f);
         const Uint32 a=Uint32(edge*(d>28?120:95)),l=Uint32(235-std::max(0.f,d-26)*8);
         reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(s->pixels)+y*s->pitch)[x]=a<<24|l<<16|l<<8|l;
     }
@@ -351,7 +570,7 @@ SDL_Surface *make_soft_disc() {
 }
 SDL_Surface *load_art(const std::string &path) {
     SDL_RWops *file=SDL_RWFromFile(sysdata::local_path(path).c_str(),"rb");
-    return file?IMG_Load_RW(file,1):nullptr;
+    auto*image=file?IMG_Load_RW(file,1):nullptr;surface_generations::seal(image);return image;
 }
 struct ScaledArt {
     SDL_Surface *source=nullptr, *image=nullptr;
@@ -367,6 +586,16 @@ void clear_scaled_art() {
     scaled_art.clear();
     scaled_art_bytes=0;
 }
+void invalidate_scaled_art(SDL_Surface *source) {
+    if (!source) return;
+    for (auto it=scaled_art.begin(); it!=scaled_art.end();) {
+        if (it->source!=source) { ++it; continue; }
+        scaled_art_bytes-=size_t(it->image->pitch)*it->image->h;
+        SDL_FreeSurface(it->image);
+        it=scaled_art.erase(it);
+    }
+}
+
 SDL_Surface *resample_art(SDL_Surface *source, const SDL_Rect &crop, int w, int h) {
     if (!source || w<1 || h<1 || crop.w<1 || crop.h<1) return nullptr;
     SDL_Surface *input=SDL_CreateRGBSurfaceWithFormat(0,crop.w,crop.h,32,SDL_PIXELFORMAT_ARGB8888);
@@ -378,10 +607,10 @@ SDL_Surface *resample_art(SDL_Surface *source, const SDL_Rect &crop, int w, int 
     SDL_SetSurfaceBlendMode(source,SDL_BLENDMODE_NONE);
     SDL_SetSurfaceAlphaMod(source,255);
     SDL_Rect from=crop;
-    SDL_BlitSurface(source,&from,input,nullptr);
+    SDL_UpperBlit(source,&from,input,nullptr);
     SDL_SetSurfaceBlendMode(source,blend);
     SDL_SetSurfaceAlphaMod(source,alpha);
-    if (w==crop.w && h==crop.h) return input;
+    if (w==crop.w && h==crop.h) {surface_generations::seal(input);return input;}
     const bool has_alpha=source->format->Amask!=0;
     for (int y=0;has_alpha && y<input->h;y++) {
         auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(input->pixels)+y*input->pitch);
@@ -403,11 +632,16 @@ SDL_Surface *resample_art(SDL_Surface *source, const SDL_Rect &crop, int w, int 
             row[x]=(a<<24)|(straight(16)<<16)|(straight(8)<<8)|straight(0);
         }
     }
-    return out;
+    surface_generations::seal(out);return out;
 }
-void blit_quality(SDL_Surface *source, const SDL_Rect *crop, SDL_Surface *target, SDL_Rect *dest, bool cache=true) {
+void blit_quality(SDL_Surface *source, const SDL_Rect *crop, SDL_Surface *target, SDL_Rect *dest, bool cache=true, bool narrow_gpu=false) {
     if (!source || !target || !dest || dest->w<1 || dest->h<1) return;
-    const SDL_Rect from=crop?*crop:SDL_Rect{0,0,source->w,source->h};
+    SDL_Rect physical=render_density::pixel_rect(*dest,render_density::density(target));
+    dest=&physical;
+    const SDL_Rect from=crop?render_density::pixel_rect(*crop,render_density::density(source)):SDL_Rect{0,0,source->w,source->h};
+    if(x21hook::quality(source,from,target,physical,narrow_gpu))return;
+    x21hook::Pause cpu_quality_reference(x21hook::recording(target));
+    if(!cache && direct_blit::eligible(source,target,from,physical)){SDL_Rect at=physical;if(!pixel_blend::blit(source,nullptr,target,&at))SDL_UpperBlit(source,nullptr,target,&at);return;}
     SDL_Surface *image=nullptr;
     for (auto &entry:scaled_art) if (cache && entry.source==source && entry.w==dest->w && entry.h==dest->h &&
         entry.crop.x==from.x && entry.crop.y==from.y && entry.crop.w==from.w && entry.crop.h==from.h) {
@@ -434,7 +668,7 @@ void blit_quality(SDL_Surface *source, const SDL_Rect *crop, SDL_Surface *target
     SDL_SetSurfaceAlphaMod(image,alpha);SDL_SetSurfaceBlendMode(image,blend);
     Uint8 cr=255,cg=255,cb=255; SDL_GetSurfaceColorMod(source,&cr,&cg,&cb); SDL_SetSurfaceColorMod(image,cr,cg,cb);
     SDL_Rect at=*dest;
-    SDL_BlitSurface(image,nullptr,target,&at);
+    x21hook::upper_blit(image,nullptr,target,&at);
     if (!cache) SDL_FreeSurface(image);
 }
 // ---- The owner's avatar -------------------------------------------------
@@ -492,26 +726,26 @@ struct SpritePack {
 // /data/nxe/avatar_look.txt. An imported (360sona) avatar can be chosen instead.
 #include "runtime/avatar_scene.inc.hpp"
 void prepare_background() {
-    background=SDL_CreateRGBSurfaceWithFormat(0,W,H,32,screen->format->format);
+    background=render_density::create(W,H,screen->format->format);
     if (!background) return;
     if (SDL_Surface *art=load_png(std::string(root)+"private_art/background.png")) {
         SDL_Rect destination{0,0,W,H};
         blit_quality(art,nullptr,background,&destination,false);
         SDL_FreeSurface(art);
         retail_background=true;
-        return;
+        surface_generations::seal(background);return;
     }
     if (SDL_MUSTLOCK(background)) SDL_LockSurface(background);
-    for (int y=0;y<H;y++) {
+    for (int y=0;y<background->h;y++) {
         auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(background->pixels)+y*background->pitch);
-        for (int x=0;x<W;x++) {
-            float horizontal=float(x)/float(W-1);
-            float vertical=float(y)/float(y<615?614:H-615);
-            if (y>=615) vertical=float(y-615)/float(H-615);
-            unsigned tl=y<615?0x59951c:0x53616a;
-            unsigned tr=y<615?0xe9eee4:0x667580;
-            unsigned bl=y<615?0xb8d956:0xd0d7dc;
-            unsigned br=y<615?0xf1f3e9:0xe5e9e8;
+        for (int x=0;x<background->w;x++) {
+            float horizontal=float(x)/float(background->w-1);
+            float vertical=float(y)/float(y<615*render_density::factor?614*render_density::factor:(H-615)*render_density::factor);
+            if (y>=615*render_density::factor) vertical=float(y-615*render_density::factor)/float((H-615)*render_density::factor);
+            unsigned tl=y<615*render_density::factor?0x59951c:0x53616a;
+            unsigned tr=y<615*render_density::factor?0xe9eee4:0x667580;
+            unsigned bl=y<615*render_density::factor?0xb8d956:0xd0d7dc;
+            unsigned br=y<615*render_density::factor?0xf1f3e9:0xe5e9e8;
             auto mix=[&](int shift) {
                 float top=float((tl>>shift)&255)*(1-horizontal)+float((tr>>shift)&255)*horizontal;
                 float bottom=float((bl>>shift)&255)*(1-horizontal)+float((br>>shift)&255)*horizontal;
@@ -521,23 +755,27 @@ void prepare_background() {
         }
     }
     if (SDL_MUSTLOCK(background)) SDL_UnlockSurface(background);
+    surface_generations::seal(background);
 }
-void ring(int cx, int cy, int radius, int thickness, unsigned hex) {
-    for (int yy=-radius; yy<=radius; yy++) for (int xx=-radius; xx<=radius; xx++) {
-        const float d=std::sqrt(float(xx*xx+yy*yy));
-        const float coverage=std::clamp(float(radius)+0.5f-d,0.0f,1.0f)*
-                             std::clamp(d-float(radius-thickness)+0.5f,0.0f,1.0f);
-        if (coverage>=0.999f) rect(cx+xx,cy+yy,1,1,hex);
-        else if (coverage>0) shade(cx+xx,cy+yy,1,1,hex,Uint8(255*coverage));
+void ring(int cx,int cy,int radius,int thickness,unsigned hex) {
+    if(x21hook::recording(screen)){ExboxGpuCommand c{};const auto r=screen->clip_rect;if(circle_command(c,false,cx,cy,radius,thickness,hex,{r.x,r.y,r.w,r.h},render_density::density(screen)))x21hook::active->push(c);else x21hook::active->packet.unsupported.push_back("circle_bounds");if(!x21hook::audit_cpu())return;}
+    x21hook::Pause cpu_reference(x21hook::recording(screen));
+    const int d=render_density::density(screen);cx*=d;cy*=d;radius*=d;thickness*=d;
+    for(int yy=-radius;yy<=radius;yy++)for(int xx=-radius;xx<=radius;xx++){
+      float distance=std::sqrt(float(xx*xx+yy*yy));
+      float coverage=std::clamp(float(radius)+.5f-distance,0.f,1.f)*std::clamp(distance-float(radius-thickness)+.5f,0.f,1.f);
+      if(coverage>=.999f)physical_rect(cx+xx,cy+yy,1,1,hex);
+      else if(coverage>0)physical_shade(cx+xx,cy+yy,1,1,hex,Uint8(255*coverage));
     }
 }
-void disc(int cx, int cy, int radius, unsigned hex) {
-    for (int yy=-radius; yy<=radius; yy++) {
-        const float span=std::sqrt(std::max(0.0f,float(radius*radius-yy*yy)));
-        const int solid=int(span);
-        rect(cx-solid,cy+yy,solid*2+1,1,hex);
-        const Uint8 alpha=Uint8(255*(span-solid));
-        if (alpha) {shade(cx-solid-1,cy+yy,1,1,hex,alpha);shade(cx+solid+1,cy+yy,1,1,hex,alpha);}
+void disc(int cx,int cy,int radius,unsigned hex) {
+    if(x21hook::recording(screen)){ExboxGpuCommand c{};const auto r=screen->clip_rect;if(circle_command(c,true,cx,cy,radius,0,hex,{r.x,r.y,r.w,r.h},render_density::density(screen)))x21hook::active->push(c);else x21hook::active->packet.unsupported.push_back("circle_bounds");if(!x21hook::audit_cpu())return;}
+    x21hook::Pause cpu_reference(x21hook::recording(screen));
+    const int d=render_density::density(screen);cx*=d;cy*=d;radius*=d;
+    for(int yy=-radius;yy<=radius;yy++){
+      float span=std::sqrt(std::max(0.f,float(radius*radius-yy*yy)));int solid=int(span);
+      physical_rect(cx-solid,cy+yy,solid*2+1,1,hex);Uint8 alpha=Uint8(255*(span-solid));
+      if(alpha){physical_shade(cx-solid-1,cy+yy,1,1,hex,alpha);physical_shade(cx+solid+1,cy+yy,1,1,hex,alpha);}
     }
 }
 int text_width(const std::string &str, TTF_Font *font) {
@@ -555,12 +793,12 @@ std::string fit(const std::string &str, TTF_Font *font, int max_width) {
 Uint8 text_alpha=255; // fades text and prompts while the Guide animates
 int text(const std::string &str, int x, int y, TTF_Font *font, SDL_Color color) {
     if (!font || str.empty()) return 0;
-    SDL_Surface *glyph=TTF_RenderUTF8_Blended(font,str.c_str(),color);
+    auto cached=text_cache::acquire(font,str,color);
+    SDL_Surface *glyph=cached.image;
     if (!glyph) return 0;
-    if (text_alpha<255) SDL_SetSurfaceAlphaMod(glyph,text_alpha);
+    SDL_SetSurfaceAlphaMod(glyph,text_alpha);
     SDL_Rect dest{x,y,0,0}; SDL_BlitSurface(glyph,nullptr,screen,&dest);
-    int w=glyph->w; SDL_FreeSurface(glyph);
-    return w;
+    return render_density::logical_w(glyph);
 }
 void wrapped_text(const std::string &message, int x, int y, int width, int max_lines,
                   TTF_Font *font, SDL_Color color) {
@@ -625,6 +863,7 @@ void glyph(xb::Button button, int x, int y, int size) {
 // they read top to bottom, as NXE drew them.
 SDL_Surface *rotated_surface(SDL_Surface *flat) {
     if (!flat) return nullptr;
+    const int raster_density=render_density::density(flat);
     SDL_Surface *src=SDL_ConvertSurfaceFormat(flat,SDL_PIXELFORMAT_ARGB8888,0);
     SDL_FreeSurface(flat);
     if (!src) return nullptr;
@@ -639,13 +878,15 @@ SDL_Surface *rotated_surface(SDL_Surface *flat) {
         SDL_SetSurfaceBlendMode(out,SDL_BLENDMODE_BLEND);
     }
     SDL_FreeSurface(src);
-    return out;
+    return render_density::tag(out,raster_density);
 }
 SDL_Surface *rotated_label(TTF_Font *font,const std::string &label,SDL_Color ink) {
     return rotated_surface(font && !label.empty()?TTF_RenderUTF8_Blended(font,label.c_str(),ink):nullptr);
 }
 // A vertical gradient with rounded corners.
 void rounded(int x, int y, int w, int h, int r, unsigned top, unsigned bottom) {
+    if(x21hook::rounded(screen,x,y,w,h,r,top,bottom))return; x21hook::Pause gpu_cpu_reference(x21hook::recording(screen));
+    const int d=render_density::density(screen);x*=d;y*=d;w*=d;h*=d;r*=d;
     r=std::min(r,std::min(w,h)/2);
     for (int row=0; row<h; ++row) {
         int inset=0;
@@ -654,7 +895,7 @@ void rounded(int x, int y, int w, int h, int r, unsigned top, unsigned bottom) {
         float t=float(row)/float(std::max(1,h-1));
         unsigned c=0;
         for (int shift:{16,8,0}) c|=unsigned(((top>>shift)&255)*(1-t)+((bottom>>shift)&255)*t)<<shift;
-        rect(x+inset,y+row,w-2*inset,1,c);
+        physical_rect(x+inset,y+row,w-2*inset,1,c);
     }
 }
 // Easing for every transition: quick start, soft landing.
@@ -669,14 +910,17 @@ float progress(Uint32 now, Uint32 since, Uint32 span) {
 // faded and scaled about the centre (Details, the Controller Map, the old
 // channel sliding away). The Guide keeps its own layer.
 SDL_Surface *fx_layer=nullptr, *fx_target=nullptr;
+x21layers::Scope fx_gpu_layer;
 bool begin_layer() {
     if (fx_target) return false;
     if (!fx_layer) {
-        fx_layer=SDL_CreateRGBSurfaceWithFormat(0,W,H,32,SDL_PIXELFORMAT_ARGB8888);
+        fx_layer=render_density::create(W,H,SDL_PIXELFORMAT_ARGB8888);
         if (fx_layer) SDL_SetSurfaceBlendMode(fx_layer,SDL_BLENDMODE_BLEND);
     }
     if (!fx_layer) return false;
-    SDL_FillRect(fx_layer,nullptr,0);
+    const bool gpu_layer=fx_gpu_layer.begin(screen,fx_layer,{0,0,W,H});
+    if(!gpu_layer&&x21hook::recording(screen))x21hook::active->packet.unsupported.push_back("effect_layer_unavailable");
+    if(!gpu_layer||x21hook::audit_cpu()) {x21hook::Pause audit(gpu_layer);SDL_FillRect(fx_layer,nullptr,0);}
     fx_target=screen;
     screen=fx_layer;
     return true;
@@ -685,6 +929,11 @@ void end_layer(float alpha, float scale=1) {
     if (!fx_target) return;
     screen=fx_target;
     fx_target=nullptr;
+    if(fx_gpu_layer.active()){
+        SDL_Rect to=scale>=0.999f?SDL_Rect{0,0,W,H}:SDL_Rect{int(W*(1-scale)/2),int(H*(1-scale)/2),int(W*scale),int(H*scale)};
+        fx_gpu_layer.end(to,alpha);if(!x21hook::audit_cpu())return;
+    }
+    x21hook::Pause audit_layer(x21hook::recording(screen));
     SDL_SetSurfaceAlphaMod(fx_layer,Uint8(255*std::clamp(alpha,0.0f,1.0f)));
     if (scale>=0.999f) {SDL_BlitSurface(fx_layer,nullptr,screen,nullptr); return;}
     SDL_Rect to{int(W*(1-scale)/2),int(H*(1-scale)/2),int(W*scale),int(H*scale)};
@@ -706,6 +955,7 @@ struct Fade {
         at=now-Uint32(want?v*float(in):(1-v)*float(out));
     }
 };
+Fade installed_theme_fade{false,0,300,300};
 // Themes recolour the hub as one linear colour transform (fixed point 1/1024).
 struct Tint { int m[9]; };
 Tint theme_tint(int) {
@@ -727,7 +977,7 @@ SDL_Surface *tinted_copy(SDL_Surface *src, const Tint &t) {
         for (int x=0;x<out->w;x++) row[x]=(row[x]&0xff000000u)|tint_rgb(row[x]&0xffffffu,t);
     }
     SDL_UnlockSurface(out);
-    return out;
+    return render_density::tag(out,render_density::density(src));
 }
 SDL_Surface *cool_blades_copy(SDL_Surface *src) {
     if (!src) return nullptr;
@@ -747,20 +997,20 @@ SDL_Surface *cool_blades_copy(SDL_Surface *src) {
         }
     }
     SDL_UnlockSurface(out);
-    return out;
+    return render_density::tag(out,render_density::density(src));
 }
 // The Ring of Light turned to each of 24 angles, for the loading spinner.
 SDL_Surface *rotated(SDL_Surface *src, float degrees, int side) {
     SDL_Surface *in=src?SDL_ConvertSurfaceFormat(src,SDL_PIXELFORMAT_ARGB8888,0):nullptr;
     if (!in) return nullptr;
-    SDL_Surface *out=SDL_CreateRGBSurfaceWithFormat(0,side,side,32,SDL_PIXELFORMAT_ARGB8888);
+    SDL_Surface *out=render_density::create(side,side,SDL_PIXELFORMAT_ARGB8888);
     if (out) {
         SDL_LockSurface(in); SDL_LockSurface(out);
         const float a=degrees*3.14159265f/180.0f, c=std::cos(a), sn=std::sin(a);
-        const float scale=float(std::max(in->w,in->h))/float(side), half=side/2.0f;
-        for (int y=0;y<side;y++) {
+        const float scale=float(std::max(in->w,in->h))/float(out->w), half=out->w/2.0f;
+        for (int y=0;y<out->h;y++) {
             auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(out->pixels)+y*out->pitch);
-            for (int x=0;x<side;x++) {
+            for (int x=0;x<out->w;x++) {
                 const float dx=(x+0.5f-half)*scale, dy=(y+0.5f-half)*scale;
                 const int sx=int(in->w/2.0f+dx*c+dy*sn), sy=int(in->h/2.0f-dx*sn+dy*c);
                 row[x]=(sx>=0 && sy>=0 && sx<in->w && sy<in->h)?
@@ -775,13 +1025,13 @@ SDL_Surface *rotated(SDL_Surface *src, float degrees, int side) {
 }
 // A soft round light: white in the middle, clear at the edge.
 SDL_Surface *make_glow(int side, unsigned rgb=0xffffff) {
-    SDL_Surface *out=SDL_CreateRGBSurfaceWithFormat(0,side,side,32,SDL_PIXELFORMAT_ARGB8888);
+    SDL_Surface *out=render_density::create(side,side,SDL_PIXELFORMAT_ARGB8888);
     if (!out) return nullptr;
     SDL_LockSurface(out);
-    for (int y=0;y<side;y++) {
+    for (int y=0;y<out->h;y++) {
         auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(out->pixels)+y*out->pitch);
-        for (int x=0;x<side;x++) {
-            const float dx=(x+0.5f)/side*2-1, dy=(y+0.5f)/side*2-1;
+        for (int x=0;x<out->w;x++) {
+            const float dx=(x+0.5f)/out->w*2-1, dy=(y+0.5f)/out->h*2-1;
             const float d=std::min(1.0f,std::sqrt(dx*dx+dy*dy));
             const float a=(1-d)*(1-d);
             row[x]=(Uint32(a*255)<<24)|rgb;
@@ -795,6 +1045,20 @@ SDL_Surface *make_glow(int side, unsigned rgb=0xffffff) {
 // in its pearly white, lime and dark-outline style instead of reusing the
 // controller or disc for unrelated dashboard actions.
 void icon_ellipse(int cx,int cy,int rx,int ry,unsigned top,unsigned bottom) {
+    const int density=render_density::density(screen);
+    if (density>1) {
+        for(int py=(cy-ry)*density;py<(cy+ry+1)*density;++py) {
+            const float dy=(py+0.5f)/density-0.5f-cy;
+            const float t=std::clamp((dy+ry)/float(std::max(1,2*ry)),0.0f,1.0f);
+            const float half=rx*std::sqrt(std::max(0.0f,1.0f-dy*dy/float(ry*ry)));
+            const auto ch=[&](int shift){return unsigned(((top>>shift)&255)*(1-t)+((bottom>>shift)&255)*t);};
+            const int left=int(std::ceil((cx-half)*density-0.5f));
+            const int right=int(std::ceil((cx+half+1)*density-0.5f));
+            physical_rect(left,py,right-left,1,(ch(16)<<16)|(ch(8)<<8)|ch(0));
+        }
+        return;
+    }
+
     for (int dy=-ry;dy<=ry;dy+=2) {
         const float t=float(dy+ry)/float(std::max(1,2*ry));
         const int half=int(rx*std::sqrt(std::max(0.0f,1.0f-float(dy*dy)/float(ry*ry))));
@@ -803,12 +1067,20 @@ void icon_ellipse(int cx,int cy,int rx,int ry,unsigned top,unsigned bottom) {
     }
 }
 void icon_line(int x1,int y1,int x2,int y2,unsigned color) {
+    const int density=render_density::density(screen);
+    if(density>1) {
+        const int steps=std::max(std::abs(x2-x1),std::abs(y2-y1))*density;
+        for(int i=0;i<=steps;++i)physical_rect(x1*density+(x2-x1)*density*i/std::max(1,steps),
+            y1*density+(y2-y1)*density*i/std::max(1,steps),3*density,3*density,color);
+        return;
+    }
+
     const int steps=std::max(std::abs(x2-x1),std::abs(y2-y1));
     for (int i=0;i<=steps;i++) rect(x1+(x2-x1)*i/std::max(1,steps),
                                 y1+(y2-y1)*i/std::max(1,steps),3,3,color);
 }
 SDL_Surface *make_social_icon(int type) {
-    SDL_Surface *art=SDL_CreateRGBSurfaceWithFormat(0,256,277,32,SDL_PIXELFORMAT_ARGB8888);
+    SDL_Surface *art=render_density::create(256,277,SDL_PIXELFORMAT_ARGB8888);
     if (!art) return nullptr;
     SDL_FillRect(art,nullptr,SDL_MapRGBA(art->format,0,0,0,0));
     SDL_Surface *before=screen;
@@ -834,11 +1106,12 @@ SDL_Surface *make_social_icon(int type) {
     // The original six category glyphs include a faint reflection below the
     // solid icon; match that material across the new three glyphs.
     SDL_LockSurface(art);
-    for (int y=190;y<277;y++) {
-        const int sy=184-(y-190)*94/87;
+    const int density=render_density::density(art);
+    for (int y=190*density;y<art->h;y++) {
+        const int sy=184*density-(y-190*density)*94/87;
         auto *dst=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(art->pixels)+y*art->pitch);
         auto *src=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(art->pixels)+sy*art->pitch);
-        const int strength=(277-y)*105/87;
+        const int strength=(277*density-y)*105/(87*density);
         for (int x=0;x<art->w;x++) {
             const Uint32 pixel=src[x];
             dst[x]=(Uint32(((pixel>>24)&255)*strength/255)<<24)|(pixel&0xffffffu);
@@ -871,7 +1144,9 @@ std::string game_key(std::string value) {
 #include "runtime/trailer_player.inc.hpp"
 #include "ui/nxe_reflection.inc.hpp"
 #include "runtime/custom_scenes.inc.hpp"
+bool gpu_home_reflect();
 void reflect_cards() {
+    if(gpu_home_reflect())return;
     // The NXE floor mirrors the lower edges of the panes, fading toward the viewer.
 #ifndef __PROSPERO__
     nxe_reflection::capture_before();
@@ -879,23 +1154,38 @@ void reflect_cards() {
     if (SDL_MUSTLOCK(screen) && SDL_LockSurface(screen)) return;
     const bool lock_figure=nxe_reflection::figure && SDL_MUSTLOCK(nxe_reflection::figure);
     if (lock_figure && SDL_LockSurface(nxe_reflection::figure)) nxe_reflection::figure=nullptr;
-    for (int y=852; y<999; ++y) {
-        int source_y=849-int((y-852)*1.12f);
+    const int density=render_density::density(screen);
+    const float figure_half_pixel=0.5f/density;
+    for (int y=852*density; y<999*density; ++y) {
+        int source_y=849*density-int((y-852*density)*1.12f);
         if (source_y<0) break;
-        float opacity=0.29f*(1.0f-float(y-852)/147.0f);
+        float opacity=0.29f*(1.0f-float(y-852*density)/(147.0f*density));
         auto *source=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(screen->pixels)+source_y*screen->pitch);
         auto *target=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(screen->pixels)+y*screen->pitch);
-        for (int x=130; x<1800; ++x) {
-            const float coverage=nxe_reflection::coverage_at(x,source_y);
+        if(solid_blend::format_ok(screen)) {
+            std::array<float,3840> coverage{};const int left=130*density,right=1800*density;
+            for(size_t i=0;i<nxe_reflection::pane_count;++i){const auto& pane=nxe_reflection::panes[i];if(source_y>=pane.y*density&&source_y<(pane.y+pane.h)*density){const int lo=std::max(left,pane.x*density),hi=std::min(right,(pane.x+pane.w)*density);if(hi>lo)std::fill(coverage.begin()+lo,coverage.begin()+hi,1.f);}}
+            if(nxe_reflection::figure){const auto& box=nxe_reflection::figure_bounds;const int lo=std::max(left,box.x*density),hi=std::min(right,(box.x+box.w)*density);for(int x=lo;x<hi;++x)if(coverage[size_t(x)]==0)coverage[size_t(x)]=nxe_reflection::figure_coverage_at(float(x)/density,float(source_y)/density,figure_half_pixel);}
+            reflection_blend::row(source+left,target+left,coverage.data()+left,right-left,opacity,screen->format->Amask);
+            continue;
+        }
+        for (int x=130*density; x<1800*density; ++x) {
+            const float coverage=nxe_reflection::coverage_at(float(x)/density,float(source_y)/density);
             if (coverage<=0) continue;
             const float masked_opacity=opacity*coverage;
             Uint8 sr,sg,sb,dr,dg,db;
-            SDL_GetRGB(source[x],screen->format,&sr,&sg,&sb);
-            SDL_GetRGB(target[x],screen->format,&dr,&dg,&db);
-            target[x]=SDL_MapRGB(screen->format,
-                Uint8(dr*(1-masked_opacity)+sr*masked_opacity),
-                Uint8(dg*(1-masked_opacity)+sg*masked_opacity),
-                Uint8(db*(1-masked_opacity)+sb*masked_opacity));
+            if(solid_blend::format_ok(screen)) {
+                const Uint32 src=source[x],dst=target[x];Uint32 out=screen->format->Amask;
+                for(int shift:{0,8,16})out|=Uint32(Uint8(((dst>>shift)&255)*(1-masked_opacity)+((src>>shift)&255)*masked_opacity))<<shift;
+                target[x]=out;
+            } else {
+                const int bytes=screen->format->BytesPerPixel;Uint32 src=0,dst=0;
+                const auto* from=reinterpret_cast<const Uint8*>(source)+x*bytes;auto* to=reinterpret_cast<Uint8*>(target)+x*bytes;
+                std::memcpy(&src,from,size_t(bytes));std::memcpy(&dst,to,size_t(bytes));
+                SDL_GetRGB(src,screen->format,&sr,&sg,&sb);SDL_GetRGB(dst,screen->format,&dr,&dg,&db);
+                const Uint32 out=SDL_MapRGB(screen->format,Uint8(dr*(1-masked_opacity)+sr*masked_opacity),Uint8(dg*(1-masked_opacity)+sg*masked_opacity),Uint8(db*(1-masked_opacity)+sb*masked_opacity));
+                std::memcpy(to,&out,size_t(bytes));
+            }
         }
     }
     if (lock_figure && nxe_reflection::figure) SDL_UnlockSurface(nxe_reflection::figure);
@@ -958,10 +1248,11 @@ void draw_hints(int y, SDL_Color ink) {
         // with a soft shadow on every theme; the Guide is the lone orb at the
         // bottom right in its ripple rings, not a labelled prompt.
         static SDL_Surface *ripple=nullptr;
-        if (!ripple && (ripple=SDL_CreateRGBSurfaceWithFormat(0,420,150,32,SDL_PIXELFORMAT_ARGB8888))) {
+        if (!ripple && (ripple=render_density::create(420,150,SDL_PIXELFORMAT_ARGB8888))) {
             SDL_FillRect(ripple,nullptr,0);
-            for (int py=0;py<150;py++) for (int px=0;px<420;px++) {
-                const float dx=(px-210)/1.0f,dy=(py-75)/0.3f,d=std::sqrt(dx*dx+dy*dy);
+            const float density=float(render_density::density(ripple));
+            for (int py=0;py<ripple->h;py++) for (int px=0;px<ripple->w;px++) {
+                const float dx=((px+0.5f)/density-0.5f-210)/1.0f,dy=((py+0.5f)/density-0.5f-75)/0.3f,d=std::sqrt(dx*dx+dy*dy);
                 float a=0;
                 for (int ring=1;ring<=6;ring++) a=std::max(a,1-std::fabs(d-ring*34.0f)/1.6f);
                 a*=std::clamp(1-d/215,0.0f,1.0f)*0.38f;
@@ -1071,6 +1362,7 @@ SDL_Surface *keep_for_toast(SDL_Surface *cover) {
 // song plays, that song's cover.
 SDL_Surface *title_icon(const std::string &path,bool preserve_source);
 SDL_Surface *card_picture(const dash::Card &card) {
+    if (card.image.rfind("music:",0)==0) return song_cover(card.image.substr(6));
     if (SDL_Surface *own=title_icon(card.image,false)) return own;
     if (card.goal==dash::Goal::ToMusic && model.now_playing>=0)
         if (const music::Song *song=music_player.current_song()) return song_cover(song->path);
@@ -1109,8 +1401,8 @@ SDL_Surface *title_icon(const std::string &path,bool preserve_source=false) {
     if (SDL_Surface *raw=load_art(path)) {
         const int longest=std::max(raw->w,raw->h);
         const bool original=preserve_source && size_t(raw->w)*size_t(raw->h)*4<=(64u<<20);
-        const int w=original?raw->w:std::max(1,raw->w*std::min(1024,longest)/longest);
-        const int h=original?raw->h:std::max(1,raw->h*std::min(1024,longest)/longest);
+        const int w=original?raw->w:std::max(1,raw->w*std::min(1024*render_density::factor,longest)/longest);
+        const int h=original?raw->h:std::max(1,raw->h*std::min(1024*render_density::factor,longest)/longest);
         icon=resample_art(raw,{0,0,raw->w,raw->h},w,h);
         SDL_FreeSurface(raw);
     }
@@ -1132,12 +1424,56 @@ std::string fs_prefix() {
 #endif
     return "";
 }
+bool owner_removed_content(std::string_view value) {
+    std::string lower(value);
+    std::transform(lower.begin(),lower.end(),lower.begin(),[](unsigned char c){return char(std::tolower(c));});
+    return lower.find("bayonetta")!=std::string::npos;
+}
+void begin_theme_catalog() {
+    std::string path="/data/nxe/themes/catalog.txt";
+#ifndef __PROSPERO__
+    if(const char* local=getenv("NXE_THEME_CATALOG"))path=local;
+#endif
+    if(!theme_catalog_job.start([path]{return exbox::themes::parse_manifest(sysdata::read(path,(16u<<20)+1));}))
+        log("themes: catalog worker unavailable; keeping Xbox 360 default");
+}
+void request_installed_theme(int index);
+void poll_theme_catalog() {
+    if(theme_catalog_reported)return;
+    exbox::themes::ManifestResult result;
+    if(!theme_catalog_job.take(result))return;
+    theme_catalog_reported=true;
+    if(!result){log(("themes: catalog refused: "+result.error).c_str());return;}
+    installed_theme_catalog=std::move(result.entries);
+    installed_theme_catalog.erase(std::remove_if(installed_theme_catalog.begin(),installed_theme_catalog.end(),[](const auto& entry){
+        return owner_removed_content(entry.display_name)||owner_removed_content(entry.relative_directory);
+    }),installed_theme_catalog.end());
+    std::size_t complete=0;for(const auto&entry:installed_theme_catalog)complete+=entry.complete;
+    model.health_runtime.themes_complete=int(complete);
+    model.health_runtime.themes_partial=int(installed_theme_catalog.size()-complete);
+    model.health_runtime.themes_rejected=int(result.rejected);
+    // The manifest publishes complete/partial/refused records only. It does
+    // not prove missing or changed local files and is not authored-scene evidence.
+    model.health_runtime.themes_missing=-1;
+    model.health_runtime.themes_changed=-1;
+    model.health_runtime.authored_theme_evidence=false;
+    std::vector<dash::InstalledTheme> model_entries;model_entries.reserve(installed_theme_catalog.size());
+    for(const auto&entry:installed_theme_catalog){unsigned wallpapers=0;for(const auto&wallpaper:entry.wallpapers)wallpapers+=bool(wallpaper);model_entries.push_back({entry.stable_id,entry.display_name,entry.complete,wallpapers});}
+    model.set_installed_themes(std::move(model_entries));
+    char line[160];std::snprintf(line,sizeof line,"themes: catalog ready entries=%zu complete=%zu partial=%zu rejected=%zu",installed_theme_catalog.size(),complete,installed_theme_catalog.size()-complete,result.rejected);log(line);
+    if(!model.installed_theme_id.empty())for(std::size_t i=0;i<model.installed_themes.size();++i)if(model.installed_themes[i].stable_id==model.installed_theme_id){request_installed_theme(int(i));break;}
+}
 void refresh_games() {
     ++library_generation;
     clear_scaled_art();
     for (auto &entry:icon_cache) if (entry.second) SDL_FreeSurface(entry.second);
     icon_cache.clear();icon_cache_bytes=0;
-    model.set_games(ps5lib::installed_games(fs_prefix()));
+    model.game_library_companion=sysdata::companion;
+    auto games=ps5lib::installed_games(fs_prefix());
+    games.erase(std::remove_if(games.begin(),games.end(),[](const dash::App& game){
+        return owner_removed_content(game.title)||owner_removed_content(game.title_id)||owner_removed_content(game.executable);
+    }),games.end());
+    model.set_games(std::move(games));
 }
 void read_profile() {
     if (user_id<0) return;
@@ -1149,15 +1485,93 @@ void save_settings() {
     if (const char *local=getenv("NXE_SETTINGS_PATH")) path=local;
 #endif
     if (FILE *f=fopen(path,"w")) {
-        fprintf(f,"sounds=%d\ntheme=%d\nera=%d\ndashboard_build=%d\nbutton_style=%d\ndimming=%d\nlibrary_order=%d\nnotifications=%d\npromotions=%d\n",
-                model.sounds?1:0,model.theme,model.era,model.dashboard_build,model.button_style,model.dimming?1:0,model.library_order,model.notification_level,model.promotions?1:0);
+        fprintf(f,"sounds=%d\ntheme=%d\nera=%d\ndashboard_build=%d\nbutton_style=%d\ndimming=%d\nlibrary_order=%d\nnotifications=%d\npromotions=%d\n%s\n",
+                model.sounds?1:0,model.theme,model.era,model.dashboard_build,model.button_style,model.dimming?1:0,model.library_order,model.notification_level,model.promotions?1:0,
+                model.saved_promotion_mode_setting().c_str());
         fprintf(f,"video_sort=%d\nvideo_subtitles=%d\n",model.video_order,model.video_subtitles?1:0);
         for (const auto &line:model.saved_picture_settings()) fprintf(f,"%s\n",line.c_str());
         fprintf(f,"clock_24_hour=%d\n",model.clock_24_hour?1:0);
         fprintf(f,"%s\n",model.saved_welcome_setting().c_str());
-        fprintf(f,"music_shuffle=%d\nmusic_repeat=%d\n",model.music_shuffle?1:0,model.music_repeat);
+        fprintf(f,"music_shuffle=%d\nmusic_repeat=%d\nmusic_volume=%d\nmusic_game_scan=%d\nlocal_friend_avatars=%d\n",model.music_shuffle?1:0,model.music_repeat,model.music_volume,model.music_game_scan?1:0,model.local_friend_avatars?1:0);
+        for(const auto &line:model.saved_game_frontend_settings())fprintf(f,"%s\n",line.c_str());
+        for(const auto&line:model.saved_theme_library_settings())fprintf(f,"%s\n",line.c_str());
+        const auto context=model.saved_dashboard_context();if(!context.empty())fprintf(f,"%s\n",context.c_str());
         fclose(f);
     }
+}
+std::string theme_asset_root() {
+#ifndef __PROSPERO__
+    if(const char* local=getenv("NXE_THEME_ROOT"))return local;
+#endif
+    return "/data/nxe/themes/library";
+}
+void start_requested_theme() {
+    if(requested_theme_id.empty()||theme_apply_job.active()||!screen)return;
+    const auto found=std::find_if(installed_theme_catalog.begin(),installed_theme_catalog.end(),[](const auto&entry){return entry.stable_id==requested_theme_id;});
+    if(found==installed_theme_catalog.end()){show_toast("Theme unavailable","The saved theme is not in this catalog.",&sfx::toast_clip,toast_themes);failed_theme_id=requested_theme_id;failed_theme_slot=requested_theme_slot;requested_theme_id.clear();return;}
+    const auto entry=*found;const auto root_path=theme_asset_root();const int width=screen->w,height=screen->h,slot=requested_theme_slot;
+    if(!theme_apply_job.start([entry,root_path,width,height,slot]{return exbox::themes::prepare_compatibility_background(entry,root_path,width,height,slot);})){
+        failed_theme_id=requested_theme_id;failed_theme_slot=requested_theme_slot;requested_theme_id.clear();
+        show_toast("Theme unavailable","The theme worker could not start.",&sfx::toast_clip,toast_themes);
+    }
+}
+void request_installed_theme(int index) {
+    if(index<0){
+        requested_theme_id.clear();failed_theme_id.clear();failed_theme_slot=-1;model.installed_theme_id.clear();installed_theme_slot=-1;
+        if(installed_theme_previous){render_density::free_surface(installed_theme_previous);installed_theme_previous=nullptr;installed_theme_previous_pixels.reset();}
+        retire_installed_theme=installed_theme_background!=nullptr;installed_theme_fade.track(false,SDL_GetTicks());
+        if(index==-1)model.picture_background_enabled=false;
+        save_settings();show_toast(index==-2?"Picture Background":"Xbox 360","Theme changed",&sfx::toast_clip,toast_themes);return;
+    }
+    if(index>=int(model.installed_themes.size()))return;
+    requested_theme_id=model.installed_themes[std::size_t(index)].stable_id;requested_theme_slot=0;failed_theme_id.clear();failed_theme_slot=-1;start_requested_theme();
+}
+void poll_installed_theme() {
+    exbox::themes::PreparedTheme prepared;
+    if(theme_apply_job.take(prepared)){
+        if(prepared.stable_id!=requested_theme_id||prepared.requested_slot!=requested_theme_slot){start_requested_theme();return;}
+        if(!prepared){show_toast("Theme unavailable",prepared.error,&sfx::toast_clip,toast_themes);log(("themes: "+prepared.error).c_str());failed_theme_id=requested_theme_id;failed_theme_slot=requested_theme_slot;requested_theme_id.clear();return;}
+        auto pixels=std::make_shared<std::vector<Uint32>>(std::move(prepared.pixels));
+        SDL_Surface* surface=SDL_CreateRGBSurfaceWithFormatFrom(pixels->data(),prepared.width,prepared.height,32,prepared.width*4,SDL_PIXELFORMAT_ARGB8888);
+        if(!surface){show_toast("Theme unavailable","Could not publish the prepared background.",&sfx::toast_clip,toast_themes);requested_theme_id.clear();return;}
+        surface=render_density::tag(surface,render_density::factor);SDL_SetSurfaceBlendMode(surface,SDL_BLENDMODE_BLEND);surface_generations::seal(surface);
+        if(installed_theme_previous)render_density::free_surface(installed_theme_previous);
+        installed_theme_previous=installed_theme_background;installed_theme_previous_pixels=std::move(installed_theme_pixels);
+        installed_theme_background=surface;installed_theme_pixels=std::move(pixels);installed_theme_slot=prepared.requested_slot;
+        retire_installed_theme=false;installed_theme_fade={false,SDL_GetTicks(),300,300};installed_theme_fade.track(true,SDL_GetTicks());
+        model.installed_theme_id=prepared.stable_id;model.picture_background_enabled=false;save_settings();
+        show_toast("Theme changed",prepared.display_name,&sfx::done_clip,toast_themes);
+        log(("themes: compatibility background published "+prepared.stable_id+" source="+std::to_string(prepared.source_slot+1)+" authored_route=0").c_str());
+        requested_theme_id.clear();failed_theme_id.clear();failed_theme_slot=-1;
+    }
+    start_requested_theme();
+}
+void poll_theme_preview() {
+    std::string desired;
+    if(model.viewer==dash::Viewer::Themes){const int index=model.theme_catalog_index_for_row(model.viewer_item);if(index>=0)desired=model.installed_themes[std::size_t(index)].stable_id;}
+    const Uint32 now=SDL_GetTicks();
+    if(desired!=theme_preview_focus_id){theme_preview_focus_id=desired;theme_preview_focus_at=now;}
+    exbox::themes::PreparedTheme prepared;
+    if(theme_preview_job.take(prepared)){
+        if(prepared&&prepared.stable_id==theme_preview_requested_id&&prepared.stable_id==theme_preview_focus_id){
+            auto pixels=std::make_shared<std::vector<Uint32>>(std::move(prepared.pixels));
+            SDL_Surface*surface=SDL_CreateRGBSurfaceWithFormatFrom(pixels->data(),prepared.width,prepared.height,32,prepared.width*4,SDL_PIXELFORMAT_ARGB8888);
+            if(surface){surface=render_density::tag(surface,render_density::factor);SDL_SetSurfaceBlendMode(surface,SDL_BLENDMODE_BLEND);surface_generations::seal(surface);if(installed_theme_preview)render_density::free_surface(installed_theme_preview);installed_theme_preview=surface;installed_theme_preview_pixels=std::move(pixels);theme_preview_published_id=prepared.stable_id;}
+            else theme_preview_published_id=theme_preview_requested_id;
+        }
+        else if(prepared.stable_id==theme_preview_requested_id&&prepared.stable_id==theme_preview_focus_id)theme_preview_published_id=theme_preview_requested_id;
+        theme_preview_requested_id.clear();
+    }
+    if(desired.empty()){
+        if(installed_theme_preview){render_density::free_surface(installed_theme_preview);installed_theme_preview=nullptr;installed_theme_preview_pixels.reset();}
+        theme_preview_published_id.clear();return;
+    }
+    if(theme_preview_published_id==desired||theme_preview_job.active()||now-theme_preview_focus_at<150)return;
+    const auto found=std::find_if(installed_theme_catalog.begin(),installed_theme_catalog.end(),[&](const auto&entry){return entry.stable_id==desired;});
+    if(found==installed_theme_catalog.end()){theme_preview_published_id=desired;return;}
+    const auto entry=*found;const auto root_path=theme_asset_root();const int width=480*render_density::factor,height=270*render_density::factor;
+    theme_preview_requested_id=desired;
+    if(!theme_preview_job.start([entry,root_path,width,height]{return exbox::themes::prepare_preview(entry,root_path,width,height);})){theme_preview_requested_id.clear();theme_preview_published_id=desired;}
 }
 // Lines of a small text file (attachments, recents), without line ends.
 std::vector<std::string> read_lines(const char *path, size_t limit) {
@@ -1188,7 +1602,7 @@ void check_trophies(Uint32 now) {
     const std::vector<std::string> saved=read_lines(trophies_path,1);
     const ps5lib::Trophies before=ps5lib::load_trophies(saved.empty()?"":saved[0]);
     const ps5lib::Unlock unlock=ps5lib::unlocked(before,trophies);
-    if (!unlock.empty()) show_toast(unlock.title,unlock.text,&sfx::toast_clip,toast_trophy?toast_trophy:trophy_icon);
+    if (!unlock.empty()) {look3d::moment(exbox::dashboard_director::AvatarMoment::Achievement,now);show_toast(unlock.title,unlock.text,&sfx::toast_clip,toast_trophy?toast_trophy:trophy_icon);}
     const std::string line=ps5lib::save_trophies(trophies);
     if (!saved.empty() && saved[0]==line) return;
     if (FILE *f=fopen("/data/nxe/trophies.tmp","w")) {
@@ -1312,14 +1726,19 @@ void load_artwork_choices() {
 void load_settings() {
     model.picture_random=unsigned(std::time(nullptr));
     int old_video_order=0, video_sort=-1;
+    bool promotion_mode_loaded=false,legacy_promotions_seen=false;
     const char *path=settings_path;
 #ifndef __PROSPERO__
     if (const char *local=getenv("NXE_SETTINGS_PATH")) path=local;
 #endif
     if (FILE *f=fopen(path,"r")) {
-        char line[64];
+        char line[256];
         while (fgets(line,sizeof line,f)) {
             model.load_picture_setting(line);
+            model.load_game_frontend_setting(line);
+            model.load_installed_theme_setting(line);
+            model.load_dashboard_context(line);
+            promotion_mode_loaded=model.load_promotion_mode_setting(line)||promotion_mode_loaded;
             if (std::strncmp(line,"sounds=",7)==0) model.sounds=atoi(line+7)!=0;
             if (std::strncmp(line,"theme=",6)==0) model.load_theme(atoi(line+6));
             if (std::strncmp(line,"era=",4)==0) model.era=std::clamp(atoi(line+4),0,dash::kEraCount-1);
@@ -1330,15 +1749,22 @@ void load_settings() {
             if (std::strncmp(line,"clock_24_hour=",14)==0) model.clock_24_hour=atoi(line+14)!=0;
             if (std::strncmp(line,"library_order=",14)==0) model.library_order=std::clamp(atoi(line+14),0,2);
             if (std::strncmp(line,"notifications=",14)==0) model.notification_level=std::clamp(atoi(line+14),0,3);
-            if (std::strncmp(line,"promotions=",11)==0) model.promotions=atoi(line+11)!=0;
+            if (std::strncmp(line,"promotions=",11)==0) {model.promotions=atoi(line+11)!=0;legacy_promotions_seen=true;}
             if (std::strncmp(line,"music_shuffle=",14)==0) model.music_shuffle=atoi(line+14)!=0;
             if (std::strncmp(line,"music_repeat=",13)==0) model.music_repeat=std::clamp(atoi(line+13),0,2);
+            if (std::strncmp(line,"music_volume=",13)==0) model.music_volume=std::clamp(atoi(line+13),0,10);
+            if (std::strncmp(line,"music_game_scan=",16)==0) model.music_game_scan=atoi(line+16)!=0;
+            if (std::strncmp(line,"local_friend_avatars=",21)==0) model.local_friend_avatars=atoi(line+21)!=0;
             if (std::strncmp(line,"video_order=",12)==0) old_video_order=atoi(line+12);
             if (std::strncmp(line,"video_sort=",11)==0) video_sort=std::clamp(atoi(line+11),0,dash::kVideoOrderCount-1);
             if (std::strncmp(line,"video_subtitles=",16)==0) model.video_subtitles=atoi(line+16)!=0;
         }
         fclose(f);
     }
+    if(!promotion_mode_loaded&&legacy_promotions_seen)model.promotion_mode=model.promotions?0:2;
+    if(model.music_volume>0)model.music_volume_restore=model.music_volume;
+    sfx::music_mix_volume.store((model.music_volume*256+5)/10,std::memory_order_relaxed);
+    model.promotions=model.promotion_mode!=2;
     model.load_video_order(video_sort>=0?video_sort:old_video_order,video_sort<0);
 #ifndef __PROSPERO__
     if (const char *preview=getenv("NXE_ERA")) model.era=std::clamp(atoi(preview),0,dash::kEraCount-1);
@@ -1349,7 +1775,7 @@ void load_settings() {
         if (update.build==model.dashboard_build && dash::kDashboardFamilies[update.family].era==model.era) valid=true;
     if (!valid) {constexpr int builds[]={6770,9199,13604,17559};model.dashboard_build=builds[model.era];}
 }
-#include "ui/source_promotions.inc.hpp"
+#include "assets/promotions.inc.hpp"
 // The DualSense light bar as the 360 controller's Ring of Light: Xbox green
 // while the dashboard is in front, a bright flash as the Guide opens, and
 // handed back to the system (reset) before a game starts or the app exits.
@@ -1456,6 +1882,9 @@ void refresh_apps() {
             "PS5 Upload","Itemzflow","A Homebrew App With A Very Long Name Indeed","ftpsrv","websrv","Kstuff","EVO Player"};
         int n=std::clamp(atoi(demo),0,12);
         for (int i=0;i<n;i++) found.push_back({names[i],std::string("/data/homebrew/")+names[i]+"/eboot.elf","",""});
+        found.erase(std::remove_if(found.begin(),found.end(),[](const dash::App &app){
+            return owner_removed_content(app.title)||owner_removed_content(app.executable);
+        }),found.end());
         model.set_apps(found);
         return;
     }
@@ -1467,6 +1896,9 @@ void refresh_apps() {
         if (stat(icon.c_str(),&st)!=0) icon.clear();
         found.push_back({app.title,app.executable,"",icon});
     }
+    found.erase(std::remove_if(found.begin(),found.end(),[](const dash::App &app){
+        return owner_removed_content(app.title)||owner_removed_content(app.executable);
+    }),found.end());
     model.set_apps(found);
 }
 #include "ui/promotion_art.inc.hpp"
@@ -1497,6 +1929,7 @@ void apply_theme() {
     }
     for (int i=0;i<dash::IconCount;i++) if (card_icons[i] && (themed_icons[i]=tinted_copy(card_icons[i],tint)))
         SDL_SetSurfaceBlendMode(themed_icons[i],SDL_BLENDMODE_BLEND);
+    surface_generations::seal(themed_background);for(auto*c:themed_cards)surface_generations::seal(c);for(auto*c:themed_icons)surface_generations::seal(c);
 }
 // Slow light drifting across the sky, and the glow along the horizon.
 void draw_atmosphere(Uint32 now) {
@@ -1508,12 +1941,14 @@ void draw_atmosphere(Uint32 now) {
             {1350,220,760,280,0.037f,320,2.1f,20},
             {900,40,1100,260,0.023f,420,4.2f,16},
         };
+        int drift_index=0;
         for (const auto &d:drifts) {
             const float x=d.x+std::sin(t*d.speed*6.2832f+d.phase)*d.amp;
             const float a=float(d.alpha)*(0.75f+0.25f*std::sin(t*0.21f+d.phase));
             SDL_Rect r{int(x-d.w/2),int(d.y),int(d.w),int(d.h)};
-            SDL_SetSurfaceAlphaMod(glow,Uint8(a));
-            SDL_BlitScaled(glow,nullptr,screen,&r);
+            SDL_Surface* cached=atmosphere_glow[size_t(drift_index++)];
+            if(cached){SDL_SetSurfaceAlphaMod(cached,Uint8(a));SDL_BlitSurface(cached,nullptr,screen,&r);}
+            else {SDL_SetSurfaceAlphaMod(glow,Uint8(a));SDL_BlitScaled(glow,nullptr,screen,&r);}
         }
     }
     if (aura) {
@@ -1546,7 +1981,19 @@ bool draw_picture_background() {
     }
     return active || alpha>0;
 }
+bool draw_installed_theme_background() {
+    const Uint32 now=SDL_GetTicks();
+    const bool active=installed_theme_background&&!retire_installed_theme;
+    installed_theme_fade.track(active,now);const float alpha=installed_theme_background?installed_theme_fade.value(now):0;
+    if(installed_theme_previous&&!retire_installed_theme)SDL_BlitSurface(installed_theme_previous,nullptr,screen,nullptr);
+    if(installed_theme_background&&alpha>0){SDL_SetSurfaceBlendMode(installed_theme_background,SDL_BLENDMODE_BLEND);SDL_SetSurfaceAlphaMod(installed_theme_background,Uint8(255*std::clamp(alpha,0.0f,1.0f)));SDL_BlitSurface(installed_theme_background,nullptr,screen,nullptr);SDL_SetSurfaceAlphaMod(installed_theme_background,255);}
+    if(installed_theme_previous&&alpha>=1){render_density::free_surface(installed_theme_previous);installed_theme_previous=nullptr;installed_theme_previous_pixels.reset();}
+    if(installed_theme_background&&retire_installed_theme&&alpha<=0){render_density::free_surface(installed_theme_background);installed_theme_background=nullptr;installed_theme_pixels.reset();retire_installed_theme=false;}
+    return active||alpha>0;
+}
 #include "runtime/editor_dashboard.inc.hpp"
+#include "runtime/gpu_home.inc.hpp"
+#include "runtime/gpu_overlay.inc.hpp"
 #include "ui/kinect_hub.inc.hpp"
 #include "ui/metro_hub.inc.hpp"
 #include "ui/hub_dispatch.inc.hpp"
@@ -1608,6 +2055,8 @@ bool lit(xb::Button button, Uint32 now) {
 #include "ui/controller_and_details.inc.hpp"
 // ---- Media: Pictures (PS5 screenshots) and Game Videos (every trailer) ----
 std::map<std::string,SDL_Surface *> picture_thumbs, video_thumbs;
+packed_thumb::Worker thumbnail_preparation;
+std::map<std::string,std::pair<int,int>> video_sizes;
 // Picture thumbnails stay while they are used: the least recently drawn goes
 // first once kPictureThumbs are held (about 28 MB), so paging back is instant.
 constexpr size_t kPictureThumbs=96;
@@ -1622,6 +2071,9 @@ std::string picture_full_path, picture_ahead_path, picture_source_path, picture_
 constexpr int kTileW=360, kTileH=203;
 void drop_surface(SDL_Surface *&s) {if (s) SDL_FreeSurface(s); s=nullptr;}
 void free_media() {
+    thumbnail_preparation.reset();
+    video_sizes.clear();
+    clear_scaled_art();
     for (auto *cache:{&picture_thumbs,&video_thumbs}) {
         for (auto &e:*cache) if (e.second) SDL_FreeSurface(e.second);
         cache->clear();
@@ -1654,6 +2106,7 @@ void scan_pictures() {
             if (it==titles.end()) it=titles.emplace(f.title_id,capture_title(f.title_id)).first;
             f.game=it->second;
         }
+        if(owner_removed_content(f.game)||owner_removed_content(f.path))continue;
         struct stat st;
         if (sysdata::stat(path,&st)==0) f.bytes=st.st_size;
         paths.insert(path);
@@ -1671,6 +2124,8 @@ void scan_pictures() {
 // An image scaled to fit a w x h box (letterboxed on black), or null.
 SDL_Surface *fitted(SDL_Surface *raw, int w, int h) {
     if (!raw) return nullptr;
+    ++x21hook::cpu_fitted_preparations;
+    w*=render_density::factor;h*=render_density::factor;
     SDL_Surface *out=SDL_CreateRGBSurfaceWithFormat(0,w,h,32,SDL_PIXELFORMAT_ARGB8888);
     if (out) {
         SDL_FillRect(out,nullptr,SDL_MapRGB(out->format,0,0,0));
@@ -1681,7 +2136,8 @@ SDL_Surface *fitted(SDL_Surface *raw, int w, int h) {
         if (scaled) {SDL_BlitSurface(scaled,nullptr,out,&r);SDL_FreeSurface(scaled);}
     }
     SDL_FreeSurface(raw);
-    return out;
+    surface_generations::seal(out);
+    return render_density::tag(out,render_density::factor);
 }
 // HDR screenshots (JPEG XR, HDR10) decode with jxrlib in the PS5 build and
 // are turned into ordinary colour by hdr::convert. Decoding a 4K capture takes
@@ -1727,8 +2183,8 @@ SDL_Surface *song_cover(const std::string &path) {
         if (SDL_RWops *rw=SDL_RWFromConstMem(bytes.data(),int(bytes.size())))
             if (SDL_Surface *raw=IMG_Load_RW(rw,1)) {
                 SDL_Surface *argb=SDL_ConvertSurfaceFormat(raw,SDL_PIXELFORMAT_ARGB8888,0);SDL_FreeSurface(raw);
-                if (argb && (argb->w>300 || argb->h>300)) {
-                    const float k=300.f/std::max(argb->w,argb->h);
+                if (argb && (argb->w>300*render_density::factor || argb->h>300*render_density::factor)) {
+                    const float k=300.f*render_density::factor/std::max(argb->w,argb->h);
                     if (SDL_Surface *small_copy=resample_art(argb,{0,0,argb->w,argb->h},std::max(1,int(argb->w*k)),std::max(1,int(argb->h*k)))) {
                         SDL_FreeSurface(argb);argb=small_copy;
                     }
@@ -1738,6 +2194,7 @@ SDL_Surface *song_cover(const std::string &path) {
     song_covers[path]=cover;   // a miss is remembered too
     song_cover_order.push_back(path);
     if (song_cover_order.size()>96) {
+        invalidate_scaled_art(song_covers[song_cover_order.front()]);
         SDL_FreeSurface(song_covers[song_cover_order.front()]);
         song_covers.erase(song_cover_order.front());
         song_cover_order.erase(song_cover_order.begin());
@@ -1754,8 +2211,9 @@ std::string capture_thumbnail(const std::string &path) {
     struct stat st;
     return sysdata::stat(thumb,&st)==0 && st.st_size>0?thumb:path;
 }
-SDL_Surface *load_jxr(const std::string &path, int w, int h, std::pair<int,int> *size=nullptr) {
+SDL_Surface *load_jxr(const std::string &path, int w, int h, std::pair<int,int> *size=nullptr, int output_density=render_density::factor) {
 #ifdef NXE_JXR
+    w*=output_density;h*=output_density;
     int sw=0, sh=0; unsigned *pixels=nullptr;
     const int rc=nxe_jxr_read_101010(sysdata::local_path(path).c_str(),&sw,&sh,&pixels);
     if (rc==NXE_JXR_OK && size) *size={sw,sh};
@@ -1774,9 +2232,9 @@ SDL_Surface *load_jxr(const std::string &path, int w, int h, std::pair<int,int> 
         hdr::convert(pixels,sw,sh,sw,dst,dw,dh,out->pitch/4);
     }
     free(pixels);
-    return out;
+    return render_density::tag(out,output_density);
 #else
-    (void)path; (void)w; (void)h; (void)size;
+    (void)path; (void)w; (void)h; (void)size; (void)output_density;
     return nullptr;
 #endif
 }
@@ -1832,6 +2290,7 @@ SDL_Surface *picture_original(const std::string &path);
 // Quarter turns use a software surface; never change the capture on disk.
 SDL_Surface *rotate_picture(SDL_Surface *raw,int turns) {
     if (!raw || !turns) return raw;
+    const int density=render_density::density(raw);
     SDL_Surface *src=SDL_ConvertSurfaceFormat(raw,SDL_PIXELFORMAT_ARGB8888,0);
     SDL_FreeSurface(raw);
     if (!src) return nullptr;
@@ -1844,7 +2303,7 @@ SDL_Surface *rotate_picture(SDL_Surface *raw,int turns) {
         out[dx]=in[x];
     }
     SDL_FreeSurface(src);
-    return dst;
+    return render_density::tag(dst,density);
 }
 SDL_Surface *picture_screen(const std::string &path, Uint32 now) {
     if (path!=picture_full_path || picture_full_rotation!=model.picture_rotation) {
@@ -1882,12 +2341,13 @@ SDL_Surface *picture_original(const std::string &path) {
     picture_source_path=key;
     SDL_Surface *raw=nullptr;
     if (ps5lib::viewable_picture(path)) raw=IMG_Load(sysdata::local_path(path).c_str());
-    else if (is_jxr(path) && kCanDecodeJxr) raw=load_jxr(path,3840,2160); // HDR captures are at most 4K
+    else if (is_jxr(path) && kCanDecodeJxr) raw=load_jxr(path,3840,2160,nullptr,1); // HDR captures are at most 4K
     raw=rotate_picture(raw,model.picture_rotation);
     if (raw) {
         // In the screen's format, so a zoomed view can be scaled straight onto it.
         picture_source=SDL_ConvertSurface(raw,screen->format,0);
         SDL_FreeSurface(raw);
+        surface_generations::seal(picture_source);
     }
     return picture_source;
 }
@@ -1943,40 +2403,49 @@ std::string trailer_name(const std::string &key) {
     return name;
 }
 // Each clip's picture size, learnt from its thumbnail frame.
-std::map<std::string,std::pair<int,int>> video_sizes;
+
 // A still from a third of the way in (six seconds still showed ratings
 // cards), for the grid. Decoding is synchronous, so callers pass a budget of
 // new decodes per frame and the rest wait their turn.
-SDL_Surface *video_thumb(const std::string &key, int *budget=nullptr) {
-    auto it=video_thumbs.find(key);
-    if (it!=video_thumbs.end()) return it->second;
-    if (budget && (*budget)--<=0) return nullptr;
+// All callers are in the Videos grid. Consume its existing decode budget.
+// File scanning and encoded reads never happen on this thread.
+unsigned long thumbnail_polled_on=~0ul;
+void poll_video_thumbnails(int *budget) {
+    if (thumbnail_polled_on==frame_count || (budget && *budget<=0)) return;
+    thumbnail_polled_on=frame_count;
+    auto ready=thumbnail_preparation.poll();
+    if (!ready) return;
+    if (budget) --*budget;
     SDL_Surface *thumb=nullptr;
-    const int index=trailer_index(key);
-    if (index>=0) {
-        const auto &clip=trailers[size_t(index)];
-        const std::string path=std::string(trailer_root)+"/packed/"+clip.folder+".frames";
-        if (FILE *f=fopen(path.c_str(),"rb")) {
-            char magic[4]; Uint32 count=0, bytes=0;
-            const int want=std::clamp(clip.frames/3,0,clip.frames-1);
-            bool ok=fread(magic,1,4,f)==4 && memcmp(magic,"NXEF",4)==0 && fread(&count,4,1,f)==1 && int(count)>want;
-            for (int i=0;ok && i<want;i++)
-                ok=fread(&bytes,4,1,f)==1 && bytes<10000000u && fseek(f,long(bytes),SEEK_CUR)==0;
-            if (ok && fread(&bytes,4,1,f)==1 && bytes>0 && bytes<10000000u) {
-                std::vector<unsigned char> data(bytes);
-                if (fread(data.data(),1,bytes,f)==bytes)
-                    if (SDL_RWops *rw=SDL_RWFromConstMem(data.data(),int(bytes)))
-                        {
-                            SDL_Surface *raw=IMG_LoadJPG_RW(rw);
-                            if (raw) video_sizes[key]={raw->w,raw->h};
-                            thumb=fitted(raw,kTileW,kTileH); SDL_RWclose(rw);
-                        }
-            }
-            fclose(f);
+    if (ready->error.empty() && !ready->jpeg.empty()) {
+        if (SDL_RWops *rw=SDL_RWFromConstMem(ready->jpeg.data(),int(ready->jpeg.size()))) {
+            SDL_Surface *raw=IMG_LoadJPG_RW(rw);
+            if (raw) video_sizes[ready->key]={raw->w,raw->h};
+            thumb=fitted(raw,kTileW,kTileH);
+            SDL_RWclose(rw);
         }
     }
-    video_thumbs[key]=thumb;
-    return thumb;
+    video_thumbs[ready->key]=thumb; // Preserve null-cache failures until refresh.
+}
+void reset_video_thumbnails() {
+    thumbnail_preparation.reset();
+    clear_scaled_art(); // Derived entries borrow the source surface identity.
+    for (auto &entry:video_thumbs) if (entry.second) SDL_FreeSurface(entry.second);
+    video_thumbs.clear();video_sizes.clear();
+}
+SDL_Surface *video_thumb(const std::string &key, int *budget=nullptr) {
+    poll_video_thumbnails(budget);
+    auto it=video_thumbs.find(key);
+    if (it!=video_thumbs.end()) return it->second;
+    // Pending requests consume no decode budget, so later visible slots can queue.
+    // The single decode budget is enforced by poll_video_thumbnails above.
+    const int index=trailer_index(key);
+    if (index<0) {video_thumbs[key]=nullptr;return nullptr;}
+    const auto &clip=trailers[size_t(index)];
+    const std::string path=std::string(trailer_root)+"/packed/"+clip.folder+".frames";
+    const auto state=thumbnail_preparation.request(key,path,uint32_t(clip.frames));
+    if (state==packed_thumb::Enqueue::Unavailable) video_thumbs[key]=nullptr;
+    return nullptr;
 }
 #include "ui/fullscreen_media.inc.hpp"
 // My Avatar: the avatar large on a lit stage, turning with Left / Right.
@@ -1985,10 +2454,13 @@ SDL_Surface *video_thumb(const std::string &key, int *budget=nullptr) {
 #include "ui/library.inc.hpp"
 #include "ui/dashboard_picker.inc.hpp"
 #include "ui/ads_settings.inc.hpp"
+#include "ui/developer_diagnostics.inc.hpp"
+#include "ui/compat_health.inc.hpp"
 #include "ui/system_settings.inc.hpp"
 #include "ui/welcome_setup.inc.hpp"
 #include "ui/theme_picker.inc.hpp"
 #include "ui/profile_achievements.inc.hpp"
+#include "ui/rom_game_guide_preview.inc.hpp"
 #include "ui/viewer_dispatch.inc.hpp"
 #include "ui/notifications.inc.hpp"
 // Presenting a frame. SDL's PS5 driver tiles the window surface, submits the
@@ -1997,25 +2469,90 @@ SDL_Surface *video_thumb(const std::string &key, int *budget=nullptr) {
 // console, 2026-10-19). A presenter thread does that wait instead: the main
 // loop copies the finished frame into the window surface only while the
 // presenter is idle (waiting at most 4 ms), and never waits for vblank itself.
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+namespace native_present {
+exbox::presenter::Adapter adapter({exbox_native_open_gpu,exbox_native_upload,exbox_native_present,exbox_native_close});
+bool active=false,requested=false;
+int initialize(){
+ char switch_value[4]{};FILE* f=std::fopen("/data/nxe/exbox/native-presenter.flag","rb");size_t n=0;
+ if(f){n=std::fread(switch_value,1,sizeof switch_value,f);std::fclose(f);}
+ requested=exbox::presenter::enabled(std::string_view(switch_value,n));
+ if(requested&&!exbox_native_set_render_scale(unsigned(render_density::factor)))catchReturnFromMain(46);
+ const auto route=adapter.start(requested);
+ if(route==exbox::presenter::Route::stop)catchReturnFromMain(46);
+ if(route==exbox::presenter::Route::sdl){x21hook::available.store(false);exbox_native_note("presenter route: SDL");return SDL_Init(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER);}
+ // SDL VideoOut opens during video initialization, so select dummy first.
+ const char* prior=SDL_getenv("SDL_VIDEODRIVER");const bool had_driver=prior!=nullptr;
+ const std::string old_driver=prior?prior:"";
+ if(SDL_setenv("SDL_VIDEODRIVER","dummy",1)==0 && SDL_Init(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER)==0){active=true;exbox_native_note("presenter route: native SDR %dx%d",adapter.width(),adapter.height());return 0;}
+ // A startup failure can fall back only after native ownership is released.
+ if(!adapter.close())catchReturnFromMain(46);
+ SDL_Quit();if(had_driver)SDL_setenv("SDL_VIDEODRIVER",old_driver.c_str(),1);else unsetenv("SDL_VIDEODRIVER");
+ x21hook::available.store(false);
+ exbox_native_note("presenter route: SDL after native release");
+ return SDL_Init(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER);
+}
+}
+#endif
+
 namespace present {
+std::shared_ptr<x21hook::OwnedPacket> gpu_pending;
 std::mutex lock;
 std::condition_variable wake, idle;
 std::thread *worker=nullptr;
 bool busy=false, stop=false;
+unsigned long queued=0;
+std::atomic<std::uint64_t> first_present_completed_ms{0};
+unsigned long submission_count(){std::lock_guard<std::mutex> guard(lock);return queued;}
 unsigned long frames=0, skipped=0, reports=0;
 double wait_total_ms=0, wait_max_ms=0;
 void run() {
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    ExboxNative2D* gpu_client=nullptr;
+#else
+    x21hook::HostAudit gpu_audit;
+#endif
+    bool first_accepted=false;
     std::unique_lock<std::mutex> guard(lock);
     for (;;) {
         wake.wait(guard,[] {return busy || stop;});
-        if (stop) return;
+        if (stop) {
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+            if(gpu_client&&!exbox_native2d_destroy(&gpu_client))x21hook::fatal.store(true);
+#endif
+            return;
+        }
+        auto packet=gpu_pending;gpu_pending.reset();
         guard.unlock();
         const Uint64 started=SDL_GetPerformanceCounter();
-        SDL_UpdateWindowSurface(window); // tile, flip, wait for vblank
+        bool accepted=false;
+        if(packet){
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+            if(!native_present::active)x21hook::available.store(false);
+            else{
+                if(!gpu_client)gpu_client=exbox_native2d_create();
+                if(!gpu_client)x21hook::available.store(false);
+                else if(!([&](){if(!packet->actors.empty()){std::vector<ExboxNativeAvatar> inputs;for(const auto&actor:packet->actors)inputs.push_back({{actor.words->data(),actor.words->size()},actor.command_index});return exbox_native2d_prepare_actors_frame(gpu_client,packet->commands.data(),packet->commands.size(),packet->source_ids.data(),inputs.data(),inputs.size(),packet->avatar_width,packet->avatar_height,packet->avatar_generation,packet->filter_requests.data(),packet->filter_requests.size());}return exbox_native2d_prepare_frame(gpu_client,packet->commands.data(),packet->commands.size(),packet->source_ids.data(),packet->avatar_words.data(),packet->avatar_words.size(),packet->avatar_width,packet->avatar_height,packet->avatar_generation,packet->filter_requests.data(),packet->filter_requests.size());})()){if(exbox_native2d_retained(gpu_client))x21hook::fatal.store(true);else{x21hook::available.store(false);if(!exbox_native2d_destroy(&gpu_client))x21hook::fatal.store(true);}}
+                else if(!(accepted=exbox_native2d_present(gpu_client)))x21hook::fatal.store(true);
+            }
+#else
+            try{accepted=gpu_audit.submit(*packet);}catch(const std::exception&e){log((std::string("GPU host audit refused: ")+e.what()).c_str());x21hook::available.store(false);}
+#endif
+        }else{
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+        if(native_present::active)accepted=native_present::adapter.submit(display_surface);
+        else
+#endif
+        accepted=SDL_UpdateWindowSurface(window)==0;
+        }
+        if(accepted && !first_accepted){
+            first_accepted=true;
+            first_present_completed_ms.store(std::uint64_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()),std::memory_order_release);
+        }
         const double ms=1000.0*double(SDL_GetPerformanceCounter()-started)/double(SDL_GetPerformanceFrequency());
         guard.lock();
         ++frames; wait_total_ms+=ms; wait_max_ms=std::max(wait_max_ms,ms);
-        if (frames%900==0 && reports<8) {
+        if (diagnostic_logging() && frames%900==0 && reports<8) {
             ++reports;
             char line[160];
             std::snprintf(line,sizeof line,"present: %lu frames, flip wait avg %.1f ms max %.1f ms, %lu frames skipped while busy",
@@ -2030,10 +2567,11 @@ void frame() {
     std::unique_lock<std::mutex> guard(lock);
     if (busy) idle.wait_for(guard,std::chrono::milliseconds(4),[] {return !busy;});
     if (busy) {++skipped; return;} // still flipping the last one: the next frame goes instead
-    if (screen->w==display_surface->w && screen->h==display_surface->h) SDL_BlitSurface(screen,nullptr,display_surface,nullptr);
-    else SDL_BlitScaled(screen,nullptr,display_surface,nullptr);
+    gpu_pending=x21hook::ready;
+    if(gpu_pending&&x21hook::audit_cpu()){gpu_pending->reference.resize(size_t(screen->w)*screen->h);for(int y=0;y<screen->h;y++)std::memcpy(gpu_pending->reference.data()+size_t(y)*screen->w,static_cast<uint8_t*>(screen->pixels)+y*screen->pitch,size_t(screen->w)*4);}
+    if(!gpu_pending){if (screen->w==display_surface->w && screen->h==display_surface->h) SDL_UpperBlit(screen,nullptr,display_surface,nullptr);else SDL_UpperBlitScaled(screen,nullptr,display_surface,nullptr);}
     if (!worker) worker=new std::thread(run);
-    busy=true;
+    busy=true;++queued;
     wake.notify_one();
 }
 // Before the window and SDL go away: let the current flip finish, then stop.
@@ -2046,6 +2584,10 @@ void finish() {
     if (worker && worker->joinable()) worker->join();
     delete worker;
     worker=nullptr;
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    if(x21hook::fatal.load())catchReturnFromMain(45);
+    if(native_present::active && !native_present::adapter.close())catchReturnFromMain(45);
+#endif
 }
 }
 // The turning Ring of Light, centred on (cx, cy).
@@ -2122,6 +2664,13 @@ void draw_boot(Uint32 now) {
     text(name,(W-text_width(name,large))/2,cy+190,large,{Uint8(230*words),Uint8(240*words),Uint8(230*words),255});
 }
 void draw(Uint32 now, float dt) {
+    // Settled opaque video has no Home background to upload. Buffering and
+    // viewer entry/exit fades retain the existing CPU fallback until migrated.
+    const bool gpu_full_video=model.viewer==dash::Viewer::Videos&&model.viewer_full&&model.video_pending.empty()&&viewer_fade.on&&viewer_fade.value(now)>=1&&active_trailer>=0&&trailer_stream_ready()&&media_fade(now).video>=1;
+    const bool gpu_pictures_settled=model.viewer==dash::Viewer::Pictures&&viewer_fade.on&&viewer_fade.value(now)>=1;
+    const bool gpu_music_settled=model.viewer==dash::Viewer::Music&&viewer_fade.on&&viewer_fade.value(now)>=1;
+    x21hook::ready.reset();x21hook::allow_frame=!x21hook::skip_frame&&x21hook::enabled()&&(model.era>=0&&model.era<=3)&&(model.viewer==dash::Viewer::None||gpu_full_video||gpu_pictures_settled||gpu_music_settled)&&!booting&&!launching.live&&dim_level==0&&(viewer_fade.value(now)==0||gpu_full_video||gpu_pictures_settled||gpu_music_settled);
+
     ++guide_scene::render_epoch;edited_avatar::refresh();
     ++frame_count;
 #ifndef __PROSPERO__
@@ -2135,18 +2684,39 @@ void draw(Uint32 now, float dt) {
     }
     overlay_now=now;
     const bool modal=model.viewer!=dash::Viewer::None || model.info || model.details || model.guide || guide::closing || model.controller_map;
-    static bool backdrop_valid=false;
+    static bool backdrop_valid=false,backdrop_gpu_only=false;
     static std::string backdrop_key;
     const std::string key=std::to_string(model.era)+":"+std::to_string(model.dashboard_build)+":"+std::to_string(model.channel)+":"+
         std::to_string(model.current())+":"+std::to_string(model.theme)+":"+std::to_string(gamerpic)+":"+std::to_string(model.picture_background)+":"+std::to_string(model.picture_background_enabled)+":"+edited_avatar::signature;
     const float picture_fade=picture_background_fade.value(now);
-    if (modal && hub_backdrop && backdrop_valid && key==backdrop_key && (picture_fade<=0 || picture_fade>=1)) SDL_BlitSurface(hub_backdrop,nullptr,screen,nullptr);
-    else {
-        draw_hub(now);
-        if (modal && hub_backdrop) SDL_BlitSurface(screen,nullptr,hub_backdrop,nullptr);
-        backdrop_key=key;
+    // A settled full-screen media viewer begins with an opaque full-target fill.
+    // Its cached hub stays available for the exit fade; copying it here is hidden work.
+    const bool opaque_picture_grid=x21hook::allow_frame&&gpu_pictures_settled&&!model.viewer_full&&model.era>=1&&screen->clip_rect.x==0&&screen->clip_rect.y==0&&screen->clip_rect.w==screen->w&&screen->clip_rect.h==screen->h&&media_skin::opaque_background();
+#ifndef __PROSPERO__
+    if(const char*trace=getenv("NXE_GPU_ROUTE_TRACE")) {
+        static unsigned previous=~0u;
+        unsigned flags=(x21hook::allow_frame?1u:0u)|(x21hook::enabled()?2u:0u)|(gpu_pictures_settled?4u:0u)|(opaque_picture_grid?8u:0u)|(look3d::active()?16u:0u)|(edited_avatar::owner_still(avatar_slots::Image::FullBody)?32u:0u)|(model.viewer_full?64u:0u)|(screen->clip_rect.w==screen->w&&screen->clip_rect.h==screen->h?128u:0u);
+        if(flags!=previous){previous=flags;if(FILE*f=fopen(trace,"a")){fprintf(f,"ms=%u era=%d viewer=%d flags=%u dim=%g clip=%d,%d,%d,%d bg=%p info=%d details=%d map=%d fade=%g\n",now,model.era,int(model.viewer),flags,double(dim_level),screen->clip_rect.x,screen->clip_rect.y,screen->clip_rect.w,screen->clip_rect.h,(void*)era_background,int(model.info),int(model.details),int(model.controller_map),double(viewer_fade.value(now)));fclose(f);}}
+    }
+#endif
+    const bool covered=opaque_picture_grid||(model.viewer_full&&(model.viewer==dash::Viewer::Videos||model.viewer==dash::Viewer::Pictures)&&viewer_fade.on&&viewer_fade.value(now)>=1);
+    if(!covered){
+        const bool cached=modal&&hub_backdrop&&backdrop_valid&&key==backdrop_key&&(picture_fade<=0||picture_fade>=1);
+        if(cached&&(x21hook::allow_frame?bool(gpu_overlay::backdrop):!backdrop_gpu_only)){
+            if(x21hook::allow_frame)x21hook::ready=gpu_overlay::backdrop;
+            if(!x21hook::allow_frame||x21hook::audit_cpu())SDL_BlitSurface(hub_backdrop,nullptr,screen,nullptr);
+        }else{
+            draw_hub(now);
+            if(!gpu_home::finish()){backdrop_valid=false;backdrop_gpu_only=false;gpu_overlay::backdrop.reset();x21hook::skip_frame=true;draw(now,dt);x21hook::skip_frame=false;return;}
+            gpu_overlay::backdrop=x21hook::allow_frame?x21hook::ready:nullptr;
+            backdrop_gpu_only=x21hook::allow_frame&&!x21hook::audit_cpu()&&bool(gpu_overlay::backdrop);
+            if(modal&&hub_backdrop&&!backdrop_gpu_only)SDL_BlitSurface(screen,nullptr,hub_backdrop,nullptr);
+            backdrop_key=key;
+        }
     }
     backdrop_valid=modal;
+    if(x21hook::allow_frame&&covered)gpu_overlay::begin_opaque();
+    else if(x21hook::allow_frame&&x21hook::ready)gpu_overlay::begin(x21hook::ready);
     overlay(viewer_fade,model.viewer!=dash::Viewer::None,now,paint_viewer,0.04f);
     overlay(info_fade,model.info,now,paint_info,0.06f);
     overlay(details_fade,model.details,now,paint_details,0.05f);
@@ -2171,6 +2741,7 @@ void draw(Uint32 now, float dt) {
     if (dim_level>0) shade(0,0,W,H,0x000000,Uint8(175*std::min(1.0f,dim_level)));
     draw_launch(now);
     draw_boot(now);
+    if(!gpu_overlay::finish(model.guide?1:guide::closing?2:model.details?3:model.controller_map?4:model.info?5:0,guide_scene::cpu_paints)||!gpu_home::finish()){backdrop_valid=false;backdrop_gpu_only=false;gpu_overlay::backdrop.reset();x21hook::skip_frame=true;draw(now,dt);x21hook::skip_frame=false;return;}
     present::frame();
 }
 // Starting a game or app: the screen fades to black round the turning Ring of
@@ -2181,7 +2752,7 @@ void launch_now(Uint32 now) {
     return_at=now;
     // Hand over without holding an audio port, and give the light bar back.
     // The music stops for the game, as on the 360.
-    stop_trailer(); tunes::stop(); sfx::close();
+    stop_trailer(); tunes::save_session(); tunes::save_activity(); tunes::stop(false); sfx::close();
     light::hand_back();
     bool ok=false;
     std::string key;
@@ -2202,6 +2773,7 @@ void launch_now(Uint32 now) {
         // Most recently played first from now on.
         if (!key.empty()) model.played(key);
         save_recent();
+        save_settings();
         suspended=true;
         return;
     }
@@ -2238,6 +2810,7 @@ void apply(const dash::Effect &effect) {
     case dash::Command::SaveArtwork: save_artwork_choices(); break;
     case dash::Command::RefreshMedia:
         stop_trailer();
+        reset_video_thumbnails();
         load_trailers();
         load_trailer_choices();
         load_videos();
@@ -2275,18 +2848,22 @@ void apply(const dash::Effect &effect) {
         break;
     case dash::Command::ReadNetwork: network_worker.request(model,false);break;
     case dash::Command::TestNetwork: network_worker.request(model,true);break;
+    case dash::Command::RecorderAction: recorder_worker.command(model,effect.app,SDL_GetTicks());break;
     case dash::Command::ApplyPictureBackground: apply_picture_background(); break;
+    case dash::Command::ApplyInstalledTheme: request_installed_theme(effect.app); break;
     case dash::Command::ScanPictures: scan_pictures(); break;
     case dash::Command::VideoSeek: seek_trailer(Uint32(std::max(0,effect.app))); pause_trailer(model.video_paused); break;
     case dash::Command::VideoPause: pause_trailer(model.video_paused); break;
     case dash::Command::SaveVideos: save_videos(); break;
     case dash::Command::AvatarWave:
-        if (look3d::active()) look3d::play("wave",SDL_GetTicks()); else avatar::start_wave(SDL_GetTicks());
+        if(prepared_avatar::emote(effect.app>=0?effect.app:0,SDL_GetTicks()))break;
+        if(effect.app>0)break;
+        if (look3d::active()) look3d::moment(exbox::dashboard_director::AvatarMoment::Selection,SDL_GetTicks()); else avatar::start_wave(SDL_GetTicks());
         break;
     case dash::Command::OpenAvatarEditor: {
         std::string reason;
         if(!editor_dashboard::prepare(edited_avatar::data(),model,std::time(nullptr),reason)) {show_toast("Avatar Editor",reason,&sfx::toast_clip);break;}
-        stop_trailer();tunes::stop();sfx::close();light::hand_back();
+        stop_trailer();tunes::save_session();tunes::save_activity();tunes::stop(false);sfx::close();light::hand_back();
         if(nxe::launch_homebrew({"Avatar Editor",editor_dashboard::title_id})) {suspended=true;return_at=SDL_GetTicks();}
         else {editor_dashboard::abandon(edited_avatar::data());sfx::open();show_toast("Avatar Editor","Could not open the installed editor.",&sfx::toast_clip);}
         break;
@@ -2297,10 +2874,16 @@ void apply(const dash::Effect &effect) {
     case dash::Command::AvatarEmote: look3d::emote(SDL_GetTicks()); break;
     case dash::Command::AvatarSave:
         look3d::keep();
+        look3d::moment(exbox::dashboard_director::AvatarMoment::EditorSave,SDL_GetTicks());
         show_toast("Avatar saved","Your avatar is now your gamerpic too.",&sfx::toast_clip,nullptr);
         break;
     case dash::Command::AvatarCancel: look3d::cancel(); break;
     case dash::Command::ScanMusic: tunes::scan(); break;
+    case dash::Command::ScanGameMusic:
+        save_settings();
+        tunes::scan();
+        show_toast("Game soundtrack scan","Accessible folders: WAV, MP3, FLAC and OGG. Containers and unsupported audio stay untouched.",&sfx::done_clip,toast_downloads);
+        break;
     case dash::Command::MusicBrowse: tunes::browse(); break;
     case dash::Command::MusicPlay:
         if (!tunes::play(effect.app))
@@ -2314,8 +2897,19 @@ void apply(const dash::Effect &effect) {
     case dash::Command::MusicEdit: tunes::edit(dash::MusicOp(effect.app),model.music_target); break;
     case dash::Command::MusicShuffle:
     case dash::Command::MusicRepeat: tunes::set_order(); save_settings(); break;
+    case dash::Command::MusicVolume:
+        sfx::music_mix_volume.store((std::clamp(effect.app,0,10)*256+5)/10,std::memory_order_relaxed);
+        save_settings();
+        break;
+    case dash::Command::GuideMusicRefresh: tunes::guide_refresh(); break;
+    case dash::Command::GuideMusicPlay: tunes::guide_play(effect.app); break;
+    case dash::Command::SaveRenderScale:
+        if(render_preference::save(sysdata::local_path("/data/nxe/render-scale.txt"),effect.app))persisted_render_scale=effect.app;
+        else {model.render_scale=persisted_render_scale;show_toast("Display","Could not save resolution. Your previous setting is unchanged.",&sfx::toast_clip);}
+        break;
     case dash::Command::SaveSettings: refresh_update_art();save_settings(); break;
     case dash::Command::SaveAdProfiles: save_ad_profiles();load_promotions();save_settings();break;
+    case dash::Command::ReloadPromotions: load_promotions();save_settings();break;
     case dash::Command::ExitToPs5: nxe::suspend_relaunch(); running=false; break;
     case dash::Command::NextGamerpic: next_gamerpic(); break;
     case dash::Command::None: break;
@@ -2323,6 +2917,7 @@ void apply(const dash::Effect &effect) {
 }
 bool restore_editor_return() {
     if(!edited_avatar::consume())return false;
+    look3d::invalidate_preparation();
     const auto now=std::time(nullptr);
     const auto route=editor_dashboard::screen_state(model,now);
     // Rebuild data behind the returned screen, then restore its cursor. This
@@ -2333,7 +2928,7 @@ bool restore_editor_return() {
         model.storage=ps5lib::storage_inventory(model.games,music::default_roots(),fs_prefix(),trailer_root);
     if(model.viewer==dash::Viewer::SystemSettings && model.network_page())network_worker.request(model,false);
     (void)editor_dashboard::restore_state(route,model,now);
-    refresh_update_art();load_promotions();return true;
+    refresh_update_art();load_promotions();look3d::moment(exbox::dashboard_director::AvatarMoment::EditorSave,SDL_GetTicks());return true;
 }
 void exit_to_home() {
     log("L3+R3: exit to PS5 Home");
@@ -2342,6 +2937,8 @@ void exit_to_home() {
 }
 // One press (or repeat) through the model, with the sound the 360 made for it.
 void press(xb::Button button) {
+    static bool first_navigation=false;
+    if(!first_navigation && xb::repeats(button)){first_navigation=true;startup_mark("first navigation dispatched");}
     custom_scene::press(button,SDL_GetTicks());
     const dash::Model before=model;
     const dash::Effect effect=model.press(button);
@@ -2416,6 +3013,45 @@ void open_controllers() {
             if (SDL_GameController *pad=SDL_GameControllerOpen(i)) light::pads.push_back(pad);
     light::shown=-1; // colour the new pad too
 }
+bool native_controller_polling() {
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    return native_present::active;
+#else
+    return false;
+#endif
+}
+// SDL's dummy video driver does not own the PS5 event pump. The native
+// presenter therefore snapshots the already-open SDL controller each frame
+// and feeds the exact same Xbox button/stick graph as ordinary SDL events.
+// Event-driven mode remains unchanged and the two sources are never mixed.
+void poll_native_controller(Uint32 now) {
+    if(!native_controller_polling())return;
+    static Uint32 physical=0,next_discovery=0;
+    SDL_GameControllerUpdate();
+    SDL_GameController* pad=nullptr;
+    for(auto* candidate:light::pads)if(candidate&&SDL_GameControllerGetAttached(candidate)){pad=candidate;break;}
+    if(!pad){
+        if(Sint32(now-next_discovery)>=0){open_controllers();next_discovery=now+1000;}
+        for(int i=0;i<xb::Count;++i)if(physical&xb::bit(xb::Button(i)))button_up(xb::Button(i));
+        physical=0;stick_x=stick_y=0;analog(now);
+        int edge=left_trigger.update(0);if(edge<0)button_up(xb::LT);
+        edge=right_trigger.update(0);if(edge<0)button_up(xb::RT);
+        return;
+    }
+    Uint32 current=0;
+    for(int index=0;index<=SDL_CONTROLLER_BUTTON_DPAD_RIGHT;++index){
+        const xb::Button button=xb::from_sdl_button(index);
+        if(button!=xb::None&&SDL_GameControllerGetButton(pad,SDL_GameControllerButton(index)))current|=xb::bit(button);
+    }
+    const Uint32 changed=physical^current;
+    static unsigned transition_reports=0;
+    for(int i=0;i<xb::Count;++i){const auto button=xb::Button(i);if(!(changed&xb::bit(button)))continue;if(transition_reports<32){char line[112];std::snprintf(line,sizeof line,"native pad transition: Xbox %s %s",xb::name(button),(current&xb::bit(button))?"down":"up");log(line);++transition_reports;}if(current&xb::bit(button))button_down(button,now,"Native controller poll");else button_up(button);}
+    physical=current;
+    auto axis=[&](SDL_GameControllerAxis id){return float(SDL_GameControllerGetAxis(pad,id))/32767.0f;};
+    stick_x=axis(SDL_CONTROLLER_AXIS_LEFTX);stick_y=axis(SDL_CONTROLLER_AXIS_LEFTY);analog(now);
+    int edge=left_trigger.update(axis(SDL_CONTROLLER_AXIS_TRIGGERLEFT));if(edge>0)button_down(xb::LT,now,"Native L2 poll");else if(edge<0)button_up(xb::LT);
+    edge=right_trigger.update(axis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT));if(edge>0)button_down(xb::RT,now,"Native R2 poll");else if(edge<0)button_up(xb::RT);
+}
 void handle(const SDL_Event &event, Uint32 now) {
     switch (event.type) {
     case SDL_QUIT: running=false; break;
@@ -2427,6 +3063,7 @@ void handle(const SDL_Event &event, Uint32 now) {
         pads_seen=light::pads.size();
         break;
     case SDL_CONTROLLERBUTTONDOWN: {
+        if(native_controller_polling())break;
         const int index=event.cbutton.button;
         xb::Button button=xb::from_sdl_button(index);
         if (index>=0 && index<32 && !(logged_sdl_buttons&(1u<<index))) {
@@ -2441,8 +3078,9 @@ void handle(const SDL_Event &event, Uint32 now) {
         button_down(button,now,source);
         break;
     }
-    case SDL_CONTROLLERBUTTONUP: button_up(xb::from_sdl_button(event.cbutton.button)); break;
+    case SDL_CONTROLLERBUTTONUP: if(!native_controller_polling())button_up(xb::from_sdl_button(event.cbutton.button)); break;
     case SDL_CONTROLLERAXISMOTION: {
+        if(native_controller_polling())break;
         const float value=float(event.caxis.value)/32767.0f;
         switch (event.caxis.axis) {
         case xb::sdl::kAxisTriggerLeft: {
@@ -2498,15 +3136,16 @@ SDL_Surface *trim_button_padding(SDL_Surface *art) {
     return out?out:art;
 }
 SDL_Surface *make_metro_symbol(int kind) {
-    SDL_Surface *out=SDL_CreateRGBSurfaceWithFormat(0,256,256,32,SDL_PIXELFORMAT_ARGB8888);
+    SDL_Surface *out=render_density::create(256,256,SDL_PIXELFORMAT_ARGB8888);
     if (!out) return nullptr;
+    const float density=float(render_density::density(out));
     const float pin[][2]={{40,18},{88,18},{88,30},{78,38},{78,65},{94,78},{94,88},{68,88},{64,118},{60,88},{34,88},{34,78},{50,65},{50,38},{40,30}};
-    for (int y=0;y<256;y++) {
+    for (int y=0;y<out->h;y++) {
         auto *row=reinterpret_cast<Uint32 *>(static_cast<Uint8 *>(out->pixels)+y*out->pitch);
-        for (int x=0;x<256;x++) {
+        for (int x=0;x<out->w;x++) {
             float alpha=0;
             for (int sy=0;sy<2;sy++) for (int sx=0;sx<2;sx++) {
-                const float px=(x+(sx+0.5f)/2)/2,py=(y+(sy+0.5f)/2)/2;
+                const float px=(x+(sx+0.5f)/2)/(2*density),py=(y+(sy+0.5f)/2)/(2*density);
                 auto segment=[&](float ax,float ay,float bx,float by,float width) {
                     const float t=std::clamp(((px-ax)*(bx-ax)+(py-ay)*(by-ay))/((bx-ax)*(bx-ax)+(by-ay)*(by-ay)),0.0f,1.0f);
                     const float dx=px-ax-t*(bx-ax),dy=py-ay-t*(by-ay);
@@ -2634,13 +3273,15 @@ void load_library_art() {
     library_art_build=library_build();
 }
 #include "runtime/welcome_resources.inc.hpp"
-#include "ui/source_update_art.inc.hpp"
+#include "assets/update_art.inc.hpp"
 void load_art() {
+    // Touch the fixed output backing before the first interactive frame.
+    video_output_backing.prepare(screen->w,screen->h);
     std::string blades_root=std::string(root)+"era-skins/blades";
 #ifndef __PROSPERO__
     if (const char *override=getenv("NXE_ERA_SKIN_ROOT")) blades_root=std::string(override)+"/blades";
 #endif
-    era_chrome::prepare(blades_root.c_str());
+    era_chrome::prepare(blades_root.c_str(),chrome_startup_deferred);
     xbox_live_logo=load_png(blades_root+"/live-logo.png");
     if (xbox_live_logo) SDL_SetSurfaceBlendMode(xbox_live_logo,SDL_BLENDMODE_BLEND);
     for (const char *name:{"ico_32x_systemSet","ico_32x_parentalControl","ico_32x_Profiles","ico_32x_network","ico_32x_console","ico_64x_controller","ico_64x_DefaultPicture","ico_64x_Themes"})
@@ -2673,7 +3314,7 @@ void load_art() {
     for (const char *name:{"ico_32x_message","ico_32x_Friend","ico_32x_marketplace","ico_32x_achievements_white","ico_32x_myGames",
                            "ico_32x_arcade","ico_32x_demos","ico_32x_trailers","ico_32x_MusicDisk","ico_32x_DigitalCamera",
                            "ico_64x_TrailersFolder_white","ico_32x_MCX","ico_32x_console","ico_32x_parentalControl","ico_32x_MU",
-                           "ico_32x_network","ico_32x_PC","ico_32x_systemSet","ico_32x_Eject","ico_32x_Friend","ico_64x_xboxlive","ico_64x_friend",
+                           "ico_32x_network","ico_32x_PC","ico_32x_systemSet","ico_32x_Eject","ico_64x_xboxlive","ico_64x_friend",
                            "ico_64x_AllDevices","ico_64x_HD","ico_64x_music","ico_64x_skins","ico_64x_Trailers","ico_64x_profiles"})
         if (SDL_Surface *art=load_png(blades_root+"/items/"+name+".png")) {
             SDL_Surface *argb=SDL_ConvertSurfaceFormat(art,SDL_PIXELFORMAT_ARGB8888,0);SDL_FreeSurface(art);
@@ -2705,10 +3346,11 @@ void load_art() {
     blades_type::audit_rails(getenv("NXE_RAIL_AUDIT"));
     blades_type::audit_rails(getenv("NXE_RAIL_REGIME_AUDIT"),true);
 #endif
-    toast_segments=SDL_CreateRGBSurfaceWithFormat(0,128,128,32,SDL_PIXELFORMAT_ARGB8888);
+    toast_segments=render_density::create(128,128,SDL_PIXELFORMAT_ARGB8888);
     if (toast_segments) {
-        for (int y=0;y<128;y++) for (int x=0;x<128;x++) {
-            const float dx=x-63.5f,dy=y-63.5f,d=std::sqrt(dx*dx+dy*dy);
+        const float density=float(render_density::density(toast_segments));
+        for (int y=0;y<toast_segments->h;y++) for (int x=0;x<toast_segments->w;x++) {
+            const float dx=(x+0.5f)/density-64,dy=(y+0.5f)/density-64,d=std::sqrt(dx*dx+dy*dy);
             float angle=std::atan2(dy,dx)*180.0f/3.14159265f+90;
             if (angle<0) angle+=360;
             const int quadrant=int(angle/90);
@@ -2786,6 +3428,8 @@ void load_art() {
     load_library_art();
     avatar_art=load_png(std::string(root)+"private_art/avatar.png");
     disc_art=load_png(std::string(root)+"private_art/disc.png");
+    theater_popcorn_art=load_png(std::string(root)+"private_art/theater/popcorn.png");
+    if(theater_popcorn_art)SDL_SetSurfaceBlendMode(theater_popcorn_art,SDL_BLENDMODE_BLEND);
     for (int i=0;i<64;i++) {
         char name[48]; std::snprintf(name,sizeof name,"private_art/gamerpic_%02d.png",i);
         SDL_Surface *pic=load_png(std::string(root)+name);
@@ -2806,6 +3450,11 @@ void load_art() {
     ring_of_light=load_png(std::string(root)+"private_art/guide_ring.png");
     for (int i=0;i<24;i++) ring_frames[i]=rotated(ring_of_light,float(i)*15.0f,160);
     glow=make_glow(128);
+    if(glow){const int widths[]={900,760,1100},heights[]={330,280,260};
+        SDL_SetSurfaceBlendMode(glow,SDL_BLENDMODE_NONE);SDL_SetSurfaceAlphaMod(glow,255);
+        for(size_t i=0;i<atmosphere_glow.size();++i){auto* frame=render_density::create(widths[i],heights[i]);if(frame){SDL_Rect to{0,0,frame->w,frame->h};SDL_UpperBlitScaled(glow,nullptr,frame,&to);SDL_SetSurfaceBlendMode(frame,SDL_BLENDMODE_BLEND);surface_generations::seal(frame);}atmosphere_glow[i]=frame;}
+        SDL_SetSurfaceBlendMode(glow,SDL_BLENDMODE_BLEND);
+    }
     kinect_glow=make_glow(128,0x40f4ff);
     // The NXE dashboard's horizon glow (controlp Aura_Horizon.png). Optional.
     aura=load_png(std::string(root)+"private_art/aura_horizon.png");
@@ -2814,6 +3463,11 @@ void load_art() {
     if (shade_pixel) SDL_SetSurfaceBlendMode(shade_pixel,SDL_BLENDMODE_BLEND);
 }
 void free_art() {
+    chrome_startup_job.join();
+    // Output wrappers borrow backing pixels, so release the wrapper first.
+    if(trailer_scaled){SDL_FreeSurface(trailer_scaled);trailer_scaled=nullptr;}
+    scaled_video_opaque=false;video_output_backing.clear();
+    for(auto*& frame:atmosphere_glow){SDL_FreeSurface(frame);frame=nullptr;}
     era_chrome::free_all();
     source_blades::clear();
     guide_scene::clear();
@@ -2852,10 +3506,13 @@ void free_art() {
     SDL_FreeSurface(era_banner);
     for (auto *icon:card_icons) if (icon) SDL_FreeSurface(icon);
     for (auto *icon:blades_icons) if (icon) SDL_FreeSurface(icon);
-    for (SDL_Surface *s:{avatar_art,disc_art,shade_pixel,background,gamerscore_icon,blade_dark,blade_grey,ring_of_light,trophy_icon,disc_spin}) if (s) SDL_FreeSurface(s);
+    for (SDL_Surface *s:{avatar_art,disc_art,theater_popcorn_art,shade_pixel,background,gamerscore_icon,blade_dark,blade_grey,ring_of_light,trophy_icon,disc_spin}) if (s) SDL_FreeSurface(s);
     for (SDL_Surface *s:gamerpics) SDL_FreeSurface(s);
     for (SDL_Surface *&s:ring_frames) if (s) {SDL_FreeSurface(s);s=nullptr;}
     for (SDL_Surface *s:{glow,kinect_glow,aura,themed_background,fx_layer,toast_trophy,toast_downloads,toast_controller,toast_themes}) if (s) SDL_FreeSurface(s);
+    if(installed_theme_background){render_density::free_surface(installed_theme_background);installed_theme_background=nullptr;installed_theme_pixels.reset();}
+    if(installed_theme_previous){render_density::free_surface(installed_theme_previous);installed_theme_previous=nullptr;installed_theme_previous_pixels.reset();}
+    if(installed_theme_preview){render_density::free_surface(installed_theme_preview);installed_theme_preview=nullptr;installed_theme_preview_pixels.reset();}
     for (SDL_Surface *s:achievement_art) if (s) SDL_FreeSurface(s);
     for (SDL_Surface *s:storage_art) if (s) SDL_FreeSurface(s);
     for (SDL_Surface *s:network_art) if (s) SDL_FreeSurface(s);
@@ -2987,6 +3644,8 @@ void audit_art_pixels(const char *path) {
 std::vector<std::string> script;
 size_t script_at=0;
 Uint32 script_wait_until=0;
+bool script_music_waiting=false;
+Uint32 script_music_wait_at=0;
 bool script_step(Uint32 now) {
     if (script_wait_until && static_cast<Sint32>(now-script_wait_until)<0) return true;
     script_wait_until=0;
@@ -3008,6 +3667,10 @@ bool script_step(Uint32 now) {
         rect(0,0,W,H,0x303030);draw_picture_controls(dash::PictureFile{},1,3,false,1.0f);
         SDL_SaveBMP(screen,token.substr(18).c_str());return true;
     }
+    if (token.rfind("theater-audit:",0)==0) {
+        model.video_theater=true;draw_theater_room(now,0.0f);
+        SDL_SaveBMP(screen,token.substr(14).c_str());return true;
+    }
 #endif
     if (token.rfind("xui-frame:",0)==0) {source_blades::seek(float(atof(token.c_str()+10)));return true;}
     if (token.rfind("xui-play:",0)==0) {source_blades::play(token.substr(9));return true;}
@@ -3024,9 +3687,71 @@ bool script_step(Uint32 now) {
     if (token=="music") {apply(model.perform_guide_entry({"Music",dash::GuideAction::Music}));return true;}
     if (token=="videos") {apply(model.perform_guide_entry({"Videos",dash::GuideAction::Videos}));return true;}
     if (token=="pictures") {apply(model.perform_guide_entry({"Pictures",dash::GuideAction::Pictures}));return true;}
-    if (token.rfind("play:",0)==0) {if (music_songs.empty()) tunes::scan();apply({dash::Command::MusicPlay,atoi(token.c_str()+5)});return true;}
+#ifndef __PROSPERO__
+    if(token=="themes"){model.open_themes();return true;}
+    if(token.rfind("settings-audit:",0)==0){
+        const std::string page=token.substr(15);
+        model.viewer=dash::Viewer::SystemSettings;model.viewer_item=0;model.system_history.clear();
+        model.system_page=page=="account"?dash::Model::SystemAccount:
+                          page=="console"?dash::Model::SystemConsole:
+                          page=="display"?dash::Model::SystemDisplay:
+                          page=="audio"?dash::Model::SystemAudio:
+                          page=="info"?dash::Model::SystemInfo:
+                          page=="music-volume"?dash::Model::SystemMusicVolume:dash::Model::SystemRoot;
+        if(model.system_page==dash::Model::SystemMusicVolume)model.viewer_item=std::clamp(model.music_volume,0,10);
+        return true;
+    }
+    if(token.rfind("recorder-audit:",0)==0){
+        const std::string state=token.substr(15);
+        model.guide=true;model.guide_host=false;model.guide_blade=dash::BladeMedia;model.guide_music_page=0;
+        model.recorder_available=true;model.recorder_recording=state!="idle";model.recorder_paused=state=="paused";
+        model.recorder_pause_supported=true;model.recorder_seconds=65.0;model.recorder_control=model.recorder_paused?0:model.recorder_recording?1:0;
+        const auto rows=model.blade_entries(dash::BladeMedia);for(std::size_t i=0;i<rows.size();++i)if(rows[i].action==dash::GuideAction::RecordScreen){model.guide_item[dash::BladeMedia]=int(i);break;}
+        return true;
+    }
+    if(token.rfind("guide-audit:",0)==0){
+        const std::string page=token.substr(12);
+        model.guide=true;model.guide_host=false;model.guide_music_page=0;
+        model.guide_blade=page=="home"?dash::BladeHome:
+                          page=="games"?dash::BladeGames:
+                          page=="media"||page=="music"?dash::BladeMedia:dash::BladeSettings;
+        if(page=="music")model.guide_music_page=5;
+        model.guide_item[model.guide_blade]=0;
+        return true;
+    }
+    if(token.rfind("music-dashboard-audit:",0)==0){
+        // Make this deterministic even when the normal asynchronous startup
+        // scan is still in flight: it must not publish over the fixture below.
+        tunes::scan_job.join();
+        const std::string folder=token.substr(22);
+        music_songs={{folder+"/album-a/track.mp3","His World","Zebrahead","Sonic the Hedgehog (2006)","Game Soundtrack"},
+                     {folder+"/album-b/track.mp3","Still Alive","Lisa Miskovsky","Mirror's Edge","Soundtrack"},
+                     {folder+"/album-c/track.mp3","Ezio's Family","Jesper Kyd","Assassin's Creed II","Soundtrack"}};
+        std::vector<std::string> paths;for(const auto&song:music_songs)paths.push_back(song.path);
+        music_activity.observe(paths);music_activity.played(paths[1]);music_activity.played(paths[1]);music_activity.played(paths[0]);
+        model.era=3;model.dashboard_build=17559;model.channel=dash::Media;
+        model.select_metro_tab(5);model.metro_focus=0;model.metro_selected[5]=0;
+        return true;
+    }
+#endif
+    if (token.rfind("play:",0)==0) {
+        if(music_songs.empty() && !script_music_waiting){tunes::scan();script_music_waiting=true;script_music_wait_at=now;}
+        if(script_music_waiting && tunes::scan_job.active()){
+            if(now-script_music_wait_at>=10000){log("script: music readiness timed out");return false;}
+            --script_at;return true;
+        }
+        script_music_waiting=false;
+        apply({dash::Command::MusicPlay,atoi(token.c_str()+5)});return true;
+    }
     if (token.rfind("tab:",0)==0) {model.select_metro_tab(atoi(token.c_str()+4));return true;}
     if (token.rfind("theme:",0)==0) {model.load_theme(atoi(token.c_str()+6));return true;}
+#ifndef __PROSPERO__
+    if(token.rfind("installed-theme:",0)==0){
+        const std::string id=token.substr(16);
+        for(std::size_t i=0;i<model.installed_themes.size();++i)if(model.installed_themes[i].stable_id==id){request_installed_theme(int(i));return true;}
+        --script_at;return true; // catalog publication is asynchronous
+    }
+#endif
     if (token.rfind("notify:",0)==0) {model.notification_level=std::clamp(atoi(token.c_str()+7),0,3);return true;}
     if (token.rfind("buttons:",0)==0) {model.button_style=std::clamp(atoi(token.c_str()+8),0,2);return true;}
     if (token.rfind("seek:",0)==0 && active_trailer>=0) {trailer_started=now-Uint32(std::max(0,atoi(token.c_str()+5)));active_frame=-1;return true;}
@@ -3052,6 +3777,10 @@ bool script_step(Uint32 now) {
             for (const auto &promo:model.promo_cards) {if (comma) fputc(',',f);string(promo.image);comma=true;}
             fprintf(f,"],\"ad_show_all\":%d,\"ad_visible_count\":%d,\"viewer_count\":%d,\"ad_picked_catalog_index\":%d",model.ad_show_all,model.ad_visible_count(),model.viewer_count(),model.viewer==dash::Viewer::AdsSettings?model.ad_catalog_index(model.viewer_item-5):-1);
             fprintf(f,",\"blades_chrome_surfaces\":%d,\"blades_chrome_bytes\":%zu,\"blades_source_labels\":%d,\"blades_source_slots\":%d",era_chrome::retained_chrome_count(),era_chrome::retained_chrome_bytes(),int(era_chrome::has_source_labels(model.dashboard_build,source_blades::active_blade())),era_chrome::converted_slot_count(model.dashboard_build));
+            size_t tagged_bytes=0;for(const auto& entry:render_density::surfaces)if(entry.first)tagged_bytes+=size_t(entry.first->pitch)*entry.first->h;
+            fprintf(f,",\"render_width\":%d,\"render_height\":%d,\"render_scale\":%d,\"requested_render_scale\":%d,\"tagged_surface_bytes\":%zu",screen->w,screen->h,render_density::factor,persisted_render_scale,tagged_bytes);
+            fprintf(f,",\"chrome_backing_failures\":%u,\"chrome_raster_fallbacks\":%u",unsigned(era_chrome::chrome_backing_failures),unsigned(era_chrome::chrome_raster_fallbacks));
+            fprintf(f,",\"theme_preview_ready\":%d,\"theme_preview_id\":",installed_theme_preview&&theme_preview_published_id==theme_preview_focus_id);string(theme_preview_published_id);
             fprintf(f,",\"ticks\":%u}\n",SDL_GetTicks());
             fclose(f);
         }
@@ -3080,7 +3809,16 @@ bool script_step(Uint32 now) {
 }
 }
 int main() {
+    DashboardLogSession log_session;
+    startup_epoch=std::chrono::steady_clock::now();
+    startup_mark("entry");
     log("Ex-Box 360 starting");
+    begin_theme_catalog();
+    persisted_render_scale=render_preference::load(sysdata::local_path("/data/nxe/render-scale.txt"));
+    render_density::factor=persisted_render_scale;
+#ifndef __PROSPERO__
+    if(const char* value=getenv("NXE_RENDER_SCALE"))render_density::factor=std::strcmp(value,"2")==0?2:1;
+#endif
 #ifndef __PROSPERO__
     if (const char *local=getenv("NXE_TRAILER_ROOT")) trailer_root=local;
     if (const char *local=getenv("NXE_VIDEO_STATE_PATH")) video_state_path=local;
@@ -3098,18 +3836,79 @@ int main() {
         log("large avatar kit: title icon cache capped at 48");
     }
     SDL_SetMainReady();
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER) || TTF_Init()) {log(SDL_GetError());return 1;}
-    window=SDL_CreateWindow("Ex-Box 360",0,0,W,H,SDL_WINDOW_SHOWN|SDL_WINDOW_FULLSCREEN_DESKTOP);
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    // Covers font/window failures before the regular presenter cleanup path.
+    struct NativeStartupGuard {~NativeStartupGuard(){if(native_present::active && !native_present::adapter.close())catchReturnFromMain(45);}} native_startup_guard;
+#endif
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    if (native_present::initialize() || TTF_Init())
+#else
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER) || TTF_Init())
+#endif
+    {log(SDL_GetError());return 1;}
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    window=native_present::active?SDL_CreateWindow("Ex-Box native surface",0,0,native_present::adapter.width(),native_present::adapter.height(),SDL_WINDOW_HIDDEN):SDL_CreateWindow("Ex-Box 360",0,0,W*render_density::factor,H*render_density::factor,SDL_WINDOW_SHOWN|SDL_WINDOW_FULLSCREEN_DESKTOP);
+#else
+    window=SDL_CreateWindow("Ex-Box 360",0,0,W*render_density::factor,H*render_density::factor,SDL_WINDOW_SHOWN|SDL_WINDOW_FULLSCREEN_DESKTOP);
+#endif
     display_surface=window?SDL_GetWindowSurface(window):nullptr;
-    screen=display_surface?SDL_CreateRGBSurfaceWithFormat(0,W,H,32,display_surface->format->format):nullptr;
+#ifdef __PROSPERO__
+    if(render_density::factor==2&&display_surface&&(display_surface->w!=3840||display_surface->h!=2160)){
+        render_density::factor=1;log("4K output unavailable; retained1080p renderer");
+    }
+#endif
+    screen=display_surface?render_density::create(W,H,display_surface->format->format):nullptr;
+    if(!screen&&display_surface&&render_density::factor==2){render_density::factor=1;screen=render_density::create(W,H,display_surface->format->format);log("4K canvas allocation failed; retained1080p renderer");}
     // The finished frame is copied, not blended, onto the window surface.
     if (screen) SDL_SetSurfaceBlendMode(screen,SDL_BLENDMODE_NONE);
     if (!screen) {log(SDL_GetError());return 2;}
-    hub_backdrop=SDL_CreateRGBSurfaceWithFormat(0,W,H,32,screen->format->format);
+    // The editor and dashboard share the same owner-authored launch picture.
+    // A wrong-size or unreadable file never replaces the existing first frame.
+    {
+        std::string splash_path=sysdata::local_path("/data/nxe/loading/current.png");
+#ifndef __PROSPERO__
+        if(const char *test_path=getenv("NXE_SHARED_SPLASH"))splash_path=test_path;
+#endif
+        SDL_Surface *splash=IMG_Load(splash_path.c_str());
+        if(!splash||splash->w!=W*render_density::factor||splash->h!=H*render_density::factor){
+            if(splash)SDL_FreeSurface(splash);
+            splash_path=sysdata::local_path(render_density::factor==2?
+                "/data/nxe/loading/loading-2160p.png":"/data/nxe/loading/loading-1080p.png");
+            splash=IMG_Load(splash_path.c_str());
+        }
+        if(splash){
+            {char note[160];std::snprintf(note,sizeof note,"shared splash source=%dx%d display=%dx%d",splash->w,splash->h,display_surface->w,display_surface->h);log(note);}
+            if(splash->w==W*render_density::factor&&splash->h==H*render_density::factor){
+                SDL_Rect destination{0,0,display_surface->w,display_surface->h};
+                if(display_surface->w*splash->h>display_surface->h*splash->w){
+                    destination.w=display_surface->h*splash->w/splash->h;
+                    destination.x=(display_surface->w-destination.w)/2;
+                }else if(display_surface->w*splash->h<display_surface->h*splash->w){
+                    destination.h=display_surface->w*splash->h/splash->w;
+                    destination.y=(display_surface->h-destination.h)/2;
+                }
+                SDL_FillRect(display_surface,nullptr,SDL_MapRGB(display_surface->format,0,0,0));
+                if(SDL_BlitScaled(splash,nullptr,display_surface,&destination)==0){
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+                if(native_present::active)native_present::adapter.submit(display_surface);
+                else SDL_UpdateWindowSurface(window);
+#else
+                SDL_UpdateWindowSurface(window);
+#endif
+                startup_mark("shared editor splash shown");
+                }else log("shared splash blit rejected; regular first frame retained");
+            }else log("shared splash size rejected; regular first frame retained");
+            SDL_FreeSurface(splash);
+        }else log(("shared splash unavailable: "+splash_path).c_str());
+    }
+    hub_backdrop=render_density::create(W,H,screen->format->format);
     if (hub_backdrop) SDL_SetSurfaceBlendMode(hub_backdrop,SDL_BLENDMODE_NONE);
-    library_base=SDL_CreateRGBSurfaceWithFormat(0,W,H,32,screen->format->format);
+    library_base=render_density::create(W,H,screen->format->format);
     if (library_base) SDL_SetSurfaceBlendMode(library_base,SDL_BLENDMODE_NONE);
-    prepare_background();
+    log(render_density::factor==2?"render target:3840x2160; logical1920x1080; native-sized glyphs":"render target:1920x1080");
+    {char line[128];std::snprintf(line,sizeof line,"render acceleration: solid=%d pixel=%d scaled=%d",int(solid_blend::compatible(screen->format->format)),int(solid_blend::format_ok(screen)&&pixel_blend::compatible(SDL_PIXELFORMAT_ARGB8888,screen->format->format)),int(solid_blend::format_ok(screen)&&scaled_blend::compatible(SDL_PIXELFORMAT_ARGB8888,screen->format->format)));log(line);}
+    begin_chrome_startup();
+    prepare_background();startup_mark("SDL surfaces ready");
     // The 360's own typeface, Convection, when a copy is installed (a licensed
     // font file, or XenonCLatin.xtt from the owner's own 360), else Inter.
     auto installed=[](std::initializer_list<const char *> names) -> std::string {
@@ -3176,7 +3975,7 @@ int main() {
         for (int f=0;f<4;f++) for (int b=0;b<4;b++) {
             SDL_Surface *disc=trim_button_padding(load_png(skins+families[f]+"/buttons/"+letters[b]+"-Button.png"));
             if (!disc) continue;
-            SDL_Surface *out=SDL_CreateRGBSurfaceWithFormat(0,96,96,32,SDL_PIXELFORMAT_ARGB8888);
+            SDL_Surface *out=render_density::create(96,96,SDL_PIXELFORMAT_ARGB8888);
             if (out) {
                 SDL_FillRect(out,nullptr,0);
                 SDL_SetSurfaceBlendMode(disc,SDL_BLENDMODE_BLEND);
@@ -3192,12 +3991,12 @@ int main() {
                     // see-through: NXE's dark one about 65 %, the later white one 80 %.
                     TTF_Font *face=f==0?letter_font:thin_font;
                     if (f>0) if (SDL_Surface *shadow=TTF_RenderUTF8_Blended(face,text_letter,{0,0,0,255})) {
-                        SDL_Rect at{(96-shadow->w)/2+2,(96-shadow->h)/2+3,shadow->w,shadow->h};
+                        SDL_Rect at{(96-render_density::logical_w(shadow))/2+2,(96-render_density::logical_h(shadow))/2+3,render_density::logical_w(shadow),render_density::logical_h(shadow)};
                         SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);SDL_SetSurfaceAlphaMod(shadow,0x2e);
                         SDL_BlitSurface(shadow,nullptr,out,&at);SDL_FreeSurface(shadow);
                     }
                     if (SDL_Surface *glyph_text=TTF_RenderUTF8_Blended(face,text_letter,ink)) {
-                        SDL_Rect at{(96-glyph_text->w)/2,(96-glyph_text->h)/2+1,glyph_text->w,glyph_text->h};
+                        SDL_Rect at{(96-render_density::logical_w(glyph_text))/2,(96-render_density::logical_h(glyph_text))/2+1,render_density::logical_w(glyph_text),render_density::logical_h(glyph_text)};
                         SDL_SetSurfaceBlendMode(glyph_text,SDL_BLENDMODE_BLEND);
                         SDL_SetSurfaceAlphaMod(glyph_text,f==0?170:205);
                         SDL_BlitSurface(glyph_text,nullptr,out,&at);
@@ -3225,7 +4024,8 @@ int main() {
     const std::string light_path=installed({"SegoeUI-Light.ttf","SegoeUI.ttf","SegoeXbox.ttf"});
     if (!light_path.empty()) metro_tabs_font=TTF_OpenFont(light_path.c_str(),48);
     if (!regular || !large || !small) log(TTF_GetError());
-    load_art();
+    startup_mark("fonts ready");
+    load_art();startup_mark("shared art and video backing ready");
     source_blades::prepare(font_path.c_str());
     guide_scene::font_path=font_path;
     guide_scene::segoe_path=installed({"SegoeXbox.ttf","SegoeUI.ttf"});
@@ -3241,7 +4041,7 @@ int main() {
     guide::make_labels();
     model.external_avatar_editor=true;
     avatar::load();
-    look3d::load();
+    // Kit loading starts after the initial Home submission.
     {
         char line[128];
         std::snprintf(line,sizeof line,"avatar direct memory: %zu MiB live",avkit::direct_memory_live() >> 20);
@@ -3251,7 +4051,7 @@ int main() {
     // picture goes in front of it below.
     if (look3d::active()) look3d::refresh_head_shot();
     else if (SDL_Surface *head=load_png(std::string(root)+"private_art/avatar/avatar_head.png"))
-        gamerpics.insert(gamerpics.begin(),head);
+        {gamerpics.insert(gamerpics.begin(),head);look3d::head_shot=head;}
     // The PS5 profile picture joins the gamerpics, first, and is the default.
     if (user_id>=0) {
         if (SDL_Surface *pic=load_png(ps5lib::profile_dir(unsigned(user_id),fs_prefix())+"/avatar.png")) {
@@ -3264,6 +4064,21 @@ int main() {
     read_profile();
     model.promotions=true;
     load_settings();
+    exbox_services::rom_guide_companion::apply(model.rom_game_guide_preview,nullptr);
+    model.developer_diagnostics_available=developer_diagnostics_requested();
+    dashboard_diagnostics.set_enabled(model.developer_diagnostics_available);
+    model.health_runtime.diagnostics_available=model.developer_diagnostics_available;
+    model.health_runtime.gpu_dashboard_requested=gpu_dashboard_health_requested();
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+    model.health_runtime.native_presenter_requested=native_present::requested;
+    model.health_runtime.native_presenter_active=native_present::active;
+#endif
+    model.health_runtime.gpu_dashboard_available=
+        model.health_runtime.gpu_dashboard_requested&&x21hook::available.load();
+    model.health_runtime.gpu_fallback=
+        (model.health_runtime.native_presenter_requested&&!model.health_runtime.native_presenter_active)||
+        (model.health_runtime.gpu_dashboard_requested&&!model.health_runtime.gpu_dashboard_available);
+    model.render_scale=persisted_render_scale;model.active_render_scale=render_density::factor;
     load_ad_catalog();
     load_ad_profiles();
     refresh_update_art();
@@ -3284,15 +4099,17 @@ int main() {
     load_pins();
     load_categories();
     model.load_recent(read_lines(recent_path,dash::kMaxRecent));
-    restore_editor_return();
+    restore_editor_return();startup_mark("profile and library setup ready");
+    finish_chrome_startup();startup_mark("chrome ready before first frame");
     // The 360 greeted the profile with a toast as it signed in, and then with
     // any achievements earned since it last looked.
     // The sign-in notification uses the Xbox orb inside the segmented disc.
     show_toast(model.player+" signed in",trophies.known?"Trophy level "+std::to_string(trophies.level):"Welcome to Ex-Box 360",
                &sfx::toast_clip);
     check_trophies(SDL_GetTicks());
-    booting=true;
+    booting=false; // Native startup goes directly to Home.
 #ifndef __PROSPERO__
+    if (const char *boot=getenv("NXE_BOOT")) booting=*boot=='1';
     if (const char *s=getenv("NXE_SCRIPT")) {
         std::string all(s), token;
         for (char c:all+",") if (c==',') {if (!token.empty()) script.push_back(token); token.clear();} else token+=c;
@@ -3326,7 +4143,48 @@ int main() {
         if (frame_audit) fprintf(frame_audit,"ticks,processing_ms,video_width,video_height\n");
     }
 #endif
+    bool startup_started=false;
+    bool avatar_completion_reported=false,music_completion_reported=false,presenter_completion_reported=false,prep_completion_reported=false;
+    auto record_startup_workers=[&]{
+        const auto epoch_ms=std::chrono::duration_cast<std::chrono::milliseconds>(startup_epoch.time_since_epoch()).count();
+        auto mark=[&](const char *name,std::uint64_t completed,bool &reported){
+            if(completed && !reported){
+                reported=true;char line[160];
+                std::snprintf(line,sizeof line,"startup: %s completed elapsed_ms=%lld",name,static_cast<long long>(completed)-static_cast<long long>(epoch_ms));log(line);
+            }
+        };
+        mark("avatar worker",look3d::kit_job.completion_ms(),avatar_completion_reported);
+        mark("avatar preparation",look3d::preparation_completion_ms(),prep_completion_reported);
+        mark("music worker",tunes::scan_job.completion_ms(),music_completion_reported);
+        mark("first presenter call",present::first_present_completed_ms.load(std::memory_order_acquire),presenter_completion_reported);
+    };
+    auto start_background=[&](bool home_drawn,unsigned long submitted_before){
+        if(!startup_started && home_drawn && present::submission_count()>submitted_before){
+            startup_started=true;startup_mark("initial dashboard queued");
+            look3d::load();tunes::scan();
+        }
+    };
+    frame_pacing::Pacer frame_pacer;
+    frame_metrics::Window render_metrics;
+    auto record_render_work=[&](Uint64 started) {
+        const double ms=1000.0*double(SDL_GetPerformanceCounter()-started)/double(SDL_GetPerformanceFrequency());
+        dashboard_diagnostics.add_frame(ms);
+        if(dashboard_diagnostics.enabled()){
+            if(x21hook::ready)dashboard_diagnostics.add_command_batch();
+            else if(x21hook::enabled())dashboard_diagnostics.add_fallback();
+        }
+        if(diagnostic_logging() && render_metrics.add(ms)) { char line[192]; render_metrics.report(line,sizeof line,render_density::factor); log(line); }
+    };
     while (running) {
+        const Uint64 frame_started=SDL_GetPerformanceCounter();
+#if defined(__PROSPERO__) && defined(NXE_NATIVE_PRESENTER)
+        if(x21hook::fatal.load()||(native_present::active && native_present::adapter.failed())){log("native presentation failed; stopping without unsafe fallback");running=false;break;}
+#endif
+        model.health_runtime.gpu_dashboard_available=
+            model.health_runtime.gpu_dashboard_requested&&x21hook::available.load();
+        model.health_runtime.gpu_fallback=
+            (model.health_runtime.native_presenter_requested&&!model.health_runtime.native_presenter_active)||
+            (model.health_runtime.gpu_dashboard_requested&&!model.health_runtime.gpu_dashboard_available);
 #ifndef __PROSPERO__
         const Uint64 work_started=SDL_GetPerformanceCounter();
         auto record_frame=[&] {
@@ -3336,9 +4194,19 @@ int main() {
         };
 #endif
         Uint32 now=SDL_GetTicks();
+        record_startup_workers();
+        if(!suspended && !launching.live){
+            if(look3d::poll_load())edited_avatar::refresh(true);
+            tunes::poll_scan();
+        }
         network_worker.tick(model);
+        {const auto notice=recorder_worker.tick(model,now);if(!notice.title.empty())show_toast(notice.title,notice.text,notice.error?&sfx::toast_clip:&sfx::done_clip,notice.error?nullptr:toast_downloads);}
+        poll_theme_catalog();
+        poll_installed_theme();
+        poll_theme_preview();
         SDL_Event event;
         while (running && SDL_PollEvent(&event)) handle(event,now);
+        poll_native_controller(now);
         if (!running) break;
         const bool waiting=launching.live || booting || suspended || dim_level>0.05f;
         xb::Button again=waiting?xb::None:repeat.poll(now);
@@ -3354,6 +4222,17 @@ int main() {
                             (model.viewer==dash::Viewer::Pictures && model.viewer_full && model.picture_slideshow);
         const bool idle=model.dimming && !suspended && !launching.live && !watching && now-last_input_at>=idle_limit;
         dim_level=idle?std::min(1.0f,dim_level+dt/1.5f):std::max(0.0f,dim_level-dt/0.25f);
+        exbox::dashboard_director::Observation director_state;
+        director_state.family=model.era==0?exbox::dashboard_director::Family::Blades:model.era==1?exbox::dashboard_director::Family::Nxe:model.era==2?exbox::dashboard_director::Family::Kinect:model.metro_v1()?exbox::dashboard_director::Family::MetroV1:exbox::dashboard_director::Family::MetroV2;
+        director_state.build=model.dashboard_build;
+        director_state.view=int(model.viewer)*32+(model.viewer==dash::Viewer::None?(model.era==3?16+model.metro_tab:int(model.channel)):0);
+        director_state.focus=model.viewer==dash::Viewer::None?model.current():model.viewer_item;
+        director_state.guide=model.guide;director_state.notification=toast.live;director_state.playback=model.now_playing>=0;director_state.paused=model.music_paused;
+        director_state.launching=launching.live||suspended;director_state.dimmed=dim_level>0.05f;
+        const bool director_avatar_visible=model.viewer==dash::Viewer::Avatar||model.viewer==dash::Viewer::Profile||
+            (model.viewer==dash::Viewer::None&&(((model.era==1||model.era==2)&&model.channel==dash::MyXbox)||(model.era==3&&model.metro_tab==2)));
+        look3d::observe_dashboard(director_state,{true,true,custom_scene::equalizer.ready},now,director_avatar_visible);
+        tick_promotion_rotation(now);
         // New trophies show up while the dashboard is open, too.
         if (!suspended && now-trophies_checked>=60000) check_trophies(now);
         if (suspended) {
@@ -3408,25 +4287,42 @@ int main() {
                     match=trailer_for(target,card.title);
                 }
             }
+            // Reconcile A+Guide in one input drain before holding a grid preview.
+            const bool full_viewer=model.viewer==dash::Viewer::Videos&&model.viewer_full&&!model.info;
+            const int full_target=full_viewer?trailer_index(model.video_key()):-1;
+            const bool ready_full_session=active_trailer>=0&&active_trailer==full_target&&(trailer_preparing||trailer_stream_ready());
+            if(model.guide&&full_viewer&&ready_full_session&&!trailer_guide_suspended&&dwell_key!="video:"+model.video_key()+":full"){
+                seek_trailer(Uint32(std::max(0,model.video_elapsed)));pause_trailer(model.video_paused);
+            }
             const bool arrived=key!=dwell_key || match!=dwell_trailer;
             if (arrived) {
                 dwell_key=key; dwell_trailer=match;
                 dwell_since=at_once?now-kTrailerAt:now;
             }
-            trailer_hold_end=full_video;
-            if (!full_video && trailer_paused) pause_trailer(false); // previews always move
-            update_trailer(phase(now)==Phase::Play?match:-1);
-            if (full_video && match>=0 && active_trailer==match && trailer_frames) {
+            const bool same_full_video=full_viewer&&ready_full_session;
+            const bool guide_hold=model.guide&&same_full_video;
+            trailer_hold_end=full_video||guide_hold;
+            bool resumed_guide=false;
+            if(guide_hold){suspend_trailer_for_guide();model.video_elapsed=int(trailer_elapsed());}
+            else {
+                resumed_guide=resume_trailer_from_guide(same_full_video);
+                if (!full_video && trailer_paused) pause_trailer(false);
+                update_trailer(phase(now)==Phase::Play?match:-1);
+            }
+            if (full_video && match>=0 && active_trailer==match && (trailer_stream_ready()||trailer_preparing)) {
                 // Full screen starts at the model's place: a resume, or where
                 // the Guide interrupted it. Then the player reports back.
-                if (arrived) {seek_trailer(Uint32(std::max(0,model.video_elapsed)));pause_trailer(model.video_paused);}
+                if (arrived&&!resumed_guide) {seek_trailer(Uint32(std::max(0,model.video_elapsed)));pause_trailer(model.video_paused);}
                 model.video_elapsed=int(trailer_elapsed());
                 model.video_paused=trailer_paused;
             }
         }
         if (!script.empty()) {
             position=float(model.current());
-            draw(now,dt);
+            const auto submitted_before=startup_started?0:present::submission_count();
+        const bool home_drawn=!booting && !suspended && !launching.live;
+            draw(now,dt);start_background(home_drawn,submitted_before);
+        record_render_work(frame_started);
 #ifndef __PROSPERO__
             record_frame();
 #endif
@@ -3434,26 +4330,46 @@ int main() {
             SDL_Delay(8);
             continue;
         }
-        draw(now,dt);
+        const auto submitted_before=startup_started?0:present::submission_count();
+        const bool home_drawn=!booting && !suspended && !launching.live;
+        draw(now,dt);start_background(home_drawn,submitted_before);
+        record_render_work(frame_started);
 #ifndef __PROSPERO__
         record_frame();
 #endif
-        Uint32 elapsed=SDL_GetTicks()-now;
-        const Uint32 frame=dim_level>=1?100:33; // a dimmed screen needs few frames
-        if (elapsed<frame) SDL_Delay(frame-elapsed);
+        // Fractional deadlines retain true60Hz cadence; overruns do not cause catch-up bursts.
+        const double clock_scale=1000.0/double(SDL_GetPerformanceFrequency());
+        const double wait=frame_pacer.wait_ms(double(frame_started)*clock_scale,double(SDL_GetPerformanceCounter())*clock_scale,dim_level>=1);
+        if(wait>0)SDL_Delay(Uint32(std::ceil(wait)));
     }
 #ifndef __PROSPERO__
     if (frame_audit) fclose(frame_audit);
 #endif
+    tunes::scan_job.join();
+    look3d::kit_job.join();
+    theme_catalog_job.join();
+    theme_apply_job.join();
+    theme_preview_job.join();
+    record_startup_workers();
     stop_trailer();
-    tunes::stop();
+    trailer_preparation.shutdown();
+    thumbnail_preparation.shutdown();
+    tunes::save_session();tunes::save_activity();tunes::stop(false);
     sfx::close();
     light::hand_back();
+    text_cache::clear();
     free_media();
-    edited_avatar::close();
+    prepared_avatar::close();edited_avatar::close();
     avatar::close();
     look3d::close();
+    // Shutdown-only owned surface caches; no later draw borrows these pixels.
     for (auto &e:icon_cache) if (e.second) SDL_FreeSurface(e.second);
+    icon_cache.clear();icon_cache_bytes=0;
+    for (auto &entry:song_covers) SDL_FreeSurface(entry.second);
+    song_covers.clear();song_cover_order.clear();
+    for (auto *&cover:toast_covers) {SDL_FreeSurface(cover);cover=nullptr;}
+    toast_cover_next=0;
+    // End shutdown-only surface cache cleanup.
     free_art();
     guide::free_all();
     std::set<TTF_Font *> fonts_to_close;
@@ -3469,20 +4385,25 @@ int main() {
     blades_type::clear();
     for (auto *font:fonts_to_close) TTF_CloseFont(font);
     present::finish();
+    record_startup_workers();
     if (hub_backdrop) SDL_FreeSurface(hub_backdrop);
     if (library_base) SDL_FreeSurface(library_base);
     custom_scene::clear();
+    save_settings();
     SDL_FreeSurface(screen);SDL_DestroyWindow(window);TTF_Quit();SDL_Quit();
     log("Ex-Box 360 stopped");
+    close_dashboard_log();
 #ifdef __PROSPERO__
     // A foreground PS5 title must hand control back to ShellCore. Returning
     // from main can send it through the crash reporter instead.
     const int refused=sceSystemServiceLoadExec("exit",nullptr);
     char failure[96];
     std::snprintf(failure,sizeof failure,"system exit refused rc=0x%x",unsigned(refused));
-    log(failure);
+    log_after_close(failure);
     for (;;) sceKernelUsleep(100000);
 #else
     return 0;
 #endif
 }
+
+

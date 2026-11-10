@@ -40,6 +40,15 @@ void draw_profile() {
     p::background("Profile");
     draw_gamerpic(195,285,144,144);
     text(fit(model.player,large,650),195,460,large,p::ink());
+    // The 360 profile presents the avatar as a standing full-body character.
+    // Do not reduce it to the gamerpic-sized thumbnail used by the old
+    // placement prototype.
+    SDL_Surface *figure=edited_avatar::live_or_still(SDL_GetTicks(),true,avatar_art);
+    if(figure) {
+        SDL_Rect at=edited_avatar::contain(figure,{400,250,430,680});
+        prepared_avatar::materialize(figure);if(figure==look3d::hub.surface)look3d::materialize_hub();
+        blit_quality(figure,nullptr,screen,&at,false);
+    }
     const auto rows=model.profile_entries();
     for (int i=0;i<int(rows.size());++i) {
         const int y=280+i*108;

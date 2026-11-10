@@ -3,7 +3,7 @@ void draw_library_static() {
     shade(0,0,W,H,0x000000,185);
     rounded(120,90,1680,895,12,0x42505e,0x2c3742);
     const char *title=model.collection==dash::Collection::Pins?"My Pins":
-                      model.collection==dash::Collection::Recent?"Recent":"Search Games & Apps";
+                      model.collection==dash::Collection::Recent?"Continue Playing":"Search Games & Apps";
     text(title,190,130,large,{255,255,255,255});
     if (model.collection==dash::Collection::All) {
         const std::string filter=model.library_filter==0?"All":model.library_filter==27?"0-9":std::string(1,char('A'+model.library_filter-1));
@@ -29,6 +29,8 @@ void draw_library_static() {
     shade(1100,280,610,460,0x000000,100);
     if (SDL_Surface *art=title_icon(card.image)) blit_contained(art,{1120,300,570,420});
     text(fit(card.title,regular,600),1100,770,regular,{255,255,255,255});
+    if(!card.subtitle.empty())
+        text(fit(card.subtitle,small,600),1100,820,small,{196,220,184,255});
     text(std::to_string(item+1)+" of "+std::to_string(n),190,910,regular,{196,208,216,255});
     if (top>0) guide::chevron(1050,280,false);
     if (top+8<n) guide::chevron(1050,858,true);
@@ -37,7 +39,7 @@ void draw_library() {
     const auto cards=model.library_cards();
     std::string key=std::to_string(library_generation)+":"+std::to_string(model.era)+":"+
         std::to_string(int(model.collection))+":"+std::to_string(model.library_filter)+":"+std::to_string(model.viewer_item);
-    for (const auto &card:cards) key+='\n'+card.title+'\t'+card.image;
+    for (const auto &card:cards) key+='\n'+card.title+'\t'+card.image+'\t'+card.subtitle+'\t'+std::to_string(int(card.kind));
     static std::string cached_key;
     if (library_base && key==cached_key) SDL_BlitSurface(library_base,nullptr,screen,nullptr);
     else {

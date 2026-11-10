@@ -4,7 +4,7 @@
 //
 // Header-only, and it compiles the decoders (dr_mp3, dr_flac, dr_wav: public
 // domain / MIT-0; stb_vorbis: public domain / MIT; see
-// vendor/audio/NOTICE-EXBOX.md), so include it from exactly one
+// ../third_party/audio/NOTICE-EXBOX.md), so include it from exactly one
 // translation unit per program (main.cpp, or a test). No SDL: the dashboard
 // calls Player::mix from its audio callback.
 //
@@ -58,11 +58,11 @@
 #define DR_FLAC_NO_OGG
 #define DR_FLAC_NO_WCHAR
 #define DR_WAV_NO_WCHAR
-#include "vendor/audio/dr_mp3.h"
-#include "vendor/audio/dr_flac.h"
-#include "vendor/audio/dr_wav.h"
+#include "../third_party/audio/dr_mp3.h"
+#include "../third_party/audio/dr_flac.h"
+#include "../third_party/audio/dr_wav.h"
 #define STB_VORBIS_NO_PUSHDATA_API
-#include "vendor/audio/stb_vorbis.c"
+#include "../third_party/audio/stb_vorbis.c"
 // stb_vorbis leaves its internal macros defined; they would clash with ordinary names.
 #undef C
 #undef CHECK
@@ -1659,6 +1659,26 @@ inline std::vector<std::string> default_roots()
 {
     return {"/data/nxe/music", "/mnt/usb0/Music", "/mnt/usb1/Music", "/mnt/usb0/music", "/mnt/usb1/music",
             "/mnt/ext0/Music", "/mnt/ext1/Music"};
+}
+
+// Opt-in roots for already-accessible, owner-supplied game files. This does
+// not mount images, decrypt containers or download anything. A setup may add
+// one absolute directory per line to /data/nxe/game-music-roots.txt; common
+// removable-drive layouts work without a sidecar.
+inline std::vector<std::string> game_roots()
+{
+    std::vector<std::string> roots={"/data/roms", "/data/games", "/mnt/usb0/roms", "/mnt/usb1/roms",
+                                    "/mnt/usb0/ROMs", "/mnt/usb1/ROMs", "/mnt/usb0/Games", "/mnt/usb1/Games"};
+    if (FILE *f=std::fopen(sysdata::local_path("/data/nxe/game-music-roots.txt").c_str(),"rb")) {
+        char line[4096];
+        while (roots.size()<64 && std::fgets(line,sizeof line,f)) {
+            std::string root=trim(line);
+            if (!root.empty() && root[0]=='/' && root.find("..") == std::string::npos) roots.push_back(root);
+        }
+        std::fclose(f);
+    }
+    std::sort(roots.begin(),roots.end());roots.erase(std::unique(roots.begin(),roots.end()),roots.end());
+    return roots;
 }
 
 inline std::string clock(double seconds)
