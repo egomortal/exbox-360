@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ex-Box Setup</title>
+<style>
+  :root {
+    --bg: #0d100e; --panel: #151a17; --panel-2: #1b221e; --line: #27312b;
+    --text: #eef3ef; --muted: #9aa8a0; --green: #5ad15f; --green-deep: #107c10;
+    --amber: #e6b450; --blue: #6cb6ff; --red: #ff7b72; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body { margin: 0; background: radial-gradient(1200px 600px at 80% -10%, #16301a 0%, var(--bg) 60%) fixed, var(--bg);
+         color: var(--text); font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; line-height: 1.5; }
+  main { max-width: 1080px; margin: 0 auto; padding: 36px 24px 96px; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+  h1 { font-size: 2.3rem; font-weight: 650; letter-spacing: -0.02em; margin: 0; }
+  h1 span { color: var(--green); }
+  .version { color: var(--muted); font-size: .8rem; }
+  .lead { color: var(--muted); font-size: 1.08rem; margin: 0 0 28px; max-width: 46em; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; }
+  h2 .n { width: 28px; height: 28px; border-radius: 50%; background: var(--green-deep); color: #fff; font-size: .85rem;
+          display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type=text] { flex: 1 1 320px; min-width: 0; background: #0b0e0c; color: var(--text); border: 1px solid var(--line);
+                     border-radius: 10px; padding: 12px 14px; font: inherit; }
+  input[type=text]:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+  button, select { font: inherit; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text);
+           padding: 11px 18px; cursor: pointer; transition: background .15s, transform .05s; }
+  button:hover { background: #243029; } button:active { transform: translateY(1px); }
+  button.primary { background: var(--green-deep); border-color: #1a9a1a; color: #fff; font-weight: 600; }
+  button.primary:hover { background: #159015; }
+  button.big { font-size: 1.25rem; padding: 16px 34px; border-radius: 12px; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .choice { display: flex; gap: 12px; flex-wrap: wrap; }
+  .choice label { flex: 1 1 300px; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; cursor: pointer; background: var(--panel-2); }
+  .choice label:has(input:checked) { border-color: var(--green); background: #16261a; }
+  .choice b { display: block; } .choice small, .hint { color: var(--muted); font-size: .88rem; }
+  .group { margin: 20px 0 8px; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .09em; }
+  .item { display: grid; grid-template-columns: 112px 1fr; gap: 4px 16px; padding: 13px 0; border-top: 1px solid var(--line); }
+  .badge { align-self: start; justify-self: start; font-size: .78rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .found { background: #173a1b; color: var(--green); } .download { background: #14304a; color: var(--blue); }
+  .partial { background: #3d3115; color: var(--amber); } .missing { background: #262b28; color: var(--muted); }
+  .failed { background: #45201d; color: var(--red); } .done { background: #173a1b; color: var(--green); }
+  .skipped, .simulated { background: #262b28; color: var(--muted); }
+  .item .title { font-weight: 600; } .item .req { color: var(--amber); font-weight: 500; font-size: .85rem; margin-left: 8px; }
+  .item p { margin: 2px 0 0; color: var(--muted); font-size: .93rem; } .item p b { color: var(--text); font-weight: 500; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .cols h3 { font-size: .95rem; margin: 0 0 8px; }
+  ul.plain { list-style: none; margin: 0; padding: 0; } ul.plain li { padding: 5px 0 5px 26px; position: relative; font-size: .95rem; }
+  ul.get li::before { content: "✓"; position: absolute; left: 2px; color: var(--green); font-weight: 700; }
+  ul.skip li { color: var(--muted); } ul.skip li::before { content: "–"; position: absolute; left: 4px; }
+  ul.new li::before { content: "★"; position: absolute; left: 0; color: var(--amber); }
+  .options { display: flex; gap: 18px 28px; flex-wrap: wrap; align-items: center; margin: 4px 0 18px; }
+  .options label { display: inline-flex; gap: 8px; align-items: center; }
+  input[type=checkbox], input[type=radio] { accent-color: var(--green); width: 18px; height: 18px; }
+  .bar { height: 14px; background: #0b0e0c; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; margin: 14px 0 8px; }
+  .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--green-deep), var(--green)); border-radius: 999px; transition: width .35s ease; }
+  .status { font-size: 1.1rem; } .status small { color: var(--muted); margin-left: 8px; }
+  .summary { font-size: 1.2rem; font-weight: 600; margin: 4px 0 12px; }
+  .summary.bad { color: var(--red); } .summary.good { color: var(--green); }
+  .note { border-left: 3px solid var(--amber); background: #221d10; padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: .92rem; margin: 12px 0 0; }
+  .error { color: var(--red); margin-top: 10px; min-height: 1.2em; }
+  pre { background: #0b0e0c; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: .8rem; max-height: 240px; overflow: auto; white-space: pre-wrap; color: var(--muted); }
+  details summary { cursor: pointer; color: var(--muted); margin-top: 12px; }
+  [hidden] { display: none !important; }
+  footer { color: var(--muted); font-size: .8rem; margin-top: 28px; }
+  @media (max-width: 720px) { .cols { grid-template-columns: 1fr; } .item { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
+  @media (prefers-reduced-motion: reduce) { .bar i, button { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header><h1>Ex-Box <span>Setup</span></h1><span class="version">version __VERSION__</span></header>
+  <p class="lead">Pick the folder that holds your Xbox 360 files. Setup shows what it found and what each thing unlocks, then one button installs everything it can.</p>
+
+  <section>
+    <h2><span class="n">1</span>Your folder</h2>
+    <div class="row">
+      <button class="primary" id="pick">Choose folder…</button>
+      <input type="text" id="folder" placeholder="or paste the folder's path here" aria-label="Folder path">
+      <button id="scan">Look inside</button>
+    </div>
+    <p class="hint">Your files are only read. Nothing in the folder is changed, moved or uploaded anywhere except your own PS5.</p>
+    <div class="error" id="scan-error" role="alert"></div>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span>Where to install</h2>
+    <div class="choice">
+      <label><input type="radio" name="mode" value="practice" checked> <b>Practice run (no PS5)</b>
+        <small>Does the whole install into a folder on this PC, so you can see exactly what would happen.</small></label>
+      <label><input type="radio" name="mode" value="console"> <b>My PS5</b>
+        <small>Installs over your home network. Not yet tried on a real PS5 in this version.</small></label>
+    </div>
+    <div class="row" id="console-row" hidden style="margin-top:14px">
+      <input type="text" id="host" placeholder="PS5 address, for example 192.168.1.50" aria-label="PS5 address" style="flex:0 1 340px">
+      <button id="find">Find my PS5</button>
+      <span class="hint" id="find-note"></span>
+    </div>
+  </section>
+
+  <section id="checklist-box" hidden>
+    <h2><span class="n">3</span>What was found</h2>
+    <p class="hint" id="scan-note"></p>
+    <div id="checklist"></div>
+    <div id="wrong" class="note" hidden></div>
+  </section>
+
+  <section id="preview-box" hidden>
+    <h2><span class="n">4</span>What you'll get</h2>
+    <div id="new-box" hidden><h3>New since last time</h3><ul class="plain new" id="new"></ul></div>
+    <div class="cols">
+      <div><h3>Included</h3><ul class="plain get" id="get"></ul></div>
+      <div><h3>Left out for now</h3><ul class="plain skip" id="skip"></ul></div>
+    </div>
+  </section>
+
+  <section id="install-box" hidden>
+    <h2><span class="n">5</span>Install</h2>
+    <div class="options">
+      <label>Home-screen icons
+        <select id="icons"><option value="xbox">Xbox style (from my files)</option><option value="default">Ex-Box default</option></select></label>
+      <label><input type="checkbox" id="ps5x360" checked> Xbox 360 games: PS5X360 by BrinooTk (MIT) — recommended</label>
+      <label id="companion-label" hidden><input type="checkbox" id="companion" checked> Launch helper</label>
+    </div>
+    <div class="row">
+      <button class="primary big" id="install">Install everything</button>
+      <button id="stop" hidden>Stop</button>
+      <span class="hint" id="install-hint"></span>
+    </div>
+    <div id="progress" hidden>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="bar"><i id="bar-fill"></i></div>
+      <div class="status" id="status" aria-live="polite"></div>
+    </div>
+    <div class="error" id="install-error" role="alert"></div>
+    <div id="result" hidden>
+      <p class="summary" id="summary"></p>
+      <div id="steps"></div>
+      <p class="hint" id="log-file"></p>
+    </div>
+    <details><summary>Details</summary><pre id="log"></pre></details>
+  </section>
+
+  <section>
+    <h2>Check or undo</h2>
+    <div class="row">
+      <button id="doctor">Doctor: check the install</button>
+      <button id="restore">Restore: undo the last install</button>
+    </div>
+    <p class="hint">Before anything is replaced, the old copy is moved to a backup folder. Restore puts those back and removes what was added.</p>
+    <div id="tool-out" aria-live="polite"></div>
+  </section>
+
+  <footer>Ex-Box 360 is a fan project (GPL-3.0). It includes no Microsoft files; everything of that kind comes from your own folder. Practice folder: <span id="practice-path"></span></footer>
+</main>
+
+<script>
+const KEY = "__KEY__";
+const $ = id => document.getElementById(id);
+const LABEL = {found: "Found", download: "Will download", partial: "Partly found", missing: "Not found",
+               done: "Done", skipped: "Skipped", simulated: "Practice only", failed: "Problem"};
+let scanned = null, timer = null;
+
+async function call(name, body) {
+  const reply = await fetch("/api/" + name, {method: "POST", headers: {"Content-Type": "application/json", "X-ExBox-Key": KEY},
+                                           body: JSON.stringify(body || {})});
+  const data = await reply.json();
+  if (!reply.ok) throw new Error(data.error || "Something went wrong.");
+  return data;
+}
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const mode = () => document.querySelector("input[name=mode]:checked").value;
+const where = () => ({mode: mode(), host: $("host").value.trim()});
+function line(label, text) { const p = el("p"); p.append(el("b", null, label + " "), text); return p; }
+function fill(list, lines) { list.replaceChildren(...lines.map(t => el("li", null, t))); }
+
+function showScan(data) {
+  scanned = data;
+  $("scan-note").textContent = `Looked at ${data.files_seen.toLocaleString()} files in ${data.folder}`;
+  const box = $("checklist"); box.replaceChildren();
+  let group = null;
+  for (const item of data.items) {
+    if (item.group !== group) { group = item.group; box.append(el("div", "group", group)); }
+    const row = el("div", "item");
+    row.append(el("span", "badge " + item.status, LABEL[item.status]));
+    const body = el("div");
+    const title = el("div", "title", item.title);
+    if (item.required && item.status !== "found") title.append(el("span", "req", "needed"));
+    body.append(title);
+    if (item.detail) body.append(el("p", null, item.detail));
+    if (item.status === "found" || item.status === "download") body.append(line("Unlocks:", item.unlocks));
+    else { body.append(line("Without it:", item.missing)); body.append(line("Where it comes from:", item.source)); }
+    for (const note of item.notes) body.append(line("Note:", note));
+    row.append(body); box.append(row);
+  }
+  const wrong = $("wrong"); wrong.hidden = !data.wrong.length;
+  wrong.replaceChildren(el("b", null, "Files that could not be used"), ...data.wrong.map(t => el("div", null, t)));
+  fill($("get"), data.preview.get); fill($("skip"), data.preview.skip);
+  $("new-box").hidden = !data.new_since.length; fill($("new"), data.new_since);
+  $("icons").value = data.has_loading ? "xbox" : "default";
+  $("icons").options[0].disabled = !data.has_loading;
+  $("companion-label").hidden = !data.has_companion;
+  $("install-hint").textContent = data.preview.can_install ? "" :
+    "The Ex-Box dashboard app was not found. Install still does everything else, and keeps Ex-Box if it is already on your PS5.";
+  for (const id of ["checklist-box", "preview-box", "install-box"]) $(id).hidden = false;
+  $("result").hidden = true;
+}
+
+async function scan() {
+  $("scan-error").textContent = "";
+  const folder = $("folder").value.trim();
+  if (!folder) { $("scan-error").textContent = "Choose your folder first."; return; }
+  $("scan").disabled = true; $("scan").textContent = "Looking…";
+  try { showScan(await call("scan", {folder, mode: mode()})); $("checklist-box").scrollIntoView({behavior: "smooth"}); }
+  catch (error) { $("scan-error").textContent = error.message; }
+  finally { $("scan").disabled = false; $("scan").textContent = "Look inside"; }
+}
+
+function showProgress(view) {
+  $("log").textContent = view.log.join("\n");
+  const p = view.progress;
+  if (p && view.running) {
+    const percent = Math.round(100 * (Math.max(p.step - 1, 0) + p.fraction) / p.steps);
+    $("bar-fill").style.width = percent + "%"; $("bar").setAttribute("aria-valuenow", percent);
+    $("status").replaceChildren(document.createTextNode(`${p.title}… ${p.step} of ${p.steps}`), el("small", null, p.detail || ""));
+  }
+  if (view.result) {
+    clearInterval(timer); timer = null;
+    $("bar-fill").style.width = "100%"; $("progress").hidden = true; $("stop").hidden = true; $("install").disabled = false;
+    const r = view.result;
+    $("summary").textContent = r.summary; $("summary").className = "summary " + (r.ok ? "good" : "bad");
+    $("steps").replaceChildren(...(r.steps || []).map(s => {
+      const row = el("div", "item"); row.append(el("span", "badge " + s.status, LABEL[s.status] || s.status));
+      const body = el("div"); body.append(el("div", "title", s.title), el("p", null, s.text)); row.append(body); return row; }));
+    $("log-file").textContent = r.log_file ? "A plain-text log of this run was saved at " + r.log_file : "";
+    $("result").hidden = false; $("install").textContent = "Install again (only what changed)";
+  }
+}
+
+async function install() {
+  $("install-error").textContent = "";
+  if (mode() === "console" && !confirm("Install to the PS5 at " + ($("host").value.trim() || "(no address)") +
+      "?\n\nOld files are backed up first and Restore can undo this. Close Ex-Box on the PS5 before you continue.")) return;
+  try {
+    await call("install", {...where(), icons: $("icons").value, ps5x360: $("ps5x360").checked, companion: $("companion").checked});
+    $("install").disabled = true; $("stop").hidden = false; $("progress").hidden = false; $("result").hidden = true;
+    $("bar-fill").style.width = "0%";
+    timer = setInterval(async () => { try { showProgress(await call("progress")); } catch (e) {} }, 400);
+  } catch (error) { $("install-error").textContent = error.message; }
+}
+
+async function tool(name) {
+  const out = $("tool-out"); out.replaceChildren(el("p", "hint", "Working…"));
+  if (name === "restore" && !confirm("Undo the last install? Files that were replaced are put back and added files are removed.")) { out.replaceChildren(); return; }
+  try {
+    const data = await call(name, where());
+    const lines = data.lines || [data.summary];
+    out.replaceChildren(...lines.map(t => el("p", null, t)));
+  } catch (error) { out.replaceChildren(el("p", "error", error.message)); }
+}
+
+$("pick").onclick = async () => {
+  $("pick").disabled = true;
+  try { const data = await call("pick-folder"); if (data.folder) { $("folder").value = data.folder; await scan(); } }
+  catch (error) { $("scan-error").textContent = error.message; }
+  finally { $("pick").disabled = false; }
+};
+$("scan").onclick = scan;
+$("folder").addEventListener("keydown", e => { if (e.key === "Enter") scan(); });
+$("install").onclick = install;
+$("stop").onclick = () => call("stop");
+$("doctor").onclick = () => tool("doctor");
+$("restore").onclick = () => tool("restore");
+$("find").onclick = async () => {
+  $("find-note").textContent = "Looking on your network…";
+  try { const data = await call("find-console");
+        if (data.hosts.length) { $("host").value = data.hosts[0]; $("find-note").textContent = "Found " + data.hosts.join(", "); }
+        else $("find-note").textContent = "No PS5 answered. Type its address instead."; }
+  catch (error) { $("find-note").textContent = error.message; }
+};
+for (const radio of document.querySelectorAll("input[name=mode]"))
+  radio.onchange = () => { $("console-row").hidden = mode() !== "console"; };
+call("info").then(info => { $("practice-path").textContent = info.practice_folder; });
+</script>
+</body>
+</html>

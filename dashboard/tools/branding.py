@@ -38,6 +38,14 @@ APP_DB = "/system_data/priv/mms/app.db"
 
 
 # ---------- FTP helpers ----------
+def _connect(host: str, port: int) -> FTP:
+    ftp = FTP(timeout=60)
+    ftp.connect(host, port)
+    ftp.login()
+    ftp.voidcmd("TYPE I")
+    return ftp
+
+
 def _get(ftp: FTP, path: str) -> bytes | None:
     buf = io.BytesIO()
     try:
@@ -136,15 +144,15 @@ def make_icons(style: str, loading: Path | None, avatar: Path | None, out: Path)
 
 # ---------- main step ----------
 def apply_branding(host: str, port: int = 2121, style: str = "xbox", loading: Path | None = None,
-                   avatar: Path | None = None, backup_dir: Path | None = None, log=print) -> dict:
+                   avatar: Path | None = None, backup_dir: Path | None = None, log=print,
+                   connection=None) -> dict:
+    """connection: an already-open FTP-style object (the installer passes its own, so a practice
+    run can use a folder on the PC). Left out, this connects to host:port itself."""
     result = {"titles": {}, "app_db_changes": 0, "restart_needed": False}
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         icons = make_icons(style, loading, avatar, tmp)
-        with FTP(timeout=60) as ftp:
-            ftp.connect(host, port)
-            ftp.login()
-            ftp.voidcmd("TYPE I")
+        with (connection if connection is not None else _connect(host, port)) as ftp:
             for tid, info in TITLES.items():
                 base = f"/data/homebrew/{tid}/sce_sys"
                 param = _get(ftp, f"{base}/param.json")
