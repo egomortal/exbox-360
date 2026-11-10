@@ -1,4 +1,42 @@
 // Included inside main.cpp's private namespace; see docs/CODE_MAP.md.
+// Ex-Box's own seated adjustment, applied on top of a real kit clip: the thighs
+// swing forward at the hips, the shins hang from the knees and the whole body
+// lowers until the feet are back on the floor.  It is not an original clip.
+// Standard 71-joint avatar skeleton only (BASE, LF_H, RT_H, ... order).
+namespace theater_pose {
+inline void turn(avkit::M34& j,const float p[3],const float r[9]) {
+    float o[12];const float d[3]{j.m[3]-p[0],j.m[7]-p[1],j.m[11]-p[2]};
+    for(int row=0;row<3;++row) {
+        for(int c=0;c<3;++c)o[row*4+c]=r[row*3]*j.m[c]+r[row*3+1]*j.m[4+c]+r[row*3+2]*j.m[8+c];
+        o[row*4+3]=p[row]+r[row*3]*d[0]+r[row*3+1]*d[1]+r[row*3+2]*d[2];
+    }
+    std::memcpy(j.m,o,sizeof o);
+}
+inline void mul3(const float a[9],const float b[9],float out[9]) {
+    for(int r=0;r<3;++r)for(int c=0;c<3;++c)out[r*3+c]=a[r*3]*b[c]+a[r*3+1]*b[3+c]+a[r*3+2]*b[6+c];
+}
+constexpr float kThigh=-1.36f, kSplay=0.13f; // radians: thighs just below level, knees slightly apart
+inline void sit(std::vector<avkit::M34>& g) {
+    if(g.size()<71)return;
+    struct Leg {int hip,twist,knee,below[3];float side;};
+    constexpr Leg legs[2]{{2,7,6,{11,13,21},1.f},{3,9,8,{15,17,23},-1.f}};
+    float lift=0;
+    for(const Leg& leg:legs) {
+        const float ankle=g[size_t(leg.below[0])].m[7];
+        const float c=std::cos(kThigh),s=std::sin(kThigh),cy=std::cos(kSplay*leg.side),sy=std::sin(kSplay*leg.side);
+        const float rx[9]{1,0,0, 0,c,-s, 0,s,c},rxt[9]{1,0,0, 0,c,s, 0,-s,c};
+        const float ry[9]{cy,0,sy, 0,1,0, -sy,0,cy},ryt[9]{cy,0,-sy, 0,1,0, sy,0,cy};
+        float hip_turn[9],part[9],knee_turn[9];
+        mul3(ry,rx,hip_turn);mul3(ry,rxt,part);mul3(part,ryt,knee_turn); // knee undoes the pitch, keeps the splay
+        const float hip[3]{g[size_t(leg.hip)].m[3],g[size_t(leg.hip)].m[7],g[size_t(leg.hip)].m[11]};
+        for(int j:{leg.hip,leg.twist,leg.knee,leg.below[0],leg.below[1],leg.below[2]})turn(g[size_t(j)],hip,hip_turn);
+        const float knee[3]{g[size_t(leg.knee)].m[3],g[size_t(leg.knee)].m[7],g[size_t(leg.knee)].m[11]};
+        for(int j:{leg.knee,leg.below[0],leg.below[1],leg.below[2]})turn(g[size_t(j)],knee,knee_turn);
+        lift+=(g[size_t(leg.below[0])].m[7]-ankle)*.5f;
+    }
+    for(auto& joint:g)joint.m[7]-=lift;
+}
+}
 namespace look3d {
 void invalidate_preparation(bool reload_saved=true);
 avkit::Kit kit;
@@ -29,15 +67,29 @@ Canvas hub, stage;
 // avatar kit as the signed-in avatar.  They are prepared once on the avatar
 // worker and then remain stable GPU-uploadable surfaces; Social/Theater never
 // fall back to the old coloured mannequin primitives.
+#ifdef __PROSPERO__
 constexpr int kLocalGuestCount=3;
+#else
+constexpr int kLocalGuestCount=7; // PC test build only: fills all seven Theater guest seats
+#endif
 std::array<avkit::Image,kLocalGuestCount> local_guest_images;
 std::array<SDL_Surface*,kLocalGuestCount> local_guest_surfaces{};
+// The same guests seated, for Theater Party.
+std::array<avkit::Image,kLocalGuestCount> local_guest_seated_images;
+std::array<SDL_Surface*,kLocalGuestCount> local_guest_seated_surfaces{};
+std::array<float,kLocalGuestCount> local_guest_seated_head{}; // seated head-joint height, model units
+SDL_Surface *local_guest_seated(int index) {
+    return index>=0 && index<kLocalGuestCount?local_guest_seated_surfaces[size_t(index)]:nullptr;
+}
+bool stock_rig() {return kit.joints.size()>=71&&kit.joint("LF_H")==2&&kit.joint("LF_K")==6&&kit.joint("LF_A")==11&&kit.joint("RT_H")==3&&kit.joint("RT_K")==8&&kit.joint("RT_A")==15;}
 SDL_Surface *local_guest(int index) {
     return index>=0 && index<kLocalGuestCount?local_guest_surfaces[size_t(index)]:nullptr;
 }
 void release_local_guests() {
     for(SDL_Surface*& surface:local_guest_surfaces){if(surface)SDL_FreeSurface(surface);surface=nullptr;}
     for(auto& image:local_guest_images)image.resize(0,0);
+    for(SDL_Surface*& surface:local_guest_seated_surfaces){if(surface)SDL_FreeSurface(surface);surface=nullptr;}
+    for(auto& image:local_guest_seated_images)image.resize(0,0);
 }
 void publish_local_guests(std::array<avkit::Image,kLocalGuestCount>& images,int density) {
     release_local_guests();
@@ -48,6 +100,16 @@ void publish_local_guests(std::array<avkit::Image,kLocalGuestCount>& images,int 
         SDL_Surface* surface=SDL_CreateRGBSurfaceWithFormatFrom(image.argb.data(),image.w,image.h,32,image.w*4,SDL_PIXELFORMAT_ARGB8888);
         if(surface){render_density::tag(surface,density);avatar_alpha::clean(surface);SDL_SetSurfaceBlendMode(surface,SDL_BLENDMODE_BLEND);}
         local_guest_surfaces[size_t(i)]=surface;
+    }
+}
+void publish_seated_guests(std::array<avkit::Image,kLocalGuestCount>& images,int density) {
+    for(int i=0;i<kLocalGuestCount;++i) {
+        local_guest_seated_images[size_t(i)]=std::move(images[size_t(i)]);
+        auto& image=local_guest_seated_images[size_t(i)];
+        if(!image.w||!image.h||image.argb.empty())continue;
+        SDL_Surface* surface=SDL_CreateRGBSurfaceWithFormatFrom(image.argb.data(),image.w,image.h,32,image.w*4,SDL_PIXELFORMAT_ARGB8888);
+        if(surface){render_density::tag(surface,density);avatar_alpha::clean(surface);SDL_SetSurfaceBlendMode(surface,SDL_BLENDMODE_BLEND);}
+        local_guest_seated_surfaces[size_t(i)]=surface;
     }
 }
 SDL_Surface *head_shot=nullptr; // the avatar gamerpic (also in gamerpics)
@@ -177,7 +239,7 @@ LookSource read_look_source(const std::string& path){
 }
 struct PreparedAvatar {
     std::unique_ptr<avkit::Renderer> renderer;avkit::Image head;avkit::Look selected;
-    std::array<avkit::Image,kLocalGuestCount> local_guests;
+    std::array<avkit::Image,kLocalGuestCount> local_guests,seated_guests;std::array<float,kLocalGuestCount> seated_head{};
     LookSource before,after;std::string path;std::uint64_t generation=0;
     int density=1,helpers=1;bool render_head=false,unchanged=false;
 };
@@ -216,12 +278,17 @@ void begin_preparation(LookSource source,bool parse){
         // These are actual kit characters, not geometric stand-ins.  Fixed
         // seeds keep their appearance stable between launches and fixed idle
         // samples avoid per-frame CPU avatar raster work for background guests.
-        constexpr std::array<std::uint32_t,kLocalGuestCount> seeds{{0x6400u,0x6404u,0x6411u}};
+        constexpr std::array<std::uint32_t,7> seeds{{0x6400u,0x6404u,0x6411u,0x6423u,0x6438u,0x644du,0x6462u}};
         for(int i=0;i<kLocalGuestCount;++i) {
             avkit::Renderer guest(kit);guest.set_threads(1);guest.set_look(avkit::random_look(seeds[size_t(i)]));
             auto& image=slot->local_guests[size_t(i)];image.resize(240*slot->density,400*slot->density);
-            avkit::Camera camera=avkit::Camera::full();camera.yaw=(i-1)*0.10f;
+            avkit::Camera camera=avkit::Camera::full();camera.yaw=i<3?(i-1)*0.10f:0.f;
             guest.render(image,guest.pose("idle",0.35f+0.17f*i),camera,2);
+            if(stock_rig()&&!guest.has_custom_rig()) {
+                auto seated=guest.pose("idle",0.35f+0.17f*i);theater_pose::sit(seated);slot->seated_head[size_t(i)]=seated[19].m[7];
+                auto& chair=slot->seated_guests[size_t(i)];chair.resize(240*slot->density,400*slot->density);
+                avkit::Camera behind=avkit::Camera::full();behind.yaw=3.14159265f;guest.render(chair,seated,behind,2);
+            }
         }
         slot->after=read_look_source(slot->path);slot->unchanged=slot->before==slot->after;
         slot->renderer=std::move(renderer);return 1;
@@ -272,7 +339,7 @@ bool poll_load(){
         if(animation_row())++model.avatar_category;
         model.avatar_editable=true;model.avatar_categories=rows();model.avatar_category=std::clamp(model.avatar_category,0,std::max(0,rows()-1));
         changed_at=SDL_GetTicks();hub.drawn=stage.drawn=0;if(active())model.avatar_angles=kTurns;
-        publish_local_guests(result->local_guests,result->density);
+        publish_local_guests(result->local_guests,result->density);publish_seated_guests(result->seated_guests,result->density);local_guest_seated_head=result->seated_head;
         if(result->render_head)refresh_head_shot(compose_head_pixels(result->head,result->density),true);else refresh_head_shot();
         if(diagnostic_logging()){char line[192];std::snprintf(line,sizeof line,"startup: avatar publication_ms=%u total_ms=%u",unsigned(SDL_GetTicks()-publish_started),unsigned(SDL_GetTicks()-kit_started));log(line);}
         return true;
@@ -332,6 +399,8 @@ SDL_Surface *sample_hub(const avkit::Camera &cam,Uint32 now,bool defer_raster) {
         hub.drawn=now?now:1;
         auto &d=deferred_hub;
         d.pose=painter->pose(clip,clip_time(now));d.camera=cam;
+        if(model.video_theater&&stock_rig()&&!painter->has_custom_rig())theater_pose::sit(d.pose);
+        if(model.video_theater)d.camera.yaw=3.14159265f;
         d.owner=painter.get();d.tick=hub.drawn;d.density=render_density::factor;
         d.width=hub.img.w;d.height=hub.img.h;d.pending=true;
     }

@@ -3667,6 +3667,7 @@ bool script_step(Uint32 now) {
         rect(0,0,W,H,0x303030);draw_picture_controls(dash::PictureFile{},1,3,false,1.0f);
         SDL_SaveBMP(screen,token.substr(18).c_str());return true;
     }
+    if (token.rfind("theater-guests:",0)==0) {theater_layout::guests=std::clamp(atoi(token.c_str()+15),0,theater_layout::kMaxGuests);return true;}
     if (token.rfind("theater-audit:",0)==0) {
         model.video_theater=true;draw_theater_room(now,0.0f);
         SDL_SaveBMP(screen,token.substr(14).c_str());return true;

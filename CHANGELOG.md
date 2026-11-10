@@ -3,6 +3,22 @@
 Dates are when a change was tested or installed on the owner's PS5. "Experimental" means it works
 on the PC test harness but has not been accepted on the TV yet.
 
+## 2026-11-10: Theater Party room (build r24)
+
+Installed on the console on Nov 10. Not yet accepted on the TV: it was checked on the PC test
+harness from still frames only.
+
+- **Seats line up:** one seat table now places the chairs, your avatar, the guests and the popcorn.
+  The row is centred and all eight seats fit on screen.
+- **Seen from behind:** the audience faces the screen and you look over the seat backs, as in a
+  cinema. Every avatar is sized and placed by its head, so hats and hair no longer change anyone's
+  size or height.
+- **Sitting down:** the avatar kit has no sitting animation, so the seated pose is our own hip and
+  knee bend applied on top of the kit's real idle and wave clips.
+- **Cinema room:** dark room, red curtains with a valance, a plain screen and maroon seats, all
+  drawn by the dashboard's own code. No artwork is used.
+- The PC test harness can fill all seven guest seats (`theater-guests:N`); the PS5 build shows three.
+
 ## 2026-11-09: editor builder, Games integration, docs
 
 ### Names and icons

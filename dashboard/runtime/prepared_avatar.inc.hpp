@@ -43,7 +43,7 @@ SDL_Surface* frame(int index,Uint32 now){
  auto*surface=s.canvas.ensure(600,660);if(!surface)return nullptr;if(resized)s.painted=false;
  if(s.tick!=now||s.pose.empty()){
   const double elapsed=double(now-s.emote_at)/1000.;if(s.waving&&elapsed>=s.actor->clip(true).duration())s.waving=false;
-  s.pose=s.actor->pose(s.waving?elapsed:double(now)/1000.+double(index)*.71,s.waving);s.camera=s.actor->camera();s.tick=now;s.painted=false;
+  s.pose=s.actor->pose(s.waving?elapsed:double(now)/1000.+double(index)*.71,s.waving);if(model.video_theater)theater_pose::sit(s.pose);s.camera=s.actor->camera();if(model.video_theater)s.camera.yaw=3.14159265f;s.tick=now;s.painted=false;
  }
  return surface;
 }

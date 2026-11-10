@@ -215,6 +215,72 @@ void draw_video_start() {
     }
 }
 
+// One seat table drives the Theater Party room: cushions, chair backs, the
+// owner, every guest and the reaction prop all read these numbers.
+namespace theater_layout {
+constexpr int kSeats=8, kPitch=228, kSeatW=196;
+constexpr int kRowX=(1920-((kSeats-1)*kPitch+kSeatW))/2;            // 64: row centred, fits 1920
+constexpr int center(int seat){return kRowX+kSeatW/2+seat*kPitch;}  // 162,390,...,1758
+constexpr int kOwnerSeat=3;
+constexpr int kFillOrder[kSeats]{3,4,2,5,1,6,0,7};                  // owner, then nearest seats
+constexpr int kAvatarW=260, kAvatarH=508, kSeatLine=1265;           // plain stills only; kSeatLine is the (off-screen) floor under the feet
+constexpr int kHeadY=900, kHeadRise=365;                            // screen row of every head joint, and its height above the feet
+constexpr int kBackTop=935;                                         // top edge of the foreground seat backs
+constexpr int kMaxGuests=kSeats-1;
+int guests=3; // guests shown; the host audit token theater-guests:N varies it
+// Opaque extent of an avatar image as fractions of its surface, measured once
+// per seat while the avatar is idle so transparent padding never moves the
+// feet and a raised arm never rescales the figure.
+struct View {float span=0,center=0,head=0;}; // camera height and centre, and the head joint, in model units
+struct Extent {SDL_Surface* surface=nullptr;int w=0,h=0;float x0=0,y0=0,x1=1,y1=1;bool measured=false;View view;};
+std::array<Extent,kSeats> extents;
+bool scan(SDL_Surface* s,Extent& e) {
+    if(!s->format||s->format->BytesPerPixel!=4||!s->format->Amask){e.measured=true;return true;}
+    const bool lock=SDL_MUSTLOCK(s);if(lock&&SDL_LockSurface(s)!=0)return false;
+    const Uint32 mask=s->format->Amask;const int shift=s->format->Ashift;
+    int x0=s->w,y0=s->h,x1=-1,y1=-1;
+    for(int y=0;y<s->h;++y) {
+        const Uint32* row=reinterpret_cast<const Uint32*>(static_cast<const Uint8*>(s->pixels)+size_t(y)*size_t(s->pitch));
+        for(int x=0;x<s->w;++x) if(((row[x]&mask)>>shift)>=32u) {x0=std::min(x0,x);x1=std::max(x1,x);y0=std::min(y0,y);y1=y;}
+    }
+    if(lock)SDL_UnlockSurface(s);
+    if(x1<x0||y1-y0<8)return false; // not painted yet; try again next frame
+    e.x0=float(x0)/s->w;e.x1=float(x1+1)/s->w;e.y0=float(y0)/s->h;e.y1=float(y1+1)/s->h;e.measured=true;return true;
+}
+bool idle(SDL_Surface* s) {
+    if(auto* actor=prepared_avatar::find(s))return !actor->waving;
+    if(s==look3d::hub.surface)return look3d::clip=="idle";
+    return true;
+}
+// The camera and seated head joint behind a surface, when it is one we render ourselves.
+View view_of(SDL_Surface* s) {
+    const avkit::Camera full=avkit::Camera::full();
+    if(auto* actor=prepared_avatar::find(s))return {actor->camera.span,actor->camera.center_y,actor->pose.size()>19?actor->pose[19].m[7]:0.f};
+    if(s==look3d::hub.surface)return {full.span,full.center_y,look3d::deferred_hub.pose.size()>19?look3d::deferred_hub.pose[19].m[7]:0.f};
+    for(size_t i=0;i<look3d::local_guest_seated_surfaces.size();++i)if(look3d::local_guest_seated_surfaces[i]==s)return {full.span,full.center_y,look3d::local_guest_seated_head[i]};
+    return {};
+}
+// Same scale for everyone, centred on the seat, feet on kSeatLine.
+SDL_Rect place(int slot,int seat,SDL_Surface* s) {
+    Extent& e=extents[size_t(slot)];
+    if(e.surface!=s||e.w!=s->w||e.h!=s->h){e=Extent{};e.surface=s;e.w=s->w;e.h=s->h;}
+    if(!e.measured&&idle(s)) {
+        prepared_avatar::materialize(s);if(s==look3d::hub.surface)look3d::materialize_hub();
+        if(scan(s,e))e.view=view_of(s);
+    }
+    const float tall=std::max(1.f,(e.y1-e.y0)*float(s->h)),wide=std::max(1.f,(e.x1-e.x0)*float(s->w));
+    float scale=std::min(float(kAvatarH)/tall,float(kAvatarW)*1.5f/wide); // plain stills: by height, feet on kSeatLine
+    float top=float(kSeatLine)-e.y1*float(s->h)*scale;
+    if(e.view.span>0&&e.view.head>.2f) {
+        // Our own renders: the head joint sits kHeadRise above the feet and on
+        // row kHeadY, so body size, hair and hats never shrink or lift anyone.
+        scale=float(kHeadRise)/e.view.head*e.view.span/float(s->h);
+        top=float(kHeadY)-(.5f-(e.view.head-e.view.center)/e.view.span)*float(s->h)*scale;
+    }
+    const float w=float(s->w)*scale,h=float(s->h)*scale;
+    return {int(std::lround(float(center(seat))-(e.x0+e.x1)*.5f*w)),int(std::lround(top)),int(std::lround(w)),int(std::lround(h))};
+}
+}
 void draw_theater_room(Uint32 now,float video_alpha) {
     static unsigned seen_reaction=0;
     static Uint32 reaction_at=0;
@@ -228,88 +294,92 @@ void draw_theater_room(Uint32 now,float video_alpha) {
         if(reaction_kind==0)look3d::moment(exbox::dashboard_director::AvatarMoment::Selection,now);
         else if(reaction_kind==1)look3d::moment(exbox::dashboard_director::AvatarMoment::Achievement,now);
     }
-    // Reuse the active era's owner-supplied dashboard material so Theater
-    // belongs to the selected dashboard instead of looking like unrelated
-    // placeholder art.  The neutral gradient remains the clean fallback.
-    gradient(0,0,W,H,0x111619,0x30383b);
-    if(era_background){SDL_Rect all{0,0,W,H};blit_quality(era_background,nullptr,screen,&all);shade(0,0,W,H,0x050708,145);}
+    // A dark cinema drawn entirely from Ex-Box primitives: black room, red
+    // velvet curtains with a valance, a plain screen, a faint spill of screen
+    // light on the floor and aisle lights in the corners.
     constexpr SDL_Rect frame{244,54,1432,704};
-    rounded(frame.x-18,frame.y-18,frame.w+36,frame.h+36,12,0x11171d,0x020304);
-    outline(frame.x-10,frame.y-10,frame.w+20,frame.h+20,4,0x68727a);
+    gradient(0,0,W,H,0x070405,0x020101);
+    gradient(0,frame.y+frame.h+18,W,H-(frame.y+frame.h+18),0x0d0a0b,0x020202);          // floor
+    gradient(0,frame.y+frame.h+18,W,210,0x0f1014,0x040405);                              // screen light on the floor
+    const auto velvet=[](float lit,float fade)->Uint32 {
+        const float r=(34.f+132.f*lit)*fade,g=(3.f+16.f*lit)*fade,b=(8.f+26.f*lit)*fade;
+        return (Uint32(r)<<16)|(Uint32(g)<<8)|Uint32(b);
+    };
+    constexpr int kCurtainW=232,kFold=4,kCurtainBottom=1010;
+    for(int side=0;side<2;++side) for(int i=0;i<kCurtainW/kFold;++i) {
+        // Soft vertical folds; the light falls off toward the floor and the
+        // edge nearest the screen stays in shadow.
+        const float u=float(i*kFold)+4.f;
+        float lit=.5f+.36f*std::sin(u*.098f+.6f)+.14f*std::sin(u*.041f+1.3f);
+        lit=std::clamp(lit,0.f,1.f);lit=lit*lit*(3.f-2.f*lit);lit*=.3f+.7f*lit; // soft shoulders, deep creases
+        const float inner=std::clamp((float(kCurtainW)-u)/70.f,.25f,1.f),outer=std::clamp((u+30.f)/90.f,.45f,1.f);
+        const int x=side?W-(i+1)*kFold:i*kFold;
+        gradient(x,0,kFold,kCurtainBottom,velvet(lit,inner*outer),velvet(lit,inner*outer*.22f));
+    }
+    for(int side=0;side<2;++side) {                                                      // hem shadow
+        const int x=side?W-kCurtainW:0;
+        shade(x,kCurtainBottom-26,kCurtainW,26,0x000000,120);
+    }
+    gradient(0,0,W,30,0x16020a,0x3e0710);                                                // valance
+    rect(0,30,W,3,0x5a0d18);shade(0,33,W,16,0x000000,150);
+    rounded(frame.x-10,frame.y-10,frame.w+20,frame.h+20,6,0x0b0b0d,0x040405);            // plain dark bezel
     rect(frame.x,frame.y,frame.w,frame.h,0x000000);
     if(video_alpha>0)draw_video(frame.x,frame.y,frame.w,frame.h,video_alpha);
-
-    // A low auditorium floor reuses the era floor material when present.
-    gradient(0,758,W,H-758,0x1a2026,0x050708);
-    if(era_floor){SDL_SetSurfaceAlphaMod(era_floor,135);SDL_Rect floor{0,758,W,H-758};blit_quality(era_floor,nullptr,screen,&floor);SDL_SetSurfaceAlphaMod(era_floor,255);}
-    for(int i=0;i<8;i++) {
-        const int x=92+i*244;
-        rounded(x,855,190,190,42,0x202830,0x0d1115);
-        rounded(x+16,875,158,170,34,0x33404a,0x151b20);
-    }
+    namespace tl=theater_layout;
     if(model.local_friend_avatars) {
-        constexpr int centers[]{350,610,1310};
-        for(int i=0;i<3;++i) {
-            SDL_Surface* guest=edited_avatar::friend_still(i);
-            if(!guest)guest=look3d::local_guest(i);
+        // Guest n sits in kFillOrder[n]; far seats first so nearer ones overlap them.
+        for(int n=std::clamp(tl::guests,0,tl::kMaxGuests);n>=1;--n) {
+            SDL_Surface* guest=edited_avatar::friend_still(n-1);
+            if(!guest)guest=look3d::local_guest_seated(n-1);
+            if(!guest)guest=look3d::local_guest(n-1);
             if(!guest)continue;
-            const int pulse=0;
-            SDL_Rect at=edited_avatar::contain(guest,{centers[i]-105,720-pulse,210,330});
+            SDL_Rect at=tl::place(n,tl::kFillOrder[n],guest);
             const bool gpu=gpu_home::avatar(guest,at,1.f);
             if(!gpu||x21hook::audit_cpu()){x21hook::Pause reference(gpu);prepared_avatar::materialize(guest);blit_quality(guest,nullptr,screen,&at,false);}
         }
     }
     SDL_Surface* figure=edited_avatar::live_or_still(now,true,avatar_art);
     if(figure) {
-        // The lower body extends behind the chair front below.  This keeps the
-        // same live pose/animation but reads as a seated theater silhouette
-        // instead of a miniature avatar standing on the chair cushion.
-        const SDL_Rect stage{830,690,260,420};
-        SDL_Rect at=edited_avatar::contain(figure,stage);
+        // Same box, scale and floor line as every guest.
+        SDL_Rect at=tl::place(0,tl::kFillOrder[0],figure);
         const bool gpu=gpu_home::avatar(figure,at,1.f);
         if(!gpu||x21hook::audit_cpu()) {x21hook::Pause reference(gpu);
             prepared_avatar::materialize(figure);if(figure==look3d::hub.surface)look3d::materialize_hub();
             blit_quality(figure,nullptr,screen,&at,false);
         }
     }
-    // Foreground chair backs occlude hips/legs for the seated composition.
-    // The original party's exact sitting skeleton remains an asset-binding
-    // task; this visual treatment never invents joint animation data.
-    for(int i=0;i<8;i++) {
-        const int x=92+i*244;
-        // The owner occupies the wider centre chair.  Its foreground back
-        // masks the standing clip's hands as well as the hips; no skeleton
-        // or authored pose is altered.
-        const int back_x=i==3?846:x+13;
-        const int back_w=i==3?228:164;
-        rounded(back_x,900,back_w,145,30,0x28323a,0x10151a);
-        rect(back_x+12,914,back_w-24,12,0x3b4852);
+    // The camera is behind the audience, as in the original party theater:
+    // every seat back is in front of its avatar, leaving head and shoulders
+    // against the screen.  The seated pose is theater_pose::sit.
+    for(int i=0;i<tl::kSeats;i++) {
+        const int x=tl::center(i)-tl::kSeatW/2;
+        rounded(x-12,tl::kBackTop+62,24,H-tl::kBackTop,12,0x2a070c,0x0a0203);        // arm rest between seats
+        if(i==tl::kSeats-1)rounded(x+tl::kSeatW-12,tl::kBackTop+62,24,H-tl::kBackTop,12,0x2a070c,0x0a0203);
+        rounded(x+6,tl::kBackTop,tl::kSeatW-12,H-tl::kBackTop+48,46,0x6a121c,0x160306);
+        shade(x+30,tl::kBackTop+10,tl::kSeatW-60,10,0xd0485a,34);                    // velvet sheen along the top edge
     }
-    // Hide feet below the front row; this is a visual seat occlusion, not a
-    // fabricated sitting skeleton pose.
-    gradient(0,1042,W,H-1042,0x090c0f,0x020303);
+    const int owner_x=tl::center(tl::kOwnerSeat);
     if(reaction_at && now-reaction_at<1600) {
         const Uint32 age=now-reaction_at;
         if(reaction_kind==2) for(int i=0;i<22;i++) {
             const int phase=int(age)/12+i*31;
-            const int x=960+((i*83+phase*3)%520)-260;
+            const int x=owner_x+((i*83+phase*3)%520)-260;
             const int rise=std::min(250,phase%340);
-            const int y=920-rise+((i*37+phase)%90);
+            const int y=tl::kBackTop-20-rise+((i*37+phase)%90);
             const int s=5+(i%4)*2;
             rounded(x,y,s,s,s/2,i%3?0xf4e7aa:0xffffff,0xb88b36);
         }
         if(reaction_kind==2 && theater_popcorn_art) {
-            SDL_Rect prop{1010,820,84,84};
+            SDL_Rect prop{owner_x+64,tl::kBackTop-84,72,72};
             blit_contained(theater_popcorn_art,prop);
         }
         const std::string reaction=dash::kTheaterReactions[reaction_kind];
-        shade(820,676,280,46,0x000000,145);
-        text(reaction,960-text_width(reaction,small)/2,686,small,{255,255,255,255});
+        shade(owner_x-140,tl::kBackTop-250,280,46,0x000000,145);
+        text(reaction,owner_x-text_width(reaction,small)/2,tl::kBackTop-240,small,{255,255,255,255});
     }
-    text("OFFLINE THEATER",96,78,small,{210,218,222,210});
-    text("Local guests",96,111,small,{148,158,164,210});
+    text("OFFLINE THEATER",28,58,small,{235,225,225,170});
     const std::string selected=std::string("Reaction: ")+dash::kTheaterReactions[std::clamp(model.video_theater_reaction,0,dash::kTheaterReactionCount-1)];
-    text(selected,96,142,small,{148,158,164,210});
+    text(selected,28,90,small,{215,195,195,150});
 }
 // ---- Pictures full screen: cross-fades, zoom and pan, the slideshow, info ----
 // A screenshot's file size: most are well under a megabyte.
@@ -558,7 +628,7 @@ void draw_viewer_full() {
         const auto info=model.video_info.find(key);
         if (index>=0 && model.video_subtitles && info!=model.video_info.end() && info->second.subtitles)
             if (const srt::Cue *cue=srt::at(subtitles_for(trailers[size_t(index)].folder),model.video_elapsed))
-                draw_subtitles(*cue,model.video_theater?735:(controls?H-300:H-70));
+                draw_subtitles(*cue,model.video_theater?680:(controls?H-300:H-70));
         if (controls) draw_video_controls(item,n,model.video_elapsed,model.video_length(),model.video_paused);
         return;
     }
