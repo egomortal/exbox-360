@@ -15,7 +15,7 @@ import stat
 import zipfile
 from pathlib import Path
 
-from . import ps5x360
+from . import helper, ps5x360
 
 HERE = Path(__file__).resolve().parent
 DASHBOARD = HERE.parent
@@ -183,7 +183,7 @@ def _size_text(count: int) -> str:
 
 def _item(item_id, group, title, unlocks, missing, source, required=False):
     return dict(id=item_id, group=group, title=title, status="missing", required=required,
-                detail="", unlocks=unlocks, missing=missing, source=source, files=[], notes=[])
+                detail="", unlocks=unlocks, missing=missing, source=source, files=[], notes=[], build=None)
 
 
 def checklist_template() -> list[dict]:
@@ -265,7 +265,8 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
     sources: dict = dict(folder=str(root), editor_originals={}, editor_dependencies=None, editor_package=None,
                          dashboard_package=None, prepared_art=None, kit=None, fonts=[], trailers_packed=None,
                          trailer_videos=[], music=[], music_root=None, loading=None, avatar_render=None,
-                         ps5x360_zip=None, companion=None, shared=None, games=[], dashboard_inputs=[])
+                         ps5x360_zip=None, companion=None, companion_source=None, shared=None, games=[],
+                         dashboard_inputs=[])
     wrong: list[str] = []
     total = 0
 
@@ -353,6 +354,9 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
         if name in COMPANION_NAMES and _head(path, 4) == b"\x7fELF":
             sources["companion"] = str(path)
             note("companion", path, hasher.sha256(path))
+            continue
+        if name == "makefile" and sources["companion_source"] is None and helper.is_source(path.parent):
+            sources["companion_source"] = str(path.parent)  # the user's own helper build folder
             continue
         if ext == ".nxak":
             if _head(path, 4) == b"NXAK":
@@ -458,6 +462,13 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                 found[item_id].append(dict(name=folder.relative_to(root).as_posix() + "/", size=0, sha256=None))
                 items[item_id]["notes"].append("Already prepared by Ex-Box's tools.")
 
+    if sources["companion_source"] and not sources["companion"]:  # built output lives in a skipped build/ dir
+        built = helper.built_elf(Path(sources["companion_source"]))
+        if built:
+            sources["companion"] = str(built)
+            found["companion"].append(dict(name=built.relative_to(root).as_posix(),
+                                           size=built.stat().st_size, sha256=hasher.sha256(built)))
+
     _fill(items, found, sources, pins)
     hasher.save()
     ordered = [items[item["id"]] for item in checklist_template()]
@@ -527,7 +538,14 @@ def _fill(items, found, sources, pins):
         done("games360", f"{len(sources['games'])} game(s) found. The installer does not copy games; "
                          "put them where PS5X360's own instructions say.")
     if sources["companion"]:
-        done("companion", "Found the launch helper you built.")
+        from_source = "build/" in Path(sources["companion"]).as_posix()
+        done("companion", "Built the launch helper from the source in your folder." if from_source
+             else "Found the launch helper you built.")
+    elif sources["companion_source"]:
+        items["companion"]["status"] = "build"
+        items["companion"]["detail"] = "Found the helper's source. Build it on this PC, then press Look inside again."
+        items["companion"]["build"] = helper.instructions(Path(sources["companion_source"]))
+        items["companion"]["notes"].append(items["companion"]["build"]["note"])
     for item in items.values():
         if item["status"] == "missing":
             item["files"] = []
@@ -550,6 +568,8 @@ def preview(items: list[dict], sources: dict) -> dict:
         item = by_id[item_id]
         if item["status"] in ("found", "download"):
             get.append(item["unlocks"] if item_id != "games360" else item["detail"])
+        elif item["status"] == "build":
+            skip.append(f"{item['title']}: build the source in your folder first, then run again.")
         else:
             skip.append(f"{item['title']}: {item['missing']}")
     return dict(get=get, skip=skip, eras=eras, games=len(sources["games"]),

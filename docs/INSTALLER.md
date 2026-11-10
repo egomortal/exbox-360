@@ -39,7 +39,7 @@ otherwise the Ex-Box default icons are used and Setup says so).
 | PS5X360 (optional, ticked) | nothing needed: fetched from the official release. `PPSA50011.zip` in the folder skips the download | `/data/homebrew/PPSA50011` |
 | Your Xbox 360 games | `.iso`, GOD, `default.xex` - **counted only, never copied or fetched** | - |
 | Loading art | `splash_360.png` (pinned) or `loading.png` | Xbox-style icons |
-| Launch helper | `exbox360-daemon.elf` you built yourself | `/data/pldmgr/payloads/ExBox360-Daemon` + one bare-name autoload line |
+| Launch helper | the helper's **source** (Setup shows the two build commands; you run them), or an `exbox360-daemon.elf` / `build/nxe_dashboard_daemon.elf` you already built | `/data/pldmgr/payloads/ExBox360-Daemon` + one bare-name autoload line |
 
 ## Safety rules the code enforces
 
@@ -82,8 +82,14 @@ Owner decision, 2026-11-10. The helper is what lets Ex-Box open the Avatar Edito
 itself. It is privileged code, so the public release never carries a ready-made copy.
 
 - Users build it on their own PC from its GPL source, the same way the Avatar Editor is built.
-- Setup never contains, downloads or builds the helper. It installs an `exbox360-daemon.elf` the
-  user built and put in their folder, and writes the one bare-name autoload line (backed up first).
+- **Guided build (owner, 2026-11-10).** When the helper's source is in the folder, Setup shows the
+  exact commands to build it and the folder to run them in, then on the next scan installs the file
+  the build produced (`build/nxe_dashboard_daemon.elf`). Setup still does **not** run the compiler
+  itself - the helper is privileged code, so the user runs `make`. See `installer/helper.py`; the
+  checklist line for the helper goes to a "Build it first" state with the commands.
+- Setup never contains, downloads, compiles or ships the helper. It installs the `.elf` the user
+  built (from the source in their folder, or one they already had), and writes the one bare-name
+  autoload line (backed up first).
 - Without it nothing breaks: the checklist says to open the editor and PS5X360 from the PS5 home
   screen instead.
 - Adopting a community launcher payload (the other option in the brief) is not used.
@@ -91,6 +97,7 @@ itself. It is privileged code, so the public release never carries a ready-made 
 Still to do for this to work in a public release:
 
 1. The helper's source is not in this repository yet. It has to be published (by the owner) with
-   plain build steps before users can build it.
-2. Open: should Setup start that build for the user (needs the same toolchain as the editor build),
-   or keep accepting only a file they built themselves, as it does today?
+   plain build steps before users can build it. Setup detects a source folder by a `Makefile` next
+   to `main.c` that builds `nxe_dashboard_daemon.elf`.
+2. The build needs the PS5 payload SDK (same toolchain as the editor build). Setup does not provision
+   that toolchain; the user installs it once, as the editor builder's README describes.

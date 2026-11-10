@@ -259,6 +259,61 @@ class Install(Base):
         self.assertIsNone(self.on_console("/data/homebrew/PPSA99735/eboot.bin.exbox-new"))
 
 
+class Helper(Base):
+    """The launch helper: Setup shows how to build it, then installs the file the user built."""
+
+    def _source(self, built=False):
+        src = self.folder / "launch-helper"
+        write(src / "Makefile", "all: build/nxe_dashboard_daemon.elf\n\tprospero-clang -o $@ main.c\n")
+        write(src / "main.c", "int main(void){return 0;}\n")
+        write(src / "gpl/elfldr.c", "/* loader source, never read or shipped by Setup */\n")
+        if built:
+            write(src / "build/nxe_dashboard_daemon.elf", b"\x7fELF the user's own build")
+        return src
+
+    def test_source_only_asks_the_user_to_build_it(self):
+        fake_folder(self.folder, full=False)
+        self._source(built=False)
+        result = catalog.scan(self.folder)
+        item = next(i for i in result["items"] if i["id"] == "companion")
+        self.assertEqual(item["status"], "build")
+        self.assertEqual(item["build"]["commands"][-1], "make")
+        self.assertTrue(item["build"]["folder"].endswith("launch-helper"))
+        self.assertIn("build the source", " ".join(result["preview"]["skip"]))
+
+    def test_setup_does_not_build_it_and_skips_with_a_plain_reason(self):
+        fake_folder(self.folder, full=False)
+        self._source(built=False)
+        outcome = self.install()
+        self.assertTrue(outcome["ok"], outcome)  # a missing optional piece is not an error
+        step = next(s for s in outcome["steps"] if s["id"] == "companion")
+        self.assertEqual(step["status"], "skipped")
+        self.assertIn("Build it on this PC", step["text"])
+        # Setup compiled nothing: no helper, no autoload line, no build output appeared
+        self.assertIsNone(self.on_console("/data/pldmgr/payloads/ExBox360-Daemon/exbox360-daemon.elf"))
+        self.assertIsNone(self.on_console("/data/pldmgr/autoload.txt"))
+        self.assertFalse((self.folder / "launch-helper/build/nxe_dashboard_daemon.elf").exists())
+
+    def test_the_file_the_user_built_is_picked_up_and_installed(self):
+        fake_folder(self.folder, full=False)
+        self._source(built=True)  # as if the user has now run make
+        result = catalog.scan(self.folder)
+        item = next(i for i in result["items"] if i["id"] == "companion")
+        self.assertEqual(item["status"], "found")
+        self.assertIn("Built the launch helper from the source", item["detail"])
+        outcome = engine.Installer(self.console, result, log=None).run()
+        self.assertEqual(self.on_console("/data/pldmgr/payloads/ExBox360-Daemon/exbox360-daemon.elf"),
+                         b"\x7fELF the user's own build")
+        self.assertEqual(self.on_console("/data/pldmgr/autoload.txt"), b"exbox360-daemon.elf\n")
+
+    def test_a_prebuilt_helper_elf_still_works(self):
+        fake_folder(self.folder, full=False)
+        write(self.folder / "helper/exbox360-daemon.elf", b"\x7fELF prebuilt by the user")
+        item = next(i for i in catalog.scan(self.folder)["items"] if i["id"] == "companion")
+        self.assertEqual(item["status"], "found")
+        self.assertIn("Found the launch helper you built", item["detail"])
+
+
 class Safety(Base):
     def test_only_owned_paths_can_be_written(self):
         for path in ("/data/homebrew/PPSA99735/eboot.bin", "/data/nxe/x", "/data/pldmgr/autoload.txt",

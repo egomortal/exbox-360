@@ -328,7 +328,8 @@ class Installer:
              or by_id["editor"]["missing"])
         step("ps5x360", "Install PS5X360 (Xbox 360 games)", o["ps5x360"], "You chose not to install PS5X360.")
         step("companion", "Install the launch helper", s["companion"] and o["companion"],
-             by_id["companion"]["missing"] if not s["companion"] else "You chose not to install it.")
+             (by_id["companion"]["detail"] or by_id["companion"]["missing"]) if not s["companion"]
+             else "You chose not to install it.")
         step("record", "Remember what was installed", True)
         step("branding", "Set the home-screen names and icons", True)
         return steps

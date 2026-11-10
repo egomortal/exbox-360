@@ -18,7 +18,8 @@ from . import VERSION, catalog, engine
 from .targets import FtpTarget, LocalTarget
 
 PAYLOAD = Path(__file__).resolve().parent / "payload"  # the dashboard package shipped with a release
-MARK = {"found": "[FOUND]  ", "download": "[FETCH]  ", "partial": "[PARTLY] ", "missing": "[MISSING]"}
+MARK = {"found": "[FOUND]  ", "download": "[FETCH]  ", "partial": "[PARTLY] ", "missing": "[MISSING]",
+        "build": "[BUILD]  "}
 
 
 def do_scan(folder) -> dict:
@@ -36,6 +37,13 @@ def print_checklist(result: dict, record: dict | None = None) -> None:
         if item["status"] in ("found", "download"):
             print(f"             {item['detail']}")
             print(f"             Unlocks: {item['unlocks']}")
+        elif item["status"] == "build":
+            print(f"             {item['detail']}")
+            print(f"             Unlocks: {item['unlocks']}")
+            for command in item["build"]["commands"]:
+                print(f"               $ {command}")
+            print(f"             Then it appears at: {item['build']['output']}")
+            print(f"             Needs: {item['build']['needs']}")
         else:
             if item["detail"]:
                 print(f"             {item['detail']}")

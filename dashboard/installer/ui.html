@@ -43,7 +43,8 @@
   .item { display: grid; grid-template-columns: 112px 1fr; gap: 4px 16px; padding: 13px 0; border-top: 1px solid var(--line); }
   .badge { align-self: start; justify-self: start; font-size: .78rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
   .found { background: #173a1b; color: var(--green); } .download { background: #14304a; color: var(--blue); }
-  .partial { background: #3d3115; color: var(--amber); } .missing { background: #262b28; color: var(--muted); }
+  .partial, .build { background: #3d3115; color: var(--amber); } .missing { background: #262b28; color: var(--muted); }
+  pre.build { background: #0b0e0c; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 6px 0 0; font-size: .85rem; color: var(--green); white-space: pre-wrap; }
   .failed { background: #45201d; color: var(--red); } .done { background: #173a1b; color: var(--green); }
   .skipped, .simulated { background: #262b28; color: var(--muted); }
   .item .title { font-weight: 600; } .item .req { color: var(--amber); font-weight: 500; font-size: .85rem; margin-left: 8px; }
@@ -162,7 +163,7 @@
 const KEY = "__KEY__";
 const $ = id => document.getElementById(id);
 const LABEL = {found: "Found", download: "Will download", partial: "Partly found", missing: "Not found",
-               done: "Done", skipped: "Skipped", simulated: "Practice only", failed: "Problem"};
+               build: "Build it first", done: "Done", skipped: "Skipped", simulated: "Practice only", failed: "Problem"};
 let scanned = null, timer = null;
 
 async function call(name, body) {
@@ -192,8 +193,12 @@ function showScan(data) {
     if (item.required && item.status !== "found") title.append(el("span", "req", "needed"));
     body.append(title);
     if (item.detail) body.append(el("p", null, item.detail));
-    if (item.status === "found" || item.status === "download") body.append(line("Unlocks:", item.unlocks));
+    if (item.status === "found" || item.status === "download" || item.status === "build") body.append(line("Unlocks:", item.unlocks));
     else { body.append(line("Without it:", item.missing)); body.append(line("Where it comes from:", item.source)); }
+    if (item.build) {
+      const pre = el("pre", "build", item.build.commands.join("\n") + "\n\nResult: " + item.build.output);
+      body.append(pre); body.append(line("Needs:", item.build.needs));
+    }
     for (const note of item.notes) body.append(line("Note:", note));
     row.append(body); box.append(row);
   }
