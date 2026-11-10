@@ -6,7 +6,7 @@ import hashlib, io, json, os, shutil, sys, tempfile, unittest, urllib.error, url
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from installer import catalog, editor, engine, ps5x360, server, targets
+from installer import catalog, editor, engine, helper, ps5x360, server, targets
 
 PARAM = {"titleId": "X", "localizedParameters": {"defaultLanguage": "en-US", "en-US": {"titleName": "Old name"}}}
 
@@ -300,7 +300,7 @@ class Helper(Base):
         result = catalog.scan(self.folder)
         item = next(i for i in result["items"] if i["id"] == "companion")
         self.assertEqual(item["status"], "found")
-        self.assertIn("Built the launch helper from the source", item["detail"])
+        self.assertIn("Built the launch helper from its source", item["detail"])
         outcome = engine.Installer(self.console, result, log=None).run()
         self.assertEqual(self.on_console("/data/pldmgr/payloads/ExBox360-Daemon/exbox360-daemon.elf"),
                          b"\x7fELF the user's own build")
@@ -312,6 +312,28 @@ class Helper(Base):
         item = next(i for i in catalog.scan(self.folder)["items"] if i["id"] == "companion")
         self.assertEqual(item["status"], "found")
         self.assertIn("Found the launch helper you built", item["detail"])
+
+    def test_helper_source_shipped_with_exbox_is_used_when_the_folder_has_none(self):
+        # The owner has added the helper source to Ex-Box's own launch-helper/ folder.
+        bundled = self.tmp / "exbox-launch-helper"
+        write(bundled / "Makefile", "all: build/nxe_dashboard_daemon.elf\n\tprospero-clang -o $@ main.c\n")
+        write(bundled / "main.c", "int main(void){return 0;}\n")
+        real = helper.BUNDLED
+        helper.BUNDLED = bundled
+        try:
+            fake_folder(self.folder, full=False)  # the user's own folder has no helper at all
+            item = next(i for i in catalog.scan(self.folder)["items"] if i["id"] == "companion")
+            self.assertEqual(item["status"], "build")
+            self.assertTrue(item["build"]["folder"].endswith("exbox-launch-helper"))
+            # once the owner/user builds it, Setup installs it from the shipped folder
+            write(bundled / "build/nxe_dashboard_daemon.elf", b"\x7fELF built from the shipped source")
+            result = catalog.scan(self.folder)
+            self.assertEqual(next(i for i in result["items"] if i["id"] == "companion")["status"], "found")
+            outcome = engine.Installer(self.console, result, log=None).run()
+            self.assertEqual(self.on_console("/data/pldmgr/payloads/ExBox360-Daemon/exbox360-daemon.elf"),
+                             b"\x7fELF built from the shipped source")
+        finally:
+            helper.BUNDLED = real
 
 
 class Safety(Base):

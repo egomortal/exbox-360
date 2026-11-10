@@ -462,12 +462,20 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                 found[item_id].append(dict(name=folder.relative_to(root).as_posix() + "/", size=0, sha256=None))
                 items[item_id]["notes"].append("Already prepared by Ex-Box's tools.")
 
+    if not sources["companion_source"] and not sources["companion"]:
+        bundled = helper.bundled_source()  # the helper source shipped with Ex-Box, if the owner added it
+        if bundled:
+            sources["companion_source"] = str(bundled)
+
     if sources["companion_source"] and not sources["companion"]:  # built output lives in a skipped build/ dir
         built = helper.built_elf(Path(sources["companion_source"]))
         if built:
             sources["companion"] = str(built)
-            found["companion"].append(dict(name=built.relative_to(root).as_posix(),
-                                           size=built.stat().st_size, sha256=hasher.sha256(built)))
+            try:
+                name = built.relative_to(root).as_posix()
+            except ValueError:
+                name = built.name  # a bundled helper built in Ex-Box's own folder, not the user's
+            found["companion"].append(dict(name=name, size=built.stat().st_size, sha256=hasher.sha256(built)))
 
     _fill(items, found, sources, pins)
     hasher.save()
@@ -539,7 +547,7 @@ def _fill(items, found, sources, pins):
                          "put them where PS5X360's own instructions say.")
     if sources["companion"]:
         from_source = "build/" in Path(sources["companion"]).as_posix()
-        done("companion", "Built the launch helper from the source in your folder." if from_source
+        done("companion", "Built the launch helper from its source." if from_source
              else "Found the launch helper you built.")
     elif sources["companion_source"]:
         items["companion"]["status"] = "build"

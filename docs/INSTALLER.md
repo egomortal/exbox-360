@@ -87,17 +87,23 @@ itself. It is privileged code, so the public release never carries a ready-made 
   the build produced (`build/nxe_dashboard_daemon.elf`). Setup still does **not** run the compiler
   itself - the helper is privileged code, so the user runs `make`. See `installer/helper.py`; the
   checklist line for the helper goes to a "Build it first" state with the commands.
-- Setup never contains, downloads, compiles or ships the helper. It installs the `.elf` the user
-  built (from the source in their folder, or one they already had), and writes the one bare-name
-  autoload line (backed up first).
+- **Shipped with Setup.** For a public release, the helper's source ships inside Ex-Box in the
+  repo-root `launch-helper/` folder, so the download can build it without the user supplying anything.
+  Setup looks there when the user's own folder has no helper (`helper.bundled_source()`), shows the
+  build commands pointing at that folder, and installs the result. The `launch-helper/` folder is in
+  the repo with a README; the **source files themselves are added by the owner** (see below).
+- Setup never contains code it authored for the helper, never downloads it, and never runs the
+  compiler. It installs the `.elf` a build produced (from the shipped source, the user's folder, or
+  one they already had) and writes the one bare-name autoload line (backed up first).
 - Without it nothing breaks: the checklist says to open the editor and PS5X360 from the PS5 home
   screen instead.
 - Adopting a community launcher payload (the other option in the brief) is not used.
 
 Still to do for this to work in a public release:
 
-1. The helper's source is not in this repository yet. It has to be published (by the owner) with
-   plain build steps before users can build it. Setup detects a source folder by a `Makefile` next
-   to `main.c` that builds `nxe_dashboard_daemon.elf`.
+1. **The owner adds the helper's source to `launch-helper/`** (it is already public GPL code from
+   another project; keep its `COPYING`/credit files and the repo's `THIRD_PARTY_NOTICES.md`). Setup
+   recognises it by a `Makefile` beside `main.c` that builds `nxe_dashboard_daemon.elf`. This step is
+   the owner's because the helper is privileged code, which Setup does not author, package or ship.
 2. The build needs the PS5 payload SDK (same toolchain as the editor build). Setup does not provision
    that toolchain; the user installs it once, as the editor builder's README describes.

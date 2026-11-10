@@ -14,6 +14,16 @@ from pathlib import Path
 BUILT_NAMES = ("nxe_dashboard_daemon.elf", "exbox360-daemon.elf")
 OUTPUT = "build/nxe_dashboard_daemon.elf"
 
+# The helper's source shipped with Ex-Box itself, so a public download can build it without the user
+# having to supply it. The owner adds the source here (it is privileged code, kept out of what Setup
+# authors); Setup only builds whatever is present and installs the result. Empty until then.
+BUNDLED = Path(__file__).resolve().parents[2] / "launch-helper"
+
+
+def bundled_source() -> Path | None:
+    """The helper source that ships with Ex-Box, if the owner has added it."""
+    return BUNDLED if is_source(BUNDLED) else None
+
 
 def is_source(folder: Path) -> bool:
     """True when a Makefile in this folder builds the daemon from main.c (no code is read or run)."""
