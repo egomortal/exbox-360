@@ -19,7 +19,7 @@ OFFICIAL_HOSTS = ("https://github.com/", "https://apt.llvm.org", "https://zlib.n
 
 class Pins(unittest.TestCase):
     def test_every_pin_is_exact(self):
-        for item in pv.PINS["sources"] + pv.PINS["git_tools"] + pv.PINS["user_supplied_sources"]:
+        for item in pv.PINS["sources"] + pv.PINS["git_tools"] + pv.PINS["tool_sources"]:
             self.assertRegex(item["commit"], r"^[0-9a-f]{40}$", item)
         for item in pv.PINS["downloads"] + pv.PINS["python_wheels"]:
             self.assertRegex(item["sha256"], r"^[0-9a-f]{64}$", item)
@@ -27,20 +27,21 @@ class Pins(unittest.TestCase):
         self.assertIn("2078da43e25a", pv.PINS["platform"]["llvm"]["version"])
 
     def test_every_source_is_an_official_upstream(self):
-        urls = [i.get("git") or i.get("url") for i in pv.PINS["sources"] + pv.PINS["git_tools"] + pv.PINS["downloads"]]
+        urls = [i.get("git") or i.get("url") for i in
+                pv.PINS["sources"] + pv.PINS["git_tools"] + pv.PINS["downloads"] + pv.PINS["tool_sources"]]
         urls += [pv.PINS["native_sdk"]["base_release"], pv.PINS["platform"]["llvm"]["repo"]]
         for url in urls:
             self.assertTrue(url.startswith(OFFICIAL_HOSTS), url)
             self.assertNotIn("egomortal", url)  # nothing rehosted by Ex-Box
 
-    def test_key_bearing_sources_are_never_fetched(self):
-        fetched = {i["role"] for i in pv.PINS["sources"]}
-        for item in pv.PINS["user_supplied_sources"]:
-            self.assertNotIn(item["role"], fetched)
-            self.assertIn("decryption key", item["why_not_fetched"])
-        names = " ".join(json.dumps(i) for i in pv.PINS["sources"] + pv.PINS["git_tools"] + pv.PINS["downloads"])
-        self.assertNotIn("rexglue", names.lower())
-        self.assertNotIn("xextool", names.lower())
+    def test_rexglue_and_xextool_come_from_their_official_projects(self):
+        tools = {i["role"]: i for i in pv.PINS["tool_sources"]}
+        self.assertEqual(tools["rexglue_sdk"]["git"], "https://github.com/rexglue/rexglue-sdk.git")
+        self.assertTrue(tools["rexglue_sdk"]["submodules"])
+        self.assertEqual(tools["xex-tool"]["git"], "https://github.com/mrtitanic777/XexTool-RE.git")
+        fixes = [t for t in pv.PINS["source_transforms"] if t["role"] == "xex-tool"]
+        self.assertEqual({t["path"] for t in fixes}, {"src/compress/lzx.cpp"})
+        self.assertEqual(fixes[-1].get("line_endings"), "crlf")  # the builder pins the CRLF file
 
     def test_the_builder_pins_cover_each_role(self):
         counts = {role: len({r["path"] for r in pv.pinned_files(role)}) for role in
@@ -95,22 +96,27 @@ class Preflight(unittest.TestCase):
                 pv.step_preflight(p)
 
 
-class UserSources(unittest.TestCase):
-    def test_without_your_folders_setup_waits_and_says_why(self):
-        with tempfile.TemporaryDirectory() as d:
-            p = pv.Provisioner(Path(d) / "deps", 2, None, None, quiet=True)
-            text = pv.step_user_sources(p)
-        self.assertIn("decryption key", text)
-        self.assertEqual({m["role"] for m in p.missing_user}, {"rexglue_sdk", "xex-tool"})
-
-    def test_a_wrong_version_is_refused(self):
+class ToolSources(unittest.TestCase):
+    def test_a_wrong_version_of_your_own_folder_is_refused(self):
         with tempfile.TemporaryDirectory() as d:
             fake = Path(d) / "rexglue"
             fake.mkdir()
             p = pv.Provisioner(Path(d) / "deps", 2, fake, None, quiet=True)
-            with self.assertRaises(pv.StepError) as caught:
-                pv.step_user_sources(p)
-        self.assertIn("c94f5ebd", str(caught.exception))
+            with mock.patch.object(pv.Provisioner, "git_fetch"):
+                with self.assertRaises(pv.StepError) as caught:
+                    pv.step_tool_sources(p)
+        self.assertIn("Setup fetches the right one", str(caught.exception))
+
+    def test_line_changes_keep_the_pinned_line_endings(self):
+        with tempfile.TemporaryDirectory() as d:
+            dest = Path(d)
+            (dest / "src").mkdir()
+            (dest / "src/a.cpp").write_bytes(b"one\ntwo\n")
+            change = dict(role="r", path="src/a.cpp", old="two\n", new="TWO\n", line_endings="crlf")
+            with mock.patch.dict(pv.PINS, {"source_transforms": [change], "source_wraps": []}):
+                pv.prepare_source(None, "r", dest)
+                pv.prepare_source(None, "r", dest)  # running again changes nothing
+            self.assertEqual((dest / "src/a.cpp").read_bytes(), b"one\r\nTWO\r\n")
 
 
 if __name__ == "__main__":

@@ -194,20 +194,6 @@ def _toolchain_pins() -> dict:
         return {}
 
 
-def project_links() -> dict:
-    """Checklist id -> the official project page of a tool Setup never downloads (from the pinned list)."""
-    ids = {"rexglue_sdk": "rexglue", "xex-tool": "xex-tool"}
-    links = {}
-    for item in _toolchain_pins().get("user_supplied_sources", []):
-        if item.get("role") in ids and item.get("upstream", "").startswith("https://github.com/"):
-            links[ids[item["role"]]] = item["upstream"].removesuffix(".git")
-    return links
-
-
-def _own_tool(role: str) -> dict:
-    return next((i for i in _toolchain_pins().get("user_supplied_sources", []) if i.get("role") == role), {})
-
-
 def checklist_template() -> list[dict]:
     """Every line the installer shows, in display order, all marked missing."""
     items = [
@@ -241,22 +227,8 @@ def checklist_template() -> list[dict]:
               "No Avatar Editor. The dashboard and your current avatar still work.",
               "Built on your PC from your own copy of the Xbox 360 Avatar Editor (avatareditor.xex), "
               "its font (xenonclatin.xtt) and the Xbox 360 start-up picture (splash_360.png). Setup sets up "
-              "the build tools itself from their official sources. You also supply your own copies of ReXGlue "
-              "0.10.0 and XexTool-RE: Setup never downloads those, because their code contains the Xbox 360 "
-              "decryption key.",
+              "everything else itself from official sources, including ReXGlue and XexTool-RE.",
               place="Put avatareditor.xex, xenonclatin.xtt and splash_360.png anywhere inside the folder you picked."),
-        _item("rexglue", "Avatars", "ReXGlue 0.10.0 (your own copy)",
-              "Lets Setup build the Avatar Editor: ReXGlue turns the Xbox 360 editor into PS5 code and is built "
-              "into it.",
-              "The Avatar Editor can't be built here. An editor you already built still installs.",
-              "ReXGlue's official project page. Setup never downloads it, because its code contains the Xbox 360 "
-              "decryption key.", link=True),
-        _item("xex-tool", "Avatars", "XexTool-RE (your own copy)",
-              "Lets Setup build the Avatar Editor: it reads your avatareditor.xex to take out the editor's own "
-              "pictures and button icons.",
-              "The Avatar Editor can't be built here. An editor you already built still installs.",
-              "XexTool-RE's official project page. Setup never downloads it, because its code contains the "
-              "Xbox 360 decryption key.", link=True),
         _item("trailers", "Media", "Trailers",
               "Video trailers that play on the dashboard.",
               "The trailer spots stay empty.",
@@ -274,7 +246,7 @@ def checklist_template() -> list[dict]:
         _item("games360", "Xbox 360 games", "Your Xbox 360 games",
               "These games show in the Games tab and start through PS5X360.",
               "The Games tab shows only your PS5 games.",
-              "Copies of games you own. The installer never downloads games, BIOS files or keys."),
+              "Copies of games you own. The installer never downloads games or BIOS files."),
         _item("icons-art", "Finishing touches", "Loading art for Xbox-style icons",
               "Xbox-style home-screen icons made from your own loading picture.",
               "The home-screen icons use the Ex-Box default artwork.",
@@ -303,8 +275,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                          dashboard_package=None, prepared_art=None, kit=None, fonts=[], trailers_packed=None,
                          trailer_videos=[], music=[], music_root=None, loading=None, avatar_render=None,
                          ps5x360_zip=None, companion=None, companion_source=None, shared=None, games=[],
-                         dashboard_inputs=[], dashboard_release=False,
-                         rexglue_source=None, xex_tool_source=None)
+                         dashboard_inputs=[], dashboard_release=False)
     wrong: list[str] = []
     total = 0
 
@@ -330,18 +301,6 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
             continue
         if any(p in ("ppsa99735", "ppsa99734", "ppsa50011") for p in parts[:-1]):
             continue  # the rest of a package folder is installed with it, not scanned as inputs
-
-        # --- your own ReXGlue / XexTool-RE source folders (never downloaded by Setup) ---
-        if name == "xex_module.cpp" and len(parts) >= 3 and parts[-2] == "system" and parts[-3] == "src":
-            top = path.parent.parent.parent
-            if (top / "src" / "rexglue" / "CMakeLists.txt").is_file() and sources["rexglue_source"] is None:
-                sources["rexglue_source"] = str(top)
-            continue
-        if name == "keys.cpp" and len(parts) >= 3 and parts[-2] == "crypto" and parts[-3] == "src":
-            top = path.parent.parent.parent
-            if (top / "src" / "extract.cpp").is_file() and sources["xex_tool_source"] is None:
-                sources["xex_tool_source"] = str(top)
-            continue
 
         # --- editor inputs ---
         if name == "avatareditor.xex":
@@ -574,41 +533,17 @@ def _fill(items, found, sources, pins):
         done("editor", "Your three editor files and the build tools were found. The editor is built on "
                        "this PC during Install (this can take a while).")
         sources["editor_mode"] = "build"
-    elif all(name in originals for name in needed) and sources["rexglue_source"] and sources["xex_tool_source"]:
-        done("editor", "Your three editor files, ReXGlue and XexTool-RE were found. During Install, Setup first sets "
-                       "up the build tools on this PC from their official sources (one time, roughly an hour), then "
-                       "builds the editor.")
+    elif all(name in originals for name in needed):
+        done("editor", "Your three editor files were found. During Install, Setup first sets up the build tools "
+                       "on this PC from their official sources (one time, roughly an hour), then builds the editor.")
         sources["editor_mode"] = "provision"
     elif originals:
         lacking = [name for name in needed if name not in originals]
-        text = []
-        if lacking:
-            text.append("still needed: " + ", ".join(lacking))
-        own = [label for key, label in (("rexglue_source", "ReXGlue 0.10.0 (rexglue-sdk, with its submodules)"),
-                                        ("xex_tool_source", "XexTool-RE")) if not sources[key]]
-        if own:
-            text.append("your own copy of " + " and ".join(own) + " was not found. Setup cannot download these "
-                        "because their code contains the Xbox 360 decryption key")
-        done("editor", "Some editor files were found, but " + "; ".join(text) + ". The editor is skipped.",
-             status="partial")
+        done("editor", "Some editor files were found, but still needed: " + ", ".join(lacking)
+             + ". The editor is skipped.", status="partial")
         sources["editor_mode"] = None
     else:
         sources["editor_mode"] = None
-    links = project_links()
-    for item_id, key, role, marker in (("rexglue", "rexglue_source", "rexglue_sdk", "src/system/xex_module.cpp"),
-                                       ("xex-tool", "xex_tool_source", "xex-tool", "src/crypto/keys.cpp")):
-        item, pin = items[item_id], _own_tool(role)
-        item["link"] = dict(label="Open project page", url=links[item_id]) if item_id in links else None
-        folder = Path(pin.get("upstream", "x")).stem
-        commit = (pin.get("commit") or "")[:8]
-        extra = ", including its submodules" if pin.get("submodules") else ""
-        item["place"] = (f"Then put it here: a folder inside the folder you picked, for example {folder} "
-                         f"(commit {commit}{extra}). Setup spots it by its {marker} file.")
-        if sources[key]:
-            done(item_id, f"Found your copy: {Path(sources[key]).name}.")
-        elif sources.get("editor_mode") == "package":
-            items[item_id]["status"] = "notneeded"
-            items[item_id]["detail"] = "Not needed: your Avatar Editor is already built."
     if sources["loading"]:
         extra = " Your avatar picture was found too." if sources["avatar_render"] else ""
         done("icons-art", "Found your loading picture." + extra)

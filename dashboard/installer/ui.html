@@ -203,15 +203,10 @@ function showScan(data, quiet) {
     }
     if (item.status !== "found" && item.status !== "notneeded") {
       if (item.place) body.append(el("p", null, item.place));
-      if (item.link) {
-        const actions = el("div", "actions");
-        const open = el("button", null, item.link.label);
-        open.onclick = async () => { try { await call("open-link", {id: item.id}); open.textContent = "Opened in your browser"; }
-                                     catch (error) { open.textContent = error.message; } };
-        const recheck = el("button", null, "Re-check");
-        recheck.onclick = () => rescan(true);
-        actions.append(open, recheck); body.append(actions);
-      }
+      const actions = el("div", "actions");
+      const recheck = el("button", null, "Re-check");
+      recheck.onclick = () => rescan(true);
+      actions.append(recheck); body.append(actions);
     }
     for (const note of item.notes) body.append(line("Note:", note));
     row.append(body); box.append(row);

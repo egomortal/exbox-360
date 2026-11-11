@@ -8,15 +8,15 @@ Every item comes from its official upstream at the exact commit or SHA-256 in to
 is checked against the editor builder's own per-file pins. Nothing is rehosted by Ex-Box. The
 result is the `dependencies` folder that avatar-editor/local-builder/builder.py expects.
 
-What it never does: use sudo, download games, BIOS, keys, Microsoft game files or console
-firmware. Two sources contain the Xbox 360 executable decryption key in their code (ReXGlue and
-XexTool-RE), so they are never downloaded here; you point at your own copies with
---rexglue-source / --xex-tool-source. Everything else still gets set up without them.
+What it never does: use sudo, or download games, BIOS, Microsoft game files or console firmware.
+ReXGlue and XexTool-RE are fetched from their official projects like everything else (owner
+decision 2026-11-11; their public source includes the Xbox 360 executable key). A folder of your
+own can be given with --rexglue-source / --xex-tool-source instead.
 
 Safe to stop and run again: finished steps are remembered in <deps>/.provision/state.json.
 Output for Setup: "PROGRESS <n> <total> <step> <text>" lines and one final "RESULT <json>" line.
-Exit codes: 0 ready, 3 needs a one-time apt install (commands are printed), 4 needs your two
-key-bearing sources, 1 a step failed (its log is named).
+Exit codes: 0 ready, 3 needs a one-time apt install (commands are printed), 1 a step failed
+(its log is named).
 """
 from __future__ import annotations
 
@@ -267,11 +267,13 @@ def prepare_source(p: Provisioner, role: str, dest: Path):
         if change["role"] != role:
             continue
         path = dest / change["path"]
-        text = path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")  # reads either line ending as "\n"
         if change["new"] not in text:
             if text.count(change["old"]) != 1:
                 raise StepError(f"{role}/{change['path']} does not contain the expected line to change.")
-            path.write_text(text.replace(change["old"], change["new"]), encoding="utf-8", newline="\n")
+            text = text.replace(change["old"], change["new"])
+        # Some pinned files keep Windows line endings; write those exactly as pinned.
+        path.write_text(text, encoding="utf-8", newline="\r\n" if change.get("line_endings") == "crlf" else "\n")
     for wrap in PINS.get("source_wraps", []):
         if wrap["role"] != role:
             continue
@@ -308,10 +310,13 @@ def parse_wrap(path: Path) -> dict:
     return values
 
 
-def step_user_sources(p: Provisioner):
-    missing = []
-    for item in PINS["user_supplied_sources"]:
+def step_tool_sources(p: Provisioner):
+    """ReXGlue and XexTool-RE, fetched from their official projects at the pinned commits (owner
+    decision 2026-11-11). A folder passed with --rexglue-source / --xex-tool-source is used instead."""
+    report = []
+    for item in PINS["tool_sources"]:
         role, dest = item["role"], p.deps / "sources" / item["role"]
+        key = "source:" + role
         given = p.user.get(role)
         if given:
             given = Path(given).expanduser().resolve()
@@ -322,17 +327,21 @@ def step_user_sources(p: Provisioner):
             count, bad = verify_tree(role, given)
             if bad:
                 raise StepError(f"Your {role} folder is not the supported version ({len(bad)} files differ, e.g. "
-                                f"{bad[0]}). It must be {item['upstream']} at commit {item['commit']}"
-                                + (" with its submodules." if item.get("submodules") else "."))
+                                f"{bad[0]}). Leave it out and Setup fetches the right one.")
             p.link(dest, given)
-            p.mark("source:" + role, item["commit"], checked_files=count, supplied=str(given))
-        elif not (dest.exists() and p.state.get("source:" + role, {}).get("pin") == item["commit"]):
-            missing.append(item)
-    p.missing_user = missing
-    if missing:
-        return ("Waiting for your own copies of: " + ", ".join(m["role"] for m in missing)
-                + " (they contain an Xbox 360 decryption key, so Setup never downloads them).")
-    return "Your ReXGlue and XexTool-RE folders were checked against the builder's pins."
+            p.mark(key, item["commit"], checked_files=count, supplied=str(given))
+        elif (not p.done(key, item["commit"]) or not dest.is_dir() or dest.is_symlink()
+              or p.state.get(key, {}).get("supplied")):
+            progress(p, f"fetching {role}")
+            p.git_fetch(item["git"], item["commit"], dest, submodules=item.get("submodules", False))
+            prepare_source(p, role, dest)
+            count, bad = verify_tree(role, dest)
+            if bad:
+                raise StepError(f"{role} at {item['commit'][:12]} does not match {len(bad)} pinned files "
+                                f"(e.g. {bad[0]}).")
+            p.mark(key, item["commit"], checked_files=count)
+        report.append(f"{role} ({p.state[key].get('checked_files', 0)} files checked)")
+    return "Fetched and checked: " + ", ".join(report)
 
 
 def step_native_sdk(p: Provisioner):
@@ -631,9 +640,9 @@ def stage_plain_checkout(p: Provisioner, source: Path) -> Path:
 
 def step_rexglue_tool(p: Provisioner):
     source = p.deps / "sources" / "rexglue_sdk"
-    item = next(s for s in PINS["user_supplied_sources"] if s["role"] == "rexglue_sdk")
+    item = next(s for s in PINS["tool_sources"] if s["role"] == "rexglue_sdk")
     if p.state.get("source:rexglue_sdk", {}).get("pin") != item["commit"] or not source.exists():
-        return None  # waits for your folder
+        raise StepError("ReXGlue's source is not in place; run the tool-sources step first.")
     pin = item["commit"]
     if not p.done("rexglue-tool", pin):
         lost = [f.name for f in (source / "thirdparty/libmspack/cabextract/mspack").glob("*.[ch]") if f.stat().st_size == 0]
@@ -658,7 +667,7 @@ def step_rexglue_tool(p: Provisioner):
             raise StepError(f"rexglue reports version {version!r}; 0.10.0 is required.")
         p.link(p.deps / "host-tools" / "rexglue", binary)
         p.mark("rexglue-tool", pin, version=version.strip())
-    return f"rexglue {p.state['rexglue-tool'].get('version', '')} built from your ReXGlue folder."
+    return f"rexglue {p.state['rexglue-tool'].get('version', '')} built from ReXGlue's source."
 
 
 def step_link_inputs(p: Provisioner):
@@ -671,7 +680,7 @@ def step_link_inputs(p: Provisioner):
 STEPS = [
     ("preflight", "Checking this PC's build packages", step_preflight),
     ("sources", "Fetching the pinned public sources", step_sources),
-    ("user-sources", "Checking your own ReXGlue and XexTool-RE folders", step_user_sources),
+    ("tool-sources", "Fetching ReXGlue and XexTool-RE", step_tool_sources),
     ("native-sdk", "Setting up the PS5 payload SDK", step_native_sdk),
     ("links", "Linking LLVM 21 and Python", step_system_links),
     ("dxc", "Fetching shader-compiler headers", step_dxc),
@@ -697,7 +706,6 @@ def progress(p: Provisioner, text: str):
 
 def provision(deps: Path, jobs: int, rexglue=None, xex=None, only=None) -> tuple[int, dict]:
     p = Provisioner(deps, jobs, rexglue, xex)
-    p.missing_user = []
     results = []
     for name, title, function in STEPS:
         if only and name not in only:
@@ -712,17 +720,9 @@ def provision(deps: Path, jobs: int, rexglue=None, xex=None, only=None) -> tuple
             return 3, result
         except (StepError, subprocess.CalledProcessError, OSError, urllib.error.URLError, KeyError, ValueError, tarfile.TarError) as error:
             return 1, dict(status="failed", step=name, error=str(error), steps=results, notes=p.notes)
-        results.append(dict(step=name, text=text or "Waiting for your ReXGlue folder."))
-    summary = dict(status="ready", dependencies=str(deps), steps=results, notes=p.notes)
-    if p.missing_user:
-        summary.update(status="needs-user-sources", needs=[
-            dict(role=m["role"], upstream=m["upstream"], commit=m["commit"], submodules=m.get("submodules", False),
-                 why=m["why_not_fetched"]) for m in p.missing_user])
-        code = 4
-    else:
-        code = 0
-        (deps / "PROVISIONED.json").write_text(json.dumps(dict(pins=PINS, state=p.state), indent=1))
-    return code, summary
+        results.append(dict(step=name, text=text or ""))
+    (deps / "PROVISIONED.json").write_text(json.dumps(dict(pins=PINS, state=p.state), indent=1))
+    return 0, dict(status="ready", dependencies=str(deps), steps=results, notes=p.notes)
 
 
 def main(argv=None) -> int:

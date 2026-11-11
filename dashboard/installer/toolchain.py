@@ -38,7 +38,7 @@ def _python(args: list[str]) -> list[str]:
 def provision(deps: str | None = None, rexglue: Path | None = None, xex: Path | None = None,
               progress=None, log=print, runner=subprocess.Popen) -> dict:
     """Run toolchain/provision.py and return its RESULT (status ready / needs-apt /
-    needs-user-sources / failed). Never raises for a tool failure; the result says what happened."""
+    failed). Never raises for a tool failure; the result says what happened."""
     args = [wsl(PROVISION)]
     if deps:
         args += ["--deps", deps]
@@ -73,12 +73,6 @@ def explain(result: dict) -> str:
     if status == "needs-apt":
         return ("This PC needs a one-time install of some Ubuntu build packages first. Open Ubuntu (WSL) and run:\n  "
                 + "\n  ".join(result.get("commands", [])) + "\nthen press Install again. " + result.get("why", ""))
-    if status == "needs-user-sources":
-        lines = [f"{n['role']}: {n['upstream']} at commit {n['commit']}"
-                 + (" (with its submodules)" if n.get("submodules") else "") for n in result.get("needs", [])]
-        return ("The build tools are set up, but building the Avatar Editor also needs your own copies of:\n  "
-                + "\n  ".join(lines) + "\nSetup never downloads these: their code contains the Xbox 360 "
-                "decryption key. Put the folders in the folder you picked and press Install again.")
     if status == "failed":
         return f"Setting up the build tools stopped at '{result.get('step', '?')}': {result.get('error', '')}"
     return ""

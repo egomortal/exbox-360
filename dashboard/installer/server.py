@@ -130,13 +130,6 @@ def api(state: State, name: str, body: dict) -> dict:
     if name in ("doctor", "restore"):
         with open_target(body) as target:
             return engine.doctor(target) if name == "doctor" else engine.restore(target)
-    if name == "open-link":
-        # Only the official project pages from the pinned list; the page never supplies a web address.
-        url = catalog.project_links().get(str(body.get("id", "")))
-        if not url:
-            raise ValueError("There is no project page for that item.")
-        webbrowser.open(url)
-        return dict(opened=url)
     if name == "info":
         return dict(version=VERSION, practice_folder=str(engine.practice_target().root),
                     ps5x360=dict(version=ps5x360.VERSION, author=ps5x360.AUTHOR, licence=ps5x360.LICENCE,

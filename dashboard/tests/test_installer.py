@@ -127,8 +127,7 @@ class Scan(Base):
         item = next(i for i in result["items"] if i["id"] == "editor")
         self.assertEqual(item["status"], "partial")
         self.assertIn("xenonclatin.xtt", item["detail"])
-        self.assertIn("ReXGlue", item["detail"])
-        self.assertIn("decryption key", item["detail"])
+        self.assertNotIn("ReXGlue", item["detail"])  # Setup fetches it; only the originals are asked for
 
     def test_wrong_ps5x360_file_is_rejected(self):
         self.folder.mkdir()
@@ -422,10 +421,6 @@ class Tools(Base):
                 "splash_360.png": b"\x89PNG\r\n\x1a\n pretend splash"}
         for name, content in data.items():
             write(self.folder / "originals" / name, content)
-        write(self.folder / "rexglue-sdk/src/system/xex_module.cpp", "// your own copy\n")
-        write(self.folder / "rexglue-sdk/src/rexglue/CMakeLists.txt", "add_executable(rexglue main.cpp)\n")
-        write(self.folder / "XexTool-RE/src/crypto/keys.cpp", "// your own copy\n")
-        write(self.folder / "XexTool-RE/src/extract.cpp", "// your own copy\n")
         pins = catalog._pins()
         fake = dict(pins, editor_xex=hashlib.sha256(data["avatareditor.xex"]).hexdigest(),
                     font_xtt=hashlib.sha256(data["xenonclatin.xtt"]).hexdigest(),
@@ -441,8 +436,7 @@ class Tools(Base):
             calls.setdefault("provision", []).append((rexglue, xex))
             if progress:
                 progress(0.5, "Building SPIR-V tools")
-            return dict(status=status, dependencies=deps, commands=["sudo apt-get install -y spirv-tools"],
-                        needs=[dict(role="rexglue_sdk", upstream="u", commit="c")])
+            return dict(status=status, dependencies=deps, commands=["sudo apt-get install -y spirv-tools"])
         def build_libc(tools, out_dir):
             calls["libc"] = tools
             path = out_dir / "libc-a.prx"
@@ -469,8 +463,6 @@ class Tools(Base):
         item = next(i for i in result["items"] if i["id"] == "editor")
         self.assertEqual(item["status"], "found")
         self.assertEqual(result["sources"]["editor_mode"], "provision")
-        self.assertTrue(result["sources"]["rexglue_source"].endswith("rexglue-sdk"))
-        self.assertTrue(result["sources"]["xex_tool_source"].endswith("XexTool-RE"))
 
     def test_practice_run_describes_but_does_not_set_up(self):
         self._editor_folder()
@@ -493,7 +485,7 @@ class Tools(Base):
         self.assertEqual(self.on_console("/data/homebrew/PPSA99734/sce_module/libc.prx"), b"\x7fELF libc built here")
         self.assertEqual(self.on_console("/data/homebrew/PPSA99734/eboot.bin"), b"editor built from your files")
         self.assertTrue(calls["editor"][1].endswith("/editor-builds/" + outcome["run"]))
-        self.assertTrue(any(r and x for r, x in calls["provision"]), "the editor step passes your two folders")
+        self.assertEqual(calls["provision"], [(None, None)], "tools set up once; Setup fetches ReXGlue and XexTool-RE itself")
 
     def test_libc_already_on_the_ps5_is_kept(self):
         fake_folder(self.folder, full=False)
@@ -512,8 +504,6 @@ class Tools(Base):
         step = next(s for s in outcome["steps"] if s["id"] == "editor")
         self.assertEqual(step["status"], "failed")
         self.assertIn("sudo apt-get install -y spirv-tools", step["text"])
-        self.assertIn("decryption key", toolchain.explain(dict(status="needs-user-sources", needs=[
-            dict(role="xex-tool", upstream="https://github.com/mrtitanic777/XexTool-RE.git", commit="c421d377")])))
 
     def test_progress_and_result_lines_are_read(self):
         lines = ["PROGRESS 2 16 sources Fetching the pinned public sources\n", "plain log line\n",
@@ -535,49 +525,36 @@ class Tools(Base):
         self.assertEqual(editor._wsl("/home/u/x"), "/home/u/x")
 
 
-class ProjectPages(Base):
-    """Tools Setup never downloads: explained, an official-page button, where to put them, re-detected."""
+class SeamlessEditor(Base):
+    """Owner decision 2026-11-11: Setup fetches ReXGlue and XexTool-RE itself; only the three originals are asked for."""
 
-    def test_missing_tools_show_their_official_page_and_where_to_put_them(self):
+    def test_no_bring_your_own_lines(self):
         self.folder.mkdir()
         items = {i["id"]: i for i in catalog.scan(self.folder)["items"]}
-        self.assertEqual(items["rexglue"]["link"]["url"], "https://github.com/rexglue/rexglue-sdk")
-        self.assertEqual(items["xex-tool"]["link"]["url"], "https://github.com/mrtitanic777/XexTool-RE")
-        self.assertIn("c94f5ebd", items["rexglue"]["place"])
-        self.assertIn("submodules", items["rexglue"]["place"])
-        self.assertIn("src/crypto/keys.cpp", items["xex-tool"]["place"])
-        for item_id in ("rexglue", "xex-tool"):
-            self.assertIn("decryption key", items[item_id]["source"])
-            self.assertTrue(items[item_id]["unlocks"].startswith("Lets Setup build the Avatar Editor"))
-        self.assertIsNone(items["editor"]["link"])  # the three originals: explained, never linked
+        self.assertNotIn("rexglue", items)
+        self.assertNotIn("xex-tool", items)
+        self.assertIn("ReXGlue and XexTool-RE", items["editor"]["source"])
         self.assertIn("avatareditor.xex", items["editor"]["place"])
+        self.assertIsNone(items["editor"]["link"])
 
-    def test_dropping_a_folder_in_ticks_the_item(self):
-        self.folder.mkdir()
-        write(self.folder / "rexglue-sdk/src/system/xex_module.cpp", "// your own copy\n")
-        write(self.folder / "rexglue-sdk/src/rexglue/CMakeLists.txt", "add_executable(rexglue main.cpp)\n")
-        items = {i["id"]: i for i in catalog.scan(self.folder)["items"]}
-        self.assertEqual(items["rexglue"]["status"], "found")
-        self.assertEqual(items["xex-tool"]["status"], "missing")
+    def test_three_originals_are_enough(self):
+        data = {"avatareditor.xex": b"XEX2 pretend editor", "xenonclatin.xtt": b"pretend font",
+                "splash_360.png": b"\x89PNG\r\n\x1a\n pretend splash"}
+        for name, content in data.items():
+            write(self.folder / name, content)
+        pins = catalog._pins()
+        fake = dict(pins, editor_xex=hashlib.sha256(data["avatareditor.xex"]).hexdigest(),
+                    font_xtt=hashlib.sha256(data["xenonclatin.xtt"]).hexdigest(),
+                    splash=hashlib.sha256(data["splash_360.png"]).hexdigest())
+        real = catalog._pins
+        catalog._pins = lambda: fake
+        self.addCleanup(setattr, catalog, "_pins", real)
+        result = catalog.scan(self.folder)
+        self.assertEqual(result["sources"]["editor_mode"], "provision")
 
-    def test_not_needed_when_the_editor_is_already_built(self):
-        fake_folder(self.folder)  # includes a built PPSA99734
-        items = {i["id"]: i for i in catalog.scan(self.folder)["items"]}
-        self.assertEqual(items["rexglue"]["status"], "notneeded")
-
-    def test_open_link_only_opens_pinned_project_pages(self):
-        opened = []
-        real = server.webbrowser.open
-        server.webbrowser.open = opened.append
-        self.addCleanup(setattr, server.webbrowser, "open", real)
-        state = server.State()
-        self.assertEqual(server.api(state, "open-link", dict(id="rexglue"))["opened"],
-                         "https://github.com/rexglue/rexglue-sdk")
-        for bad in (dict(id="editor"), dict(id="nope"), dict(url="https://example.com/evil")):
-            with self.assertRaises(ValueError):
-                server.api(state, "open-link", bad)
-        self.assertEqual(opened, ["https://github.com/rexglue/rexglue-sdk"])
-
+    def test_the_project_page_endpoint_is_gone(self):
+        with self.assertRaises(ValueError):
+            server.api(server.State(), "open-link", dict(id="rexglue"))
 
 class Safety(Base):
     def test_only_owned_paths_can_be_written(self):

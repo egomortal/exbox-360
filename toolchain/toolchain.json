@@ -85,21 +85,23 @@
       "licence": "none stated upstream; fetched by you from its official page, not redistributed by Ex-Box"
     }
   ],
-  "user_supplied_sources": [
+  "tool_sources": [
     {
       "role": "rexglue_sdk",
-      "upstream": "https://github.com/rexglue/rexglue-sdk.git",
+      "git": "https://github.com/rexglue/rexglue-sdk.git",
       "commit": "c94f5ebdcb3c9d1a460ca48e04f9758448f8d518",
       "submodules": true,
-      "why_not_fetched": "Its source code contains the Xbox 360 executable decryption key (src/system/xex_module.cpp). Ex-Box Setup never downloads keys, so you supply this folder yourself.",
-      "also_builds": "host-tools/rexglue"
+      "license": "BSD-3-Clause",
+      "also_builds": "host-tools/rexglue",
+      "why": "Recompiler runtime compiled into the editor; also builds the rexglue tool."
     },
     {
       "role": "xex-tool",
-      "upstream": "https://github.com/mrtitanic777/XexTool-RE.git",
+      "git": "https://github.com/mrtitanic777/XexTool-RE.git",
       "commit": "c421d3772ff9b6d5cd4798edbc01f7d0570f1081",
       "submodules": false,
-      "why_not_fetched": "Its source code contains the Xbox 360 executable decryption keys (src/crypto/keys.cpp). Ex-Box Setup never downloads keys, so you supply this folder yourself."
+      "license": "MIT",
+      "why": "Reads the user's own avatareditor.xex."
     }
   ],
   "native_sdk": {
@@ -249,6 +251,20 @@
       "old": "  dep_clang = cpp.find_library('clang-cpp', dirs : llvm_libdir, required : false)\n",
       "new": "# AV2 private host build: reuse installed versioned Clang without writing a system symlink.\n  dep_clang = cpp.find_library('clang-cpp', dirs : [llvm_libdir, '/tmp/exbox-av2-q2-prefix/lib'], required : false)\n",
       "why": "The editor builder pins the Mesa meson.build with this one-line host-build change (an extra library search folder for Clang's libclang-cpp). Applied exactly, then checked against the builder's hash."
+    },
+    {
+      "role": "xex-tool",
+      "path": "src/compress/lzx.cpp",
+      "old": "        if (rem) read(rem);\n    }\n",
+      "new": "        if (rem) read(rem);\n    }\n    void align_uncompressed() { int rem = bitsleft_ & 15; read(rem ? rem : 16); }\n"
+    },
+    {
+      "role": "xex-tool",
+      "path": "src/compress/lzx.cpp",
+      "old": "                    br.align16();\n                    br.drain_to_byte();\n",
+      "new": "                    // Uncompressed headers require 1..16 alignment bits.\n                    // At an exact word boundary, a full pad word is present.\n                    br.align_uncompressed();\n                    br.drain_to_byte();\n",
+      "line_endings": "crlf",
+      "why": "The owner's fix to XexTool-RE's LZX decoder (MIT): an uncompressed block header needs 1..16 alignment bits, including a full word when already aligned. Not on the official project yet. Applied exactly, saved with the CRLF line endings the builder's pin has (f3f85f00...), then checked against that hash."
     }
   ],
   "source_wraps": [

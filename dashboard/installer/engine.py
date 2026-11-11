@@ -511,16 +511,13 @@ class Installer:
         files = {f"/data/nxe/music/{p.relative_to(common).as_posix()}": Src(p) for p in songs}
         return "done", self._counts(self.put_all(files, "music", index, total, title), f"{len(files)} song(s)")
 
-    def ensure_tools(self, index, total, title, with_sources=False) -> str:
+    def ensure_tools(self, index, total, title) -> str:
         """Set up the build tools in WSL once per run (resumable). Returns their Linux path."""
-        if self.tools and not with_sources:
+        if self.tools:
             return self.tools
         result = toolchain.provision(
-            rexglue=Path(self.src["rexglue_source"]) if with_sources and self.src.get("rexglue_source") else None,
-            xex=Path(self.src["xex_tool_source"]) if with_sources and self.src.get("xex_tool_source") else None,
             progress=lambda fraction, text: self.tick(index, total, title, fraction * 0.4, text), log=self.log)
-        ready = result.get("status") == "ready" or (result.get("status") == "needs-user-sources" and not with_sources)
-        if not ready:
+        if result.get("status") != "ready":
             raise RuntimeError(toolchain.explain(result))
         self.tools = result["dependencies"]
         return self.tools
@@ -542,7 +539,7 @@ class Installer:
                 return "simulated", ("Practice run: the Avatar Editor build was not started (it takes a long "
                                      f"time). A real install would {first}build it here from your three files.")
             if mode == "provision":
-                tools = self.ensure_tools(index, total, title, with_sources=True)
+                tools = self.ensure_tools(index, total, title)
                 package = editor.build(self.src["editor_originals"], tools, self.work / "editor-build", self.log,
                                        lambda fraction, detail: self.tick(index, total, title, 0.4 + fraction * 0.4, detail),
                                        linux_work=f"{tools}/../editor-builds/{self.run_id}")

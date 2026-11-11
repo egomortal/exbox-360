@@ -33,7 +33,7 @@ otherwise the Ex-Box default icons are used and Setup says so).
 | Shared artwork | `shrdres.xzp` or prepared shared art | same |
 | Fonts | `xenonclatin.xtt`, or files in a `fonts` folder | `.../private_art/fonts` |
 | Avatar kit | a `.nxak` kit | `.../private_art/avatar/kit360.nxak` |
-| Avatar Editor | a finished build (`PPSA99734/` or the builder's ZIP), **or** the three originals plus your own `rexglue-sdk` and `XexTool-RE` folders (Setup then sets up the build tools itself and builds headless with `avatar-editor/local-builder/builder.py`), **or** the three originals plus a ready `dependencies` tools folder | `/data/homebrew/PPSA99734` |
+| Avatar Editor | a finished build (`PPSA99734/` or the builder's ZIP), **or** the three originals (Setup then sets up the build tools itself, including `rexglue-sdk` and `XexTool-RE`, and builds headless with `avatar-editor/local-builder/builder.py`), **or** the three originals plus a ready `dependencies` tools folder | `/data/homebrew/PPSA99734` |
 | Trailers | `manifest.tsv` + `packed/` from the trailer tool | `/data/homebrew/ExBox360/trailers` |
 | Music | mp3 / flac / ogg / wav | `/data/nxe/music` |
 | PS5X360 (optional, ticked) | nothing needed: fetched from the official release. `PPSA50011.zip` in the folder skips the download | `/data/homebrew/PPSA50011` |
@@ -125,32 +125,24 @@ them compiled), so Setup now says to clone it inside Ubuntu. A folder copied wit
 Setup builds from a hard-linked copy with empty git repositories in the submodule folders, and never
 writes to the user's folder.
 
-### The blocker: two sources contain the Xbox 360 decryption key
+### Decided: Setup fetches ReXGlue and XexTool-RE itself (owner, 2026-11-11)
 
-`rexglue-sdk` (`src/system/xex_module.cpp`) and `XexTool-RE` (`src/crypto/keys.cpp`) both contain the
-Xbox 360 executable decryption key in their source code. The editor build compiles ReXGlue into the
-editor and uses XexTool-RE to read the user's `avatareditor.xex`, so neither is optional. Setup
-**never downloads them**; the user supplies their own copies (ReXGlue 0.10.0 at commit `c94f5ebd`,
-with its submodules; XexTool-RE at commit `c421d377`). Setup recognises the folders in the picked
-folder, checks every pinned file, and says plainly what is missing. Everything else is fetched.
-Whether this rule should treat public emulator source differently is the owner's decision.
+`rexglue-sdk` and `XexTool-RE` are public GitHub projects under permissive licenses (ReXGlue:
+BSD-3-Clause, partly from Xenia; XexTool-RE: MIT). Their source contains the Xbox 360 executable
+decryption key, which is why Setup first asked users to bring their own copies. The owner decided
+Setup should be seamless instead: both are now fetched like every other tool, from their official
+projects at the pinned commits (`toolchain.json` `tool_sources`: ReXGlue `c94f5ebd` with submodules,
+XexTool-RE `c421d377`), checked file by file against the builder's pins, and never rehosted. The user
+supplies only their three original files. A folder passed with `--rexglue-source` / `--xex-tool-source`
+is still accepted if it is the right version.
 
-**Owner decision (2026-11-10): keep both bring-your-own, with a button.** Each one has its own checklist
-line ("ReXGlue 0.10.0 (your own copy)", "XexTool-RE (your own copy)") with one sentence on what it is
-for, an **Open project page** button that opens only the official page from the pinned list
-(`https://github.com/rexglue/rexglue-sdk`, `https://github.com/mrtitanic777/XexTool-RE`; the page never
-supplies an address, `server.py` looks it up by item id), a "then put it here" line naming the commit
-and the file Setup looks for, and a **Re-check** button. The window also re-checks by itself when you
-come back to it. Setup still downloads nothing for these, mirrors nothing and never links an archive.
-The three original files get an explanation and a "put it here" line, but no link.
+**XexTool-RE fix.** The builder pins a changed `src/compress/lzx.cpp` (`f3f85f00...`). It is the
+owner's 4-line fix to the LZX decoder (an uncompressed block header needs 1..16 alignment bits,
+including a full word when already aligned; MIT, written independently). Setup applies it as two
+pinned line changes and saves the file with the CRLF line endings the pin has. It is not on the
+official project yet; sending it upstream would let the line changes go.
 
-**Found while testing (needs a decision):** the builder pins a *changed* `src/compress/lzx.cpp` for
-XexTool-RE (`f3f85f00...`). Neither commit on the official project page has it (both carry
-`64a20069...`); the owner's validated build used a private snapshot
-(`private/tool-builds/xex/6c49566a.../source`). So a user who follows the button today gets a copy the
-builder rejects. That file holds no keys (it is the LZX decompressor), so the fix can be either:
-publish the change upstream, or ship it in this repo as a pinned patch Setup applies to the user's
-official copy (the same way the Mesa `meson.build` change is applied).
+Fetching ReXGlue inside Ubuntu also avoids the Windows checkout problem (links turned into empty files).
 
 ### Decided: `libc.prx` is always built on the user's PC
 
