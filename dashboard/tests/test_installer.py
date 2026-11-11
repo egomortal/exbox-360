@@ -535,6 +535,50 @@ class Tools(Base):
         self.assertEqual(editor._wsl("/home/u/x"), "/home/u/x")
 
 
+class ProjectPages(Base):
+    """Tools Setup never downloads: explained, an official-page button, where to put them, re-detected."""
+
+    def test_missing_tools_show_their_official_page_and_where_to_put_them(self):
+        self.folder.mkdir()
+        items = {i["id"]: i for i in catalog.scan(self.folder)["items"]}
+        self.assertEqual(items["rexglue"]["link"]["url"], "https://github.com/rexglue/rexglue-sdk")
+        self.assertEqual(items["xex-tool"]["link"]["url"], "https://github.com/mrtitanic777/XexTool-RE")
+        self.assertIn("c94f5ebd", items["rexglue"]["place"])
+        self.assertIn("submodules", items["rexglue"]["place"])
+        self.assertIn("src/crypto/keys.cpp", items["xex-tool"]["place"])
+        for item_id in ("rexglue", "xex-tool"):
+            self.assertIn("decryption key", items[item_id]["source"])
+            self.assertTrue(items[item_id]["unlocks"].startswith("Lets Setup build the Avatar Editor"))
+        self.assertIsNone(items["editor"]["link"])  # the three originals: explained, never linked
+        self.assertIn("avatareditor.xex", items["editor"]["place"])
+
+    def test_dropping_a_folder_in_ticks_the_item(self):
+        self.folder.mkdir()
+        write(self.folder / "rexglue-sdk/src/system/xex_module.cpp", "// your own copy\n")
+        write(self.folder / "rexglue-sdk/src/rexglue/CMakeLists.txt", "add_executable(rexglue main.cpp)\n")
+        items = {i["id"]: i for i in catalog.scan(self.folder)["items"]}
+        self.assertEqual(items["rexglue"]["status"], "found")
+        self.assertEqual(items["xex-tool"]["status"], "missing")
+
+    def test_not_needed_when_the_editor_is_already_built(self):
+        fake_folder(self.folder)  # includes a built PPSA99734
+        items = {i["id"]: i for i in catalog.scan(self.folder)["items"]}
+        self.assertEqual(items["rexglue"]["status"], "notneeded")
+
+    def test_open_link_only_opens_pinned_project_pages(self):
+        opened = []
+        real = server.webbrowser.open
+        server.webbrowser.open = opened.append
+        self.addCleanup(setattr, server.webbrowser, "open", real)
+        state = server.State()
+        self.assertEqual(server.api(state, "open-link", dict(id="rexglue"))["opened"],
+                         "https://github.com/rexglue/rexglue-sdk")
+        for bad in (dict(id="editor"), dict(id="nope"), dict(url="https://example.com/evil")):
+            with self.assertRaises(ValueError):
+                server.api(state, "open-link", bad)
+        self.assertEqual(opened, ["https://github.com/rexglue/rexglue-sdk"])
+
+
 class Safety(Base):
     def test_only_owned_paths_can_be_written(self):
         for path in ("/data/homebrew/PPSA99735/eboot.bin", "/data/nxe/x", "/data/pldmgr/autoload.txt",

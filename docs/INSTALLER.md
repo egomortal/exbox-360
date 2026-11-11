@@ -94,9 +94,32 @@ builds that folder itself, inside WSL, with no admin rights:
   the exact commands, with why: the Ubuntu 24.04 build packages (including `python3-pil`, whose exact
   Pillow 10.2.0 build the editor's images are checked against) and the pinned LLVM 21.1.8 packages
   from apt.llvm.org (`1:21.1.8~++20251221032922+2078da43e25a-1~exp1~20251221153059.70`, still served).
-- **SDK**: the SDK fork's own `platform/tools/setup-sdk.sh` at its pinned commit, which installs the
-  official payload SDK v0.42 release (SHA-256 checked) with the fork's headers and platform library
-  built over it. The same SDK serves both `native-sdk` and `payload-sdk`.
+- **SDK**: rebuilt the way the owner's validated SDK was made (`bigapp/private/av2/toolchain/
+  prepare-native-sdk.sh`): the official payload SDK **v0.44** release, the official **pacbrew-repo
+  v0.41.1** bundle over it (its `libc++abi.a`/`libunwind.a` replace the release's), the PS5 fork's
+  headers and compiler wrappers at `b83202be`, and three quoting fixes so the wrappers work in folders
+  with spaces. Compared file by file with the owner's SDK: 6,474 of 6,479 shared files identical (the
+  rest are five helper-script links that point at `/opt`). The same SDK serves `native-sdk` and
+  `payload-sdk`. A last step checks all 48 files the editor links against by SHA-256.
+- **Converter** (`ps5-native-tool`): built like the owner's (`clang++-21 -O2 ... -lz`, Ubuntu's zlib);
+  byte-identical to the pin (`48bb5f0b...`).
+
+### Test run on a clean WSL user (2026-11-10)
+
+Provisioning reached `ready` (17 steps). The editor builder then passed all 11 stages: compile, link,
+verify, companions, package. Every packaged companion matches `validation.json` exactly, including
+`sce_module/libc.prx` (`e6ff45d1...`) and both splash images made from the user's original. The
+`eboot.bin` was `1b6c96bd...`, not the recorded `ef199349...`, because **the program embeds its build
+folder's path** (122 absolute source paths from `__FILE__`, e.g.
+`<work>/build-<time>/native-work/source/project/...`). Every build folder gives a different eboot from
+the same code. So the recorded hash can only be matched by building in the owner's original folder;
+for users, the builder's own checks (all PASS) are the real proof. Making it folder-independent needs
+`-ffile-prefix-map` in the builder's recipe, which changes the pinned hashes: owner's call.
+
+Also found: a ReXGlue folder cloned or copied on **Windows** loses its links (43 empty files, 15 of
+them compiled), so Setup now says to clone it inside Ubuntu. A folder copied without git is fine:
+Setup builds from a hard-linked copy with empty git repositories in the submodule folders, and never
+writes to the user's folder.
 
 ### The blocker: two sources contain the Xbox 360 decryption key
 
@@ -107,6 +130,23 @@ editor and uses XexTool-RE to read the user's `avatareditor.xex`, so neither is 
 with its submodules; XexTool-RE at commit `c421d377`). Setup recognises the folders in the picked
 folder, checks every pinned file, and says plainly what is missing. Everything else is fetched.
 Whether this rule should treat public emulator source differently is the owner's decision.
+
+**Owner decision (2026-11-10): keep both bring-your-own, with a button.** Each one has its own checklist
+line ("ReXGlue 0.10.0 (your own copy)", "XexTool-RE (your own copy)") with one sentence on what it is
+for, an **Open project page** button that opens only the official page from the pinned list
+(`https://github.com/rexglue/rexglue-sdk`, `https://github.com/mrtitanic777/XexTool-RE`; the page never
+supplies an address, `server.py` looks it up by item id), a "then put it here" line naming the commit
+and the file Setup looks for, and a **Re-check** button. The window also re-checks by itself when you
+come back to it. Setup still downloads nothing for these, mirrors nothing and never links an archive.
+The three original files get an explanation and a "put it here" line, but no link.
+
+**Found while testing (needs a decision):** the builder pins a *changed* `src/compress/lzx.cpp` for
+XexTool-RE (`f3f85f00...`). Neither commit on the official project page has it (both carry
+`64a20069...`); the owner's validated build used a private snapshot
+(`private/tool-builds/xex/6c49566a.../source`). So a user who follows the button today gets a copy the
+builder rejects. That file holds no keys (it is the LZX decompressor), so the fix can be either:
+publish the change upstream, or ship it in this repo as a pinned patch Setup applies to the user's
+official copy (the same way the Mesa `meson.build` change is applied).
 
 ### Decided: `libc.prx` is always built on the user's PC
 

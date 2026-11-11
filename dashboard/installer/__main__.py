@@ -19,7 +19,7 @@ from .targets import FtpTarget, LocalTarget
 
 PAYLOAD = Path(__file__).resolve().parent / "payload"  # the dashboard package shipped with a release
 MARK = {"found": "[FOUND]  ", "download": "[FETCH]  ", "partial": "[PARTLY] ", "missing": "[MISSING]",
-        "build": "[BUILD]  "}
+        "build": "[BUILD]  ", "notneeded": "[N/A]    "}
 
 
 def do_scan(folder) -> dict:
@@ -49,6 +49,11 @@ def print_checklist(result: dict, record: dict | None = None) -> None:
                 print(f"             {item['detail']}")
             print(f"             Without it: {item['missing']}")
             print(f"             Where it comes from: {item['source']}")
+        if item["status"] not in ("found", "notneeded"):
+            if item.get("link"):
+                print(f"             Project page: {item['link']['url']}")
+            if item.get("place"):
+                print(f"             {item['place']}")
         for note in item["notes"]:
             print(f"             Note: {note}")
     if result["wrong"]:

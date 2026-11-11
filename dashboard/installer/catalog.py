@@ -181,9 +181,31 @@ def _size_text(count: int) -> str:
     return str(count)
 
 
-def _item(item_id, group, title, unlocks, missing, source, required=False):
+def _item(item_id, group, title, unlocks, missing, source, required=False, link=None, place=""):
     return dict(id=item_id, group=group, title=title, status="missing", required=required,
-                detail="", unlocks=unlocks, missing=missing, source=source, files=[], notes=[], build=None)
+                detail="", unlocks=unlocks, missing=missing, source=source, files=[], notes=[], build=None,
+                link=link, place=place)
+
+
+def _toolchain_pins() -> dict:
+    try:
+        return json.loads((REPO / "toolchain" / "toolchain.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def project_links() -> dict:
+    """Checklist id -> the official project page of a tool Setup never downloads (from the pinned list)."""
+    ids = {"rexglue_sdk": "rexglue", "xex-tool": "xex-tool"}
+    links = {}
+    for item in _toolchain_pins().get("user_supplied_sources", []):
+        if item.get("role") in ids and item.get("upstream", "").startswith("https://github.com/"):
+            links[ids[item["role"]]] = item["upstream"].removesuffix(".git")
+    return links
+
+
+def _own_tool(role: str) -> dict:
+    return next((i for i in _toolchain_pins().get("user_supplied_sources", []) if i.get("role") == role), {})
 
 
 def checklist_template() -> list[dict]:
@@ -221,7 +243,20 @@ def checklist_template() -> list[dict]:
               "its font (xenonclatin.xtt) and the Xbox 360 start-up picture (splash_360.png). Setup sets up "
               "the build tools itself from their official sources. You also supply your own copies of ReXGlue "
               "0.10.0 and XexTool-RE: Setup never downloads those, because their code contains the Xbox 360 "
-              "decryption key."),
+              "decryption key.",
+              place="Put avatareditor.xex, xenonclatin.xtt and splash_360.png anywhere inside the folder you picked."),
+        _item("rexglue", "Avatars", "ReXGlue 0.10.0 (your own copy)",
+              "Lets Setup build the Avatar Editor: ReXGlue turns the Xbox 360 editor into PS5 code and is built "
+              "into it.",
+              "The Avatar Editor can't be built here. An editor you already built still installs.",
+              "ReXGlue's official project page. Setup never downloads it, because its code contains the Xbox 360 "
+              "decryption key.", link=True),
+        _item("xex-tool", "Avatars", "XexTool-RE (your own copy)",
+              "Lets Setup build the Avatar Editor: it reads your avatareditor.xex to take out the editor's own "
+              "pictures and button icons.",
+              "The Avatar Editor can't be built here. An editor you already built still installs.",
+              "XexTool-RE's official project page. Setup never downloads it, because its code contains the "
+              "Xbox 360 decryption key.", link=True),
         _item("trailers", "Media", "Trailers",
               "Video trailers that play on the dashboard.",
               "The trailer spots stay empty.",
@@ -559,6 +594,21 @@ def _fill(items, found, sources, pins):
         sources["editor_mode"] = None
     else:
         sources["editor_mode"] = None
+    links = project_links()
+    for item_id, key, role, marker in (("rexglue", "rexglue_source", "rexglue_sdk", "src/system/xex_module.cpp"),
+                                       ("xex-tool", "xex_tool_source", "xex-tool", "src/crypto/keys.cpp")):
+        item, pin = items[item_id], _own_tool(role)
+        item["link"] = dict(label="Open project page", url=links[item_id]) if item_id in links else None
+        folder = Path(pin.get("upstream", "x")).stem
+        commit = (pin.get("commit") or "")[:8]
+        extra = ", including its submodules" if pin.get("submodules") else ""
+        item["place"] = (f"Then put it here: a folder inside the folder you picked, for example {folder} "
+                         f"(commit {commit}{extra}). Setup spots it by its {marker} file.")
+        if sources[key]:
+            done(item_id, f"Found your copy: {Path(sources[key]).name}.")
+        elif sources.get("editor_mode") == "package":
+            items[item_id]["status"] = "notneeded"
+            items[item_id]["detail"] = "Not needed: your Avatar Editor is already built."
     if sources["loading"]:
         extra = " Your avatar picture was found too." if sources["avatar_render"] else ""
         done("icons-art", "Found your loading picture." + extra)

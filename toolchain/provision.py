@@ -89,6 +89,7 @@ class Provisioner:
         env["LLVM_CONFIG"] = str(LLVM / "bin" / "llvm-config")
         env.pop("PS5_PAYLOAD_SDK", None)
         env["LC_ALL"] = "C.UTF-8"
+        env["LD_LIBRARY_PATH"] = str(self.prefix / "lib")
         env.update({k: str(v) for k, v in extra.items()})
         return env
 
@@ -127,8 +128,8 @@ class Provisioner:
         if self.capture(["git", "-C", dest, "rev-parse", "HEAD"]) != commit:
             raise StepError(f"{url} did not check out {commit}")
 
-    def download(self, url: str, sha256: str) -> Path:
-        target = self.cache / url.rsplit("/", 1)[-1]
+    def download(self, url: str, sha256: str, name: str | None = None) -> Path:
+        target = self.cache / (name or url.rsplit("/", 1)[-1])
         if target.is_file() and file_sha256(target) == sha256:
             return target
         part = target.with_suffix(target.suffix + ".part")
@@ -250,6 +251,7 @@ def step_sources(p: Provisioner):
         if not p.done(key, item["commit"]) or not dest.is_dir():
             progress(p, f"fetching {item['role']}")
             p.git_fetch(item["git"], item["commit"], dest)
+            prepare_source(p, item["role"], dest)
             count, bad = verify_tree(item["role"], dest)
             if bad:
                 raise StepError(f"{item['role']} at {item['commit'][:12]} does not match {len(bad)} pinned files "
@@ -257,6 +259,53 @@ def step_sources(p: Provisioner):
             p.mark(key, item["commit"], checked_files=count)
         report.append(f"{item['role']} ({p.state[key].get('checked_files', 0)} files checked)")
     return "Fetched and checked: " + ", ".join(report)
+
+
+def prepare_source(p: Provisioner, role: str, dest: Path):
+    """Pinned, documented changes the builder expects on top of a fetched source (see toolchain.json)."""
+    for change in PINS.get("source_transforms", []):
+        if change["role"] != role:
+            continue
+        path = dest / change["path"]
+        text = path.read_text(encoding="utf-8")
+        if change["new"] not in text:
+            if text.count(change["old"]) != 1:
+                raise StepError(f"{role}/{change['path']} does not contain the expected line to change.")
+            path.write_text(text.replace(change["old"], change["new"]), encoding="utf-8", newline="\n")
+    for wrap in PINS.get("source_wraps", []):
+        if wrap["role"] != role:
+            continue
+        spec = parse_wrap(dest / wrap["wrap"])
+        folder = dest / "subprojects" / spec["directory"]
+        if folder.is_dir():
+            continue
+        source = p.download(spec["source_url"], spec["source_hash"], name=spec["source_filename"])
+        patch = p.download(spec["patch_url"], spec["patch_hash"], name=spec["patch_filename"])
+        with tarfile.open(source) as tar:
+            tar.extractall(dest / "subprojects", filter="data")
+        import zipfile
+        with zipfile.ZipFile(patch) as archive:
+            for info in archive.infolist():
+                target = (dest / "subprojects" / info.filename).resolve()
+                if not target.is_relative_to((dest / "subprojects").resolve()):
+                    raise StepError("Unsafe file name in the Meson wrap patch.")
+            archive.extractall(dest / "subprojects")
+
+
+def parse_wrap(path: Path) -> dict:
+    values = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" in line and not line.lstrip().startswith(("#", "[")):
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip()
+    for key in ("directory", "source_url", "source_hash", "source_filename", "patch_url", "patch_hash", "patch_filename"):
+        if not values.get(key):
+            raise StepError(f"{path.name} has no {key}.")
+    if not values["source_url"].startswith(("http://zlib.net/", "https://zlib.net/")) and "github.com/mesonbuild" not in values["source_url"]:
+        raise StepError(f"{path.name} points at an unexpected source host.")
+    if not values["patch_url"].startswith("https://wrapdb.mesonbuild.com/"):
+        raise StepError(f"{path.name} points at an unexpected patch host.")
+    return values
 
 
 def step_user_sources(p: Provisioner):
@@ -287,10 +336,27 @@ def step_user_sources(p: Provisioner):
 
 
 def step_native_sdk(p: Provisioner):
+    """The SDK exactly as the editor builder's pins were made (see toolchain.json native_sdk.why)."""
     spec = PINS["native_sdk"]
     fork = next(s for s in PINS["sources"] if s["role"] == spec["fork_role"])
     sdk = p.deps / "native-sdk"
-    if not (p.done("native-sdk", fork["commit"]) and (sdk / ".ps5-sdk-revision").is_file()):
+    pin = [spec["base_release_sha256"], spec["addons"]["sha256"], fork["commit"],
+           hashlib.sha256(json.dumps(spec["wrapper_fixes"]).encode()).hexdigest()]
+    if not p.done("native-sdk", pin):
+        if sdk.exists():
+            shutil.rmtree(sdk)
+        # 1. The official payload SDK release (unzip keeps its file modes and links).
+        unpacked = p.build / "sdk-release"
+        if unpacked.exists():
+            shutil.rmtree(unpacked)
+        unpacked.mkdir(parents=True)
+        base = p.download(spec["base_release"], spec["base_release_sha256"],
+                          name="ps5-payload-sdk-" + spec["base_release"].split("/")[-2] + ".zip")
+        p.run(["unzip", "-q", base, "-d", unpacked])
+        (unpacked / spec["base_prefix"].rstrip("/")).rename(sdk)
+        # 2. The official pacbrew bundle over it.
+        install_addons(p, sdk, spec["addons"])
+        # 3. The PS5 fork's headers and compiler wrappers on top.
         tree = p.build / "sdk-fork-export"
         if tree.exists():
             shutil.rmtree(tree)
@@ -298,18 +364,67 @@ def step_native_sdk(p: Provisioner):
         archive = subprocess.run(["git", "-C", p.deps / "sources" / spec["fork_role"], "archive", fork["commit"]],
                                  capture_output=True, check=True).stdout
         p.run(["tar", "-x", "-C", tree], input_bytes=archive)
-        # The fork's own script downloads the official v0.42 release and checks its SHA-256.
-        script = (tree / spec["setup_script"]).read_text()
-        if spec["base_release_sha256"] not in script or spec["base_release"] not in script:
-            raise StepError("The SDK fork's setup script no longer pins the expected v0.42 release.")
-        p.run(["bash", tree / spec["setup_script"], sdk, fork["commit"], p.cache], cwd=tree)
+        for source, dest in spec["fork_overlay"]:
+            if source.endswith("/"):
+                (sdk / dest).mkdir(parents=True, exist_ok=True)
+                p.run(["cp", "-a", "--remove-destination", f"{tree / source}/.", f"{sdk / dest}/"])
+            else:
+                shutil.copy2(tree / source, sdk / dest)
+        # 4. Quoting fixes so the wrappers work in folders with spaces.
+        for name, old, new in spec["wrapper_fixes"]:
+            target = sdk / name
+            text = target.read_text()
+            if old not in text:
+                raise StepError(f"{name} no longer contains the line its quoting fix expects.")
+            target.write_text(text.replace(old, new))
         count, bad = verify_tree("native-sdk", sdk)
         if bad:
             raise StepError(f"native-sdk differs from the builder's pins in {len(bad)} files (e.g. {bad[0]}).")
-        p.mark("native-sdk", fork["commit"], checked_files=count)
+        p.mark("native-sdk", pin, checked_files=count)
     # One SDK serves both roles the builder names.
     p.link(p.deps / "payload-sdk", Path("native-sdk"))
-    return f"Payload SDK v0.42 + PS5 fork {fork['commit'][:12]} ({p.state['native-sdk']['checked_files']} headers checked)."
+    return (f"Payload SDK v0.44 + pacbrew v0.41.1 + PS5 fork {fork['commit'][:12]} "
+            f"({p.state['native-sdk']['checked_files']} headers checked).")
+
+
+def install_addons(p: Provisioner, sdk: Path, addons: dict):
+    """Unpack the SDK folder of the official pacbrew bundle over the SDK."""
+    archive = p.download(addons["url"], addons["sha256"], name="ps5-payload-dev-" + addons["url"].split("/")[-2] + ".tar.gz")
+    into = sdk / addons.get("into", "")
+    into.mkdir(parents=True, exist_ok=True)
+    prefix = addons["subtree"]
+    with tarfile.open(archive) as tar:
+        members = []
+        for member in tar.getmembers():
+            if member.name.startswith(prefix) and len(member.name) > len(prefix):
+                member.name = member.name[len(prefix):]
+                if member.islnk():  # hard links name their target by its full path in the archive
+                    if not member.linkname.startswith(prefix):
+                        continue
+                    member.linkname = member.linkname[len(prefix):]
+                if member.issym():  # e.g. target/include_common: the release has an empty folder there
+                    there = into / member.name
+                    if there.is_dir() and not there.is_symlink():
+                        if any(there.iterdir()):
+                            raise StepError(f"{member.name} is a link in the bundle but a non-empty folder in the SDK.")
+                        there.rmdir()
+                members.append(member)
+        tar.errorlevel = 2  # a member that cannot be written is an error, not a silent skip
+        tar.extractall(into, members=members, filter="data")
+
+
+def verify_link_inputs(p: Provisioner) -> list[str]:
+    """The builder's link step checks these tool and library files by SHA-256; check them here first."""
+    plan = json.loads((BUILDER / "link-plan.json").read_text(encoding="utf-8"))
+    bad = []
+    for item in plan["required_files"]:
+        if item["path"].startswith("${dependencies}/"):
+            path = p.deps / item["path"][len("${dependencies}/"):]
+            if not path.is_file():
+                bad.append("missing " + item["path"][16:])
+            elif file_sha256(path) != item["sha256"]:
+                bad.append("different " + item["path"][16:])
+    return bad
 
 
 def step_system_links(p: Provisioner):
@@ -397,11 +512,12 @@ def step_glslang(p: Provisioner):
 
 def step_translator(p: Provisioner):
     source, headers = git_tool(p, "spirv-llvm-translator"), git_tool(p, "spirv-headers-translator")
-    pin = [p.state["git:spirv-llvm-translator"]["pin"], p.state["git:spirv-headers-translator"]["pin"]]
+    pin = [p.state["git:spirv-llvm-translator"]["pin"], p.state["git:spirv-headers-translator"]["pin"], "rpath"]
     if not p.done("translator", pin):
         cmake_build(p, "translator", source, [f"-DLLVM_DIR={LLVM}/lib/cmake/llvm",
                     f"-DLLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR={headers}", "-DLLVM_SPIRV_INCLUDE_TESTS=OFF",
-                    "-DLLVM_SPIRV_ENABLE_LIBSPIRV_DIS=OFF", "-DBUILD_SHARED_LIBS=ON", "-DLLVM_LINK_LLVM_DYLIB=ON"],
+                    "-DLLVM_SPIRV_ENABLE_LIBSPIRV_DIS=OFF", "-DBUILD_SHARED_LIBS=ON", "-DLLVM_LINK_LLVM_DYLIB=ON",
+                    f"-DCMAKE_INSTALL_RPATH={p.prefix}/lib"],
                     install=True)
         p.mark("translator", pin)
     return "SPIRV-LLVM-Translator built."
@@ -475,27 +591,42 @@ def step_mesa_clc(p: Provisioner):
 
 
 def step_native_tool(p: Provisioner):
+    """Built exactly as the editor builder's pin was made: clang++-21 -O2 against Ubuntu's zlib (-lz).
+    The result is byte-for-byte the pinned ps5-native-tool (48bb5f0b...)."""
     vulkan = p.deps / "sources" / "vulkan-port-source"
-    item = next(d for d in PINS["downloads"] if d["name"] == "zlib")
-    pin = [p.state["source:vulkan-port-source"]["pin"], item["sha256"]]
+    pin = [p.state["source:vulkan-port-source"]["pin"], "system-zlib"]
     if not p.done("ps5-native-tool", pin):
-        zsrc, zroot = p.src / "zlib", p.build / "zlib-root"
-        p.extract(p.download(item["url"], item["sha256"]), zsrc)
-        if zroot.exists():
-            shutil.rmtree(zroot)
-        env = p.env(CC=LLVM / "bin" / "clang", AR=LLVM / "bin" / "llvm-ar", RANLIB=LLVM / "bin" / "llvm-ranlib")
-        p.run(["./configure", "--static", "--prefix=/usr"], cwd=zsrc, env=env)
-        p.run(["make", f"-j{p.jobs}"], cwd=zsrc, env=env)
-        p.run(["make", f"DESTDIR={zroot}", "install"], cwd=zsrc, env=env)
         native = vulkan / "tooling" / "native"
         out = p.deps / "native-tools" / "ps5-native-tool"
         out.parent.mkdir(parents=True, exist_ok=True)
         p.run([LLVM / "bin" / "clang++", "-std=c++20", "-O2", "-Wall", "-Wextra", "-Werror",
-               f"-I{zroot}/usr/include", native / "native_app_builder.cpp", native / "self_container.cpp",
-               native / "elf_object.cpp", native / "sce_module_writer.cpp", zroot / "usr" / "lib" / "libz.a",
-               "-o", out])
+               "native_app_builder.cpp", "self_container.cpp", "elf_object.cpp", "sce_module_writer.cpp",
+               "-lz", "-o", out], cwd=native)
         p.mark("ps5-native-tool", pin)
-    return "ps5-native-tool built from PS5_Vulkan (zlib 1.3.2, SHA-256 checked)."
+    return "ps5-native-tool built from PS5_Vulkan against Ubuntu's zlib."
+
+
+def stage_plain_checkout(p: Provisioner, source: Path) -> Path:
+    """ReXGlue's CMake insists each vendored submodule folder has a `.git` entry. A folder copied
+    without git (files only) has everything else, so build from a hard-linked copy that gets an
+    empty git repository in each submodule folder that has files. Your own folder is never written to."""
+    gitmodules = source / ".gitmodules"
+    paths = re.findall(r"^\s*path\s*=\s*(\S+)", gitmodules.read_text(), re.M) if gitmodules.is_file() else []
+    need = [d for d in paths if (source / d).is_dir() and any((source / d).iterdir()) and not (source / d / ".git").exists()]
+    if not need:
+        return source
+    staged = p.deps / ".provision" / "build" / "rexglue-source"
+    if staged.exists():
+        shutil.rmtree(staged)
+    staged.parent.mkdir(parents=True, exist_ok=True)
+    if subprocess.run(["cp", "-al", str(source), str(staged)], capture_output=True).returncode != 0:
+        shutil.rmtree(staged, ignore_errors=True)  # different drive: hard links impossible, copy instead
+        p.run(["cp", "-a", str(source), str(staged)])
+    for d in need:  # a real (empty) repository: some vendored builds read HEAD from it
+        p.run(["git", "-C", str(staged / d), "init", "-q"])
+        p.run(["git", "-C", str(staged / d), "-c", "user.name=Ex-Box Setup", "-c", "user.email=setup@localhost",
+               "commit", "-q", "--allow-empty", "-m", "files copied without git"])
+    return staged
 
 
 def step_rexglue_tool(p: Provisioner):
@@ -505,9 +636,19 @@ def step_rexglue_tool(p: Provisioner):
         return None  # waits for your folder
     pin = item["commit"]
     if not p.done("rexglue-tool", pin):
-        build = cmake_build(p, "rexglue", source.resolve(), ["-DCMAKE_CXX_STANDARD=23", "-DCMAKE_C_FLAGS=-march=x86-64-v2",
+        lost = [f.name for f in (source / "thirdparty/libmspack/cabextract/mspack").glob("*.[ch]") if f.stat().st_size == 0]
+        if lost:
+            raise StepError("Your ReXGlue folder has empty files where git keeps links "
+                            f"(thirdparty/libmspack/cabextract/mspack/{lost[0]} and {len(lost) - 1} more). That happens "
+                            "when it is cloned or copied on Windows. Clone it inside Ubuntu instead: "
+                            "git clone --recursive https://github.com/rexglue/rexglue-sdk.git, then check out "
+                            f"commit {pin[:8]} and run git submodule update --init --recursive.")
+        built_from = stage_plain_checkout(p, source.resolve())
+        build = cmake_build(p, "rexglue", built_from, ["-DCMAKE_CXX_STANDARD=23", "-DCMAKE_C_FLAGS=-march=x86-64-v2",
                             "-DCMAKE_CXX_FLAGS=-march=x86-64-v2", "-DREXGLUE_BUILD_TESTS=OFF"], targets=["rexglue"])
-        found = sorted((q for q in build.rglob("rexglue") if q.is_file() and os.access(q, os.X_OK)),
+        # ReXGlue writes its program to <source>/out/<platform>/, not to the build folder
+        found = sorted((q for where in (build, built_from / "out") if where.is_dir()
+                        for q in where.rglob("rexglue") if q.is_file() and os.access(q, os.X_OK)),
                        key=lambda q: len(q.parts))
         if not found:
             raise StepError("The ReXGlue build produced no rexglue program.")
@@ -518,6 +659,13 @@ def step_rexglue_tool(p: Provisioner):
         p.link(p.deps / "host-tools" / "rexglue", binary)
         p.mark("rexglue-tool", pin, version=version.strip())
     return f"rexglue {p.state['rexglue-tool'].get('version', '')} built from your ReXGlue folder."
+
+
+def step_link_inputs(p: Provisioner):
+    bad = verify_link_inputs(p)
+    if bad:
+        raise StepError(f"{len(bad)} files the editor links against differ from the builder's pins: " + ", ".join(bad[:4]))
+    return "Every SDK library and tool the editor links against matches the builder's pins."
 
 
 STEPS = [
@@ -537,6 +685,7 @@ STEPS = [
     ("mesa-clc", "Building Mesa's shader tools", step_mesa_clc),
     ("ps5-native-tool", "Building the PS5 app converter", step_native_tool),
     ("rexglue-tool", "Building ReXGlue", step_rexglue_tool),
+    ("link-inputs", "Checking the files the editor links against", step_link_inputs),
 ]
 
 
@@ -561,7 +710,7 @@ def provision(deps: Path, jobs: int, rexglue=None, xex=None, only=None) -> tuple
             result = dict(status="needs-apt", step=name, missing=need.missing, commands=need.commands,
                           why=PINS["platform"]["apt_base_why"] + " " + PINS["platform"]["llvm"]["why"])
             return 3, result
-        except (StepError, subprocess.CalledProcessError, OSError, urllib.error.URLError) as error:
+        except (StepError, subprocess.CalledProcessError, OSError, urllib.error.URLError, KeyError, ValueError, tarfile.TarError) as error:
             return 1, dict(status="failed", step=name, error=str(error), steps=results, notes=p.notes)
         results.append(dict(step=name, text=text or "Waiting for your ReXGlue folder."))
     summary = dict(status="ready", dependencies=str(deps), steps=results, notes=p.notes)
