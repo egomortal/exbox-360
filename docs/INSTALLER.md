@@ -108,13 +108,17 @@ builds that folder itself, inside WSL, with no admin rights:
 
 Provisioning reached `ready` (17 steps). The editor builder then passed all 11 stages: compile, link,
 verify, companions, package. Every packaged companion matches `validation.json` exactly, including
-`sce_module/libc.prx` (`e6ff45d1...`) and both splash images made from the user's original. The
-`eboot.bin` was `1b6c96bd...`, not the recorded `ef199349...`, because **the program embeds its build
-folder's path** (122 absolute source paths from `__FILE__`, e.g.
-`<work>/build-<time>/native-work/source/project/...`). Every build folder gives a different eboot from
-the same code. So the recorded hash can only be matched by building in the owner's original folder;
-for users, the builder's own checks (all PASS) are the real proof. Making it folder-independent needs
-`-ffile-prefix-map` in the builder's recipe, which changes the pinned hashes: owner's call.
+`sce_module/libc.prx` (`e6ff45d1...`) and both splash images made from the user's original.
+
+**The eboot is now the same in every folder (owner decision, 2026-11-11).** The program used to embed
+its build folder's path (122 absolute paths from `__FILE__`, plus the shader pack's developer fallback
+folder `AE_SOURCE_DIR`), so each folder gave a different eboot and the old recorded `ef199349...` could
+only be matched in the owner's original folder. The builder now maps the build folder to `/exbox/run`
+and the dependencies folder to `/exbox/deps` in every compile (`native_graph.py`, and the PCH in
+`workflow.py`). Two full builds in different folders gave the same eboot,
+**`21dbf785...`**, now recorded in `validation.json` and `BUILD-STATUS.md`, with no build-folder path
+inside. That fallback folder never exists on the console, so behaviour is unchanged. A builder test
+compiles the same source in two folders and checks the objects are identical.
 
 Also found: a ReXGlue folder cloned or copied on **Windows** loses its links (43 empty files, 15 of
 them compiled), so Setup now says to clone it inside Ubuntu. A folder copied without git is fine:

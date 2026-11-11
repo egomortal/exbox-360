@@ -144,6 +144,9 @@ def compile_native(inputs, run, spec, graph_path):
             for s in pch['native_compile_argv']]
     if any('${' in s for s in argv):
         raise ValueError('Unresolved PCH command placeholder')
+    stable_run = Path(run).resolve(strict=True)
+    argv = (native_graph.stable_defines(argv, stable_run, dependencies)
+            + native_graph.stable_path_flags(stable_run, dependencies))
     attempt_root = run / 'workflow-receipts'
     index = 1
     while (attempt_root / ('compile-attempt-%02d' % index)).exists():

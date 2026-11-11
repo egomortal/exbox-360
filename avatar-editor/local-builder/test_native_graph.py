@@ -68,6 +68,24 @@ class NativeGraphTests(unittest.TestCase):
         self.assertEqual(len(receipt['units']), 2)
         self.assertTrue((self.run / 'native-graph-result.json').is_file())
 
+    def test_objects_do_not_depend_on_the_build_folder(self):
+        objects = []
+        for name in ('first-folder', 'a-much-longer-second-build-folder'):
+            run = self.root / name / 'run'
+            run.mkdir(parents=True)
+            source = run / 'where.c'
+            source.write_text('const char *graph_fixture_where(void) { return __FILE__; }\n'
+                              'const char *graph_fixture_home(void) { return AE_SOURCE_DIR; }\n')
+            plan = {'schema': 1, 'archives': [], 'units': [{
+                'id': 'where', 'source': 'where.c', 'source_sha256': native_graph.digest(source),
+                'output': 'objects/where.o', 'optimization': '-O2',
+                'argv': [self.cc, '-O2', '-g', '-DAE_SOURCE_DIR="${run}/data"', '-c', '${run}/where.c', '-o', '${run}/objects/where.o']}]}
+            native_graph.execute(plan, run, self.dependencies, self.app)
+            objects.append((run / 'objects/where.o').read_bytes())
+        self.assertEqual(objects[0], objects[1])
+        self.assertIn(native_graph.STABLE_RUN.encode(), objects[0])
+        self.assertNotIn(str(self.root).encode(), objects[0])
+
     def test_later_source_hash_mismatch_prevents_all_compiles(self):
         (self.run / 'second.c').write_text('int graph_fixture_changed(void) { return 99; }\n')
         with self.assertRaisesRegex(native_graph.GraphError, 'Source version differs: second'):

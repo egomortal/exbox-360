@@ -59,6 +59,33 @@ def write_archive(destination, members):
                 target.write(b'\n')
 
 
+STABLE_RUN = '/exbox/run'
+STABLE_DEPENDENCIES = '/exbox/deps'
+
+
+def stable_path_flags(run, dependencies):
+    """Compiled code names its source files (__FILE__, debug info). Remap the build folder and the
+    dependencies folder to fixed names so the same sources give the same bytes in any folder."""
+    return ['-ffile-prefix-map=' + str(run) + '=' + STABLE_RUN,
+            '-ffile-prefix-map=' + str(dependencies) + '=' + STABLE_DEPENDENCIES]
+
+
+# -D values that only name a folder the program might look in at run time (never one the compiler
+# opens). AE_SOURCE_DIR is the shader pack's developer fallback; the console never has that folder.
+RUNTIME_PATH_DEFINES = ('AE_SOURCE_DIR',)
+
+
+def stable_defines(argv, run, dependencies):
+    """Give those runtime-only folder names the same fixed names, so they do not carry the build
+    folder into the program. Include paths (e.g. O1HEAP_CONFIG_HEADER) are left alone."""
+    out = []
+    for arg in argv:
+        if arg.startswith('-D') and arg[2:].split('=', 1)[0] in RUNTIME_PATH_DEFINES:
+            arg = arg.replace(str(run), STABLE_RUN).replace(str(dependencies), STABLE_DEPENDENCIES)
+        out.append(arg)
+    return out
+
+
 def execute(plan, run, dependencies, app):
     if plan.get('schema') != 1 or not plan.get('units'):
         raise GraphError('Missing source build graph')
@@ -94,7 +121,8 @@ def execute(plan, run, dependencies, app):
         cwd = run if not unit.get('cwd') else relative_file(run, unit['cwd'])
         if not cwd.is_dir():
             raise GraphError('Compilation working directory does not exist: ' + unit['id'])
-        argv = expand(unit['argv'])
+        argv = (stable_defines(expand(unit['argv']), run, roots['dependencies'])
+                + stable_path_flags(run, roots['dependencies']))
         def command_path(option):
             if argv.count(option) != 1 or argv.index(option) + 1 >= len(argv):
                 return None
