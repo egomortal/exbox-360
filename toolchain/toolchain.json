@@ -1,0 +1,277 @@
+{
+  "schema": 1,
+  "description": "Pinned build tools for the Avatar Editor builder (and the dashboard's native build). Every item comes from its official upstream at an exact commit or a SHA-256-checked release file. Nothing here is rehosted by Ex-Box.",
+  "layout": "Matches avatar-editor/local-builder/README.md: sources/, native-sdk/, payload-sdk/, llvm21/, dxc/, native-tools/, host-tools/, python/",
+  "platform": {
+    "distro": "Ubuntu",
+    "release": "24.04",
+    "apt_base": [
+      "build-essential",
+      "git",
+      "curl",
+      "wget",
+      "unzip",
+      "xz-utils",
+      "rsync",
+      "util-linux",
+      "cmake",
+      "ninja-build",
+      "bison",
+      "flex",
+      "pkg-config",
+      "zlib1g-dev",
+      "python3",
+      "python3.12-venv",
+      "python3-pil",
+      "python3-mako",
+      "python3-yaml",
+      "spirv-tools"
+    ],
+    "apt_base_why": "Compilers, build systems and Python modules used to build the tools below. python3-pil must be Ubuntu 24.04's Pillow 10.2.0 (FreeType 2.13.2, raqm 0.10.1): the editor's companion images are checked against hashes made with exactly that build.",
+    "llvm": {
+      "repo": "https://apt.llvm.org",
+      "suite": "llvm-toolchain-noble-21",
+      "key_url": "https://apt.llvm.org/llvm-snapshot.gpg.key",
+      "version": "1:21.1.8~++20251221032922+2078da43e25a-1~exp1~20251221153059.70",
+      "packages": [
+        "clang-21",
+        "lld-21",
+        "llvm-21",
+        "llvm-21-dev",
+        "llvm-21-tools",
+        "libclang-cpp21",
+        "libclang-cpp21-dev",
+        "libclang-rt-21-dev"
+      ],
+      "prefix": "/usr/lib/llvm-21",
+      "why": "Clang 21.1.8 (commit 2078da43, the llvmorg-21.1.8 tag) compiles the editor. The exact package build is pinned so the compiled editor matches the validated one."
+    }
+  },
+  "sources": [
+    {
+      "role": "mesa-source",
+      "git": "https://github.com/mihawk-99/PS5_Mesa.git",
+      "commit": "1ba9874f478657ccf6da72ce55f0260164cc0bd0",
+      "licence": "MIT (Mesa)"
+    },
+    {
+      "role": "payload-sdk-source",
+      "git": "https://github.com/mihawk-99/PS5_PayloadSDK.git",
+      "commit": "b83202be73e930050e00de0f1b4d9ec46c0391bf",
+      "licence": "GPL-3.0"
+    },
+    {
+      "role": "vulkan-port-source",
+      "git": "https://github.com/mihawk-99/PS5_Vulkan.git",
+      "commit": "f410e67a0241b3e8edcdbcd2a9b285dfc4a412ed",
+      "licence": "GPL-3.0"
+    },
+    {
+      "role": "glm-source",
+      "git": "https://github.com/g-truc/glm.git",
+      "commit": "6f14f4792a0cde5d0cf2c910506724d61cb95834",
+      "licence": "MIT / Happy Bunny"
+    },
+    {
+      "role": "fast-float-source",
+      "git": "https://github.com/fastfloat/fast_float.git",
+      "commit": "50a80a73ab2ab256ba1c3bf86923ddd8b4202bc7",
+      "licence": "Apache-2.0 / MIT / BSL-1.0"
+    },
+    {
+      "role": "avatar_editor",
+      "git": "https://github.com/panedivitasei/AvatarEditorRecomp.git",
+      "commit": "c7910196da96d0c5b6e3170f77c3c928156a214c",
+      "licence": "none stated upstream; fetched by you from its official page, not redistributed by Ex-Box"
+    }
+  ],
+  "tool_sources": [
+    {
+      "role": "rexglue_sdk",
+      "git": "https://github.com/rexglue/rexglue-sdk.git",
+      "commit": "c94f5ebdcb3c9d1a460ca48e04f9758448f8d518",
+      "submodules": true,
+      "license": "BSD-3-Clause",
+      "also_builds": "host-tools/rexglue",
+      "why": "Recompiler runtime compiled into the editor; also builds the rexglue tool."
+    },
+    {
+      "role": "xex-tool",
+      "git": "https://github.com/mrtitanic777/XexTool-RE.git",
+      "commit": "c421d3772ff9b6d5cd4798edbc01f7d0570f1081",
+      "submodules": false,
+      "license": "MIT",
+      "why": "Reads the user's own avatareditor.xex."
+    }
+  ],
+  "native_sdk": {
+    "fork_role": "payload-sdk-source",
+    "base_release": "https://github.com/ps5-payload-dev/sdk/releases/download/v0.44/ps5-payload-sdk.zip",
+    "base_release_sha256": "4d06eab777bb135705b5a6816688c9132efb246093fe606ac488ab6cf65ca5b0",
+    "base_prefix": "ps5-payload-sdk/",
+    "addons": {
+      "url": "https://github.com/ps5-payload-dev/pacbrew-repo/releases/download/v0.41.1/ps5-payload-dev.tar.gz",
+      "sha256": "e811bc2e4676c5bb7f80a8fe928d2985dce599996a5ca6b54da3e72699287887",
+      "subtree": "opt/ps5-payload-sdk/"
+    },
+    "fork_overlay": [
+      [
+        "include/freebsd/",
+        "target/include/"
+      ],
+      [
+        "include/khronos/",
+        "target/include/"
+      ],
+      [
+        "include/ps5/",
+        "target/include/ps5/"
+      ],
+      [
+        "platform/include/ps5platform/",
+        "target/include/ps5platform/"
+      ],
+      [
+        "host/bin/prospero-clang",
+        "bin/prospero-clang"
+      ],
+      [
+        "host/bin/prospero-clang++",
+        "bin/prospero-clang++"
+      ]
+    ],
+    "wrapper_fixes": [
+      [
+        "bin/prospero-clang",
+        "$($SCRIPT_DIR/prospero-llvm-config --version",
+        "$(\"$SCRIPT_DIR/prospero-llvm-config\" --version"
+      ],
+      [
+        "bin/prospero-clang++",
+        "$($SCRIPT_DIR/prospero-llvm-config --version",
+        "$(\"$SCRIPT_DIR/prospero-llvm-config\" --version"
+      ],
+      [
+        "bin/prospero-lld",
+        "LDSCRIPT=\"-T${PS5_PAYLOAD_SDK}/ldscripts/elf_x86_64.x\"",
+        "LDSCRIPT=(-T \"${PS5_PAYLOAD_SDK}/ldscripts/elf_x86_64.x\")"
+      ],
+      [
+        "bin/prospero-lld",
+        "LDSCRIPT=\"\"",
+        "LDSCRIPT=()"
+      ],
+      [
+        "bin/prospero-lld",
+        "$PIE $LDSCRIPT --eh-frame-hdr",
+        "$PIE \"${LDSCRIPT[@]}\" --eh-frame-hdr"
+      ]
+    ],
+    "why": "The SDK the editor builder was pinned against: the official payload SDK v0.44 release, the official pacbrew-repo v0.41.1 bundle installed over it (its libc++abi.a and libunwind.a replace the SDK's), the PS5 fork's headers and compiler wrappers copied on top, and three quoting fixes so the wrappers work in folders with spaces. The editor builds its own platform library from source."
+  },
+  "git_tools": [
+    {
+      "name": "spirv-headers-tools",
+      "git": "https://github.com/KhronosGroup/SPIRV-Headers.git",
+      "commit": "29981f65241605e08b0ede4cfeb999fe3b723c6a"
+    },
+    {
+      "name": "spirv-headers-translator",
+      "git": "https://github.com/KhronosGroup/SPIRV-Headers.git",
+      "commit": "b8a32968473ce852a809b9de5f04f02a5a9dfa78"
+    },
+    {
+      "name": "spirv-tools",
+      "git": "https://github.com/KhronosGroup/SPIRV-Tools.git",
+      "commit": "9a49b0883b9b635689a85b5647dbfcb223268151"
+    },
+    {
+      "name": "glslang",
+      "git": "https://github.com/KhronosGroup/glslang.git",
+      "commit": "168d452a4f460d24b588fed08477a81c44ee27a1"
+    },
+    {
+      "name": "spirv-llvm-translator",
+      "git": "https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git",
+      "commit": "0b421acdd1dc8cc7e4d1a436e65511d7784ce522"
+    },
+    {
+      "name": "dxc",
+      "git": "https://github.com/microsoft/DirectXShaderCompiler.git",
+      "commit": "416fab6b5c4ba956a320d9131102304da995edfc",
+      "sparse": [
+        "include/dxc"
+      ],
+      "why": "Open-source shader compiler headers only (include/dxc); no compiled Microsoft files."
+    }
+  ],
+  "downloads": [
+    {
+      "name": "clang-src",
+      "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/clang-21.1.8.src.tar.xz",
+      "sha256": "6090e3f23720d003cdd84483a47d0eec6d01adbb5e0c714ac0c8b58de546aa62"
+    },
+    {
+      "name": "libclc-src",
+      "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/libclc-21.1.8.src.tar.xz",
+      "sha256": "6c2677362a53531c35edf482bdc9171ea0471ca0a1e9138ac9b5a1782925616f"
+    },
+    {
+      "name": "llvm-cmake-src",
+      "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/cmake-21.1.8.src.tar.xz",
+      "sha256": "85735f20fd8c81ecb0a09abb0c267018475420e93b65050cc5b7634eab744de9"
+    }
+  ],
+  "python_wheels": [
+    {
+      "name": "meson==1.9.1",
+      "file": "meson-1.9.1-py3-none-any.whl",
+      "sha256": "f824ab770c041a202f532f69e114c971918ed2daff7ea56583d80642564598d0"
+    },
+    {
+      "name": "Mako==1.3.10",
+      "file": "mako-1.3.10-py3-none-any.whl",
+      "sha256": "baef24a52fc4fc514a0887ac600f9f1cff3d82c61d4d700a1fa84d597b88db59"
+    },
+    {
+      "name": "MarkupSafe==3.0.2",
+      "file": "MarkupSafe-3.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "e17c96c14e19278594aa4841ec148115f9c7615a47382ecb6b82bd8fea3ab0c8"
+    },
+    {
+      "name": "PyYAML==6.0.2",
+      "file": "PyYAML-6.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "80bab7bfc629882493af4aa31a4cfa43a4c57c83813253626916b8c7ada83476"
+    }
+  ],
+  "source_transforms": [
+    {
+      "role": "mesa-source",
+      "path": "meson.build",
+      "old": "  dep_clang = cpp.find_library('clang-cpp', dirs : llvm_libdir, required : false)\n",
+      "new": "# AV2 private host build: reuse installed versioned Clang without writing a system symlink.\n  dep_clang = cpp.find_library('clang-cpp', dirs : [llvm_libdir, '/tmp/exbox-av2-q2-prefix/lib'], required : false)\n",
+      "why": "The editor builder pins the Mesa meson.build with this one-line host-build change (an extra library search folder for Clang's libclang-cpp). Applied exactly, then checked against the builder's hash."
+    },
+    {
+      "role": "xex-tool",
+      "path": "src/compress/lzx.cpp",
+      "old": "        if (rem) read(rem);\n    }\n",
+      "new": "        if (rem) read(rem);\n    }\n    void align_uncompressed() { int rem = bitsleft_ & 15; read(rem ? rem : 16); }\n"
+    },
+    {
+      "role": "xex-tool",
+      "path": "src/compress/lzx.cpp",
+      "old": "                    br.align16();\n                    br.drain_to_byte();\n",
+      "new": "                    // Uncompressed headers require 1..16 alignment bits.\n                    // At an exact word boundary, a full pad word is present.\n                    br.align_uncompressed();\n                    br.drain_to_byte();\n",
+      "line_endings": "crlf",
+      "why": "The owner's fix to XexTool-RE's LZX decoder (MIT): an uncompressed block header needs 1..16 alignment bits, including a full word when already aligned. Not on the official project yet. Applied exactly, saved with the CRLF line endings the builder's pin has (f3f85f00...), then checked against that hash."
+    }
+  ],
+  "source_wraps": [
+    {
+      "role": "mesa-source",
+      "wrap": "subprojects/zlib.wrap",
+      "why": "Mesa's own wrap file pins zlib 1.3.1 (zlib.net) and its Meson WrapDB build patch by SHA-256; the builder pins the resulting files."
+    }
+  ]
+}

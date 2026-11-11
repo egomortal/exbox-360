@@ -23,6 +23,7 @@ class Branding(unittest.TestCase):
             db = sqlite3.connect(p)
             self.assertIn('"size":14', db.execute("select ConceptInfoJson from tbl_conceptmetadata").fetchone()[0])
             self.assertEqual(db.execute("select titleName from tbl_contentinfo where titleId='PPSA00001'").fetchone()[0], "Some Game")
+            db.close()  # Windows cannot remove the temporary folder while the file is open
 
     def test_default_icons_exist(self):
         for t, path in b.make_icons("default", None, None, Path(".")).items():

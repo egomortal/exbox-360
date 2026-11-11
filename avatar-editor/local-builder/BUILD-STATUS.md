@@ -10,6 +10,12 @@ Validated locally on November 5, 2026. The source-only download requires users' 
 - Fresh focused delay, Sort/Filter and production splash-loader gates PASS with fatal ASan/UBSan. Actual generated 1080p/4K images passed the decoder. Existing six companions remain byte-identical.
 - Builder unit tests and launcher syntax pass; see the validation receipt for the final count.
 
-Eboot SHA256: `ef199349102fb2f37f694441d8819d1e2b95a66407530063323f7ef5553ffde0`.
+Eboot SHA256: `21dbf78554d03517e5aaee0aa793046186f32e7abf4fbe91fdf290b3bf64dcdc`.
+
+Builds are folder-independent (2026-11-11): every compile maps the build folder to `/exbox/run` and the
+dependencies folder to `/exbox/deps` (`-ffile-prefix-map`), and the shader pack's developer fallback
+folder (`AE_SOURCE_DIR`) gets the same fixed name. Two full builds in different folders gave the same
+eboot and native ELF (`e248a9e5...`), with no build-folder path inside. The earlier `ef199349...` held
+the original build folder's paths and is replaced by this hash; packaged companions are unchanged.
 
 This is an authored static layout using original Xbox artwork, not the animated retail boot sequence. Private generated preview inspected. No console contact, native execution, startup-time claim, installation or publishing. Prior full Save/Discard/Cancel/replay proof remains reused only for unchanged delay/save source; no fresh whole-application run is claimed.
