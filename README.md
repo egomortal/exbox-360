@@ -9,9 +9,9 @@ and press **Run**.
 
 ## See it running
 
-Recorded on a PS5 running Ex-Box 360 (sound removed):
+A guided tour recorded on a PS5 running Ex-Box 360: the Blades, NXE, Kinect and Metro looks, avatars, the Guide, Videos and Theater Party (sound removed):
 
-https://github.com/user-attachments/assets/3749fd93-71f0-4655-ae6a-9061cb75e496
+https://github.com/user-attachments/assets/94f58c5a-42eb-4a39-99cb-f6c0623c92a8
 
 ## What works today
 - Your real avatar, with friends, on the dashboard.
