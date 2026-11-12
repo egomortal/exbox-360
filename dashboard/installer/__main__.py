@@ -1,7 +1,7 @@
 """Ex-Box Setup entry point.
 
     python -m installer                         open the installer window
-    python -m installer scan FOLDER             show the found / missing / unlocks checklist
+    python -m installer scan FOLDER|ZIP         show the found / missing / unlocks checklist
     python -m installer scan [FOLDER] --link URL --i-have-the-right   also use files from a link
     python -m installer install FOLDER --practice     full install into a practice folder (no PS5)
     python -m installer install FOLDER --console IP   install to a PS5 (asks first)
@@ -23,9 +23,9 @@ MARK = {"found": "[FOUND]  ", "download": "[FETCH]  ", "partial": "[PARTLY] ", "
         "build": "[BUILD]  ", "notneeded": "[N/A]    "}
 
 
-def do_scan(folder, links: linksource.Links | None = None) -> dict:
-    extra = links.folders() if links else []
-    return catalog.scan(folder or None, catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD], extra=extra)
+def do_scan(folder, links: linksource.Links) -> dict:
+    """The checklist for a folder (or a ZIP file), plus any files added from links."""
+    return catalog.scan_all(folder or None, links, catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD])
 
 
 def add_links(args) -> linksource.Links | None:
@@ -146,9 +146,9 @@ def main(argv=None) -> int:
         return server.serve(port=getattr(args, "port", 0), browser=not getattr(args, "no_browser", False))
     links = None
     try:
-        links = add_links(args)
-        if args.action in ("scan", "install") and not args.folder and not links:
-            raise ValueError("Give a folder, or files from a link with --link.")
+        if args.action in ("scan", "install") and not args.folder and not getattr(args, "link", None):
+            raise ValueError("Give a folder or a ZIP file, or files from a link with --link.")
+        links = add_links(args) or (linksource.Links() if args.action in ("scan", "install") else None)
         if args.action == "scan":
             result = do_scan(args.folder, links)
             if args.json:

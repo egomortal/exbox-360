@@ -123,13 +123,15 @@ def make_opener(resolve=socket.getaddrinfo, *extra_handlers):
     return opener
 
 
-# ---------- GitHub repository and release pages ----------
+# ---------- GitHub repository, branch and release pages ----------
 _GH = re.compile(r"^/([A-Za-z0-9._-]+)/([A-Za-z0-9._-]+?)(?:\.git)?(/.*)?$")
 
 
 def resolve_github(url: str, read_json) -> list[str] | None:
-    """A github.com repository or release page -> the file links it stands for (None if it is neither).
-    Repository: its default-branch archive. Release: that release's assets."""
+    """A github.com repository, branch/tag or release page -> the file links it stands for.
+    Repository page: its default-branch archive. Branch or tag page (/tree/<name>): that archive.
+    Release page: that release's files. Anything else (including the link behind the Download ZIP
+    button) is not a page and is downloaded as it is (None)."""
     parts = urllib.parse.urlsplit(url)
     if (parts.hostname or "").lower() not in ("github.com", "www.github.com"):
         return None
@@ -138,14 +140,17 @@ def resolve_github(url: str, read_json) -> list[str] | None:
         return None
     owner, repo, rest = match.group(1), match.group(2), match.group(3) or ""
     api = f"{GITHUB_API}/repos/{owner}/{repo}"
-    if rest in ("",):
+    if rest == "":
         branch = read_json(api).get("default_branch")
         if not branch:
             raise LinkError("That repository's default branch could not be found.")
-        return [f"{api}/zipball/{urllib.parse.quote(branch)}"]
+        return [f"{api}/zipball/{urllib.parse.quote(branch, safe='/')}"]
+    if rest.startswith("/tree/") and len(rest) > len("/tree/"):
+        ref = urllib.parse.unquote(rest[len("/tree/"):])
+        return [f"{api}/zipball/{urllib.parse.quote(ref, safe='/')}"]
     release = re.fullmatch(r"/releases(?:/tag/([^/]+)|/latest)?", rest)
     if release:
-        if rest == "/releases" or rest == "/releases/latest":
+        if rest in ("/releases", "/releases/latest"):
             data = read_json(f"{api}/releases/latest")
         else:
             data = read_json(f"{api}/releases/tags/{urllib.parse.quote(urllib.parse.unquote(release.group(1)))}")
@@ -153,7 +158,51 @@ def resolve_github(url: str, read_json) -> list[str] | None:
         if not assets:
             raise LinkError("That release has no files attached.")
         return assets
-    return None  # any other github.com page or file link is downloaded as it is
+    return None
+
+
+# ---------- plain-English messages (none of them repeat the link) ----------
+FALLBACK = "Download it in your browser instead, then choose the downloaded file or folder in Setup."
+SIGN_IN = ("That link needs a sign-in, or is private or no longer there. " + FALLBACK
+           + " Setup never asks for passwords or tokens.")
+LFS_TEXT = ("This download contains placeholders, not the real files (it was stored with Git LFS). "
+            "Download the files themselves and point Setup at them.")
+LFS_HEAD = b"version https://git-lfs.github.com/spec/"
+
+
+class Cancelled(LinkError):
+    pass
+
+
+def _http_error(error: urllib.error.HTTPError) -> LinkError:
+    error.close()
+    if error.code in (401, 403, 404, 407, 451):
+        return LinkError(SIGN_IN)
+    return LinkError(f"The link answered with an error ({error.code}). " + FALLBACK)
+
+
+def _timed_out() -> LinkError:
+    return LinkError(f"The download timed out (no data for {TIMEOUT} seconds). " + FALLBACK)
+
+
+def _too_big(limit: int, budget: list[int]) -> str:
+    if limit < PER_DOWNLOAD_CAP:
+        return (f"That is larger than the space left for links in this session (the {TOTAL_CAP >> 30} GB "
+                f"session limit; {max(limit, 0) / (1 << 30):.1f} GB left). " + FALLBACK)
+    return f"That is larger than {PER_DOWNLOAD_CAP >> 30} GB, the most Setup takes from one link. " + FALLBACK
+
+
+def lfs_placeholders(folder: Path) -> int:
+    """How many Git LFS pointer files (small text stand-ins for the real files) a folder holds."""
+    count = 0
+    for path in folder.rglob("*"):
+        try:
+            if path.is_file() and not path.is_symlink() and path.stat().st_size < 1024:
+                with path.open("rb") as f:
+                    count += f.read(len(LFS_HEAD)) == LFS_HEAD
+        except OSError:
+            continue
+    return count
 
 
 # ---------- downloading ----------
@@ -165,36 +214,48 @@ def _file_name(response, url: str, index: int) -> str:
     return name or f"download-{index}"
 
 
-def download(url: str, folder: Path, budget: list[int], opener, index: int = 1) -> tuple[Path, int, str]:
+def download(url: str, folder: Path, budget: list[int], opener, index: int = 1, progress=None,
+             cancel=None) -> tuple[Path, int, str]:
     """Stream one link into folder. budget[0] is what is left of the session's total cap.
-    Returns (file, size, sha256)."""
-    check_url(url, getattr(opener, "resolve", socket.getaddrinfo))
+    progress(done, total_or_None) is called as data arrives; cancel.is_set() stops the download and
+    removes the partial file. Returns (file, size, sha256)."""
+    resolve = getattr(opener, "resolve", socket.getaddrinfo)
+    check_url(url, resolve)
     try:
         response = opener.open(urllib.request.Request(url), timeout=TIMEOUT)
     except urllib.error.HTTPError as error:
-        error.close()
-        raise LinkError(f"The link answered with an error ({error.code}).") from None
+        raise _http_error(error) from None
     except LinkError:
         raise
-    except (urllib.error.URLError, OSError, ValueError):
-        raise LinkError("The link could not be reached.") from None
+    except TimeoutError:
+        raise _timed_out() from None
+    except (urllib.error.URLError, OSError, ValueError) as error:
+        if isinstance(getattr(error, "reason", None), TimeoutError):
+            raise _timed_out() from None
+        raise LinkError("The link could not be reached. " + FALLBACK) from None
     with response:
-        final = response.geturl()
-        check_url(final, getattr(opener, "resolve", socket.getaddrinfo))
+        check_url(response.geturl(), resolve)
         declared = response.headers.get("Content-Length")
+        total = int(declared) if declared and declared.isdigit() else None
         limit = min(PER_DOWNLOAD_CAP, budget[0])
-        if declared and declared.isdigit() and int(declared) > limit:
+        if total is not None and total > limit:
             raise LinkError(_too_big(limit, budget))
         folder.mkdir(parents=True, exist_ok=True)
-        path = folder / _file_name(response, final, index)
+        path = folder / _file_name(response, response.geturl(), index)
         digest, size = hashlib.sha256(), 0
         try:
             with path.open("xb") as out:
+                if progress:
+                    progress(0, total)
                 while True:
+                    if cancel is not None and cancel.is_set():
+                        raise Cancelled("Cancelled. Nothing from that link was kept.")
                     try:
                         chunk = response.read(CHUNK)
+                    except TimeoutError:
+                        raise _timed_out() from None
                     except (OSError, ValueError):
-                        raise LinkError("The download stopped before it finished.") from None
+                        raise LinkError("The download stopped before it finished. " + FALLBACK) from None
                     if not chunk:
                         break
                     size += len(chunk)
@@ -202,6 +263,8 @@ def download(url: str, folder: Path, budget: list[int], opener, index: int = 1) 
                         raise LinkError(_too_big(limit, budget))
                     digest.update(chunk)
                     out.write(chunk)
+                    if progress:
+                        progress(size, total)
         except BaseException:
             path.unlink(missing_ok=True)
             raise
@@ -209,50 +272,46 @@ def download(url: str, folder: Path, budget: list[int], opener, index: int = 1) 
     return path, size, digest.hexdigest()
 
 
-def _too_big(limit: int, budget: list[int]) -> str:
-    if limit < PER_DOWNLOAD_CAP:
-        return (f"That download is larger than the space left for links in this session "
-                f"({limit / (1 << 30):.1f} GB of {TOTAL_CAP >> 30} GB). Use a folder on this PC for large files.")
-    return (f"That download is larger than {PER_DOWNLOAD_CAP >> 30} GB, the most Setup takes from one link. "
-            "Use a folder on this PC for large files.")
-
-
 # ---------- safe ZIP extraction ----------
-def safe_extract(archive: Path, dest: Path, budget: list[int]) -> int:
-    """Unpack a ZIP without trusting it. Returns the number of files written."""
+def safe_extract(archive: Path, dest: Path, budget: list[int], cancel=None) -> int:
+    """Unpack a ZIP without trusting it (downloaded or already on this PC). Returns files written."""
     try:
         zf = zipfile.ZipFile(archive)
     except (zipfile.BadZipFile, OSError):
-        raise LinkError("A downloaded ZIP file is damaged.") from None
+        raise LinkError("A ZIP file is damaged, so it was not unpacked.") from None
     with zf:
         members = zf.infolist()
         if len(members) > MAX_MEMBERS:
-            raise LinkError("A downloaded ZIP file holds too many files.")
+            raise LinkError("A ZIP file holds too many files to unpack.")
         planned = 0
         for m in members:
             name = m.filename.replace("\\", "/")
             parts = [p for p in name.split("/") if p not in ("", ".")]
             if name.startswith("/") or re.match(r"^[A-Za-z]:", name) or ".." in parts:
-                raise LinkError("A downloaded ZIP file tries to write outside its own folder.")
+                raise LinkError("A ZIP file tries to write outside its own folder, so it was not unpacked.")
             kind = (m.external_attr >> 16) & 0o170000
             if kind == stat.S_IFLNK or (kind and kind not in (stat.S_IFREG, stat.S_IFDIR)):
-                raise LinkError("A downloaded ZIP file contains links, which Setup does not unpack.")
+                raise LinkError("A ZIP file contains links, which Setup does not unpack.")
             if m.file_size > PER_DOWNLOAD_CAP:
-                raise LinkError("A downloaded ZIP file holds a file that is too large.")
+                raise LinkError(f"A ZIP file holds a file that is too large (over {PER_DOWNLOAD_CAP >> 30} GB) "
+                                "to unpack. Unpack it yourself and choose the folder instead.")
             if m.file_size > (1 << 20) and m.file_size > MAX_RATIO * max(m.compress_size, 1):
-                raise LinkError("A downloaded ZIP file is compressed suspiciously far, so it was not unpacked.")
+                raise LinkError("A ZIP file is compressed suspiciously far, so it was not unpacked.")
             planned += m.file_size
         if planned > budget[0]:
-            raise LinkError(_too_big(budget[0], budget))
+            raise LinkError(f"A ZIP file unpacks to more than the space left this session (the "
+                            f"{TOTAL_CAP >> 30} GB limit). Unpack it yourself and choose the folder instead.")
         written = 0
         root = dest.resolve()
         for m in members:
+            if cancel is not None and cancel.is_set():
+                raise Cancelled("Cancelled. Nothing from it was kept.")
             parts = [p for p in m.filename.replace("\\", "/").split("/") if p not in ("", ".")]
             if not parts:
                 continue
             target = root.joinpath(*parts)
             if not target.resolve().is_relative_to(root):
-                raise LinkError("A downloaded ZIP file tries to write outside its own folder.")
+                raise LinkError("A ZIP file tries to write outside its own folder, so it was not unpacked.")
             if m.is_dir():
                 target.mkdir(parents=True, exist_ok=True)
                 continue
@@ -265,28 +324,31 @@ def safe_extract(archive: Path, dest: Path, budget: list[int]) -> int:
                         break
                     size += len(chunk)
                     if size > m.file_size:  # the header lied about the size
-                        raise LinkError("A downloaded ZIP file is damaged.")
+                        raise LinkError("A ZIP file is damaged, so it was not unpacked.")
                     out.write(chunk)
             written += 1
         budget[0] -= planned
         return written
 
 
-# ---------- one Setup session's links ----------
+# ---------- one Setup session's links and ZIP files ----------
 class Links:
-    """The links added in one Setup session. Keeps folders, sizes and fingerprints; never the links."""
+    """Files added in one Setup session from links or from ZIP files on this PC, each unpacked into its
+    own temporary folder. Keeps folders, sizes and fingerprints; never the links."""
 
     def __init__(self, opener=None, temp_root: Path | None = None):
         self.opener = opener or make_opener()
         self.root = Path(tempfile.mkdtemp(prefix="exbox-links-", dir=temp_root))
         self.budget = [TOTAL_CAP]
         self.entries: list[dict] = []
+        self._zips: dict[tuple, dict] = {}  # a ZIP on this PC is unpacked once per session
 
     def folders(self) -> list[tuple[str, Path]]:
         return [(e["label"], Path(e["folder"])) for e in self.entries]
 
     def summary(self) -> list[dict]:
-        return [dict(label=e["label"], files=e["files"], size=e["size"]) for e in self.entries]
+        return [dict(label=e["label"], files=e["files"], size=e["size"], warnings=e.get("warnings", []))
+                for e in self.entries if e["kind"] == "link"]
 
     def _read_json(self, url: str) -> dict:
         try:
@@ -294,41 +356,74 @@ class Links:
                                   timeout=TIMEOUT) as response:
                 return json.loads(response.read(4 << 20))
         except urllib.error.HTTPError as error:
-            error.close()
-            raise LinkError(f"GitHub answered with an error ({error.code}) for that page.") from None
+            raise _http_error(error) from None
+        except TimeoutError:
+            raise _timed_out() from None
         except (urllib.error.URLError, OSError, ValueError):
-            raise LinkError("GitHub could not be reached for that page.") from None
+            raise LinkError("GitHub could not be reached for that page. " + FALLBACK) from None
 
-    def add(self, url: str, consent: bool, log=None) -> dict:
-        """Download one link into its own folder. Returns its summary (no link in it)."""
+    def _warnings(self, folder: Path) -> list[str]:
+        return [LFS_TEXT] if lfs_placeholders(folder) else []
+
+    def add(self, url: str, consent: bool, log=None, progress=None, cancel=None) -> dict:
+        """Download one link into its own folder. Returns its summary (no link in it).
+        progress(text, done, total_or_None) reports bytes as they arrive."""
         if consent is not True:
             raise LinkError("Tick \"" + CONSENT_TEXT + "\" first. Nothing was downloaded.")
         check_url(url, getattr(self.opener, "resolve", socket.getaddrinfo))
-        index = len(self.entries) + 1
+        index = sum(e["kind"] == "link" for e in self.entries) + 1
         label = f"from link {index}"
         folder = self.root / f"link-{index}"
         try:
             targets = resolve_github(url.strip(), self._read_json) or [url.strip()]
             files, total, prints = 0, 0, []
             for n, target in enumerate(targets, 1):
-                path, size, sha = download(target, folder / "downloads", self.budget, self.opener, n)
+                step = f"file {n} of {len(targets)}" if len(targets) > 1 else "download"
+                report = (lambda done, size, step=step: progress(step, done, size)) if progress else None
+                path, size, sha = download(target, folder / "downloads", self.budget, self.opener, n, report, cancel)
                 total += size
                 prints.append(dict(size=size, sha256=sha))
                 if log:
                     log(f"Downloaded a file from a link: {size:,} bytes, sha256 {sha}")
                 if zipfile.is_zipfile(path):
-                    files += safe_extract(path, folder / path.stem, self.budget)
+                    if progress:
+                        progress("unpacking", size, size)
+                    files += safe_extract(path, folder / path.stem, self.budget, cancel)
                     path.unlink()
                 else:
                     files += 1
+            warnings = self._warnings(folder)
         except BaseException:
             shutil.rmtree(folder, ignore_errors=True)
             raise
-        entry = dict(label=label, folder=str(folder), files=files, size=total, downloads=prints)
+        entry = dict(kind="link", label=label, folder=str(folder), files=files, size=total, downloads=prints,
+                     warnings=warnings)
         self.entries.append(entry)
-        return dict(label=label, files=files, size=total, downloads=prints)
+        return dict(label=label, files=files, size=total, downloads=prints, warnings=warnings)
+
+    def add_zip(self, archive: Path, cancel=None) -> dict:
+        """Unpack a ZIP file already on this PC (no download, no link) with the same safe extraction."""
+        archive = Path(archive).resolve()
+        info = archive.stat()
+        key = (str(archive), info.st_size, info.st_mtime_ns)
+        if key in self._zips:
+            return self._zips[key]
+        index = sum(e["kind"] == "zip" for e in self.entries) + 1
+        folder = self.root / f"zip-{index}"
+        try:
+            files = safe_extract(archive, folder, self.budget, cancel)
+            warnings = self._warnings(folder)
+        except BaseException:
+            shutil.rmtree(folder, ignore_errors=True)
+            raise
+        entry = dict(kind="zip", label=f"inside {archive.name}", folder=str(folder), files=files,
+                     size=info.st_size, warnings=warnings)
+        self.entries.append(entry)
+        self._zips[key] = entry
+        return entry
 
     def close(self):
-        """Delete everything downloaded in this session."""
+        """Delete everything downloaded or unpacked in this session."""
         shutil.rmtree(self.root, ignore_errors=True)
         self.entries.clear()
+        self._zips.clear()

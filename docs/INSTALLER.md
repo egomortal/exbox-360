@@ -59,8 +59,24 @@ A convenience for using your own files from a link, for example your own cloud s
   the checklist is the same: only files that pass the normal checks are used, and everything else is
   ignored. Several links can be added, and links work together with a folder. Files from links show
   in the checklist as `from link 1/...`.
-- Accepted: an https link to a single file or a ZIP archive, or a GitHub repository page (its
-  default-branch archive) or release page (that release's files). Nothing else is treated specially.
+- Accepted: an https link to a single file or a ZIP archive (including the link behind GitHub's
+  **Download ZIP** button), a GitHub repository page (Setup fetches its default-branch archive), a
+  branch or tag page (`.../tree/<name>`, that archive) or a release page (that release's files).
+  Nothing else is treated specially.
+- **A ZIP already on this PC needs no link:** pick it with **Choose ZIP file…** (or type its path), or
+  leave it in the chosen folder. Any ZIP the checklist does not use as it is gets unpacked with the
+  same safe extraction and scanned; files show as `inside <name>.zip/...`. ZIPs inside a ZIP are not
+  unpacked again, and an unsafe or damaged ZIP is listed under the problems while the rest still works.
+- **Progress and Cancel:** the window shows the size downloaded so far, and the total when the server
+  reports it. **Cancel** stops the download and removes the partial file.
+- **Plain-English failures**, each with the same fallback ("download it in your browser instead, then
+  choose the downloaded file or folder in Setup"):
+  - a link that needs a sign-in, is private or is gone (401, 403, 404): says so; Setup never asks for
+    or stores passwords or tokens;
+  - Git LFS placeholders (small pointer files instead of the real files): "this download contains
+    placeholders, not the real files"; they are also named in the scan, wherever they are;
+  - too large: names the cap that was hit (8 GB per link or 32 GB per session); timed out: says no
+    data arrived for 60 seconds.
 - Setup never suggests a link and shows no example; where files come from is the user's choice.
 - **The link is never kept.** It is not written to `install-record.json`, the PC-side record, logs,
   settings or error messages, and the window clears the box after a download. Records and logs say
@@ -72,7 +88,7 @@ A convenience for using your own files from a link, for example your own cloud s
   no entry is oversize or compressed more than 200 to 1. The temporary folder is deleted when Setup
   closes, when you press **Remove files from links**, and straight away if a download fails.
 - Not supported yet: archives other than ZIP (`.7z`, `.rar`, `.tar`) are kept as plain files, so
-  their contents are not scanned. The address check happens before connecting, so a name whose
+  their contents are not scanned. The command line shows no download progress (Ctrl+C cancels). The address check happens before connecting, so a name whose
   address changes between the check and the connection is not caught (DNS rebinding).
 
 ## What Setup looks for

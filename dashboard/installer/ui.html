@@ -85,10 +85,11 @@
     <h2><span class="n">1</span>Your files</h2>
     <div class="row">
       <button class="primary" id="pick">Choose folder…</button>
+      <button id="pick-zip">Choose ZIP file…</button>
       <input type="text" id="folder" placeholder="or paste the folder's path here" aria-label="Folder path">
       <button id="scan">Look inside</button>
     </div>
-    <p class="hint">Your files are only read. Nothing in the folder is changed, moved or uploaded anywhere except your own PS5.</p>
+    <p class="hint">Your files are only read. Nothing in the folder is changed, moved or uploaded anywhere except your own PS5. A ZIP file works too, picked directly or inside the folder: Setup looks inside it.</p>
     <h3>Add files from a link</h3>
     <p class="hint">A convenience for using your own files from a link, for example your own cloud storage, with or instead of a folder. Setup downloads what the link points to into a temporary folder on this PC, checks it exactly like a folder, and deletes it when Setup closes. Only https links. The link itself is not saved anywhere.</p>
     <div class="row">
@@ -96,6 +97,10 @@
       <button id="add-link">Add files from this link</button>
     </div>
     <label class="consent"><input type="checkbox" id="consent"> I have the right to use these files.</label>
+    <div class="row" id="link-progress" hidden>
+      <span id="link-status" role="status"></span>
+      <button id="cancel-link">Cancel</button>
+    </div>
     <ul id="links" class="links"></ul>
     <button id="clear-links" hidden>Remove files from links</button>
     <div class="error" id="scan-error" role="alert"></div>
@@ -237,9 +242,11 @@ function showScan(data, quiet) {
 }
 
 let linkCount = 0;
+const mb = n => (n / 1048576).toFixed(1) + " MB";
 function showLinks(links) {
   linkCount = links.length;
-  fill($("links"), links.map(l => `Files ${l.label}: ${l.files.toLocaleString()} file(s), ${(l.size / 1048576).toFixed(1)} MB`));
+  fill($("links"), links.map(l => `Files ${l.label}: ${l.files.toLocaleString()} file(s), ${mb(l.size)}`
+                                  + (l.warnings && l.warnings.length ? ". " + l.warnings.join(" ") : "")));
   $("clear-links").hidden = !links.length;
 }
 
@@ -248,14 +255,23 @@ async function addLink() {
   const url = $("link").value.trim();
   if (!url) { $("scan-error").textContent = "Paste a link first."; return; }
   if (!$("consent").checked) { $("scan-error").textContent = "Tick \"I have the right to use these files.\" first. Nothing was downloaded."; return; }
-  $("add-link").disabled = true; $("add-link").textContent = "Downloading… (this can take a while)";
+  $("add-link").disabled = true;
   try {
-    const data = await call("add-link", {url, consent: true});
+    await call("add-link", {url, consent: true});
     $("link").value = "";  // the link is not kept, not even in this window
-    showLinks(data.links);
-    await scan();
+    $("link-progress").hidden = false; $("cancel-link").disabled = false;
+    let state;
+    do {
+      await new Promise(r => setTimeout(r, 500));
+      state = await call("link-progress");
+      const what = state.step === "unpacking" ? "Unpacking" : "Downloading" + (state.step && state.step.startsWith("file") ? " " + state.step : "");
+      $("link-status").textContent = `${what}: ${mb(state.done || 0)}` + (state.total ? ` of ${mb(state.total)}` : " so far");
+    } while (state.running);
+    showLinks(state.links);
+    if (state.error) $("scan-error").textContent = state.error;
+    else await scan();
   } catch (error) { $("scan-error").textContent = error.message; }
-  finally { $("add-link").disabled = false; $("add-link").textContent = "Add files from this link"; }
+  finally { $("add-link").disabled = false; $("link-progress").hidden = true; }
 }
 
 async function clearLinks() {
@@ -339,6 +355,13 @@ $("pick").onclick = async () => {
 };
 $("scan").onclick = scan;
 $("add-link").onclick = addLink;
+$("cancel-link").onclick = async () => { $("cancel-link").disabled = true; try { await call("cancel-link"); } catch (e) {} };
+$("pick-zip").onclick = async () => {
+  $("pick-zip").disabled = true;
+  try { const data = await call("pick-zip"); if (data.folder) { $("folder").value = data.folder; await scan(); } }
+  catch (error) { $("scan-error").textContent = error.message; }
+  finally { $("pick-zip").disabled = false; }
+};
 $("clear-links").onclick = clearLinks;
 $("link").addEventListener("keydown", e => { if (e.key === "Enter") addLink(); });
 $("folder").addEventListener("keydown", e => { if (e.key === "Enter") scan(); });

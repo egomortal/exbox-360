@@ -15,6 +15,7 @@ import stat
 import zipfile
 from pathlib import Path
 
+from . import linksource
 from . import helper, ps5x360, release
 
 HERE = Path(__file__).resolve().parent
@@ -297,7 +298,11 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
             return f"{tag}/{rel}" if tag else rel
         return path.name
 
+    used: set[str] = set()  # files the checklist took (so ZIPs it did not recognise can be looked inside)
+    zips: list[Path] = []
+
     def note(item_id, path, sha=None):
+        used.add(str(path))
         found[item_id].append(dict(name=shown(path), size=path.stat().st_size, sha256=sha))
 
     god_dirs = set()
@@ -309,6 +314,12 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
         size = path.stat().st_size
         relative = shown(path)
         parts = [p.lower() for p in path.relative_to(root).parts]
+        if size < 1024 and _head(path, len(linksource.LFS_HEAD)) == linksource.LFS_HEAD:
+            wrong.append(f"{relative}: this is a placeholder, not the real file (it was stored with Git LFS). "
+                         "Download the files themselves and point Setup at them.")
+            continue
+        if ext == ".zip":
+            zips.append(path)
 
         # --- packages (a ready dashboard or editor folder, by title ID) ---
         if name == "eboot.bin" and len(parts) >= 2 and parts[-2] in ("ppsa99735", "ppsa99734"):
@@ -365,6 +376,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                         note("editor", path, hasher.sha256(path))
                         continue
             except (zipfile.BadZipFile, OSError):
+                used.add(str(path))
                 wrong.append(f"{relative}: this ZIP file is damaged.")
                 continue
 
@@ -375,6 +387,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                 sources["ps5x360_zip"] = str(path)
                 note("ps5x360", path, sha)
             else:
+                used.add(str(path))
                 wrong.append(f"{relative}: this is not PS5X360 {ps5x360.VERSION} from the official release "
                              f"(or the download is damaged). The installer will fetch the right one itself.")
             continue
@@ -513,7 +526,33 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
     ordered = [items[item["id"]] for item in checklist_template()]
     return dict(folder=str(roots[0][1]) if not roots[0][0] else "", links=[t for t, _b in roots if t],
                 files_seen=total, items=ordered, wrong=wrong, sources=sources,
+                zips=[str(z) for z in zips if str(z) not in used],
                 preview=preview(ordered, sources))
+
+
+def scan_all(folder, links: "linksource.Links", hasher: Hasher | None = None,
+             package_dirs: list[Path] | None = None) -> dict:
+    """scan() plus ZIP files: a ZIP picked instead of a folder, and any ZIP in the folder (or among a
+    link's files) that the checklist does not use as it is, are unpacked into the session's temporary
+    folder with the same safe extraction as downloads, then everything is scanned together.
+    ZIPs found inside an unpacked ZIP are not unpacked again."""
+    problems = []
+    if folder and Path(folder).is_file() and zipfile.is_zipfile(folder):
+        links.add_zip(Path(folder))  # a ZIP picked directly: an unsafe or damaged one stops here
+        folder = None
+    result = scan(folder, hasher, package_dirs, extra=links.folders())
+    nested = [Path(e["folder"]) for e in links.entries if e["kind"] == "zip"]
+    fresh = [Path(z) for z in result["zips"] if not any(Path(z).is_relative_to(n) for n in nested)]
+    before = len(links.entries)
+    for archive in fresh:
+        try:
+            links.add_zip(archive)
+        except linksource.LinkError as error:
+            problems.append(f"{archive.name}: {error}")
+    if len(links.entries) != before:
+        result = scan(folder, hasher, package_dirs, extra=links.folders())
+    result["wrong"] = problems + result["wrong"]
+    return result
 
 
 def _fill(items, found, sources, pins):
