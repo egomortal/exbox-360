@@ -13,7 +13,7 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from . import VERSION, catalog, engine, ps5x360
+from . import VERSION, catalog, engine, linksource, ps5x360
 from .targets import FtpTarget, discover
 
 PAGE = Path(__file__).resolve().parent / "ui.html"
@@ -26,6 +26,18 @@ class State:
         self.scan = None
         self.job = None
         self.lock = threading.Lock()
+        self._links = None  # files added from links; kept in a temporary folder, never the links
+
+    @property
+    def links(self) -> linksource.Links:
+        if self._links is None:
+            self._links = linksource.Links()
+        return self._links
+
+    def close(self):
+        if self._links is not None:
+            self._links.close()
+            self._links = None
 
 
 def pick_folder() -> str:
@@ -100,13 +112,32 @@ def start_install(state: State, body: dict) -> Job:
 def api(state: State, name: str, body: dict) -> dict:
     if name == "pick-folder":
         return dict(folder=pick_folder())
+    if name == "add-link":
+        if state.job and state.job.result is None:
+            raise ValueError("Wait until the install has finished before adding files.")
+        try:
+            added = state.links.add(str(body.get("url", "")), body.get("consent") is True)
+        except linksource.LinkError:
+            raise  # its messages never contain the link
+        except Exception:
+            # Anything unexpected is reported without its text, which could repeat the link.
+            raise ValueError("That link could not be used. Nothing from it was kept.") from None
+        return dict(added=added, links=state.links.summary())
+    if name == "clear-links":
+        if state.job and state.job.result is None:
+            raise ValueError("Wait until the install has finished.")
+        state.close()
+        return dict(links=[])
     if name == "scan":
-        result = catalog.scan(body.get("folder", ""), catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD])
+        extra = state.links.folders() if state._links is not None else []
+        result = catalog.scan(body.get("folder", "") or None, catalog.Hasher(engine.home() / "hash-cache.json"),
+                              [PAYLOAD], extra=extra)
         state.scan = result
         news = []
         if body.get("mode") != "console":  # the console is only contacted when the user presses a console button
             news = catalog.new_since(result, engine.load_record(engine.practice_target()))
         view = {k: result[k] for k in ("folder", "files_seen", "wrong", "preview")}
+        view["links"] = state.links.summary() if state._links is not None else []
         view["items"] = [dict(item) for item in result["items"]]  # copies: the scan itself stays whole
         view.update(new_since=news, has_loading=bool(result["sources"]["loading"]),
                     has_companion=bool(result["sources"]["companion"]))
@@ -189,4 +220,5 @@ def serve(port: int = 0, browser: bool = True) -> int:
         pass
     finally:
         httpd.server_close()
+        state.close()  # files added from links are deleted when Setup closes
     return 0

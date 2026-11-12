@@ -38,7 +38,7 @@ if not any(d[0].endswith("ui.html") for d in datas):
     sys.exit("Setup's files were not found; run this from a git checkout.")
 
 # Setup is imported from the bundled files at run time, so its imports are listed here.
-hidden = ["argparse", "concurrent.futures", "ftplib", "hashlib", "http.server", "io", "json", "secrets",
+hidden = ["argparse", "concurrent.futures", "email", "ftplib", "ipaddress", "ssl", "urllib.parse", "urllib.response", "hashlib", "http.server", "io", "json", "secrets",
           "shutil", "socket", "sqlite3", "stat", "subprocess", "tempfile", "threading", "urllib.request",
           "webbrowser", "zipfile", "PIL", "PIL.Image", "PIL.ImageDraw",
           "PIL.ImageFont", "PIL.ImageFilter", "PIL.ImageOps", "PIL.ImageChops", "ctypes"]

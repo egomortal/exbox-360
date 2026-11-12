@@ -47,6 +47,34 @@ install logic already matched Ex-Box's, so what was copied is its packaging):
   install. They are the same code as from a checkout, but read their files from the app's unpacked
   folder.
 
+## Add files from a link
+
+A convenience for using your own files from a link, for example your own cloud storage, instead of
+(or as well as) a folder on this PC. Requested by the owner, 2026-11-11.
+
+- In section 1 of the window, paste a link, tick **"I have the right to use these files."** and press
+  **Add files from this link**. Without the tick nothing is downloaded. On the command line:
+  `--link URL --i-have-the-right` on `scan` or `install` (repeatable; the folder becomes optional).
+- What the link points to is downloaded into a temporary folder and scanned exactly like a folder, so
+  the checklist is the same: only files that pass the normal checks are used, and everything else is
+  ignored. Several links can be added, and links work together with a folder. Files from links show
+  in the checklist as `from link 1/...`.
+- Accepted: an https link to a single file or a ZIP archive, or a GitHub repository page (its
+  default-branch archive) or release page (that release's files). Nothing else is treated specially.
+- Setup never suggests a link and shows no example; where files come from is the user's choice.
+- **The link is never kept.** It is not written to `install-record.json`, the PC-side record, logs,
+  settings or error messages, and the window clears the box after a download. Records and logs say
+  only "from a link", with sizes and SHA-256 fingerprints.
+- Safety (`installer/linksource.py`): https only, with no http, ftp, file or local-network addresses,
+  checked again after every redirect; at most 8 GB per download and 32 GB per session, with a
+  message suggesting a local folder for bigger files; 60-second timeouts. Nothing downloaded is run or
+  imported. ZIP files are unpacked only if no entry has an absolute path, a `..` part or a link, and
+  no entry is oversize or compressed more than 200 to 1. The temporary folder is deleted when Setup
+  closes, when you press **Remove files from links**, and straight away if a download fails.
+- Not supported yet: archives other than ZIP (`.7z`, `.rar`, `.tar`) are kept as plain files, so
+  their contents are not scanned. The address check happens before connecting, so a name whose
+  address changes between the check and the connection is not caught (DNS rebinding).
+
 ## What Setup looks for
 
 | Checklist line | Found when the folder has | Installs to |

@@ -2,6 +2,7 @@
 
     python -m installer                         open the installer window
     python -m installer scan FOLDER             show the found / missing / unlocks checklist
+    python -m installer scan [FOLDER] --link URL --i-have-the-right   also use files from a link
     python -m installer install FOLDER --practice     full install into a practice folder (no PS5)
     python -m installer install FOLDER --console IP   install to a PS5 (asks first)
     python -m installer doctor  --practice | --console IP
@@ -14,7 +15,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import VERSION, catalog, engine
+from . import VERSION, catalog, engine, linksource
 from .targets import FtpTarget, LocalTarget
 
 PAYLOAD = Path(__file__).resolve().parent / "payload"  # the dashboard package shipped with a release
@@ -22,12 +23,33 @@ MARK = {"found": "[FOUND]  ", "download": "[FETCH]  ", "partial": "[PARTLY] ", "
         "build": "[BUILD]  ", "notneeded": "[N/A]    "}
 
 
-def do_scan(folder) -> dict:
-    return catalog.scan(folder, catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD])
+def do_scan(folder, links: linksource.Links | None = None) -> dict:
+    extra = links.folders() if links else []
+    return catalog.scan(folder or None, catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD], extra=extra)
+
+
+def add_links(args) -> linksource.Links | None:
+    """Download each --link into a temporary folder (deleted when Setup ends). Prints no links."""
+    if not getattr(args, "link", None):
+        return None
+    if not args.i_have_the_right:
+        raise ValueError(f'Add --i-have-the-right to confirm: "{linksource.CONSENT_TEXT}" Nothing was downloaded.')
+    links = linksource.Links()
+    try:
+        for url in args.link:
+            added = links.add(url, True)
+            print(f"Added {added['label']}: {added['files']} file(s), {added['size']:,} bytes.", file=sys.stderr)
+    except BaseException:
+        links.close()
+        raise
+    return links
 
 
 def print_checklist(result: dict, record: dict | None = None) -> None:
-    print(f"\nFolder: {result['folder']}   ({result['files_seen']:,} files looked at)\n")
+    where = result["folder"] or "files from links"
+    if result["folder"] and result.get("links"):
+        where += " + files from " + str(len(result["links"])) + " link(s)"
+    print(f"\nFolder: {where}   ({result['files_seen']:,} files looked at)\n")
     group = None
     for item in result["items"]:
         if item["group"] != group:
@@ -95,12 +117,12 @@ def main(argv=None) -> int:
     ui.add_argument("--no-browser", action="store_true")
     ui.add_argument("--port", type=int, default=0)
     scan = sub.add_parser("scan", help="show the checklist for a folder")
-    scan.add_argument("folder")
+    scan.add_argument("folder", nargs="?", default="")
     scan.add_argument("--json", action="store_true")
     for name in ("install", "doctor", "restore"):
         p = sub.add_parser(name)
         if name == "install":
-            p.add_argument("folder")
+            p.add_argument("folder", nargs="?", default="")
             p.add_argument("--icons", choices=["xbox", "default"], default="xbox")
             p.add_argument("--no-ps5x360", action="store_true")
             p.add_argument("--no-helper", action="store_true")
@@ -113,14 +135,22 @@ def main(argv=None) -> int:
         where.add_argument("--console", metavar="IP", help="the PS5's address")
         p.add_argument("--target", help="practice folder to use instead of the default one")
         p.add_argument("--port", type=int, default=2121)
+    for p in (scan, sub.choices["install"]):
+        p.add_argument("--link", action="append", metavar="URL",
+                       help="also use files from this https link (repeatable; downloaded to a temporary folder)")
+        p.add_argument("--i-have-the-right", action="store_true", help=f'confirm: "{linksource.CONSENT_TEXT}"')
     args = parser.parse_args(argv)
 
     if args.action in (None, "ui"):
         from . import server
         return server.serve(port=getattr(args, "port", 0), browser=not getattr(args, "no_browser", False))
+    links = None
     try:
+        links = add_links(args)
+        if args.action in ("scan", "install") and not args.folder and not links:
+            raise ValueError("Give a folder, or files from a link with --link.")
         if args.action == "scan":
-            result = do_scan(args.folder)
+            result = do_scan(args.folder, links)
             if args.json:
                 print(json.dumps(result, indent=1))
             else:
@@ -135,7 +165,7 @@ def main(argv=None) -> int:
                 report = engine.restore(target)
                 print(report["summary"])
                 return 0 if report["ok"] else 1
-            result = do_scan(args.folder)
+            result = do_scan(args.folder, links)
             if not args.json:
                 print_checklist(result, engine.load_record(target))
             if not target.practice and not args.yes:
@@ -157,6 +187,9 @@ def main(argv=None) -> int:
     except (ValueError, OSError) as error:
         print("Ex-Box Setup: " + str(error), file=sys.stderr)
         return 2
+    finally:
+        if links:
+            links.close()  # files added from links are deleted when Setup ends
 
 
 if __name__ == "__main__":
