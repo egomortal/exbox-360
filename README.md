@@ -7,6 +7,12 @@ An Xbox 360-style dashboard, with its matching avatar editor, that runs **native
 It is built to install in one go: point the installer at your console, tick **Install everything (recommended)**
 and press **Run**.
 
+## See it running
+
+Recorded on a PS5 running Ex-Box 360 (sound removed):
+
+https://github.com/user-attachments/assets/3749fd93-71f0-4655-ae6a-9061cb75e496
+
 ## What works today
 - Your real avatar, with friends, on the dashboard.
 - A smooth avatar closet with Sort / Filter on Y.
