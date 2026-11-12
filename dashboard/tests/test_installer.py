@@ -2,7 +2,7 @@
 
     python -B tests/test_installer.py
 """
-import hashlib, io, json, os, shutil, sys, tempfile, unittest, urllib.error, urllib.request, zipfile
+import hashlib, io, json, os, shutil, sys, tempfile, unittest, unittest.mock, urllib.error, urllib.request, zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -62,6 +62,12 @@ class Base(unittest.TestCase):
         self.folder = self.tmp / "my files"
         self.console = targets.LocalTarget(self.tmp / "console")
         self.addCleanup(shutil.rmtree, self.tmp, True)
+        # Isolate from the helper source that now ships in the repo's launch-helper/ folder, so the
+        # tests are deterministic whatever is checked in. Tests that exercise the shipped source point
+        # helper.BUNDLED at their own folder.
+        self._real_bundled = helper.BUNDLED
+        helper.BUNDLED = self.tmp / "no-bundled-helper"
+        self.addCleanup(lambda: setattr(helper, "BUNDLED", self._real_bundled))
         zip_path = fake_ps5x360(self.tmp / "release" / "x.zip") if (self.tmp / "release").mkdir() is None else None
         self._pin = (ps5x360.SHA256, ps5x360.SIZE)
         ps5x360.SHA256 = hashlib.sha256(zip_path.read_bytes()).hexdigest()
@@ -661,3 +667,20 @@ class Window(Base):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OneFileApp(unittest.TestCase):
+    """ExBox-Setup.exe: in the frozen app, repository scripts run on WSL's python3 (sys.executable is the app)."""
+
+    def test_scripts_run_on_this_python_from_a_checkout(self):
+        python, path = engine.script_python(Path("dashboard/setup.py"))
+        self.assertEqual(python[0], sys.executable)
+        self.assertEqual(path(Path("x")), "x")
+
+    def test_scripts_run_on_wsl_python_in_the_app(self):
+        with unittest.mock.patch.object(engine.sys, "frozen", True, create=True), \
+                unittest.mock.patch.object(engine.sys, "platform", "win32"), \
+                unittest.mock.patch.object(engine.toolchain, "wsl", lambda p: "/mnt/c/" + Path(p).name):
+            python, path = engine.script_python(Path("C:/app/dashboard/setup.py"))
+        self.assertEqual(python, ["wsl.exe", "--exec", "python3", "-B", "/mnt/c/setup.py"])
+        self.assertEqual(path(Path("C:/f/inputs")), "/mnt/c/inputs")

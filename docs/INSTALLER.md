@@ -1,6 +1,7 @@
 # Ex-Box Setup (installer X18 v2)
 
-One folder, one button. Double-click `dashboard/ExBox Setup.cmd`. A window opens in your browser:
+One folder, one button. Double-click **`ExBox-Setup.exe`** (from the GitHub release; no Python needed),
+or `dashboard/ExBox Setup.cmd` in a checkout. A window opens in your browser:
 
 1. **Choose folder** - the folder that holds your Xbox 360 files. Setup only reads it.
 2. **Where to install** - *Practice run* (a folder on this PC, no PS5 contacted) or *My PS5*.
@@ -23,6 +24,72 @@ python -B tests/test_installer.py                    # 21 checks, no console, no
 
 Run these from `dashboard/`. Python 3.11+ only; no extra packages (Xbox-style icons need Pillow,
 otherwise the Ex-Box default icons are used and Setup says so).
+
+## The one-file app (`ExBox-Setup.exe`)
+
+Packaged the way Omnibloom Setup is (owner decision 2026-11-11: copy its installer approach; its PS5
+install logic already matched Ex-Box's, so what was copied is its packaging):
+
+- `dashboard/run_setup.py` is the app's entry point; `dashboard/exbox-setup.spec` builds one `.exe`
+  with PyInstaller. Only git-tracked files go in: Setup, `dashboard/tools`, `dashboard/installer-icons`,
+  `toolchain/`, `avatar-editor/local-builder/`, `launch-helper/` and `dashboard/setup.py`, with the
+  repository layout, so Setup finds them exactly as in a checkout.
+- Differences from Omnibloom's: the app keeps a small console window (Setup's window is a browser
+  page; the console is how you close it), Tk is left out (Windows uses the system folder picker,
+  and PyInstaller 6.16 cannot bundle Python 3.14's Tk 9), and in the app the art step runs on WSL's
+  `python3`, which Setup needs anyway.
+- `dashboard/build-setup-exe.ps1` builds it on Windows: own venv, Setup's tests, build, then
+  `dashboard/tests/frozen_check.py` runs the built app (version, scan, a practice install into a
+  temporary folder, the window's server) and prints the SHA-256. First build: 20.3 MB, check PASS.
+- `.github/workflows/exbox-setup.yml` does the same on GitHub for each published release and attaches
+  `ExBox-Setup.exe` and its `.sha256` to the release.
+- Not yet run from the app: the WSL steps (tool setup, editor build, art preparation) and a real PS5
+  install. They are the same code as from a checkout, but read their files from the app's unpacked
+  folder.
+
+## Add files from a link
+
+A convenience for using your own files from a link, for example your own cloud storage, instead of
+(or as well as) a folder on this PC. Requested by the owner, 2026-11-11.
+
+- In section 1 of the window, paste a link, tick **"I have the right to use these files."** and press
+  **Add files from this link**. Without the tick nothing is downloaded. On the command line:
+  `--link URL --i-have-the-right` on `scan` or `install` (repeatable; the folder becomes optional).
+- What the link points to is downloaded into a temporary folder and scanned exactly like a folder, so
+  the checklist is the same: only files that pass the normal checks are used, and everything else is
+  ignored. Several links can be added, and links work together with a folder. Files from links show
+  in the checklist as `from link 1/...`.
+- Accepted: an https link to a single file or a ZIP archive (including the link behind GitHub's
+  **Download ZIP** button), a GitHub repository page (Setup fetches its default-branch archive), a
+  branch or tag page (`.../tree/<name>`, that archive) or a release page (that release's files).
+  Nothing else is treated specially.
+- **A ZIP already on this PC needs no link:** pick it with **Choose ZIP file…** (or type its path), or
+  leave it in the chosen folder. Any ZIP the checklist does not use as it is gets unpacked with the
+  same safe extraction and scanned; files show as `inside <name>.zip/...`. ZIPs inside a ZIP are not
+  unpacked again, and an unsafe or damaged ZIP is listed under the problems while the rest still works.
+- **Progress and Cancel:** the window shows the size downloaded so far, and the total when the server
+  reports it. **Cancel** stops the download and removes the partial file.
+- **Plain-English failures**, each with the same fallback ("download it in your browser instead, then
+  choose the downloaded file or folder in Setup"):
+  - a link that needs a sign-in, is private or is gone (401, 403, 404): says so; Setup never asks for
+    or stores passwords or tokens;
+  - Git LFS placeholders (small pointer files instead of the real files): "this download contains
+    placeholders, not the real files"; they are also named in the scan, wherever they are;
+  - too large: names the cap that was hit (8 GB per link or 32 GB per session); timed out: says no
+    data arrived for 60 seconds.
+- Setup never suggests a link and shows no example; where files come from is the user's choice.
+- **The link is never kept.** It is not written to `install-record.json`, the PC-side record, logs,
+  settings or error messages, and the window clears the box after a download. Records and logs say
+  only "from a link", with sizes and SHA-256 fingerprints.
+- Safety (`installer/linksource.py`): https only, with no http, ftp, file or local-network addresses,
+  checked again after every redirect; at most 8 GB per download and 32 GB per session, with a
+  message suggesting a local folder for bigger files; 60-second timeouts. Nothing downloaded is run or
+  imported. ZIP files are unpacked only if no entry has an absolute path, a `..` part or a link, and
+  no entry is oversize or compressed more than 200 to 1. The temporary folder is deleted when Setup
+  closes, when you press **Remove files from links**, and straight away if a download fails.
+- Not supported yet: archives other than ZIP (`.7z`, `.rar`, `.tar`) are kept as plain files, so
+  their contents are not scanned. The command line shows no download progress (Ctrl+C cancels). The address check happens before connecting, so a name whose
+  address changes between the check and the connection is not caught (DNS rebinding).
 
 ## What Setup looks for
 

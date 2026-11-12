@@ -13,7 +13,7 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from . import VERSION, catalog, engine, ps5x360
+from . import VERSION, catalog, engine, linksource, ps5x360
 from .targets import FtpTarget, discover
 
 PAGE = Path(__file__).resolve().parent / "ui.html"
@@ -26,6 +26,64 @@ class State:
         self.scan = None
         self.job = None
         self.lock = threading.Lock()
+        self._links = None  # files added from links; kept in a temporary folder, never the links
+        self.link_job = None  # the download in progress, if any
+
+    @property
+    def links(self) -> linksource.Links:
+        if self._links is None:
+            self._links = linksource.Links()
+        return self._links
+
+    def close(self):
+        if self.link_job and self.link_job.thread.is_alive():
+            self.link_job.cancel.set()
+            self.link_job.thread.join(30)
+        if self._links is not None:
+            self._links.close()
+            self._links = None
+
+
+class LinkJob:
+    """One download running in the background, so the window can show progress and offer Cancel."""
+
+    def __init__(self, links, url: str):
+        self.cancel = threading.Event()
+        self.step, self.done, self.total = "starting", 0, None
+        self.result, self.error = None, None
+        self.thread = threading.Thread(target=self._run, args=(links, url), daemon=True)
+        self.thread.start()
+
+    def _progress(self, step, done, total):
+        self.step, self.done, self.total = step, done, total
+
+    def _run(self, links, url):
+        try:
+            self.result = links.add(url, True, progress=self._progress, cancel=self.cancel)
+        except linksource.LinkError as error:
+            self.error = str(error)  # its messages never contain the link
+        except Exception:
+            # Anything unexpected is reported without its text, which could repeat the link.
+            self.error = "That link could not be used. Nothing from it was kept."
+
+    def view(self) -> dict:
+        return dict(running=self.thread.is_alive(), step=self.step, done=self.done, total=self.total,
+                    added=self.result, error=self.error)
+
+
+def pick_zip() -> str:
+    """Show the normal Windows "open file" box for one ZIP file ('' if cancelled or not on Windows)."""
+    if sys.platform != "win32":
+        return ""
+    script = ("Add-Type -AssemblyName System.Windows.Forms;"
+              "$d=New-Object System.Windows.Forms.OpenFileDialog;"
+              "$d.Title='Pick a ZIP file that holds your Xbox 360 files';"
+              "$d.Filter='ZIP files (*.zip)|*.zip';$d.Multiselect=$false;"
+              "$o=New-Object System.Windows.Forms.Form;$o.TopMost=$true;"
+              "if($d.ShowDialog($o) -eq 'OK'){[Console]::OutputEncoding=[Text.Encoding]::UTF8;$d.FileName}")
+    result = subprocess.run(["powershell.exe", "-NoProfile", "-STA", "-Command", script],
+                            capture_output=True, text=True, encoding="utf-8", errors="replace")
+    return result.stdout.strip()
 
 
 def pick_folder() -> str:
@@ -100,13 +158,44 @@ def start_install(state: State, body: dict) -> Job:
 def api(state: State, name: str, body: dict) -> dict:
     if name == "pick-folder":
         return dict(folder=pick_folder())
+    if name == "pick-zip":
+        return dict(folder=pick_zip())
+    if name == "add-link":
+        if state.job and state.job.result is None:
+            raise ValueError("Wait until the install has finished before adding files.")
+        if state.link_job and state.link_job.thread.is_alive():
+            raise ValueError("A download is already running. Wait for it or press Cancel.")
+        if body.get("consent") is not True:
+            raise linksource.LinkError("Tick \"" + linksource.CONSENT_TEXT + "\" first. Nothing was downloaded.")
+        url = str(body.get("url", ""))
+        linksource.check_url(url, state.links.opener.resolve)  # refuse a bad link before starting
+        state.link_job = LinkJob(state.links, url)
+        return dict(started=True)
+    if name == "link-progress":
+        view = state.link_job.view() if state.link_job else dict(running=False, added=None, error=None)
+        view["links"] = state.links.summary() if state._links is not None else []
+        return view
+    if name == "cancel-link":
+        if state.link_job:
+            state.link_job.cancel.set()
+        return dict(cancelling=True)
+    if name == "clear-links":
+        if state.job and state.job.result is None:
+            raise ValueError("Wait until the install has finished.")
+        state.close()
+        state.link_job = None
+        return dict(links=[])
     if name == "scan":
-        result = catalog.scan(body.get("folder", ""), catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD])
+        if state.link_job and state.link_job.thread.is_alive():
+            raise ValueError("Wait for the download to finish, or press Cancel.")
+        result = catalog.scan_all(body.get("folder", "") or None, state.links,
+                                  catalog.Hasher(engine.home() / "hash-cache.json"), [PAYLOAD])
         state.scan = result
         news = []
         if body.get("mode") != "console":  # the console is only contacted when the user presses a console button
             news = catalog.new_since(result, engine.load_record(engine.practice_target()))
         view = {k: result[k] for k in ("folder", "files_seen", "wrong", "preview")}
+        view["links"] = state.links.summary() if state._links is not None else []
         view["items"] = [dict(item) for item in result["items"]]  # copies: the scan itself stays whole
         view.update(new_since=news, has_loading=bool(result["sources"]["loading"]),
                     has_companion=bool(result["sources"]["companion"]))
@@ -189,4 +278,5 @@ def serve(port: int = 0, browser: bool = True) -> int:
         pass
     finally:
         httpd.server_close()
+        state.close()  # files added from links are deleted when Setup closes
     return 0

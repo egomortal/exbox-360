@@ -69,3 +69,9 @@ __pycache__/
 !/dashboard/installer-icons/*.png
 /installer/payload/
 /dashboard/installer/payload/
+
+# Ex-Box Setup one-file app build (dashboard/build-setup-exe.ps1)
+/dashboard/.venv-setup/
+/dashboard/.build-setup/
+/dashboard/dist/
+/dashboard/.build-setup.log

@@ -15,6 +15,7 @@ import stat
 import zipfile
 from pathlib import Path
 
+from . import linksource
 from . import helper, ps5x360, release
 
 HERE = Path(__file__).resolve().parent
@@ -260,18 +261,26 @@ def checklist_template() -> list[dict]:
     return items
 
 
-def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None = None) -> dict:
-    """Look through one folder and return the checklist. Read-only."""
-    root = Path(folder).expanduser()
-    if not root.is_dir():
-        raise ValueError("That folder was not found. Pick the folder that holds your Xbox 360 files.")
-    root = root.resolve()
+def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None = None,
+         extra: list[tuple[str, Path]] | None = None) -> dict:
+    """Look through one folder, plus any extra folders (files added from links, each shown under its
+    label), and return the checklist. Read-only."""
+    roots: list[tuple[str, Path]] = []
+    if folder:
+        local = Path(folder).expanduser()
+        if not local.is_dir():
+            raise ValueError("That folder was not found. Pick the folder that holds your Xbox 360 files.")
+        roots.append(("", local.resolve()))
+    roots += [(label, Path(path).resolve()) for label, path in extra or [] if Path(path).is_dir()]
+    if not roots:
+        raise ValueError("Pick a folder or add files from a link first.")
+    root = roots[0][1]
     hasher = hasher or Hasher()
     pins = _pins()
     by_size, updates = _registry()
     items = {item["id"]: item for item in checklist_template()}
     found: dict[str, list] = {key: [] for key in items}
-    sources: dict = dict(folder=str(root), editor_originals={}, editor_dependencies=None, editor_package=None,
+    sources: dict = dict(folder=str(roots[0][1]), editor_originals={}, editor_dependencies=None, editor_package=None,
                          dashboard_package=None, prepared_art=None, kit=None, fonts=[], trailers_packed=None,
                          trailer_videos=[], music=[], music_root=None, loading=None, avatar_render=None,
                          ps5x360_zip=None, companion=None, companion_source=None, shared=None, games=[],
@@ -279,18 +288,38 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
     wrong: list[str] = []
     total = 0
 
+    def shown(path: Path) -> str:
+        """A file's name as the checklist shows it: relative to its folder, with a link's label."""
+        for tag, base in roots:
+            try:
+                rel = path.relative_to(base).as_posix()
+            except ValueError:
+                continue
+            return f"{tag}/{rel}" if tag else rel
+        return path.name
+
+    used: set[str] = set()  # files the checklist took (so ZIPs it did not recognise can be looked inside)
+    zips: list[Path] = []
+
     def note(item_id, path, sha=None):
-        relative = path.relative_to(root).as_posix()
-        found[item_id].append(dict(name=relative, size=path.stat().st_size, sha256=sha))
+        used.add(str(path))
+        found[item_id].append(dict(name=shown(path), size=path.stat().st_size, sha256=sha))
 
     god_dirs = set()
-    for path in _files(root):
+    for path in (p for label, root in roots for p in _files(root)):
+        root = next(base for _t, base in roots if path.is_relative_to(base))
         total += 1
         name = path.name.lower()
         ext = path.suffix.lower()
         size = path.stat().st_size
-        relative = path.relative_to(root).as_posix()
+        relative = shown(path)
         parts = [p.lower() for p in path.relative_to(root).parts]
+        if size < 1024 and _head(path, len(linksource.LFS_HEAD)) == linksource.LFS_HEAD:
+            wrong.append(f"{relative}: this is a placeholder, not the real file (it was stored with Git LFS). "
+                         "Download the files themselves and point Setup at them.")
+            continue
+        if ext == ".zip":
+            zips.append(path)
 
         # --- packages (a ready dashboard or editor folder, by title ID) ---
         if name == "eboot.bin" and len(parts) >= 2 and parts[-2] in ("ppsa99735", "ppsa99734"):
@@ -347,6 +376,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                         note("editor", path, hasher.sha256(path))
                         continue
             except (zipfile.BadZipFile, OSError):
+                used.add(str(path))
                 wrong.append(f"{relative}: this ZIP file is damaged.")
                 continue
 
@@ -357,6 +387,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
                 sources["ps5x360_zip"] = str(path)
                 note("ps5x360", path, sha)
             else:
+                used.add(str(path))
                 wrong.append(f"{relative}: this is not PS5X360 {ps5x360.VERSION} from the official release "
                              f"(or the download is damaged). The installer will fetch the right one itself.")
             continue
@@ -442,15 +473,15 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
         if ext == ".iso" and size > 100_000_000:
             sources["games"].append(relative)
         elif name == "default.xex":
-            sources["games"].append(path.parent.relative_to(root).as_posix() or path.name)
+            sources["games"].append(shown(path.parent) if path.parent != root else path.name)
         elif ext == ".god" or (ext == "" and size > 1024 and _head(path, 4) in (b"LIVE", b"PIRS", b"CON ")
                                and size > 50_000_000):
             god_dirs.add(relative)
     sources["games"].extend(sorted(god_dirs))
 
     # editor build tools: a "dependencies" folder laid out as the builder's README describes
-    for candidate in [root / "dependencies", root / "editor-dependencies"] + \
-            [p / "dependencies" for p in root.iterdir() if p.is_dir()]:
+    for candidate in [c for _t, base in roots for c in [base / "dependencies", base / "editor-dependencies"]
+                      + [p / "dependencies" for p in base.iterdir() if p.is_dir()]]:
         if (candidate / "native-sdk").is_dir() and (candidate / "sources").is_dir():
             sources["editor_dependencies"] = str(candidate)
             break
@@ -475,7 +506,7 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
         ready.append(("shared-art", private / "xbox" / "shrdres"))
         for item_id, folder in ready:
             if not found[item_id] and folder.is_dir() and any(folder.iterdir()):
-                found[item_id].append(dict(name=folder.relative_to(root).as_posix() + "/", size=0, sha256=None))
+                found[item_id].append(dict(name=shown(folder) + "/", size=0, sha256=None))
                 items[item_id]["notes"].append("Already prepared by Ex-Box's tools.")
 
     if not sources["companion_source"] and not sources["companion"]:
@@ -487,17 +518,41 @@ def scan(folder, hasher: Hasher | None = None, package_dirs: list[Path] | None =
         built = helper.built_elf(Path(sources["companion_source"]))
         if built:
             sources["companion"] = str(built)
-            try:
-                name = built.relative_to(root).as_posix()
-            except ValueError:
-                name = built.name  # a bundled helper built in Ex-Box's own folder, not the user's
+            name = shown(built)  # a bundled helper built in Ex-Box's own folder shows its file name
             found["companion"].append(dict(name=name, size=built.stat().st_size, sha256=hasher.sha256(built)))
 
     _fill(items, found, sources, pins)
     hasher.save()
     ordered = [items[item["id"]] for item in checklist_template()]
-    return dict(folder=str(root), files_seen=total, items=ordered, wrong=wrong, sources=sources,
+    return dict(folder=str(roots[0][1]) if not roots[0][0] else "", links=[t for t, _b in roots if t],
+                files_seen=total, items=ordered, wrong=wrong, sources=sources,
+                zips=[str(z) for z in zips if str(z) not in used],
                 preview=preview(ordered, sources))
+
+
+def scan_all(folder, links: "linksource.Links", hasher: Hasher | None = None,
+             package_dirs: list[Path] | None = None) -> dict:
+    """scan() plus ZIP files: a ZIP picked instead of a folder, and any ZIP in the folder (or among a
+    link's files) that the checklist does not use as it is, are unpacked into the session's temporary
+    folder with the same safe extraction as downloads, then everything is scanned together.
+    ZIPs found inside an unpacked ZIP are not unpacked again."""
+    problems = []
+    if folder and Path(folder).is_file() and zipfile.is_zipfile(folder):
+        links.add_zip(Path(folder))  # a ZIP picked directly: an unsafe or damaged one stops here
+        folder = None
+    result = scan(folder, hasher, package_dirs, extra=links.folders())
+    nested = [Path(e["folder"]) for e in links.entries if e["kind"] == "zip"]
+    fresh = [Path(z) for z in result["zips"] if not any(Path(z).is_relative_to(n) for n in nested)]
+    before = len(links.entries)
+    for archive in fresh:
+        try:
+            links.add_zip(archive)
+        except linksource.LinkError as error:
+            problems.append(f"{archive.name}: {error}")
+    if len(links.entries) != before:
+        result = scan(folder, hasher, package_dirs, extra=links.folders())
+    result["wrong"] = problems + result["wrong"]
+    return result
 
 
 def _fill(items, found, sources, pins):

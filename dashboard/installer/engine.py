@@ -47,6 +47,15 @@ def home() -> Path:
     return path
 
 
+def script_python(script: Path):
+    """How to run one of the repository's Python scripts, and how to name paths for it.
+    In the one-file app (ExBox-Setup.exe) sys.executable is the app itself, so scripts run on WSL's
+    python3 (which Setup needs anyway for the build tools); from a checkout they run on this Python."""
+    if getattr(sys, "frozen", False) and sys.platform == "win32":
+        return ["wsl.exe", "--exec", "python3", "-B", toolchain.wsl(script)], toolchain.wsl
+    return [sys.executable, str(script)], str
+
+
 def is_self(remote: str) -> bool:
     return remote.endswith("/eboot.bin") or remote.endswith(SELF_SUFFIXES)
 
@@ -469,13 +478,13 @@ class Installer:
         """Turn original dashboard files into ready art with the existing setup.py pipeline (local only)."""
         out = self.work / "prepared"
         inputs = Path(self.src["folder"])
-        python = [sys.executable, str(DASHBOARD / "setup.py")]
+        python, path = script_python(DASHBOARD / "setup.py")
         if not (inputs / "dashboard-resources").is_dir():
             inputs = self.work / "inputs"
-            self._run(python + ["--inputs", str(inputs), "--intake", *self.src["dashboard_inputs"]],
+            self._run(python + ["--inputs", path(inputs), "--intake", *map(path, self.src["dashboard_inputs"])],
                       "Sorting your dashboard files")
         self.tick(index, total, title, 0.1, "Preparing art from your files")
-        self._run(python + ["--inputs", str(inputs), "--output", str(out), "--components", "dashboard"],
+        self._run(python + ["--inputs", path(inputs), "--output", path(out), "--components", "dashboard"],
                   "Preparing dashboard art")
         return str(out / "private")
 

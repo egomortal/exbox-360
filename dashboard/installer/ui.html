@@ -25,6 +25,7 @@
           display: inline-flex; align-items: center; justify-content: center; flex: none; }
   section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  #link { flex: 1 1 320px; } .consent { display: block; margin: 8px 0; } .links { margin: 6px 0; }
   input[type=text] { flex: 1 1 320px; min-width: 0; background: #0b0e0c; color: var(--text); border: 1px solid var(--line);
                      border-radius: 10px; padding: 12px 14px; font: inherit; }
   input[type=text]:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
@@ -81,13 +82,27 @@
   <p class="lead">Pick the folder that holds your Xbox 360 files. Setup shows what it found and what each thing unlocks, then one button installs everything it can.</p>
 
   <section>
-    <h2><span class="n">1</span>Your folder</h2>
+    <h2><span class="n">1</span>Your files</h2>
     <div class="row">
       <button class="primary" id="pick">Choose folder…</button>
+      <button id="pick-zip">Choose ZIP file…</button>
       <input type="text" id="folder" placeholder="or paste the folder's path here" aria-label="Folder path">
       <button id="scan">Look inside</button>
     </div>
-    <p class="hint">Your files are only read. Nothing in the folder is changed, moved or uploaded anywhere except your own PS5.</p>
+    <p class="hint">Your files are only read. Nothing in the folder is changed, moved or uploaded anywhere except your own PS5. A ZIP file works too, picked directly or inside the folder: Setup looks inside it.</p>
+    <h3>Add files from a link</h3>
+    <p class="hint">A convenience for using your own files from a link, for example your own cloud storage, with or instead of a folder. Setup downloads what the link points to into a temporary folder on this PC, checks it exactly like a folder, and deletes it when Setup closes. Only https links. The link itself is not saved anywhere.</p>
+    <div class="row">
+      <input type="url" id="link" aria-label="Link to your files" autocomplete="off" spellcheck="false">
+      <button id="add-link">Add files from this link</button>
+    </div>
+    <label class="consent"><input type="checkbox" id="consent"> I have the right to use these files.</label>
+    <div class="row" id="link-progress" hidden>
+      <span id="link-status" role="status"></span>
+      <button id="cancel-link">Cancel</button>
+    </div>
+    <ul id="links" class="links"></ul>
+    <button id="clear-links" hidden>Remove files from links</button>
     <div class="error" id="scan-error" role="alert"></div>
   </section>
 
@@ -183,7 +198,9 @@ function fill(list, lines) { list.replaceChildren(...lines.map(t => el("li", nul
 
 function showScan(data, quiet) {
   scanned = data;
-  $("scan-note").textContent = `Looked at ${data.files_seen.toLocaleString()} files in ${data.folder}`;
+  const where = [data.folder, data.links && data.links.length ? `files from ${data.links.length} link(s)` : ""].filter(Boolean).join(" + ");
+  $("scan-note").textContent = `Looked at ${data.files_seen.toLocaleString()} files in ${where}`;
+  showLinks(data.links || []);
   const box = $("checklist"); box.replaceChildren();
   let group = null;
   for (const item of data.items) {
@@ -224,10 +241,48 @@ function showScan(data, quiet) {
   if (!quiet) $("result").hidden = true;
 }
 
+let linkCount = 0;
+const mb = n => (n / 1048576).toFixed(1) + " MB";
+function showLinks(links) {
+  linkCount = links.length;
+  fill($("links"), links.map(l => `Files ${l.label}: ${l.files.toLocaleString()} file(s), ${mb(l.size)}`
+                                  + (l.warnings && l.warnings.length ? ". " + l.warnings.join(" ") : "")));
+  $("clear-links").hidden = !links.length;
+}
+
+async function addLink() {
+  $("scan-error").textContent = "";
+  const url = $("link").value.trim();
+  if (!url) { $("scan-error").textContent = "Paste a link first."; return; }
+  if (!$("consent").checked) { $("scan-error").textContent = "Tick \"I have the right to use these files.\" first. Nothing was downloaded."; return; }
+  $("add-link").disabled = true;
+  try {
+    await call("add-link", {url, consent: true});
+    $("link").value = "";  // the link is not kept, not even in this window
+    $("link-progress").hidden = false; $("cancel-link").disabled = false;
+    let state;
+    do {
+      await new Promise(r => setTimeout(r, 500));
+      state = await call("link-progress");
+      const what = state.step === "unpacking" ? "Unpacking" : "Downloading" + (state.step && state.step.startsWith("file") ? " " + state.step : "");
+      $("link-status").textContent = `${what}: ${mb(state.done || 0)}` + (state.total ? ` of ${mb(state.total)}` : " so far");
+    } while (state.running);
+    showLinks(state.links);
+    if (state.error) $("scan-error").textContent = state.error;
+    else await scan();
+  } catch (error) { $("scan-error").textContent = error.message; }
+  finally { $("add-link").disabled = false; $("link-progress").hidden = true; }
+}
+
+async function clearLinks() {
+  try { showLinks((await call("clear-links")).links); if ($("folder").value.trim()) await scan(); else { scanned = null; $("checklist").replaceChildren(); } }
+  catch (error) { $("scan-error").textContent = error.message; }
+}
+
 async function scan() {
   $("scan-error").textContent = "";
   const folder = $("folder").value.trim();
-  if (!folder) { $("scan-error").textContent = "Choose your folder first."; return; }
+  if (!folder && !linkCount) { $("scan-error").textContent = "Choose your folder or add files from a link first."; return; }
   $("scan").disabled = true; $("scan").textContent = "Looking…";
   try { showScan(await call("scan", {folder, mode: mode()})); $("checklist-box").scrollIntoView({behavior: "smooth"}); }
   catch (error) { $("scan-error").textContent = error.message; }
@@ -299,6 +354,16 @@ $("pick").onclick = async () => {
   finally { $("pick").disabled = false; }
 };
 $("scan").onclick = scan;
+$("add-link").onclick = addLink;
+$("cancel-link").onclick = async () => { $("cancel-link").disabled = true; try { await call("cancel-link"); } catch (e) {} };
+$("pick-zip").onclick = async () => {
+  $("pick-zip").disabled = true;
+  try { const data = await call("pick-zip"); if (data.folder) { $("folder").value = data.folder; await scan(); } }
+  catch (error) { $("scan-error").textContent = error.message; }
+  finally { $("pick-zip").disabled = false; }
+};
+$("clear-links").onclick = clearLinks;
+$("link").addEventListener("keydown", e => { if (e.key === "Enter") addLink(); });
 $("folder").addEventListener("keydown", e => { if (e.key === "Enter") scan(); });
 $("install").onclick = install;
 $("stop").onclick = () => call("stop");
