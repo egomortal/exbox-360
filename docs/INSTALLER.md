@@ -1,6 +1,7 @@
 # Ex-Box Setup (installer X18 v2)
 
-One folder, one button. Double-click `dashboard/ExBox Setup.cmd`. A window opens in your browser:
+One folder, one button. Double-click **`ExBox-Setup.exe`** (from the GitHub release; no Python needed),
+or `dashboard/ExBox Setup.cmd` in a checkout. A window opens in your browser:
 
 1. **Choose folder** - the folder that holds your Xbox 360 files. Setup only reads it.
 2. **Where to install** - *Practice run* (a folder on this PC, no PS5 contacted) or *My PS5*.
@@ -23,6 +24,28 @@ python -B tests/test_installer.py                    # 21 checks, no console, no
 
 Run these from `dashboard/`. Python 3.11+ only; no extra packages (Xbox-style icons need Pillow,
 otherwise the Ex-Box default icons are used and Setup says so).
+
+## The one-file app (`ExBox-Setup.exe`)
+
+Packaged the way Omnibloom Setup is (owner decision 2026-11-11: copy its installer approach; its PS5
+install logic already matched Ex-Box's, so what was copied is its packaging):
+
+- `dashboard/run_setup.py` is the app's entry point; `dashboard/exbox-setup.spec` builds one `.exe`
+  with PyInstaller. Only git-tracked files go in: Setup, `dashboard/tools`, `dashboard/installer-icons`,
+  `toolchain/`, `avatar-editor/local-builder/`, `launch-helper/` and `dashboard/setup.py`, with the
+  repository layout, so Setup finds them exactly as in a checkout.
+- Differences from Omnibloom's: the app keeps a small console window (Setup's window is a browser
+  page; the console is how you close it), Tk is left out (Windows uses the system folder picker,
+  and PyInstaller 6.16 cannot bundle Python 3.14's Tk 9), and in the app the art step runs on WSL's
+  `python3`, which Setup needs anyway.
+- `dashboard/build-setup-exe.ps1` builds it on Windows: own venv, Setup's tests, build, then
+  `dashboard/tests/frozen_check.py` runs the built app (version, scan, a practice install into a
+  temporary folder, the window's server) and prints the SHA-256. First build: 20.3 MB, check PASS.
+- `.github/workflows/exbox-setup.yml` does the same on GitHub for each published release and attaches
+  `ExBox-Setup.exe` and its `.sha256` to the release.
+- Not yet run from the app: the WSL steps (tool setup, editor build, art preparation) and a real PS5
+  install. They are the same code as from a checkout, but read their files from the app's unpacked
+  folder.
 
 ## What Setup looks for
 
