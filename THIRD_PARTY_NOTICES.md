@@ -11,7 +11,7 @@ Source archives, weights, compiled adapters and user images are not part of the 
 ## Dashboard app binary (PPSA99735) distributed in the release
 
 The Ex-Box 360 dashboard app shipped as the GitHub release asset `ExBox360-PPSA99735.zip` is our own
-code, GPL-3.0-or-later. The **corresponding source is this repository at `main`, commit `584b18e` or
+code, GPL-3.0-or-later. The **corresponding source is this repository at `main`, commit `7a67124` or
 later** — not the dashboard sources alone. Everything Ex-Box wrote or changed for this binary is in the
 repo at that commit: the dashboard source, the start-up / link support sources
 (`dashboard/native/support/`), the two code headers under `dashboard/assets/`, and the RADV presenter
