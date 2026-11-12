@@ -119,7 +119,7 @@ static void scans_a_console()
 
     // Profile cache: online.json carries trophySummary as an escaped string.
     write(ps5lib::profile_dir(0x10000001, root) + "/online.json",
-          R"({"onlineId":"celestials","trophySummary":"{\"level\":12,\"progress\":40,\"earnedTrophies\":{\"platinum\":2,\"gold\":9,\"silver\":30,\"bronze\":120}}"})");
+          R"({"onlineId":"playerone","trophySummary":"{\"level\":12,\"progress\":40,\"earnedTrophies\":{\"platinum\":2,\"gold\":9,\"silver\":30,\"bronze\":120}}"})");
     const auto t = ps5lib::read_trophies(0x10000001, root);
     CHECK(t.known && t.level == 12 && t.platinum == 2 && t.gold == 9 && t.silver == 30 && t.bronze == 120);
     CHECK(t.total() == 161 && t.points() == 120 * 15 + 30 * 30 + 9 * 90 + 2 * 300);

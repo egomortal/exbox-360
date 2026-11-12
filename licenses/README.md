@@ -10,26 +10,29 @@ The project's own code is **GPL-3.0-or-later**; its full text is [`../COPYING`](
 - `ncnn-LICENSE.txt` — ncnn (BSD 3-Clause, with its own third-party notices).
 - `Real-ESRGAN-LICENSE.txt` — Real-ESRGAN (BSD 3-Clause).
 
-## Dashboard app binary (PPSA99735) — licenses to include before a public release
+## Dashboard app binary (PPSA99735)
 
 The dashboard `eboot.bin` statically links the components in `THIRD_PARTY_NOTICES.md`. Each license
-below must be present as the **exact upstream text** before the release is made public. Take each from
-the component's own `LICENSE`/`COPYING` file in the PS5 payload SDK bundle the dashboard was built
-against (that bundle is authoritative for the shipped versions); do not paraphrase. Status:
+text below is the exact upstream file for the version that shipped.
 
-| License | Covers | File | Status |
+| License | Covers | File | Source of the text |
 |---|---|---|---|
-| GPL-3.0-or-later | Ex-Box code; libps5platform + start-up/link support; libav2 shims | `../COPYING` | present |
-| LGPL-2.1-or-later | GNU libiconv 1.17 | `LGPL-2.1.txt` | **to add** (copy from libiconv `COPYING.LIB`) |
-| Apache-2.0 WITH LLVM-exception | libc++, libc++abi, libunwind, compiler-rt | `LLVM-LICENSE.txt` | **to add** (copy from the LLVM `LICENSE.TXT`) |
-| MIT | HarfBuzz; Mesa/RADV (MIT parts) | `MIT-HarfBuzz.txt`, `Mesa-LICENSE.txt` | **to add** (copy each project's text; Mesa carries its own tree notices) |
-| zlib | SDL2, SDL2_ttf 2.22.0, SDL2_image 2.8.2 | `Zlib-SDL.txt` | **to add** (copy from SDL's `LICENSE.txt`) |
-| FreeType License (FTL) | FreeType 2.13.x | `FTL.txt` | **to add** (copy from FreeType `docs/FTL.TXT`; keep the credit line) |
-| libpng License | libpng 1.6.43 | `libpng-LICENSE.txt` | **to add** (copy from libpng `LICENSE`) |
-| IJG + BSD-3 + zlib | libjpeg-turbo 3.0.2 | `libjpeg-turbo-LICENSE.txt` | **to add** (copy from libjpeg-turbo `LICENSE.md`) |
-| BSD-3-Clause | libwebp/libwebpdemux 1.4.0 | `libwebp-LICENSE.txt` | **to add** (copy from libwebp `COPYING`) |
-| bzip2 License | bzip2 / libbzip2 | `bzip2-LICENSE.txt` | **to add** (copy from bzip2 `LICENSE`) |
-| BSD-2-Clause | libsamplerate 0.2.2 | `libsamplerate-COPYING.txt` | **to add** (copy from libsamplerate `COPYING`) |
+| GPL-3.0-or-later | Ex-Box code; libps5platform + start-up/link support; libav2 shims | `../COPYING` | project |
+| LGPL-2.1-or-later | GNU libiconv 1.17 | `LGPL-2.1.txt` | FSF text, as shipped in Ubuntu `common-licenses` |
+| Apache-2.0 WITH LLVM-exception | libc++, libc++abi, libunwind, compiler-rt | `LLVM-LICENSE.txt` | llvm-project `LICENSE.TXT` |
+| MIT ("Old MIT") | HarfBuzz 9.0.0 | `MIT-HarfBuzz.txt` | harfbuzz 9.0.0 `COPYING` |
+| MIT and others | Mesa / RADV (PS5_Mesa fork, 1ba9874) | `Mesa-LICENSE.txt` | that tree's `docs/license.rst` |
+| zlib | SDL2 2.30.12 | `Zlib-SDL.txt` | SDL release-2.30.12 `LICENSE.txt` (matches the SDK bundle copy) |
+| zlib | SDL2_ttf 2.22.0 | `Zlib-SDL_ttf.txt` | SDL_ttf release-2.22.0 `LICENSE.txt` |
+| zlib | SDL2_image 2.8.2 | `Zlib-SDL_image.txt` | SDL_image release-2.8.2 `LICENSE.txt` |
+| FreeType License (FTL) | FreeType 2.13.2 | `FTL.txt` | freetype VER-2-13-2 `docs/FTL.TXT` |
+| libpng License | libpng 1.6.43 | `libpng-LICENSE.txt` | libpng v1.6.43 `LICENSE` |
+| IJG + BSD-3 + zlib | libjpeg-turbo 3.0.2 | `libjpeg-turbo-LICENSE.txt` | libjpeg-turbo 3.0.2 `LICENSE.md` |
+| BSD-3-Clause | libwebp / libwebpdemux 1.4.0 | `libwebp-LICENSE.txt` | libwebp v1.4.0 `COPYING` |
+| bzip2 License | bzip2 1.0.8 | `bzip2-LICENSE.txt` | bzip2-1.0.8 `LICENSE` |
+| BSD-2-Clause | libsamplerate 0.2.2 | `libsamplerate-COPYING.txt` | libsamplerate 0.2.2 `COPYING` |
+
+Portions of this software are copyright © The FreeType Project (www.freetype.org). All rights reserved.
 
 Audio decoders (dr_flac, dr_mp3, dr_wav, stb_vorbis) are covered by
 [`../dashboard/vendor/audio/NOTICE-EXBOX.md`](../dashboard/vendor/audio/NOTICE-EXBOX.md).

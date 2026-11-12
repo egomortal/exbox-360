@@ -372,10 +372,10 @@ static int find_action(const Model &m, int blade, GuideAction action, int app = 
 static void guide_opens_on_the_home_blade()
 {
     Model m = with_apps(2);
-    m.player = "Celestials";
+    m.player = "Player One";
     m.press(xb::Guide);
     CHECK(m.guide && m.guide_blade == BladeHome && m.guide_item[BladeHome] == 0);
-    CHECK(m.blade_title(BladeHome) == "Celestials");
+    CHECK(m.blade_title(BladeHome) == "Player One");
     CHECK(m.blade_title(BladeApps) == "Marketplace" && m.blade_title(BladeSettings) == "Settings");
     // GuideMain authors A/B/Y; no signed-in tab overrides them.
     CHECK(has_hint(m, xb::A, "Select") && has_hint(m, xb::B, "Back") && has_hint(m, xb::Y, "Xbox Dashboard"));
