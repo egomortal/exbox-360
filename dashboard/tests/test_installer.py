@@ -62,6 +62,12 @@ class Base(unittest.TestCase):
         self.folder = self.tmp / "my files"
         self.console = targets.LocalTarget(self.tmp / "console")
         self.addCleanup(shutil.rmtree, self.tmp, True)
+        # Isolate from the helper source that now ships in the repo's launch-helper/ folder, so the
+        # tests are deterministic whatever is checked in. Tests that exercise the shipped source point
+        # helper.BUNDLED at their own folder.
+        self._real_bundled = helper.BUNDLED
+        helper.BUNDLED = self.tmp / "no-bundled-helper"
+        self.addCleanup(lambda: setattr(helper, "BUNDLED", self._real_bundled))
         zip_path = fake_ps5x360(self.tmp / "release" / "x.zip") if (self.tmp / "release").mkdir() is None else None
         self._pin = (ps5x360.SHA256, ps5x360.SIZE)
         ps5x360.SHA256 = hashlib.sha256(zip_path.read_bytes()).hexdigest()
