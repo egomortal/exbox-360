@@ -109,8 +109,11 @@ class Scan(Base):
             self.assertNotIn("http", item["source"] if item["id"] != "ps5x360" else "")
         status = {item["id"]: item["status"] for item in result["items"]}
         self.assertEqual(status.pop("ps5x360"), "download")
+        # the dashboard app comes from the pinned Ex-Box release when the folder has none
+        self.assertEqual(status.pop("dashboard-app"), "download")
         self.assertEqual(set(status.values()), {"missing"})
-        self.assertFalse(result["preview"]["can_install"])
+        # with the dashboard available from the pinned release, an empty folder can still install
+        self.assertTrue(result["preview"]["can_install"])
 
     def test_scan_changes_nothing(self):
         fake_folder(self.folder)

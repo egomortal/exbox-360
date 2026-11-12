@@ -22,9 +22,18 @@ PAYLOAD = Path(__file__).resolve().parent / "payload"
 TITLE_ID = "PPSA99735"
 MAX_UNPACKED = 512 * 1024 ** 2
 
-# Set this when you tag a release and upload the dashboard title as a zip asset to it.
-# RELEASE = dict(tag="v1.0", asset="ExBox360-PPSA99735.zip", size=12345678, sha256="<64 hex chars>")
-RELEASE: dict | None = None
+# The dashboard title (PPSA99735) is pinned to the GitHub release asset below. It is the r24
+# "Theater Party" build that was installed and confirmed working on the owner's console
+# (eboot SHA-256 73af85046f36be3ec1777b26e63d56712903ae763f363275ddee432bb45d687d). The asset is
+# PPSA99735/eboot.bin + sce_sys/param.json + sce_sys/icon0.png (the Ex-Box default icon); libc.prx
+# is not in it (Setup builds that on the user's PC). The pinned download works only once the release
+# (and repo, or at least the release) is public.
+RELEASE: dict | None = dict(
+    tag="v1.0.0",
+    asset="ExBox360-PPSA99735.zip",
+    size=10059029,
+    sha256="395cb31625b561d7c471e41acf6886d7b0a42ab9e7d31809ab82df3dc2660f69",
+)
 REPO = "egomortal/exbox-360"
 
 

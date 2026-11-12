@@ -325,7 +325,10 @@ class Installer:
         def step(step_id, title, do, why=""):
             steps.append(dict(id=step_id, title=title, do=bool(do), why="" if do else why))
 
-        step("dashboard", "Install the Ex-Box 360 dashboard", s["dashboard_package"] or s["dashboard_release"],
+        # A dashboard in your folder is always installed (an update); the pinned release is only
+        # downloaded when the dashboard is not already on the PS5, so it never overwrites what is there.
+        step("dashboard", "Install the Ex-Box 360 dashboard",
+             s["dashboard_package"] or (s["dashboard_release"] and not on_console),
              "Already on your PS5; kept as it is." if on_console else by_id["dashboard-app"]["missing"])
         art = s["prepared_art"] or (s["dashboard_inputs"] and o["prepare_art"])
         step("art", "Install your dashboard art", art, "No dashboard art in your folder; Ex-Box uses its plain look.")
