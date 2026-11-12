@@ -26,8 +26,8 @@ It compiles every unit from source, links, checks imports and layout, and signs 
 [`dashboard/native/README.md`](../dashboard/native/README.md) for the folder layout, the checks and
 what is still open. `make native` in `dashboard/` prints the same pointer.
 
-Checked on 2026-11-10: a full from-source build of this tree with the reference dependencies
-produced a signed eboot with 408 imports and a passing layout. It was not run on a console.
+Checked on 2026-11-12: two full from-source builds of this tree in different folders produced the same
+signed eboot (r24b, `2254dd8f...`), with 408 imports and a passing layout and no build-folder path inside.
 
 ## What is still open
 

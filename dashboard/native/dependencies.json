@@ -1,11 +1,12 @@
 {
-  "about": "Hashes of the dependency set that produced the installed build. A different set can still build; the manifest then lists what differs and the eboot hash will differ.",
+  "about": "Hashes of the dependency set that produces the reference build. With this set the eboot hash is the same in any folder. A different set can still build; the manifest then lists what differs and the eboot hash will differ.",
   "reference_build": {
-    "name": "r24 (Theater Party)",
-    "eboot_sha256": "73af85046f36be3ec1777b26e63d56712903ae763f363275ddee432bb45d687d"
+    "name": "r24b (Theater Party, path-independent build)",
+    "eboot_sha256": "2254dd8fd330180e8b6270b215898049458df435169a3c2391cd8309d7e5e6f5",
+    "note": "Same source as the r24 build first installed on the console (73af8504...), rebuilt so no build-folder path is embedded."
   },
   "reference_hashes": {
-    "dashboard/libvulkan_radeon.a": "2bb567dab75d52ae30f0ba157d701f60b368a2f1d451bdd358dc837b5e8a704e",
+    "dashboard/libvulkan_radeon.a": "222b4199b5d9a8955ce707413c687849e22c56d55a5950392e2099ca728a256a",
     "dashboard/libav2_locale_accessor.a": "6b38f8917e3ed36ff597eb598121543ed08fe57d25aa7ac70d28f96fffe0b75e",
     "dashboard/libav2_tempfile_compat.a": "c8d45c31d4291b75e8e80c22596a8312516f0f6e3c584c3bea57cbb0f4abfb4e",
     "dashboard/stubs/libSceAgc.so": "af421cb134f9f958878738fe59ea9702d6d25e8f3ebe5cb44f9d2d09abb59012",

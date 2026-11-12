@@ -121,7 +121,12 @@ def main():
         print(label, "ok", flush=True)
 
     sdk = deps / "native-sdk"
-    cxx_flags = ["-std=c++17", "-O2", "-ffp-contract=on", "-Wall", "-Wextra", "-Werror", "-D__PROSPERO__",
+    # No folder of the PC that builds this ends up inside the eboot: every path a compiler could
+    # embed (assert file names, debug info) is mapped to a fixed name. This also makes the eboot
+    # the same wherever the repository and the dependencies folder live.
+    path_maps = [f"-ffile-prefix-map={out}=/exbox/build", f"-ffile-prefix-map={deps}=/exbox/deps",
+                 f"-ffile-prefix-map={a.deps.absolute()}=/exbox/deps", f"-ffile-prefix-map={DASH}=/exbox/dashboard"]
+    cxx_flags = [*path_maps, "-std=c++17", "-O2", "-ffp-contract=on", "-Wall", "-Wextra", "-Werror", "-D__PROSPERO__",
                  "-DEXBOX_NATIVE_TITLE", "-DNXE_NATIVE_PRESENTER", "-I" + str(support / "presenter"),
                  "-I" + str(homebrew / "include/SDL2"), "-ffunction-sections", "-fdata-sections", "-I" + str(DASH),
                  "-I" + str(support), "-I" + str(homebrew / "include"), "-I" + str(DASH / "modules/host_bridge")]
@@ -141,10 +146,10 @@ def main():
     for name, src, extra in cxx_units:
         run("compile-" + name, [sdk / "bin/prospero-clang++", *cxx_flags, *extra, "-c", src, "-o", obj / (name + ".o")])
     for name in ("native_session", "native_2d_client", "gpu2d", "avatar_gpu", "resize_gpu"):
-        run("compile-" + name, [sdk / "bin/prospero-clang", "-std=gnu11", "-O2", "-Wall", "-Wextra", "-Werror",
+        run("compile-" + name, [sdk / "bin/prospero-clang", *path_maps, "-std=gnu11", "-O2", "-Wall", "-Wextra", "-Werror",
                                 "-ffunction-sections", "-fdata-sections", "-I" + str(DASH / "x21"), "-c",
                                 DASH / "x21" / (name + ".c"), "-o", obj / (name + ".o")])
-    run("compile-string", [sdk / "bin/prospero-clang", "-O2", "-Wall", "-Wextra", "-Werror", "-c",
+    run("compile-string", [sdk / "bin/prospero-clang", *path_maps, "-O2", "-Wall", "-Wextra", "-Werror", "-c",
                            support / "string_compat.c", "-o", obj / "string.o"])
 
     wraps = " ".join("--wrap=" + w for w in WRAPS)
@@ -207,6 +212,10 @@ for unit in {units}; do objects+=("$state/obj/$unit.o"); done
     if r.returncode or "integrity: valid" not in r.stdout:
         sys.exit("The signed eboot failed inspection; see self-inspect.log")
 
+    blob = (title / "eboot.bin").read_bytes()
+    leaked = sorted({str(x) for x in (out, deps, a.deps.absolute(), DASH, Path.home()) if str(x).encode() in blob})
+    if leaked:
+        sys.exit("The eboot contains a folder path from this PC (" + ", ".join(leaked) + "); refusing to finish")
     pinned = json.loads((HERE / "dependencies.json").read_text())["reference_hashes"]
     used = {rel: sha(deps / rel) for rel in pinned if (deps / rel).is_file()}
     result = {

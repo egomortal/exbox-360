@@ -72,14 +72,14 @@ This repository does not ship it.
 
 ## Reproducibility
 
-`dependencies.json` records the hashes of the dependency set used for the installed build. The
-manifest lists any dependency that differs from it.
+The eboot does not depend on where the repository or the dependencies folder live. Every path a
+compiler could embed is mapped to a fixed name (`/exbox/dashboard`, `/exbox/deps`, `/exbox/build`),
+and the build refuses to finish if a folder path from the building PC is found in the result.
 
-The eboot hash depends on where the repository is checked out, because compiler diagnostics embed
-source paths. Built from this repository with the reference dependencies, the result has the same
-408 imports and the same code size as the installed build, and a different hash. A matching hash
-is only expected when the checkout path matches too; pass `--expect-eboot-sha256` if you want the
-build to enforce one.
+`dependencies.json` records the hashes of the reference dependency set and the eboot it produces.
+Two builds of this tree in different folders with that set gave the same eboot,
+`2254dd8f...` (r24b). The manifest lists any dependency that differs from the reference; the hash
+then differs too. Pass `--expect-eboot-sha256` to make the build enforce a hash.
 
 ## Support sources
 
