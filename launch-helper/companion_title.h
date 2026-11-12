@@ -32,6 +32,8 @@ int sceSystemServiceLaunchApp(const char *title_id, const char *const *argv,
                               void *param);
 int sceUserServiceGetInitialUser(int32_t *user_id);
 int sceUserServiceGetForegroundUser(int32_t *user_id);
+int sceSystemServiceGetAppIdOfRunningBigApp(void);
+int sceSystemServiceKillApp(int app_id, int how, int reason, int flags);
 
 /* --- configurable dashboard target --------------------------------------- */
 /* Empty string => fall back to the legacy DASHBOARD_PATH / eboot.elf launch. */
@@ -75,6 +77,19 @@ static int companion_launch_title(const char *title_id) {
     if (sceUserServiceGetForegroundUser(&uid) != 0 || uid < 0)
         sceUserServiceGetInitialUser(&uid);
     const char *argv[] = { NULL };
+
+    /* A big-app may already hold the foreground (e.g. Ex-Box itself asked us
+     * to open the editor or a game). The launch services refuse a second
+     * big-app with 0x80940005, so close the running one first -- the same
+     * thing working PS5 launchers do -- then give Shell up to 2s to tear it
+     * down before launching. */
+    int running = sceSystemServiceGetAppIdOfRunningBigApp();
+    if (running >= 0) {
+        int krc = sceSystemServiceKillApp(running, -1, 0, 0);
+        log_line("launch: closed running big-app id=%d rc=0x%x", running, (unsigned)krc);
+        for (int i = 0; i < 20 && sceSystemServiceGetAppIdOfRunningBigApp() >= 0; i++)
+            usleep(100000);
+    }
 
     /* Order matches working PS5 homebrew launchers: SystemService first. */
     int rc = sceSystemServiceLaunchApp(title_id, argv, NULL);
