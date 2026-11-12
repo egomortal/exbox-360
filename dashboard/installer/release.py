@@ -22,17 +22,18 @@ PAYLOAD = Path(__file__).resolve().parent / "payload"
 TITLE_ID = "PPSA99735"
 MAX_UNPACKED = 512 * 1024 ** 2
 
-# The dashboard title (PPSA99735) is pinned to the GitHub release asset below. It is the r24
-# "Theater Party" build that was installed and confirmed working on the owner's console
-# (eboot SHA-256 73af85046f36be3ec1777b26e63d56712903ae763f363275ddee432bb45d687d). The asset is
+# The dashboard title (PPSA99735) is pinned to the GitHub release asset below. It is the r24b
+# "Theater Party" build: the same source as the r24 that ran on the owner's console, rebuilt so no
+# path from the building PC is embedded (eboot SHA-256
+# 2254dd8fd330180e8b6270b215898049458df435169a3c2391cd8309d7e5e6f5). The asset is
 # PPSA99735/eboot.bin + sce_sys/param.json + sce_sys/icon0.png (the Ex-Box default icon); libc.prx
 # is not in it (Setup builds that on the user's PC). The pinned download works only once the release
 # (and repo, or at least the release) is public.
 RELEASE: dict | None = dict(
     tag="v1.0.0",
     asset="ExBox360-PPSA99735.zip",
-    size=10059029,
-    sha256="395cb31625b561d7c471e41acf6886d7b0a42ab9e7d31809ab82df3dc2660f69",
+    size=10059047,
+    sha256="b57df548813612471fe2be078189b93c78b8646020ac31fb67153898b7d501fd",
 )
 REPO = "egomortal/exbox-360"
 
