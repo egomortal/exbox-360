@@ -54,9 +54,9 @@ Being honest about what a stranger cannot do yet:
 
 - **The tools are not provisioned for you.** Setup does not yet fetch and build the SDKs and
   libraries above from their public sources. That work is tracked with the installer.
-- **`dashboard/libvulkan_radeon.a` has no published recipe yet.** It is Mesa's RADV built with the
-  PS5 window system from the PS5_Vulkan project, plus a presenter change that adds
-  `exbox_presenter_probe`. The exact Mesa revision and patch still have to be written down here.
+- **`dashboard/libvulkan_radeon.a`: recipe written, rebuild not re-run.** [`radv/README.md`](radv/README.md)
+  gives the Mesa revision, build options and our presenter patch. Rebuilding it from that recipe
+  has not been repeated yet.
   The two small `libav2_*` archives and the two stub libraries come from the Avatar Editor's native
   platform layer and need the same treatment.
 - **The eboot alone is not a title folder.** A title also needs `sce_sys/param.json`,

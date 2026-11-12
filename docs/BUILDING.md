@@ -33,8 +33,9 @@ produced a signed eboot with 408 imports and a passing layout. It was not run on
 
 - **Tool provisioning.** The SDKs and libraries in the dependencies folder are not fetched or built
   for you yet. The installer is taking this on for both titles.
-- **RADV archive recipe.** `libvulkan_radeon.a` (RADV for the PS5 window system with the HDR
-  presenter change) and the small platform archives have no written recipe in this repository yet.
+- **RADV archive recipe.** Written in `dashboard/native/radv/` (Mesa revision, build options and our
+  presenter patch). Rebuilding the archive from that recipe has not been repeated yet. The small
+  platform archives still have no written recipe in this repository.
 - **Title folder.** `sce_sys/param.json` and `sce_sys/icon0.png` are produced at install time by
   Setup; they are not built here.
 
