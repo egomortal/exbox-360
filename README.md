@@ -13,6 +13,15 @@ A guided tour recorded on a PS5 running Ex-Box 360: the Blades, NXE, Kinect and 
 
 https://github.com/user-attachments/assets/94f58c5a-42eb-4a39-99cb-f6c0623c92a8
 
+## 📣 Coming next: the Mega Drop
+The next version is the biggest update yet:
+- **A real 360 look everywhere:** era-correct screens, fancy dressed panels instead of grey boxes, a new Panel style setting, and proper A/B/X/Y button legends.
+- **Videos that just work:** Ex-Box finds your videos by itself (with Refresh), and plays MP4, MKV and WebM up to 4K with hardware video decoding.
+- **Online Theater Party (planned):** watch together with friends anywhere, peer-to-peer and encrypted, avatars included.
+- **Livelier avatars, gamercards, game channels, one-press Continue,** and a lot more.
+
+Read the full list in [`docs/MEGA-DROP.md`](docs/MEGA-DROP.md).
+
 ## What works today
 - Your real avatar, with friends, on the dashboard.
 - A smooth avatar closet with Sort / Filter on Y.
